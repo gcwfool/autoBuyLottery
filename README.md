@@ -1,0 +1,2 @@
+# autoBuyLottery
+auto Buy Lottery
