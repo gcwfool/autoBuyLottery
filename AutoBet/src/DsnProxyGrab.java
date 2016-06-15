@@ -45,7 +45,7 @@ public class DsnProxyGrab {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
          requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookiedae
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
-    }    
+    }     
 
     
     
