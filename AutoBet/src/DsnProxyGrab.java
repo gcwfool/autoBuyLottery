@@ -1,4 +1,3 @@
-package network;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -20,15 +19,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-
 import org.apache.http.client.protocol.HttpClientContext;
 
 import java.io.*; 
 import java.util.Scanner;
-
-
-
-
 
 import org.apache.http.Header;
 
@@ -45,13 +39,12 @@ public class DsnProxyGrab {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
          requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookiedae
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
-    }     
+    }
 
     
     
 
-	public static String setCookie(CloseableHttpResponse httpResponse)
-	{
+	public static String setCookie(CloseableHttpResponse httpResponse) {
 		System.out.println("----setCookieStore");
 		Header headers[] = httpResponse.getHeaders("Set-Cookie");
 		if (headers == null || headers.length==0)
@@ -72,7 +65,8 @@ public class DsnProxyGrab {
 		
 		for (String c : cookies)
 		{
-			if(c.indexOf("path=") != -1 || c.indexOf("expires=") != -1 || c.indexOf("domain=") != -1 || c.indexOf("Max-Age=") != -1 || c.indexOf("HttpOnly") != -1 || c.indexOf("Expires=") != -1)
+			if(c.indexOf("path=") != -1 || c.indexOf("expires=") != -1 || c.indexOf("domain=") != -1 ||
+			   c.indexOf("Max-Age=") != -1 || c.indexOf("HttpOnly") != -1 || c.indexOf("Expires=") != -1)
 				continue;
 			strCookies += c;
 			strCookies += ";";
@@ -91,12 +85,14 @@ public class DsnProxyGrab {
     
 
 
-    public static String doLogin(String url) {
-
+    public static String doLogin() {
+    	if(!ConfigReader.read("grab.config")) {
+    		return null;
+    	}
         clientContext = HttpClientContext.create();
         clientContext.setRequestConfig(requestConfig);
         
-        String loginPage = doGet(url, null); //get 登录页面
+        String loginPage = doGet(ConfigReader.getAddress(), null); //get 登录页面
         
         if(loginPage != null) {
         	cookieuid = strCookies;
@@ -108,10 +104,10 @@ public class DsnProxyGrab {
         		//发送post
         		List<NameValuePair> params = new ArrayList<NameValuePair>();
         		params.add(new BasicNameValuePair("type", "2"));
-        		params.add(new BasicNameValuePair("account", "abb100"));
-        		params.add(new BasicNameValuePair("password", "aaa111"));
+        		params.add(new BasicNameValuePair("account", ConfigReader.getAccount()));
+        		params.add(new BasicNameValuePair("password", ConfigReader.getPassword()));
         		params.add(new BasicNameValuePair("code", rmNum));
-        		String location = doPost("http://3f071b45.dsn.ww311.com/login", params, strCookies, "");
+        		String location = doPost(ConfigReader.getAddress(), params, strCookies, "");
         		
         		System.out.println("location: " + location); 
 
@@ -121,12 +117,7 @@ public class DsnProxyGrab {
         			location = doGet(location, cookieuid);//get cookiedae和重定向url
         			cookiedae = strCookies;
         			strCookies = "";
-        			doGet(location, cookieuid + cookiedae);//get 主页
-        			long time =  System.currentTimeMillis();
-        			String strTime = Long.toString(time);
-        			
-        			//get cqssc下单数据
-        			doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=DX1%2CDS1%2CDX2%2CDS2%2CDX3%2CDS3%2CDX4%2CDS4%2CDX5%2CDS5%2CZDX%2CZDS%2CLH&all=SZ&range=&multiple=false&_=" + strTime, cookieuid + cookiedae);
+        			return doGet(location, cookieuid + cookiedae);//get 主页
         		}
             
         	}
@@ -149,7 +140,8 @@ public class DsnProxyGrab {
         httppost.addHeader("Connection","keep-alive");
         httppost.addHeader("Cache-Control","no-cache");
         httppost.addHeader("Referer", referUrl);
-        httppost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");
+        httppost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36"
+        					+ " (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");
         if(cookies != null){
        	 httppost.addHeader("Cookie", cookies);
         }
@@ -197,7 +189,8 @@ public class DsnProxyGrab {
            httpget.addHeader("Connection","keep-alive");
            //httpget.addHeader("Content-Type","application/json; charset=UTF-8");
            //httpget.addHeader("Referer","http://www.lashou.com/");
-           httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");  
+           httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36"
+           					+ " (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");  
            if(cookies != null){
         	   httpget.addHeader("Cookie", cookies);
            }
@@ -246,7 +239,8 @@ public class DsnProxyGrab {
          if(strCookies != ""){
         	 httpget.addHeader("Cookie", strCookies);
          }
-         httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
+         httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 "
+         					+ "(KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
          System.out.println("executing request " + httpget.getURI()); 
         
          // 执行get请求.    
@@ -281,4 +275,25 @@ public class DsnProxyGrab {
          
     	return null;
     }
+    
+  //! @brief 抓取cqssc下单数据
+  //! @param game       两面:"LM", 单号:"DH", 前中后三:"QZHS"
+  //! @param all        全部:"", A盘:"A", B盘:"B", C盘:"C", D盘:"D",
+  //! @param range      虚注:"XZ" 实占:"SZ" 补货:"BH"
+  //! @return           success:String fail:null
+    public static String grabCQSSCdata(String game, String all, String range){
+    	if((game == "LM" || game == "DH" || game == "QZHS") && (all == "" || all == "A" ||
+    			all == "B" || all == "C" || all == "D") && (range == "XZ" || range == "SZ" || range == "BH")) {
+    		long time =  System.currentTimeMillis();
+    		String strTime = Long.toString(time);
+    		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=DX1%2CDS1%2CDX2"
+				+ "%2CDS2%2CDX3%2CDS3%2CDX4%2CDS4%2CDX5%2CDS5%2CZDX%2CZDS%2CLH&all=" + all + "&range=" + range 
+				+ "&multiple=false&_=" + strTime, cookieuid + cookiedae);
+    		if(data != null) {
+    			return data;
+    		}
+    	}
+    	return null;
+    }
+    
 }
