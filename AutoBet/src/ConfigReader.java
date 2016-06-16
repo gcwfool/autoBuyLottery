@@ -9,11 +9,11 @@ import org.w3c.dom.NodeList;
 
 public class ConfigReader {
 	
-	static String address = "";
-	static String account = "";
-	static String password = "";
+	String address = "";
+	String account = "";
+	String password = "";
 	
-	public static boolean read(String filename) {
+	public boolean read(String filename) {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
         
 //      System.out.println("class name: " + dbf.getClass().getName());  
@@ -46,17 +46,17 @@ public class ConfigReader {
 		
 	}
 	
-	public static String getAddress() {
+	public  String getAddress() {
 		return address;
 		
 	}
 	
-	public static String getAccount() {
+	public  String getAccount() {
 		return account;
 		
 	}
 
-	public static String getPassword() {
+	public  String getPassword() {
 		return password;
 	
 	}

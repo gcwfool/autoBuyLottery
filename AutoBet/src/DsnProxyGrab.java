@@ -30,6 +30,10 @@ public class DsnProxyGrab {
 	static CloseableHttpClient httpclient = null;
     static RequestConfig requestConfig = null;
     static HttpClientContext clientContext = null;
+    
+    //configreader
+    static ConfigReader configReader = new ConfigReader();
+    
     //static Map<String,String> cookieMap = new HashMap<String, String>(64);
     static String strCookies = "";
     static String cookieuid = "";
@@ -86,13 +90,13 @@ public class DsnProxyGrab {
 
 
     public static String doLogin() {
-    	if(!ConfigReader.read("grab.config")) {
+    	if(!configReader.read("grab.config")) {
     		return null;
     	}
         clientContext = HttpClientContext.create();
         clientContext.setRequestConfig(requestConfig);
         
-        String loginPage = doGet(ConfigReader.getAddress(), null); //get µÇÂ¼Ò³Ãæ
+        String loginPage = doGet(configReader.getAddress(), null); //get µÇÂ¼Ò³Ãæ
         
         if(loginPage != null) {
         	cookieuid = strCookies;
@@ -104,10 +108,10 @@ public class DsnProxyGrab {
         		//·¢ËÍpost
         		List<NameValuePair> params = new ArrayList<NameValuePair>();
         		params.add(new BasicNameValuePair("type", "2"));
-        		params.add(new BasicNameValuePair("account", ConfigReader.getAccount()));
-        		params.add(new BasicNameValuePair("password", ConfigReader.getPassword()));
+        		params.add(new BasicNameValuePair("account", configReader.getAccount()));
+        		params.add(new BasicNameValuePair("password", configReader.getPassword()));
         		params.add(new BasicNameValuePair("code", rmNum));
-        		String location = doPost(ConfigReader.getAddress(), params, strCookies, "");
+        		String location = doPost(configReader.getAddress(), params, strCookies, "");
         		
         		System.out.println("location: " + location); 
 
