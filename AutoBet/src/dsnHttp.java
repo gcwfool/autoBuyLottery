@@ -14,7 +14,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,8 +22,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-
 import org.apache.http.entity.StringEntity;
+
 
 
 import java.io.BufferedReader;
@@ -42,6 +41,9 @@ public class dsnHttp {
     static CloseableHttpClient httpclient = null;
     static RequestConfig requestConfig = null;
     static HttpClientContext clientContext = null;
+    static ConfigReader configReader = new ConfigReader();
+    
+    
     //这个变量用来存储
     static String cookieCfduid = "";
     static String cookie2ae = "";
@@ -57,7 +59,19 @@ public class dsnHttp {
     
     public static boolean loginToDsn(){
     	
-    	doGetLoginPage("http://835b1195.dsn.ww311.com/login");
+    	boolean readRes = configReader.read("bet.config");
+    	if(readRes != true){
+    		System.out.println("bet.config 文件读取错误，请检查!");
+    		return false;
+    	}
+    		
+    	
+    	String loginURI = "";
+    	loginURI = "/login";
+    	
+    	loginURI = configReader.getAddress() + loginURI;
+    	
+    	doGetLoginPage(loginURI);
     	
 	    //手动输入验证码:
         System.out.println("请登录迪斯尼输入验证码：");
@@ -65,13 +79,13 @@ public class dsnHttp {
         String code = scanner.next();
         System.out.println(code);
         
-        String type = "1";
-        String account = "ghh332";
-        String password = "abcd12345";
+        String type = "1";  //remove hardcode later
+        String account = configReader.getAccount();
+        String password = configReader.getPassword();
         
         
         
-        String cookies = cookieCfduid + cookie2ae;
+        //String cookies = cookieCfduid + cookie2ae;
         
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("type", type));
@@ -79,7 +93,7 @@ public class dsnHttp {
         params.add(new BasicNameValuePair("password", password));
         params.add(new BasicNameValuePair("code", code));
     	
-        doPost("http://835b1195.dsn.ww311.com/login", params, cookies);
+        doPost(loginURI, params, "");
         
         //For get cookies
         doGet(location,cookieCfduid, "");
@@ -89,16 +103,18 @@ public class dsnHttp {
 
         
         //get cqssc page
-        String res = doGet("http://835b1195.dsn.ww311.com/member/load?lottery=CQSSC&page=lm", "", "http://835b1195.dsn.ww311.com/member/index");
+        String host = configReader.getAddress();
+        String res = doGet(host + "/member/load?lottery=CQSSC&page=lm", "", host + "/member/index");
         if(res == null){
         	System.out.println("get cqssc page failed");
+        	return false;
         }
 
       
-        String response = "";
+        /*String response = "";
         //get time
-        String getTimeUrl = "http://835b1195.dsn.ww311.com/time?_=";
-        getTimeUrl += getQueryStringparam();
+        String getTimeUrl = //"http://835b1195.dsn.ww311.com/time?_=";
+        getTimeUrl += System.currentTimeMillis();
         response = doGetCQSSCparam(getTimeUrl, cookieCfduid, "http://835b1195.dsn.ww311.com/member/load?lottery=CQSSC&page=lm");
         if(response == null)
         {
@@ -108,12 +124,23 @@ public class dsnHttp {
         }
         System.out.println("time:");
         System.out.println(response);
-        time = Long.parseLong(response);
+        time = Long.parseLong(response);*/
         
+
+        
+        
+        
+    	return true;
+    }
+    
+    public static boolean doBet(String betData)
+    {
         //get period
-        String getPeriodUrl = "http://835b1195.dsn.ww311.com/member/period?lottery=CQSSC&_=";
-        getPeriodUrl += getQueryStringparam();
-        response = doGetCQSSCparam(getPeriodUrl, "", "http://835b1195.dsn.ww311.com/member/load?lottery=CQSSC&page=lm");
+    	String response = "";
+    	String host = configReader.getAddress();
+        String getPeriodUrl = host + "/member/period?lottery=CQSSC&_=";
+        getPeriodUrl += Long.toString(System.currentTimeMillis());
+        response = doGetCQSSCparam(getPeriodUrl, "", configReader.getAddress() + "/member/load?lottery=CQSSC&page=lm");
         
         if(response == null)
         {
@@ -131,9 +158,11 @@ public class dsnHttp {
        	
         String jsonParam = "";
         
+        time = System.currentTimeMillis();
+        
         //如果未到封盘时间
         if(time < closeTime && drawNumber != null){
-        	jsonParam = constructBetsData();
+        	jsonParam = constructBetsData(betData);
         	
         	System.out.println(jsonParam);
         	
@@ -143,17 +172,15 @@ public class dsnHttp {
         	
         	System.out.println("bet result:");
         	System.out.println(response);
+        	
+        	
         
         }
         
-        
-        
-    	return true;
+        return false;
     }
     
-       
-    
-    public static String constructBetsData()
+    public static String constructBetsData(String betData)
     {
     	JSONObject game1Obj = new JSONObject();
     	
@@ -215,7 +242,7 @@ public class dsnHttp {
     	
     }
 
-    public static void setQueryParams(String str){
+    /*public static void setQueryParams(String str){
     	int posStar = str.indexOf("=");
     	int len = str.length();
     	String queryStringParam = str.substring(posStar+1);
@@ -231,7 +258,7 @@ public class dsnHttp {
     	String queryString = Long.toString(queryParam);
     	queryParam++;
     	return queryString;
-    }
+    }*/
     
 	public static String setCookie(CloseableHttpResponse httpResponse)
 	{
@@ -315,7 +342,7 @@ public class dsnHttp {
             	
             	//response.close();
             	
-            	setQueryParams(yzmURL);
+            	//setQueryParams(yzmURL);
             	
             	//get yzm
             	String hostUrl = "http://835b1195.dsn.ww311.com/";
@@ -424,10 +451,7 @@ public class dsnHttp {
                  Header headers[] = response.getHeaders("Location");
                  location = headers[0].getValue();
                  
-                 
-                 //get cookiesb18
-                 //cookiesb18 = setCookie(response);
-                 
+                                 
                  httppost.releaseConnection();
                  
                  System.out.println(cookiesb18);
