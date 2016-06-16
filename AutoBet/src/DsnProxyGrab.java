@@ -282,12 +282,12 @@ public class DsnProxyGrab {
     
   //! @brief 抓取cqssc下单数据
   //! @param game       两面:"LM", 单号:"DH", 前中后三:"QZHS"
-  //! @param all        全部:"", A盘:"A", B盘:"B", C盘:"C", D盘:"D",
-  //! @param range      虚注:"XZ" 实占:"SZ" 补货:"BH"
+  //! @param all        虚注:"XZ" 实占:"SZ" 补货:"BH"
+  //! @param range      全部:"", A盘:"A", B盘:"B", C盘:"C", D盘:"D",
   //! @return           success:String fail:null
     public static String grabCQSSCdata(String game, String all, String range){
-    	if((game == "LM" || game == "DH" || game == "QZHS") && (all == "" || all == "A" ||
-    			all == "B" || all == "C" || all == "D") && (range == "XZ" || range == "SZ" || range == "BH")) {
+    	if((game == "LM" || game == "DH" || game == "QZHS") && (range == "" || range == "A" ||
+    			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
     		long time =  System.currentTimeMillis();
     		String strTime = Long.toString(time);
     		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=DX1%2CDS1%2CDX2"

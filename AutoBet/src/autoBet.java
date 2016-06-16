@@ -9,7 +9,7 @@ public class autoBet {
 		String data = DsnProxyGrab.doLogin();
 		if(data != null) {
 			for(int i = 0; i < 10; i++) {
-				data = DsnProxyGrab.grabCQSSCdata("LM", "", "XZ");
+				data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
 				Thread.sleep(5000);
 			}
 		}
