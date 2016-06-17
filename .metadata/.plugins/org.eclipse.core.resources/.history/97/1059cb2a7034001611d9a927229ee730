@@ -29,7 +29,6 @@ public class autoBet {
 							System.out.println(data);
 							if(data != null){
 								autoBetSuccess = dsnHttp.doBetCQSSC(data);
-								Thread.sleep(4*1000);
 							}
 						}
 						else{

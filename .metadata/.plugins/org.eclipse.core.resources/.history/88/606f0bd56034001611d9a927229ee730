@@ -13,27 +13,24 @@ public class autoBet {
 		boolean autoBetSuccess = false;
 		
 		if (res == true){
-			while(true){
+			while(autoBetSuccess == false){
 				long remainTime = dsnHttp.timeToBet();
 				
 					System.out.println("距离封盘时间为:");
 					System.out.println(remainTime/1000);
 				
-					if(remainTime <= 0){//已经封盘,等四分钟后再次查询
+					if(remainTime <= 0){//已经封盘,等五分钟后再次查询
 						Thread.sleep(4*60*1000);//等四分钟
 					}
 					else{
-						if(remainTime < 3*1000){//最后三秒秒去下注
+						if(remainTime < 4*1000){//最后四秒去下注
 							data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
-							System.out.println("下单数据：");
-							System.out.println(data);
 							if(data != null){
 								autoBetSuccess = dsnHttp.doBetCQSSC(data);
-								Thread.sleep(4*1000);
 							}
 						}
 						else{
-							long sleepTime = remainTime - 3*1000;
+							long sleepTime = remainTime/4;
 							Thread.sleep(sleepTime);
 						}
 					}
@@ -41,12 +38,12 @@ public class autoBet {
 		}
 		}
 		
-		/*if(data != null) {
+		if(data != null) {
 			for(int i = 0; i < 10; i++) {
 				data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
 				Thread.sleep(5000);
 			}
-		}*/
+		}
 
 	}
 }

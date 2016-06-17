@@ -55,7 +55,6 @@ public class dsnHttp {
     static long time = 0;
     
     static String drawNumber = "";
-    static String previousBetNumber = "";
     
     
     public static boolean loginToDsn(){
@@ -168,9 +167,7 @@ public class dsnHttp {
        	
         String jsonParam = "";
         
-        if(previousBetNumber.equals(drawNumber)) //之前如果已经下过单就直接返回
-        	return false;
-        
+        time = System.currentTimeMillis();
         
         //如果未到封盘时间
         if( drawNumber != null){
@@ -179,8 +176,6 @@ public class dsnHttp {
         	System.out.println(jsonParam);
         	
         	String response = "";
-        	
-        	previousBetNumber = drawNumber;
         	
         	response = betCQSSC(host + "/member/bet", jsonParam, "UTF-8", "");
         	
@@ -221,11 +216,11 @@ public class dsnHttp {
 			int amount = gameGrabData.getInt("a");
 			//只下赔率二以下的
     		if(odds < 2 && amount >0){
-    			amount = amount/50;  //hard code 暂时只下五十分之一的量
+    			amount = amount/100;  //hard code 暂时只下百分分之一的量
     			if(amount == 0)
     				amount = 1;
-    			if(amount > 10)  //额度暂时不够
-    				amount = 10;
+    			if(amount > 20)  //额度暂时不够
+    				amount = 20;
     			JSONObject gameObj = new JSONObject();
     			gameObj.put("game", game);
     			gameObj.put("contents", contents);

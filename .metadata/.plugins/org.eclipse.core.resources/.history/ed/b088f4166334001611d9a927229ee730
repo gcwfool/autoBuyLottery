@@ -55,7 +55,6 @@ public class dsnHttp {
     static long time = 0;
     
     static String drawNumber = "";
-    static String previousBetNumber = "";
     
     
     public static boolean loginToDsn(){
@@ -168,9 +167,7 @@ public class dsnHttp {
        	
         String jsonParam = "";
         
-        if(previousBetNumber.equals(drawNumber)) //之前如果已经下过单就直接返回
-        	return false;
-        
+        time = System.currentTimeMillis();
         
         //如果未到封盘时间
         if( drawNumber != null){
@@ -179,8 +176,6 @@ public class dsnHttp {
         	System.out.println(jsonParam);
         	
         	String response = "";
-        	
-        	previousBetNumber = drawNumber;
         	
         	response = betCQSSC(host + "/member/bet", jsonParam, "UTF-8", "");
         	
@@ -221,11 +216,9 @@ public class dsnHttp {
 			int amount = gameGrabData.getInt("a");
 			//只下赔率二以下的
     		if(odds < 2 && amount >0){
-    			amount = amount/50;  //hard code 暂时只下五十分之一的量
+    			amount = amount/10;  //hard code 暂时只下十分之一的量
     			if(amount == 0)
     				amount = 1;
-    			if(amount > 10)  //额度暂时不够
-    				amount = 10;
     			JSONObject gameObj = new JSONObject();
     			gameObj.put("game", game);
     			gameObj.put("contents", contents);
@@ -361,27 +354,28 @@ public class dsnHttp {
                 httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
                 System.out.println("executing request " + httpget.getURI()); 
                
-
+                // 执行get请求.   
+                
+                String destfilename = "D:\\yzm.jpg";
+                
+        	    //httpget = new HttpGet(url);
+        	    File file = new File(destfilename);
+        	    if (file.exists()) {
+        	        file.delete();
+        	    }
                 
                 response = httpclient.execute(httpget); 
             	
                 
-                //entity = response.getEntity();
+                entity = response.getEntity();
                 
                 
                 cookie2ae = setCookie(response);
                 
                 
-                //InputStream in = entity.getContent();
+                InputStream in = entity.getContent();
                 
-                File storeFile = new File("D:\\hyyzm.png");  
-                FileOutputStream output = new FileOutputStream(storeFile);  
-                //得到网络资源的字节数组,并写入文件  
-                byte [] a = EntityUtils.toByteArray(response.getEntity());
-                output.write(a);  
-                output.close();  
-                
-        	    /*try {
+        	    try {
         	        FileOutputStream fout = new FileOutputStream(file);
         	        int l = -1;
         	        byte[] tmp = new byte[2048];
@@ -391,7 +385,7 @@ public class dsnHttp {
         	        fout.close();
         	    } finally {
         	        in.close();
-        	    }*/
+        	    }
         	    
 
             	httpget.releaseConnection();
