@@ -288,11 +288,22 @@ public class DsnProxyGrab {
     public static String grabCQSSCdata(String game, String all, String range){
     	if((game == "LM" || game == "DH" || game == "QZHS") && (range == "" || range == "A" ||
     			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
+    		switch (game) {
+    		    case "LM":
+    		      game = "DX1%2CDS1%2CDX2%2CDS2%2CDX3%2CDS3%2CDX4%2CDS4%2CDX5%2CDS5%2CZDX%2CZDS%2CLH";
+    		      break;
+    		    case "DH":
+      		      game = "B1%2CB2%2CB3%2CB4%2CB5";
+      		      break;
+    		    case "QZHS":
+        		  game = "TS1%2CTS2%2CTS3";
+        		  break;
+    		   default :
+    		}
     		long time =  System.currentTimeMillis();
     		String strTime = Long.toString(time);
-    		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=DX1%2CDS1%2CDX2"
-				+ "%2CDS2%2CDX3%2CDS3%2CDX4%2CDS4%2CDX5%2CDS5%2CZDX%2CZDS%2CLH&all=" + all + "&range=" + range 
-				+ "&multiple=false&_=" + strTime, cookieuid + cookiedae);
+    		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=" + game +"&all=" 
+    								+ all + "&range=" + range + "&multiple=false&_=" + strTime, cookieuid + cookiedae);
     		if(data != null) {
     			return data;
     		}
