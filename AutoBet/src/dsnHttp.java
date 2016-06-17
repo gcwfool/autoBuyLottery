@@ -55,7 +55,6 @@ public class dsnHttp {
     static long time = 0;
     
     static String drawNumber = "";
-    static String previousBetNumber = "";
     
     
     public static boolean loginToDsn(){
@@ -133,7 +132,9 @@ public class dsnHttp {
         
     	return true;
     }
-    public static long timeToBet(){
+    
+    public static boolean doBet(String betData)
+    {
         //get period
     	String response = "";
     	String host = configReader.getAddress();
@@ -145,7 +146,7 @@ public class dsnHttp {
         {
         	
         	System.out.println("get period failed");
-        	return System.currentTimeMillis();
+        	return false;
         }
         
         System.out.println("preiod:");
@@ -154,90 +155,80 @@ public class dsnHttp {
         JSONObject periodJson = new JSONObject(response);
         long closeTime = periodJson.getLong("closeTime");
         drawNumber = periodJson.getString("drawNumber");
-        
-        time = System.currentTimeMillis();
-        
-        long remainTime = closeTime - time;
-        
-    	return remainTime;
-    }
-    public static boolean doBetCQSSC(String betData)
-    {
-
-    	String host = configReader.getAddress();
        	
         String jsonParam = "";
         
-        if(previousBetNumber.equals(drawNumber)) //之前如果已经下过单就直接返回
-        	return false;
-        
+        time = System.currentTimeMillis();
         
         //如果未到封盘时间
-        if( drawNumber != null){
+        if(time < closeTime && drawNumber != null){
         	jsonParam = constructBetsData(betData);
         	
         	System.out.println(jsonParam);
         	
-        	String response = "";
         	
-        	previousBetNumber = drawNumber;
         	
-        	response = betCQSSC(host + "/member/bet", jsonParam, "UTF-8", "");
+        	response = bet("http://835b1195.dsn.ww311.com/member/bet", jsonParam, "UTF-8", "");
         	
         	System.out.println("bet result:");
         	System.out.println(response);
         	
-        	return true;
+        	
         
         }
         
         return false;
     }
     
-    public static String constructBetsData(String data)
+    public static String constructBetsData(String betData)
     {
+    	JSONObject game1Obj = new JSONObject();
     	
-    	//data = "[[{\"k\":\"DX2\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX3\",\"i\":\"D\",\"c\":3,\"a\":130,\"r\":258.294,\"cm\":0},{\"k\":\"DX4\",\"i\":\"D\",\"c\":4,\"a\":660,\"r\":1319.868,\"cm\":0},{\"k\":\"DS1\",\"i\":\"D\",\"c\":1,\"a\":10,\"r\":19.998,\"cm\":0},{\"k\":\"DX2\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DX3\",\"i\":\"X\",\"c\":1,\"a\":5,\"r\":9.999,\"cm\":0},{\"k\":\"DX5\",\"i\":\"D\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DX1\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX4\",\"i\":\"X\",\"c\":1,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDX\",\"i\":\"D\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS1\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"D\",\"c\":3,\"a\":100,\"r\":199.98,\"cm\":0},{\"k\":\"DS3\",\"i\":\"D\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DS3\",\"i\":\"S\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"S\",\"c\":2,\"a\":45,\"r\":89.991,\"cm\":0},{\"k\":\"DS5\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX1\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX5\",\"i\":\"X\",\"c\":3,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDS\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"S\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DS5\",\"i\":\"S\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0}],{\"DS1_S\":1.983,\"DS1_D\":1.983,\"DS2_S\":1.983,\"DS2_D\":1.983,\"DS3_S\":1.983,\"DS3_D\":1.983,\"DS4_S\":1.983,\"DS4_D\":1.983,\"DS5_S\":1.983,\"DS5_D\":1.983,\"DX1_X\":1.983,\"DX1_D\":1.983,\"DX2_X\":1.983,\"DX2_D\":1.983,\"DX3_X\":1.983,\"DX3_D\":1.983,\"DX4_X\":1.983,\"DX4_D\":1.983,\"DX5_X\":1.983,\"DX5_D\":1.983,\"LH_T\":9.28,\"LH_H\":1.983,\"LH_L\":1.983,\"ZDS_S\":1.983,\"ZDS_D\":1.983,\"ZDX_X\":1.983,\"ZDX_D\":1.983},{\"B1\":64,\"B4\":142,\"LM\":1535,\"B3\":64,\"B5\":334,\"B2\":64}]";
+    	//ball 1
+    	game1Obj.put("game", "DX1");
+    	game1Obj.put("contents", "D");
+    	game1Obj.put("amount", 1);
+    	game1Obj.put("odds", 1.983);
 
-    
+    	//ball 2
+    	JSONObject game2Obj = new JSONObject();
+    	game2Obj.put("game", "DX2");
+    	game2Obj.put("contents", "D");
+    	game2Obj.put("amount", 1);
+    	game2Obj.put("odds", 1.983);
     	
-    	JSONArray cqsscLMGrabData = new JSONArray(data);
+    	//ball 3
+    	JSONObject game3Obj = new JSONObject();
+    	game3Obj.put("game", "DX3");
+    	game3Obj.put("contents", "D");
+    	game3Obj.put("amount", 1);
+    	game3Obj.put("odds", 1.983);
     	
-    	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
-    	
-    	JSONObject oddsGrabData = cqsscLMGrabData.getJSONObject(1);
+    	//ball 4
+    	JSONObject game4Obj = new JSONObject();
+    	game4Obj.put("game", "DX4");
+    	game4Obj.put("contents", "D");
+    	game4Obj.put("amount", 1);
+    	game4Obj.put("odds", 1.983);
+
+    	//ball 5
+    	JSONObject game5Obj = new JSONObject();
+    	game5Obj.put("game", "DX5");
+    	game5Obj.put("contents", "D");
+    	game5Obj.put("amount", 1);
+    	game5Obj.put("odds", 1.983);
     	
     	JSONArray gamesArray = new JSONArray();
+    	gamesArray.put(game1Obj);
+    	gamesArray.put(game2Obj);
+    	gamesArray.put(game3Obj);
+    	gamesArray.put(game4Obj);
+    	gamesArray.put(game5Obj);
     	
-    	for(int i = 0; i < gamesGrabData.length(); i++){
-    		JSONObject gameGrabData = gamesGrabData.getJSONObject(i);
-    		
-    		
-    		
-			String game = gameGrabData.getString("k");
-			String contents = gameGrabData.getString("i");
-			String oddsKey = game + "_" + contents;
-			double odds = oddsGrabData.getDouble(oddsKey);
-			int amount = gameGrabData.getInt("a");
-			//只下赔率二以下的
-    		if(odds < 2 && amount >0){
-    			amount = amount/50;  //hard code 暂时只下五十分之一的量
-    			if(amount == 0)
-    				amount = 1;
-    			if(amount > 10)  //额度暂时不够
-    				amount = 10;
-    			JSONObject gameObj = new JSONObject();
-    			gameObj.put("game", game);
-    			gameObj.put("contents", contents);
-    			gameObj.put("amount", amount);
-    			gameObj.put("odds", odds);
-    			
-    			gamesArray.put(gameObj);
-    		}
-    		
-    	}
-    	
-    	
+    	//JSONObject gamesObj = new JSONObject();
+    	//gamesObj.append("bets", gamesArray);
+
+
     	JSONObject betsObj = new JSONObject();
     	
     	boolean ignore = false;
@@ -247,18 +238,27 @@ public class dsnHttp {
     	
     	betsObj.put("lottery", "CQSSC");
     	
-    	String res = betsObj.toString();
-    	
-    	System.out.println(res);
-    	
-    	return res;
-    	
-    	
-
+    	return betsObj.toString();
     	
     }
 
-
+    /*public static void setQueryParams(String str){
+    	int posStar = str.indexOf("=");
+    	int len = str.length();
+    	String queryStringParam = str.substring(posStar+1);
+    	queryParam = Long.parseLong(queryStringParam);
+    	
+    	//加十秒
+    	queryParam += 99949;
+    	System.out.println("set query param successfully");
+    	System.out.println(queryParam);
+    }
+    
+    public static String getQueryStringparam(){
+    	String queryString = Long.toString(queryParam);
+    	queryParam++;
+    	return queryString;
+    }*/
     
 	public static String setCookie(CloseableHttpResponse httpResponse)
 	{
@@ -361,27 +361,28 @@ public class dsnHttp {
                 httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
                 System.out.println("executing request " + httpget.getURI()); 
                
-
+                // 执行get请求.   
+                
+                String destfilename = "D:\\yzm.jpg";
+                
+        	    //httpget = new HttpGet(url);
+        	    File file = new File(destfilename);
+        	    if (file.exists()) {
+        	        file.delete();
+        	    }
                 
                 response = httpclient.execute(httpget); 
             	
                 
-                //entity = response.getEntity();
+                entity = response.getEntity();
                 
                 
                 cookie2ae = setCookie(response);
                 
                 
-                //InputStream in = entity.getContent();
+                InputStream in = entity.getContent();
                 
-                File storeFile = new File("D:\\hyyzm.png");  
-                FileOutputStream output = new FileOutputStream(storeFile);  
-                //得到网络资源的字节数组,并写入文件  
-                byte [] a = EntityUtils.toByteArray(response.getEntity());
-                output.write(a);  
-                output.close();  
-                
-        	    /*try {
+        	    try {
         	        FileOutputStream fout = new FileOutputStream(file);
         	        int l = -1;
         	        byte[] tmp = new byte[2048];
@@ -391,7 +392,7 @@ public class dsnHttp {
         	        fout.close();
         	    } finally {
         	        in.close();
-        	    }*/
+        	    }
         	    
 
             	httpget.releaseConnection();
@@ -581,7 +582,7 @@ public class dsnHttp {
     }
     
     
-    public static String betCQSSC(String url,String jsonData, String charset, String cookies) {
+    public static String bet(String url,String jsonData, String charset, String cookies) {
 
 
         // 创建httppost    
