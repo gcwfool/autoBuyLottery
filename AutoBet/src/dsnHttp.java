@@ -28,6 +28,9 @@ import org.apache.http.entity.StringEntity;
 
 
 
+
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,43 +70,14 @@ public class dsnHttp {
     	
     	loginURI = ConfigReader.getBetAddress() + loginURI;
     	
-    	doGetLoginPage(loginURI);
+    	String code = doGetLoginPage(loginURI);
     	
-	    //获取验证码:
-    	InputStream ins = null;
-		String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "hyyzm.png", "result", "-l", "eng"};
-		
-		String code = "";
-		try {
-			Process process = Runtime.getRuntime().exec(cmd);
-			// cmd 的信息
-			ins = process.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 
-			String line = null;
-		  	while ((line = reader.readLine()) != null) {
-		  		System.out.println(line);
-			}
-				
-			int exitValue = process.waitFor();
-			System.out.println("返回值：" + exitValue);
-			process.getOutputStream().close();
-			File file = new File("result.txt");
-			reader.close();
-	        reader = new BufferedReader(new FileReader(file));
-	        // 一次读入一行，直到读入null为文件结束
-	        code = reader.readLine();
-	        reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-	    }
         String type = "1";  //remove hardcode later
         String account = ConfigReader.getBetAccount();
         String password = ConfigReader.getBetPassword();
         
-        
-        
-        //String cookies = cookieCfduid + cookie2ae;
+
         
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("type", type));
@@ -111,44 +85,19 @@ public class dsnHttp {
         params.add(new BasicNameValuePair("password", password));
         params.add(new BasicNameValuePair("code", code));
     	
-        doPost(loginURI, params, "");
+        String location = doPost(loginURI, params, "");
         
-        //For get cookies
-        doGet(location,cookieCfduid, "");
+        System.out.println("location: " + location); 
+        
+		if(location.indexOf("agreement?_") > 0) {
+
+			if(doGet(location, cookieCfduid, "") != null){
+				return true;
+			}
+		}
         
 
-        
-
-        
-        //get cqssc page
-        String host = ConfigReader.getBetAddress();
-        String res = doGet(host + "/member/load?lottery=CQSSC&page=lm", "", host + "/member/index");
-        if(res == null){
-        	System.out.println("get cqssc page failed");
-        	return false;
-        }
-
-      
-        /*String response = "";
-        //get time
-        String getTimeUrl = //"http://835b1195.dsn.ww311.com/time?_=";
-        getTimeUrl += System.currentTimeMillis();
-        response = doGetCQSSCparam(getTimeUrl, cookieCfduid, "http://835b1195.dsn.ww311.com/member/load?lottery=CQSSC&page=lm");
-        if(response == null)
-        {
-        	
-        	System.out.println("get time failed");
-        	return false;
-        }
-        System.out.println("time:");
-        System.out.println(response);
-        time = Long.parseLong(response);*/
-        
-
-        
-        
-        
-    	return true;
+    	return false;
     }
     public static long timeToBet(){
         //get period
@@ -156,7 +105,9 @@ public class dsnHttp {
     	String host = ConfigReader.getBetAddress();
         String getPeriodUrl = host + "/member/period?lottery=CQSSC&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
-        response = doGetCQSSCparam(getPeriodUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
+
+        
+        response = doGet(getPeriodUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
         
         if(response == null)
         {
@@ -368,56 +319,15 @@ public class dsnHttp {
             	httpget.releaseConnection();
             	
             	
-            	httpget = new HttpGet(yzmURL);
-                httpget.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
-                httpget.addHeader("Accept-Language","Accept-Language: zh-CN,zh;q=0.8");
-                httpget.addHeader("Connection","keep-alive");
-                httpget.addHeader("Referer","http://835b1195.dsn.ww311.com/login");
-                httpget.addHeader("Accept","image/webp,image/*,*/*;q=0.8");
-                //httpget.addHeader("Referer","http://www.lashou.com/");
-                httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
-                System.out.println("executing request " + httpget.getURI()); 
-               
-
-                
-                response = httpclient.execute(httpget); 
+            	String code = getPicNum(yzmURL);
             	
-                
-                //entity = response.getEntity();
-                
-                
-                cookie2ae = setCookie(response);
-                
-                
-                //InputStream in = entity.getContent();
-                
-                File storeFile = new File("hyyzm.png");  
-                FileOutputStream output = new FileOutputStream(storeFile);  
-                //得到网络资源的字节数组,并写入文件  
-                byte [] a = EntityUtils.toByteArray(response.getEntity());
-                output.write(a);  
-                output.close();  
-                
-        	    /*try {
-        	        FileOutputStream fout = new FileOutputStream(file);
-        	        int l = -1;
-        	        byte[] tmp = new byte[2048];
-        	        while ((l = in.read(tmp)) != -1) {
-        	            fout.write(tmp);
-        	        }
-        	        fout.close();
-        	    } finally {
-        	        in.close();
-        	    }*/
-        	    
 
-            	httpget.releaseConnection();
-                
+                System.out.println(code);
 
             	
-                return "hahaha";
+                return code;
                }  
-               System.out.println("------------------------------------"); 
+               
            } finally {  
                response.close(); 
            }  
@@ -460,21 +370,20 @@ public class dsnHttp {
             CloseableHttpResponse response = httpclient.execute(httppost);
             try {
                 // 打印响应状态    
-                System.out.println(response.getStatusLine());
-                 HttpEntity entity = response.getEntity(); 
-                 
-                 //get location
-                 Header headers[] = response.getHeaders("Location");
-                 location = headers[0].getValue();
-                 
-                                 
-                 httppost.releaseConnection();
-                 
-                 System.out.println(cookiesb18);
-                 
-                 if (entity != null) {  
-                    return EntityUtils.toString(entity);
-                 }  
+            	
+            	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
+            		String location = response.getFirstHeader("Location").getValue();
+            		System.out.println(response.getStatusLine());
+            		
+            		httppost.releaseConnection();
+            		
+            		if(location != null) {
+            			return location;
+            		}
+            	}
+            	
+            	
+
             } finally {  
                 response.close(); 
             }  
@@ -525,7 +434,7 @@ public class dsnHttp {
             httpget.releaseConnection();
             response.close();
             
-            if(entity != null){
+            if(res != null){
                 return res;
             }
             
@@ -546,56 +455,7 @@ public class dsnHttp {
     }
     
     
-    public static String doGetCQSSCparam(String url, String cookies, String referUrl) {
-    	
-        try {  
-            // 创建httpget.    
-            HttpGet httpget = new HttpGet(url);
-            
-            httpget.addHeader("Cookie",cookies);
-            httpget.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
-            httpget.addHeader("Accept-Language","Accept-Language: zh-CN,zh;q=0.8");
-            httpget.addHeader("Connection","keep-alive");
-            //httpget.addHeader("Upgrade-Insecure-Requests","1");
-            httpget.addHeader("Accept","*/*");
-            httpget.addHeader("X-Requested-With","XMLHttpRequest");
-            
-            if(referUrl != "")
-            {
-            	httpget.addHeader("Referer",referUrl);
-            	
-            }
-            
-            httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
-            System.out.println("executing request " + httpget.getURI()); 
-           
-            // 执行get请求.    
-            CloseableHttpResponse response = httpclient.execute(httpget); 
-            System.out.println(response.getStatusLine());
-       
-            HttpEntity entity = response.getEntity(); 
-            
-            String res = EntityUtils.toString(entity);
-            
-            httpget.releaseConnection();
-            response.close();
-            
-            if(entity != null){
-                return res;
-            }
 
-
-
-        } catch (ClientProtocolException e) {  
-            e.printStackTrace(); 
-        } catch (ParseException e) {  
-            e.printStackTrace(); 
-        } catch (IOException e) {  
-            e.printStackTrace(); 
-        } 
-        
-        return null;
-    }
     
     
     public static String betCQSSC(String url,String jsonData, String charset, String cookies) {
@@ -648,6 +508,71 @@ public class dsnHttp {
            return null;
        }
     
+    
+    public static String getPicNum(String picUri) {
+   	 HttpGet httpget = new HttpGet(picUri);
+        httpget.addHeader("Connection","keep-alive");
+
+        httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 "
+        					+ "(KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
+        System.out.println("executing request " + httpget.getURI()); 
+       
+        // 执行get请求.    
+        try {
+       	 CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
+       	 try {
+       		 setCookie(response);
+                // 打印响应状态    
+                System.out.println(response.getStatusLine()); 
+                System.out.println("------------------------------------");
+                File storeFile = new File("hyyzm.png");   //图片保存到当前位置
+                FileOutputStream output = new FileOutputStream(storeFile);  
+                //得到网络资源的字节数组,并写入文件  
+                byte [] a = EntityUtils.toByteArray(response.getEntity());
+                output.write(a);  
+                output.close();  
+                
+         
+                InputStream ins = null;
+        		 String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "hyyzm.png", "result", "-l", "eng"};
+
+        		 Process process = Runtime.getRuntime().exec(cmd);
+        		 // cmd 的信息
+        		 ins = process.getInputStream();
+        		 BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
+
+        		 String line = null;
+        	  	 while ((line = reader.readLine()) != null) {
+        	  		 System.out.println(line);
+        		 }
+        			
+        		 int exitValue = process.waitFor();
+        		 System.out.println("返回值：" + exitValue);
+        		 process.getOutputStream().close();
+        		 File file = new File("result.txt");
+        		 reader.close();
+                reader = new BufferedReader(new FileReader(file));
+                 // 一次读入一行，直到读入null为文件结束
+                String rmNum;
+                rmNum = reader.readLine();
+                reader.close();
+                return rmNum;
+       	 }
+       	 finally{
+       		 response.close(); 
+       	 }
+        } catch (ClientProtocolException e) {  
+            e.printStackTrace(); 
+        } catch (UnsupportedEncodingException e1) {  
+            e1.printStackTrace(); 
+        } catch (IOException e) {  
+            e.printStackTrace(); 
+        } catch (Exception e) {
+				e.printStackTrace();
+		 }
+        
+   	return null;
+   }
     
 }
 

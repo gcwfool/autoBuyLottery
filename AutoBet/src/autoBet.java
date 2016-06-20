@@ -15,10 +15,8 @@ public class autoBet {
 		while(DsnProxyGrab.doLogin() == false) {
 		}
 		
-		if(dsnHttp.loginToDsn() == false) {
-			return;
-		}
-		//while(dsnHttp.loginToDsn() == false);
+
+		while(dsnHttp.loginToDsn() == false);
 		
 		boolean autoBetSuccess = false;
 		
