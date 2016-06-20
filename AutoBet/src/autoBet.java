@@ -8,11 +8,12 @@ public class autoBet {
 		//测试  5秒读一次数据
 		String data = DsnProxyGrab.doLogin();
 		if(data != null) {
-			for(int i = 0; i < 10; i++) {
-				data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
-				Thread.sleep(5000);
+			for(int i = 0; i < 3; i++) {
+					//data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
+					//data = DsnProxyGrab.grabCQSSCdata("DH", "XZ", "");
+					//data = DsnProxyGrab.grabCQSSCdata("QZHS", "XZ", "");
+				Thread.sleep(10000);
 			}
 		}
-
 	}
 }
