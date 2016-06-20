@@ -9,65 +9,88 @@ import org.w3c.dom.NodeList;
 
 public class ConfigReader {
 	
-	String address = "";
-	String account = "";
-	String password = "";
-	String tessPath = "";
+	static String proxyAddress = "";
+	static String proxyAccount = "";
+	static String proxyPassword = "";
+	static String betAddress = "";
+	static String betAccount = "";
+	static String betPassword = "";
+	static String tessPath = "";
 	
-	public boolean read(String filename) {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
-        
-//      System.out.println("class name: " + dbf.getClass().getName());  
-          
-        // step 2:获得具体的dom解析器  
+	public static boolean read(String filename) {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();           
 		try {
-			DocumentBuilder db = dbf.newDocumentBuilder(); 
-
+			DocumentBuilder db = dbf.newDocumentBuilder();
 	        Document document = db.parse(new File(filename));  
-	          
-	        NodeList list = document.getElementsByTagName("LOGIN");  
-	          
+	         
+	        //read proxy login msg
+	        NodeList list = document.getElementsByTagName("PROXYLOGIN");        
 	        Element element = (Element)list.item(0);  
+            
+	        proxyAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("proxyaddress:" + proxyAddress);  
 	              
-	        address = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
-	        System.out.println("address:" + address);  
+	        proxyAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
+	        System.out.println("proxyaccount:" + proxyAccount);  
 	              
-	        account = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
-	        System.out.println("account:" + account);  
-	              
-	        password = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
-	        System.out.println("password:" + password);
+	        proxyPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("proxypassword:" + proxyPassword);
 	        
-	        tessPath = element.getElementsByTagName("PATH").item(0).getFirstChild().getNodeValue();  
-	        System.out.println("password:" + password);
+	        //read bet login msg
+	        list = document.getElementsByTagName("BETLOGIN");        
+	        element = (Element)list.item(0);  
+            
+	        betAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("betaddress:" + betAddress);  
+	              
+	        betAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
+	        System.out.println("betaccount:" + betAccount);  
+	              
+	        betPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("betpassword:" + betPassword);
 	        
+	        //read tesseract-ocr path
+	        list = document.getElementsByTagName("PATH");   
+	        element = (Element)list.item(0);  
+            
+	        tessPath = element.getElementsByTagName("TESSPATH").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("tesspath:" + tessPath);  
+
 	        return true;
-		}catch(Exception e){   
+		} catch(Exception e) {   
 			e.printStackTrace();	   
 		}
 			  
-        return false;
-		
+        return false;	
 	}
 	
-	public  String getAddress() {
-		return address;
-		
+	public static String getProxyAddress() {
+		return proxyAddress;
 	}
 	
-	public  String getAccount() {
-		return account;
-		
-	}
-
-	public  String getPassword() {
-		return password;
-	
+	public static String getProxyAccount() {
+		return proxyAccount;
 	}
 	
-	public  String getTessPath() {
+	public static String getProxyPassword() {
+		return proxyPassword;
+	}
+	
+	public static String getBetAddress() {
+		return betAddress;
+	}
+	
+	public static String getBetAccount() {
+		return betAccount;
+	}
+	
+	public static String getBetPassword() {
+		return betPassword;
+	}
+	
+	public static String getTessPath() {
 		return tessPath;
-	
 	}
-
+	
+	
 }

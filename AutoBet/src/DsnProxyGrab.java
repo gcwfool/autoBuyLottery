@@ -33,9 +33,6 @@ public class DsnProxyGrab {
     static RequestConfig requestConfig = null;
     static HttpClientContext clientContext = null;
     
-    //configreader
-    static ConfigReader configReader = new ConfigReader();
-    
     //static Map<String,String> cookieMap = new HashMap<String, String>(64);
     static String strCookies = "";
     static String cookieuid = "";
@@ -91,29 +88,29 @@ public class DsnProxyGrab {
     
 
 
-    public static String doLogin() {
-    	if(!configReader.read("grab.config")) {
-    		return null;
-    	}
+    public static boolean doLogin() {
+    	strCookies = "";
+        cookieuid = "";
+        cookiedae = "";
         clientContext = HttpClientContext.create();
         clientContext.setRequestConfig(requestConfig);
         
-        String loginPage = doGet(configReader.getAddress(), null); //get 登录页面
+        String loginPage = doGet(ConfigReader.getProxyAddress() + "/login", null); //get 登录页面
         
         if(loginPage != null) {
         	cookieuid = strCookies;
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
-        		String rmNum = getPicNum("http://3f071b45.dsn.ww311.com/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		String rmNum = getPicNum(ConfigReader.getProxyAddress() + "/" + loginPage.substring(posStart, posEnd));//get 验证码
         	
         		//发送post
         		List<NameValuePair> params = new ArrayList<NameValuePair>();
         		params.add(new BasicNameValuePair("type", "2"));
-        		params.add(new BasicNameValuePair("account", configReader.getAccount()));
-        		params.add(new BasicNameValuePair("password", configReader.getPassword()));
+        		params.add(new BasicNameValuePair("account", ConfigReader.getProxyAccount()));
+        		params.add(new BasicNameValuePair("password", ConfigReader.getProxyPassword()));
         		params.add(new BasicNameValuePair("code", rmNum));
-        		String location = doPost(configReader.getAddress(), params, strCookies, "");
+        		String location = doPost(ConfigReader.getProxyAddress() + "/login", params, strCookies, "");
         		
         		System.out.println("location: " + location); 
 
@@ -123,14 +120,15 @@ public class DsnProxyGrab {
         			location = doGet(location, cookieuid);//get cookiedae和重定向url
         			cookiedae = strCookies;
         			strCookies = "";
-        			return doGet(location, cookieuid + cookiedae);//get 主页
+        			if(doGet(location, cookieuid + cookiedae) != null){
+        				return true;
+        			}
         		}
             
         	}
         }
-   //     int loginPage.
          
-        return null;
+        return false;
     }
 
 
@@ -263,11 +261,9 @@ public class DsnProxyGrab {
                  output.write(a);  
                  output.close();  
                  
-                 
-                
-                 
+          
                  InputStream ins = null;
-         		 String[] cmd = new String[]{configReader.getTessPath() + "\\tesseract", "yzm.png", "result", "-l", "eng"};
+         		 String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "yzm.png", "result", "-l", "eng"};
 
          		 Process process = Runtime.getRuntime().exec(cmd);
          		 // cmd 的信息

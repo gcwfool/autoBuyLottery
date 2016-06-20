@@ -26,9 +26,12 @@ import org.apache.http.entity.StringEntity;
 
 
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -41,7 +44,6 @@ public class dsnHttp {
     static CloseableHttpClient httpclient = null;
     static RequestConfig requestConfig = null;
     static HttpClientContext clientContext = null;
-    static ConfigReader configReader = new ConfigReader();
     
     
     //这个变量用来存储
@@ -59,30 +61,45 @@ public class dsnHttp {
     
     
     public static boolean loginToDsn(){
-    	
-    	boolean readRes = configReader.read("bet.config");
-    	if(readRes != true){
-    		System.out.println("bet.config 文件读取错误，请检查!");
-    		return false;
-    	}
-    		
-    	
+  	
     	String loginURI = "";
     	loginURI = "/login";
     	
-    	loginURI = configReader.getAddress() + loginURI;
+    	loginURI = ConfigReader.getBetAddress() + loginURI;
     	
     	doGetLoginPage(loginURI);
     	
-	    //手动输入验证码:
-        System.out.println("请登录迪斯尼输入验证码：");
-        Scanner scanner = new Scanner(System.in);
-        String code = scanner.next();
-        System.out.println(code);
-        
+	    //获取验证码:
+    	InputStream ins = null;
+		String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "hyyzm.png", "result", "-l", "eng"};
+		
+		String code = "";
+		try {
+			Process process = Runtime.getRuntime().exec(cmd);
+			// cmd 的信息
+			ins = process.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
+
+			String line = null;
+		  	while ((line = reader.readLine()) != null) {
+		  		System.out.println(line);
+			}
+				
+			int exitValue = process.waitFor();
+			System.out.println("返回值：" + exitValue);
+			process.getOutputStream().close();
+			File file = new File("result.txt");
+			reader.close();
+	        reader = new BufferedReader(new FileReader(file));
+	        // 一次读入一行，直到读入null为文件结束
+	        code = reader.readLine();
+	        reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+	    }
         String type = "1";  //remove hardcode later
-        String account = configReader.getAccount();
-        String password = configReader.getPassword();
+        String account = ConfigReader.getBetAccount();
+        String password = ConfigReader.getBetPassword();
         
         
         
@@ -104,7 +121,7 @@ public class dsnHttp {
 
         
         //get cqssc page
-        String host = configReader.getAddress();
+        String host = ConfigReader.getBetAddress();
         String res = doGet(host + "/member/load?lottery=CQSSC&page=lm", "", host + "/member/index");
         if(res == null){
         	System.out.println("get cqssc page failed");
@@ -136,10 +153,10 @@ public class dsnHttp {
     public static long timeToBet(){
         //get period
     	String response = "";
-    	String host = configReader.getAddress();
+    	String host = ConfigReader.getBetAddress();
         String getPeriodUrl = host + "/member/period?lottery=CQSSC&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
-        response = doGetCQSSCparam(getPeriodUrl, "", configReader.getAddress() + "/member/load?lottery=CQSSC&page=lm");
+        response = doGetCQSSCparam(getPeriodUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
         
         if(response == null)
         {
@@ -164,7 +181,7 @@ public class dsnHttp {
     public static boolean doBetCQSSC(String betData)
     {
 
-    	String host = configReader.getAddress();
+    	String host = ConfigReader.getBetAddress();
        	
         String jsonParam = "";
         
@@ -374,7 +391,7 @@ public class dsnHttp {
                 
                 //InputStream in = entity.getContent();
                 
-                File storeFile = new File("D:\\hyyzm.png");  
+                File storeFile = new File("hyyzm.png");  
                 FileOutputStream output = new FileOutputStream(storeFile);  
                 //得到网络资源的字节数组,并写入文件  
                 byte [] a = EntityUtils.toByteArray(response.getEntity());
