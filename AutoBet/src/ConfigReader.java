@@ -12,6 +12,7 @@ public class ConfigReader {
 	String address = "";
 	String account = "";
 	String password = "";
+	String tessPath = "";
 	
 	public boolean read(String filename) {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
@@ -37,6 +38,9 @@ public class ConfigReader {
 	        password = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
 	        System.out.println("password:" + password);
 	        
+	        tessPath = element.getElementsByTagName("PATH").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("password:" + password);
+	        
 	        return true;
 		}catch(Exception e){   
 			e.printStackTrace();	   
@@ -58,6 +62,11 @@ public class ConfigReader {
 
 	public  String getPassword() {
 		return password;
+	
+	}
+	
+	public  String getTessPath() {
+		return tessPath;
 	
 	}
 

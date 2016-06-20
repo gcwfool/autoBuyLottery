@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.ArrayList;
@@ -22,7 +25,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.http.client.protocol.HttpClientContext;
 
 import java.io.*; 
-import java.util.Scanner;
 
 import org.apache.http.Header;
 
@@ -236,8 +238,7 @@ public class DsnProxyGrab {
         return null;
     }
     
-    // 获取并输入验证码， 图片下载在D:\\rmnumber.png, 在控制台输入验证码
-    public static String getPicNum(String picUri){
+    public static String getPicNum(String picUri) {
     	 HttpGet httpget = new HttpGet(picUri);
          httpget.addHeader("Connection","keep-alive");
          if(strCookies != ""){
@@ -250,20 +251,44 @@ public class DsnProxyGrab {
          // 执行get请求.    
          try {
         	 CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
-        	 try{
+        	 try {
         		 setCookie(response);
                  // 打印响应状态    
                  System.out.println(response.getStatusLine()); 
                  System.out.println("------------------------------------");
-                 File storeFile = new File("D:\\yzm.png");  
+                 File storeFile = new File("yzm.png");   //图片保存到当前位置
                  FileOutputStream output = new FileOutputStream(storeFile);  
                  //得到网络资源的字节数组,并写入文件  
                  byte [] a = EntityUtils.toByteArray(response.getEntity());
                  output.write(a);  
                  output.close();  
-                 System.out.println("请输入验证码：");
-                 Scanner scanner = new Scanner(System.in);
-                 String rmNum = scanner.next();
+                 
+                 
+                
+                 
+                 InputStream ins = null;
+         		 String[] cmd = new String[]{configReader.getTessPath() + "\\tesseract", "yzm.png", "result", "-l", "eng"};
+
+         		 Process process = Runtime.getRuntime().exec(cmd);
+         		 // cmd 的信息
+         		 ins = process.getInputStream();
+         		 BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
+
+         		 String line = null;
+         	  	 while ((line = reader.readLine()) != null) {
+         	  		 System.out.println(line);
+         		 }
+         			
+         		 int exitValue = process.waitFor();
+         		 System.out.println("返回值：" + exitValue);
+         		 process.getOutputStream().close();
+         		 File file = new File("result.txt");
+         		 reader.close();
+                 reader = new BufferedReader(new FileReader(file));
+                  // 一次读入一行，直到读入null为文件结束
+                 String rmNum;
+                 rmNum = reader.readLine();
+                 reader.close();
                  return rmNum;
         	 }
         	 finally{
@@ -275,7 +300,9 @@ public class DsnProxyGrab {
              e1.printStackTrace(); 
          } catch (IOException e) {  
              e.printStackTrace(); 
-         } 
+         } catch (Exception e) {
+				e.printStackTrace();
+		 }
          
     	return null;
     }
