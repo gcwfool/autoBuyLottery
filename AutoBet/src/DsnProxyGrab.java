@@ -53,7 +53,7 @@ public class DsnProxyGrab {
 		if (headers == null || headers.length==0)
 		{
 			System.out.println("----there are no cookies");
-			return null;
+			return "";
 		}
 		String cookie = "";
 		for (int i = 0; i < headers.length; i++) {
@@ -86,18 +86,19 @@ public class DsnProxyGrab {
 		return strCookies;
 	}
     
-
-
-    public static boolean doLogin() {
-    	strCookies = "";
+	private static void loginInit() {
+		strCookies = "";
         cookieuid = "";
         cookiedae = "";
         clientContext = HttpClientContext.create();
         clientContext.setRequestConfig(requestConfig);
+	}
+
+    public static boolean doLogin() { 	
+        loginInit();
+        String loginPage = doGet(ConfigReader.getProxyAddress() + "/login", ""); //get 登录页面
         
-        String loginPage = doGet(ConfigReader.getProxyAddress() + "/login", null); //get 登录页面
-        
-        if(loginPage != null) {
+        if(loginPage != "") {
         	cookieuid = strCookies;
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
@@ -120,7 +121,7 @@ public class DsnProxyGrab {
         			location = doGet(location, cookieuid);//get cookiedae和重定向url
         			cookiedae = strCookies;
         			strCookies = "";
-        			if(doGet(location, cookieuid + cookiedae) != null){
+        			if(doGet(location, cookieuid + cookiedae) != ""){
         				return true;
         			}
         		}
@@ -146,8 +147,8 @@ public class DsnProxyGrab {
         httppost.addHeader("Referer", referUrl);
         httppost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36"
         					+ " (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");
-        if(cookies != null){
-       	 httppost.addHeader("Cookie", cookies);
+        if(cookies != ""){
+        	httppost.addHeader("Cookie", cookies);
         }
         
         System.out.println("executing request " + httppost.getURI()); 
@@ -178,11 +179,10 @@ public class DsnProxyGrab {
         } catch (IOException e) {  
             e.printStackTrace(); 
         } 
-        return null;
+        return "";
     }
     
-    public static String doGet(String url, String cookies) {
-         
+    public static String doGet(String url, String cookies) { 
         try {  
            // 创建httpget.    
            HttpGet httpget = new HttpGet(url);
@@ -195,7 +195,7 @@ public class DsnProxyGrab {
            //httpget.addHeader("Referer","http://www.lashou.com/");
            httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36"
            					+ " (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");  
-           if(cookies != null){
+           if(cookies != ""){
         	   httpget.addHeader("Cookie", cookies);
            }
            System.out.println("executing request " + httpget.getURI()); 
@@ -209,7 +209,6 @@ public class DsnProxyGrab {
         	   setCookie(response);
                HttpEntity entity = response.getEntity(); 
                System.out.println("--------------------------------------"); 
-               // 打印响应状态    
                
                String statusLine = response.getStatusLine().toString();
                System.out.println(statusLine); 
@@ -219,7 +218,10 @@ public class DsnProxyGrab {
                System.out.println("------------------------------------"); 
                if (entity != null) {
 	            	String entityStr = EntityUtils.toString(entity);
-	            	System.out.println(entityStr); 
+	            	System.out.println("entityStr: " + entityStr);
+	            	if(entityStr.length() == 0) {
+	            		return "";
+	            	}
 	            	return entityStr;
                }
            } 
@@ -233,7 +235,7 @@ public class DsnProxyGrab {
        } catch (IOException e) {  
            e.printStackTrace(); 
        } 
-        return null;
+        return "";
     }
     
     public static String getPicNum(String picUri) {
@@ -254,6 +256,9 @@ public class DsnProxyGrab {
                  // 打印响应状态    
                  System.out.println(response.getStatusLine()); 
                  System.out.println("------------------------------------");
+                 if(response.getStatusLine().toString().indexOf("200 OK") < 0) {
+                	 return "";
+                 }
                  File storeFile = new File("yzm.png");   //图片保存到当前位置
                  FileOutputStream output = new FileOutputStream(storeFile);  
                  //得到网络资源的字节数组,并写入文件  
@@ -300,7 +305,7 @@ public class DsnProxyGrab {
 				e.printStackTrace();
 		 }
          
-    	return null;
+    	return "";
     }
     
   //! @brief 抓取cqssc下单数据
@@ -327,7 +332,7 @@ public class DsnProxyGrab {
     		String strTime = Long.toString(time);
     		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=" + game +"&all=" 
     								+ all + "&range=" + range + "&multiple=false&_=" + strTime, cookieuid + cookiedae);
-    		if(data != null) {
+    		if(data != "") {
     			return data;
     		}
     	}
