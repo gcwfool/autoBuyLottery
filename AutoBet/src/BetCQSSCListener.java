@@ -3,6 +3,9 @@ import java.awt.event.*;
 
 
 class BetThread extends Thread{
+    
+    
+    double betCQSSCPercent = 1.0;
     @Override
     public void run() {
     	try{
@@ -31,7 +34,7 @@ class BetThread extends Thread{
 						System.out.println("下单数据：");
 						System.out.println(data);
 						if(data != null){
-						autoBetSuccess = dsnHttp.doBetCQSSC(data);
+						autoBetSuccess = dsnHttp.doBetCQSSC(data, betCQSSCPercent);
 						Thread.sleep(4*1000);
 						}
 					}
@@ -61,6 +64,10 @@ class BetThread extends Thread{
             // TODO: handle exception
         }
 	}//run
+    
+    public void setCQSSCBetPercent(double percent){
+    	betCQSSCPercent = percent;
+    }
 }
 
 
@@ -81,6 +88,18 @@ public class BetCQSSCListener implements ActionListener
 		}
 		
 		BetThread betThread = new BetThread();
+		
+		String s = ab.textFieldCQSSCBetPercent.getText();
+		
+		if(Common.isNum(s)){
+			double percent = Double.parseDouble(s);
+			betThread.setCQSSCBetPercent(percent);
+		}
+		else{
+			//TODO 弹出对话框，提示输入错误
+		}
+			
+				
 		betThread.start();
 		
 		inBet = true;
