@@ -99,7 +99,7 @@ public class dsnHttp {
 
     	return false;
     }
-    public static long getRemainTime(){
+    public static long timeToBet(){
         //get period
     	String response = "";
     	String host = ConfigReader.getBetAddress();
@@ -434,10 +434,14 @@ public class dsnHttp {
             httpget.releaseConnection();
             response.close();
             
-            if(res != null && res.length() > 0 ){            	
+            if(res != null){
                 return res;
             }
             
+            
+            
+            //System.out.println(EntityUtils.toString(entity)); 
+
 
         } catch (ClientProtocolException e) {  
             e.printStackTrace(); 
