@@ -12,9 +12,6 @@ public class LoginListener implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		if(ab.loginSuccess == true)
-			return;
-		
 		while(DsnProxyGrab.doLogin() == false) {
 		}		
 		while(dsnHttp.loginToDsn() == false);
