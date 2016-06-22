@@ -339,4 +339,36 @@ public class DsnProxyGrab {
     	return null;
     }
     
+    
+    //! @brief 抓取cqssc下单数据
+    //! @param game       冠亚:"GY", 三四五六:"SSWL", 七八九十:"QBJS"
+    //! @param all        虚注:"XZ" 实占:"SZ" 补货:"BH"
+    //! @param range      全部:"", A盘:"A", B盘:"B", C盘:"C", D盘:"D",
+    //! @return           success:String fail:null
+      public static String grabBJSCdata(String game, String all, String range){
+      	if((game == "GY" || game == "SSWL" || game == "QBJS") && (range == "" || range == "A" ||
+      			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
+      		switch (game) {
+      		    case "GY":
+      		      game = "GYH%2CGDX%2CGDS%2CB1%2CDX1%2CDS1%2CLH1%2CB2%2CDX2%2CDS2%2CLH2";
+      		      break;
+      		    case "SSWL":
+        		      game = "B3%2CDX3%2CDS3%2CLH3%2CB4%2CDX4%2CDS4%2CLH4%2CB5%2CDX5%2CDS5%2CLH5%2CB6%2CDX6%2CDS6%2CLH6";
+        		      break;
+      		    case "QBJS":
+          		  game = "B7%2CDX7%2CDS7%2CB8%2CDX8%2CDS8%2CB9%2CDX9%2CDS9%2CB10%2CDX10%2CDS10%2C";
+          		  break;
+      		   default :
+      		}
+      		long time =  System.currentTimeMillis();
+      		String strTime = Long.toString(time);
+      		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=BJPK10&games=" + game +"&all=" 
+      								+ all + "&range=" + range + "&multiple=false&_=" + strTime, cookieuid + cookiedae);
+      		if(data != "") {
+      			return data;
+      		}
+      	}
+      	return null;
+      }
+    
 }
