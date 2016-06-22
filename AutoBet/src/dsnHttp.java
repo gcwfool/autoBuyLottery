@@ -59,8 +59,10 @@ public class dsnHttp {
     
     static long time = 0;
     
-    static String drawNumber = "";
-    static String previousBetNumber = "";
+    static String CQSSCdrawNumber = "";
+    static String BJSCdrawNumber = "";
+    static String previousCQSSCBetNumber = "";
+    static String previousBJSCBetNumber = "";
     
     
     public static boolean loginToDsn(){
@@ -99,7 +101,7 @@ public class dsnHttp {
 
     	return false;
     }
-    public static long getRemainTime(){
+    public static long getCQSSCRemainTime(){
         //get period
     	String response = "";
     	String host = ConfigReader.getBetAddress();
@@ -121,36 +123,96 @@ public class dsnHttp {
         
         JSONObject periodJson = new JSONObject(response);
         long closeTime = periodJson.getLong("closeTime");
-        drawNumber = periodJson.getString("drawNumber");
+        CQSSCdrawNumber = periodJson.getString("drawNumber");
         
-        time = System.currentTimeMillis();
+
+        
+    	
+        String getTimeUrl = host + "/time?&_=";
+        getTimeUrl += Long.toString(System.currentTimeMillis());
+        
+        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
+        
+        if(response != null && Common.isNum(response))
+        {
+        	time = Long.parseLong(response);
+        }
+        else{
+        	time = System.currentTimeMillis();
+        }
         
         long remainTime = closeTime - time;
         
     	return remainTime;
     }
-    public static boolean doBetCQSSC(String betData, double percent)
+    
+    public static long getBJSCRemainTime(){
+        //get period
+    	String response = "";
+    	String host = ConfigReader.getBetAddress();
+        String getPeriodUrl = host + "/member/period?lottery=BJPK10&_=";
+        getPeriodUrl += Long.toString(System.currentTimeMillis());
+
+        
+        response = doGet(getPeriodUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=BJPK10&page=lm");
+        
+        if(response == null)
+        {
+        	
+        	System.out.println("get period failed");
+        	return System.currentTimeMillis();
+        }
+        
+        System.out.println("preiod:");
+        System.out.println(response);
+        
+        JSONObject periodJson = new JSONObject(response);
+        long closeTime = periodJson.getLong("closeTime");
+        BJSCdrawNumber = periodJson.getString("drawNumber");
+        
+
+        
+    	
+        String getTimeUrl = host + "/time?&_=";
+        getTimeUrl += Long.toString(System.currentTimeMillis());
+        
+        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=BJPK10&page=lm");
+        
+        if(response != null && Common.isNum(response))
+        {
+        	time = Long.parseLong(response);
+        }
+        else{
+        	time = System.currentTimeMillis();
+        }
+        
+        long remainTime = closeTime - time;
+        
+    	return remainTime;
+    }    
+    
+    public static boolean doBetCQSSC(String[] betData, double percent)
     {
 
     	String host = ConfigReader.getBetAddress();
        	
         String jsonParam = "";
         
-        if(previousBetNumber.equals(drawNumber)) //之前如果已经下过单就直接返回
+        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber)) //之前如果已经下过单就直接返回
         	return false;
         
         
         //如果未到封盘时间
-        if( drawNumber != null){
-        	jsonParam = constructBetsData(betData, percent);
+        if( CQSSCdrawNumber != null){
+        	jsonParam = constructBetsData(betData, percent, BetType.CQSSC);
         	
         	System.out.println(jsonParam);
         	
         	String response = "";
         	
-        	previousBetNumber = drawNumber;
+        	previousCQSSCBetNumber = CQSSCdrawNumber;
         	
-        	response = betCQSSC(host + "/member/bet", jsonParam, "UTF-8", "");
+        	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
         	System.out.println("bet result:");
         	System.out.println(response);
@@ -162,47 +224,90 @@ public class dsnHttp {
         return false;
     }
     
-    public static String constructBetsData(String data, double percent)
+    public static boolean doBetBJSC(String[] betData, double percent)
+    {
+
+    	String host = ConfigReader.getBetAddress();
+       	
+        String jsonParam = "";
+        
+        if(previousBJSCBetNumber.equals(BJSCdrawNumber)) //之前如果已经下过单就直接返回
+        	return false;
+        
+        
+        //如果未到封盘时间
+        if( BJSCdrawNumber != null){
+        	jsonParam = constructBetsData(betData, percent, BetType.BJSC);
+        	
+        	System.out.println(jsonParam);
+        	
+        	String response = "";
+        	
+        	previousBJSCBetNumber = BJSCdrawNumber;
+        	
+        	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
+        	
+        	System.out.println("bet result:");
+        	System.out.println(response);
+        	
+        	return true;
+        
+        }
+        
+        return false;
+    }
+    
+    public static String constructBetsData(String[] data, double percent, BetType betType)
     {
     	
     	//data = "[[{\"k\":\"DX2\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX3\",\"i\":\"D\",\"c\":3,\"a\":130,\"r\":258.294,\"cm\":0},{\"k\":\"DX4\",\"i\":\"D\",\"c\":4,\"a\":660,\"r\":1319.868,\"cm\":0},{\"k\":\"DS1\",\"i\":\"D\",\"c\":1,\"a\":10,\"r\":19.998,\"cm\":0},{\"k\":\"DX2\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DX3\",\"i\":\"X\",\"c\":1,\"a\":5,\"r\":9.999,\"cm\":0},{\"k\":\"DX5\",\"i\":\"D\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DX1\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX4\",\"i\":\"X\",\"c\":1,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDX\",\"i\":\"D\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS1\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"D\",\"c\":3,\"a\":100,\"r\":199.98,\"cm\":0},{\"k\":\"DS3\",\"i\":\"D\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DS3\",\"i\":\"S\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"S\",\"c\":2,\"a\":45,\"r\":89.991,\"cm\":0},{\"k\":\"DS5\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX1\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX5\",\"i\":\"X\",\"c\":3,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDS\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"S\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DS5\",\"i\":\"S\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0}],{\"DS1_S\":1.983,\"DS1_D\":1.983,\"DS2_S\":1.983,\"DS2_D\":1.983,\"DS3_S\":1.983,\"DS3_D\":1.983,\"DS4_S\":1.983,\"DS4_D\":1.983,\"DS5_S\":1.983,\"DS5_D\":1.983,\"DX1_X\":1.983,\"DX1_D\":1.983,\"DX2_X\":1.983,\"DX2_D\":1.983,\"DX3_X\":1.983,\"DX3_D\":1.983,\"DX4_X\":1.983,\"DX4_D\":1.983,\"DX5_X\":1.983,\"DX5_D\":1.983,\"LH_T\":9.28,\"LH_H\":1.983,\"LH_L\":1.983,\"ZDS_S\":1.983,\"ZDS_D\":1.983,\"ZDX_X\":1.983,\"ZDX_D\":1.983},{\"B1\":64,\"B4\":142,\"LM\":1535,\"B3\":64,\"B5\":334,\"B2\":64}]";
-
-    
-    	
-    	JSONArray cqsscLMGrabData = new JSONArray(data);
-    	
-    	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
-    	
-    	JSONObject oddsGrabData = cqsscLMGrabData.getJSONObject(1);
+    	int totalAmount = 0;
     	
     	JSONArray gamesArray = new JSONArray();
     	
-    	for(int i = 0; i < gamesGrabData.length(); i++){
-    		JSONObject gameGrabData = gamesGrabData.getJSONObject(i);
+    	for(int i = 0; i < data.length; i++){
     		
-    		
-    		
-			String game = gameGrabData.getString("k");
-			String contents = gameGrabData.getString("i");
-			String oddsKey = game + "_" + contents;
-			double odds = oddsGrabData.getDouble(oddsKey);
-			int amount = gameGrabData.getInt("a");
-			//只下赔率二以下的
-    		if(odds < 2 && amount >0){
-    			amount = (int)(amount*percent);  //hard code 暂时只下五十分之一的量
-    			if(amount == 0)
-    				amount = 1;
-
-    			JSONObject gameObj = new JSONObject();
-    			gameObj.put("game", game);
-    			gameObj.put("contents", contents);
-    			gameObj.put("amount", amount);
-    			gameObj.put("odds", odds);
-    			
-    			gamesArray.put(gameObj);
-    		}
-    		
+        	JSONArray cqsscLMGrabData = new JSONArray(data[i]);
+        	
+        	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+        	
+        	JSONObject oddsGrabData = cqsscLMGrabData.getJSONObject(1);
+        	
+        	
+        	
+        	for(int j = 0; j < gamesGrabData.length(); j++){
+        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
+        		
+        		
+        		
+    			String game = gameGrabData.getString("k");
+    			String contents = gameGrabData.getString("i");
+    			String oddsKey = game + "_" + contents;
+    			double odds = oddsGrabData.getDouble(oddsKey);
+    			int amount = gameGrabData.getInt("a");
+    			//只下赔率二以下的
+        		if(odds < 2.5 && amount >0){
+        			amount = (int)(amount*percent);  //hard code 暂时只下五十分之一的量
+        			if(amount == 0)
+        				amount = 1;
+        			totalAmount += amount;
+        			
+        			JSONObject gameObj = new JSONObject();
+        			gameObj.put("game", game);
+        			gameObj.put("contents", contents);
+        			gameObj.put("amount", amount);
+        			gameObj.put("odds", odds);
+        			
+        			gamesArray.put(gameObj);
+        		}
+        		
+        	}
     	}
+    	
+
+    	
+    	
+    	
     	
     	
     	JSONObject betsObj = new JSONObject();
@@ -210,13 +315,24 @@ public class dsnHttp {
     	boolean ignore = false;
     	betsObj.put("ignore", ignore);
     	betsObj.put("bets", gamesArray);
-    	betsObj.put("drawNumber",drawNumber);
     	
-    	betsObj.put("lottery", "CQSSC");
+    	if(betType == BetType.CQSSC){
+        	betsObj.put("drawNumber",CQSSCdrawNumber);
+        	
+        	betsObj.put("lottery", "CQSSC");
+    	}
+    	else if(betType == BetType.BJSC){
+        	betsObj.put("drawNumber",BJSCdrawNumber);
+        	
+        	betsObj.put("lottery", "BJPK10");
+
+    	}
+
     	
     	String res = betsObj.toString();
     	
-    	System.out.println(res);
+    	System.out.println("下单总额：");
+    	System.out.println(totalAmount);
     	
     	return res;
     	
@@ -453,7 +569,7 @@ public class dsnHttp {
 
     
     
-    public static String betCQSSC(String url,String jsonData, String charset, String cookies) {
+    public static String bet(String url,String jsonData, String charset, String cookies) {
 
 
         // 创建httppost    

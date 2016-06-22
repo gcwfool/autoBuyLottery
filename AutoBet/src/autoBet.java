@@ -1,10 +1,17 @@
 import java.awt.*;
 import java.awt.event.*;
 
+enum BetType{
+	CQSSC,
+	BJSC
+}
+
 public class autoBet{
 	
 	public boolean loginSuccess = false;
 	public TextField textFieldCQSSCBetPercent;
+	
+	
 	
 	public static void main(String[] args) throws Exception {
 		
