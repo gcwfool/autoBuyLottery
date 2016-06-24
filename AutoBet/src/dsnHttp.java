@@ -204,7 +204,11 @@ public class dsnHttp {
         
         //如果未到封盘时间
         if( CQSSCdrawNumber != null){
+        	
+        	System.out.printf("下注重庆时时彩第%s期\n",CQSSCdrawNumber);
         	jsonParam = constructBetsData(betData, percent, BetType.CQSSC);
+        	
+        	
         	
         	System.out.println(jsonParam);
         	
@@ -214,10 +218,11 @@ public class dsnHttp {
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
-        	System.out.println("bet result:");
-        	System.out.println(response);
+        	//System.out.println(response);
         	
-        	return true;
+        	boolean result = parseBetResult(response);
+        	
+        	return result;
         
         }
         
@@ -237,7 +242,11 @@ public class dsnHttp {
         
         //如果未到封盘时间
         if( BJSCdrawNumber != null){
+        	
+        	System.out.printf("下注北京赛车第%s期\n",BJSCdrawNumber);
         	jsonParam = constructBetsData(betData, percent, BetType.BJSC);
+        	
+        	
         	
         	System.out.println(jsonParam);
         	
@@ -246,15 +255,42 @@ public class dsnHttp {
         	previousBJSCBetNumber = BJSCdrawNumber;
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
-        	
-        	System.out.println("bet result:");
+
         	System.out.println(response);
         	
-        	return true;
-        
+        	boolean result = parseBetResult(response);
+        	
+        	return result;
         }
         
         return false;
+    }
+    
+    
+    public static boolean parseBetResult(String str){
+    	if(str != null && str.length()>0){
+    		JSONObject betResult = new JSONObject(str);
+    		int status = betResult.getInt("status");
+    		switch(status){
+    		case 0:
+    			JSONObject account = betResult.getJSONObject("account");
+    			double balance = account.getDouble("balance");
+    			int betting = account.getInt("betting");
+    			System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
+    			return true;
+    		
+
+    		case 2:
+    			System.out.println("下单失败:已封盘！");
+    			return false;
+    		case 3:
+    			String message = betResult.getString("message");
+    			System.out.printf("下单失败：%s\n",message);
+    			return false;
+    		
+    		}
+    	}
+    	return false;
     }
     
     public static String constructBetsData(String[] data, double percent, BetType betType)

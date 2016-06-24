@@ -5,6 +5,12 @@ import java.awt.event.*;
 class BetThread extends Thread{
     
     
+	long betRemainTime = 8*1000;  //离多少秒封盘时进行下注
+	
+	long almostTime = 25*1000;  //进行最后一次sleep计算的时间
+	
+	long sleepTime = 10*1000;	//平时水淼时间
+	
     double betCQSSCPercent = 1.0;
     @Override
     public void run() {
@@ -25,8 +31,8 @@ class BetThread extends Thread{
 				System.out.println("距离北京赛车封盘时间为:");
 				System.out.println(BJSCremainTime/1000);
 				
-				boolean timeTobetCQSSC = CQSSCremainTime <= 15*1000 && CQSSCremainTime >=0;
-				boolean timeTobetBJSC = BJSCremainTime <= 15*1000 && BJSCremainTime >=0;
+				boolean timeTobetCQSSC = CQSSCremainTime <= betRemainTime && CQSSCremainTime >=0;
+				boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime >=0;
 
 				if(timeTobetCQSSC){//最后十五秒秒去下注
 					String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
@@ -72,17 +78,19 @@ class BetThread extends Thread{
 					data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
 				}
 				
-				long sleepTime = 10*1000;
 				
-				if(BJSCremainTime <= 25*1000 || CQSSCremainTime <= 25 * 1000){					
-					long time1 = BJSCremainTime - 15*1000;
-					long time2 = CQSSCremainTime - 15*1000;
+				
+				
+				
+				if(BJSCremainTime <= almostTime || CQSSCremainTime <= almostTime){					
+					long time1 = BJSCremainTime - betRemainTime;
+					long time2 = CQSSCremainTime - betRemainTime;
 					long littleTime = time1<time2?time1:time2;
 					if(time1 <0)
 						littleTime = time2;
 					if(time2 < 0)
 						littleTime = time1;
-					if(littleTime > 0 && littleTime <= 10*1000)
+					if(littleTime > 0 && littleTime <= (almostTime - betRemainTime))
 						sleepTime = littleTime;
 				}
 				Thread.sleep(sleepTime);
