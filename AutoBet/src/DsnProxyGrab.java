@@ -41,6 +41,7 @@ public class DsnProxyGrab {
     static {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
          requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookiedae
+         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(20*1000).setConnectionRequestTimeout(20*1000).setSocketTimeout(20*1000).build();//设置超时
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     }
 
@@ -98,12 +99,15 @@ public class DsnProxyGrab {
         loginInit();
         String loginPage = doGet(ConfigReader.getProxyAddress() + "/login", ""); //get 登录页面
         
-        if(loginPage != "") {
+        if(loginPage != "" && loginPage != "timeout") {
         	cookieuid = strCookies;
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
         		String rmNum = getPicNum(ConfigReader.getProxyAddress() + "/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		if(!Common.isNum(rmNum)) {
+        			return false;
+        		}
         	
         		//发送post
         		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -121,7 +125,8 @@ public class DsnProxyGrab {
         			location = doGet(location, cookieuid);//get cookiedae和重定向url
         			cookiedae = strCookies;
         			strCookies = "";
-        			if(doGet(location, cookieuid + cookiedae) != ""){
+        			location = doGet(location, cookieuid + cookiedae);
+        			if(location != "" && location != "timeout"){
         				return true;
         			}
         		}
@@ -178,6 +183,7 @@ public class DsnProxyGrab {
             e1.printStackTrace(); 
         } catch (IOException e) {  
             e.printStackTrace(); 
+            return "timeout";
         } 
         return "";
     }
@@ -234,6 +240,7 @@ public class DsnProxyGrab {
            e.printStackTrace(); 
        } catch (IOException e) {  
            e.printStackTrace(); 
+           return "timeout";
        } 
         return "";
     }
@@ -312,7 +319,7 @@ public class DsnProxyGrab {
   //! @param game       两面:"LM", 单号:"DH", 前中后三:"QZHS"
   //! @param all        虚注:"XZ" 实占:"SZ" 补货:"BH"
   //! @param range      全部:"", A盘:"A", B盘:"B", C盘:"C", D盘:"D",
-  //! @return           success:String fail:null
+  //! @return           成功:String 连接失败:null 超时:"timeout" 
     public static String grabCQSSCdata(String game, String all, String range){
     	if((game == "LM" || game == "DH" || game == "QZHS") && (range == "" || range == "A" ||
     			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
@@ -344,7 +351,7 @@ public class DsnProxyGrab {
     //! @param game       冠亚:"GY", 三四五六:"SSWL", 七八九十:"QBJS"
     //! @param all        虚注:"XZ" 实占:"SZ" 补货:"BH"
     //! @param range      全部:"", A盘:"A", B盘:"B", C盘:"C", D盘:"D",
-    //! @return           success:String fail:null
+    //! @return           成功:String 连接失败:null 超时:"timeout" 
       public static String grabBJSCdata(String game, String all, String range){
       	if((game == "GY" || game == "SSWL" || game == "QBJS") && (range == "" || range == "A" ||
       			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
