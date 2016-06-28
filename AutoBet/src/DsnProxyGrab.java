@@ -41,7 +41,7 @@ public class DsnProxyGrab {
     static {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
          requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookiedae
-         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(20*1000).setConnectionRequestTimeout(20*1000).setSocketTimeout(20*1000).build();//设置超时
+         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//设置超时
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     }
 
@@ -182,8 +182,10 @@ public class DsnProxyGrab {
         } catch (UnsupportedEncodingException e1) {  
             e1.printStackTrace(); 
         } catch (IOException e) {  
-            e.printStackTrace(); 
-            return "timeout";
+            e.printStackTrace();
+            if(e.getMessage().indexOf("timed out") > 0) {
+            	return "timeout";
+            }
         } 
         return "";
     }
@@ -240,7 +242,9 @@ public class DsnProxyGrab {
            e.printStackTrace(); 
        } catch (IOException e) {  
            e.printStackTrace(); 
-           return "timeout";
+           if(e.getMessage().indexOf("timed out") > 0) {
+        	   return "timeout";
+           }
        } 
         return "";
     }
@@ -337,7 +341,7 @@ public class DsnProxyGrab {
     		}
     		long time =  System.currentTimeMillis();
     		String strTime = Long.toString(time);
-    		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=" + game +"&all=" 
+    		String data = doGet(ConfigReader.getProxyAddress() + "/agent/control/risk?lottery=CQSSC&games=" + game +"&all=" 
     								+ all + "&range=" + range + "&multiple=false&_=" + strTime, cookieuid + cookiedae);
     		if(data != "") {
     			return data;
@@ -369,7 +373,7 @@ public class DsnProxyGrab {
       		}
       		long time =  System.currentTimeMillis();
       		String strTime = Long.toString(time);
-      		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=BJPK10&games=" + game +"&all=" 
+      		String data = doGet(ConfigReader.getProxyAddress() + "/agent/control/risk?lottery=BJPK10&games=" + game +"&all=" 
       								+ all + "&range=" + range + "&multiple=false&_=" + strTime, cookieuid + cookiedae);
       		if(data != "") {
       			return data;
