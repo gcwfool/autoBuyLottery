@@ -20,5 +20,7 @@ public class LoginListener implements ActionListener
 		while(dsnHttp.loginToDsn() == false);
 		
 		ab.loginSuccess = true;
+		
+		ab.outputMessage.append("µÇÂ¼³É¹¦\n");
 	}
 }

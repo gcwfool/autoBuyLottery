@@ -2,13 +2,13 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class BetCQSSCListener implements ActionListener
+public class BetOppositeCQSSCListener implements ActionListener
 {
 	private autoBet ab;
 	
 	
 	
-	public BetCQSSCListener(autoBet ab) {
+	public BetOppositeCQSSCListener(autoBet ab) {
 		this.ab = ab;
 	}
 	
@@ -29,12 +29,11 @@ public class BetCQSSCListener implements ActionListener
 		}
 		
 		ab.setBetTime();
+		
+		BetThread.betCQSSC = false;
+		BetThread.betOppositeCQSSC = true;
 
-		
-		BetThread.betCQSSC = true;
-		BetThread.betOppositeCQSSC = false;
-		
-		String outputStr = "开始正投重庆时时彩,投注比例：" + BetThread.betCQSSCPercent + "\n";
+		String outputStr = "开始反投重庆时时彩,投注比例：" + BetThread.betCQSSCPercent + "\n";
 		
 		autoBet.outputMessage.append(outputStr);
 		
@@ -51,28 +50,3 @@ public class BetCQSSCListener implements ActionListener
 	}	
 
 }
-
-
-class StopBetCQSSCListener implements ActionListener
-{
-	private autoBet ab;
-	
-	
-	
-	public StopBetCQSSCListener(autoBet ab) {
-		this.ab = ab;
-	}
-	
-	public void actionPerformed(ActionEvent e)
-	{
-
-		BetThread.betCQSSC = false;
-		BetThread.betOppositeCQSSC = false;
-		
-		autoBet.outputMessage.append("停止投注重庆时时彩\n");
-	}	
-
-}
-
-
-

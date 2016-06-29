@@ -2,13 +2,13 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class BetCQSSCListener implements ActionListener
+public class BetBJSCListener implements ActionListener
 {
 	private autoBet ab;
 	
 	
 	
-	public BetCQSSCListener(autoBet ab) {
+	public BetBJSCListener(autoBet ab) {
 		this.ab = ab;
 	}
 	
@@ -18,29 +18,30 @@ public class BetCQSSCListener implements ActionListener
 			return;
 		}
 		
-		String s = ab.textFieldCQSSCBetPercent.getText();
+		String s = ab.textFieldBJSCBetPercent.getText();
 		
 		if(Common.isNum(s)){
 			double percent = Double.parseDouble(s);
-			BetThread.betCQSSCPercent = percent;
+			BetThread.betBJSCPercent = percent;
 		}
 		else{
 			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
-
 		
-		BetThread.betCQSSC = true;
-		BetThread.betOppositeCQSSC = false;
+		BetThread.betBJSC = true;
+		BetThread.betOppositeBJSC = false;
 		
-		String outputStr = "开始正投重庆时时彩,投注比例：" + BetThread.betCQSSCPercent + "\n";
+		String outputStr = "开始正投北京赛车,投注比例：" + BetThread.betBJSCPercent + "\n";
 		
 		autoBet.outputMessage.append(outputStr);
 		
 		if(ab.inBet == true){					
 			return;
 		}
+		
+
 		
 		BetThread betThread = new BetThread();
 								
@@ -53,26 +54,25 @@ public class BetCQSSCListener implements ActionListener
 }
 
 
-class StopBetCQSSCListener implements ActionListener
+
+
+class StopBetBJSCListener implements ActionListener
 {
 	private autoBet ab;
 	
 	
 	
-	public StopBetCQSSCListener(autoBet ab) {
+	public StopBetBJSCListener(autoBet ab) {
 		this.ab = ab;
 	}
 	
 	public void actionPerformed(ActionEvent e)
 	{
 
-		BetThread.betCQSSC = false;
-		BetThread.betOppositeCQSSC = false;
+		BetThread.betBJSC = false;
+		BetThread.betOppositeBJSC = false;
 		
-		autoBet.outputMessage.append("停止投注重庆时时彩\n");
+		autoBet.outputMessage.append("停止投注北京赛车\n");
 	}	
 
 }
-
-
-
