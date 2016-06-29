@@ -85,7 +85,7 @@ class BetThread extends Thread{
 				}
 				
 				
-				
+				sleepTime = 10*1000;
 				
 				
 				if(BJSCremainTime <= almostTime || CQSSCremainTime <= almostTime){					
