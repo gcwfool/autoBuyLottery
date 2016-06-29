@@ -41,7 +41,7 @@ public class DsnProxyGrab {
     static {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
          requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookiedae
-         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//设置超时
+         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(20*1000).setConnectionRequestTimeout(20*1000).setSocketTimeout(20*1000).build();//设置超时
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     }
 
@@ -175,6 +175,7 @@ public class DsnProxyGrab {
             		}
             	}
             } finally {  
+            	httppost.releaseConnection();
                 response.close(); 
             }  
         } catch (ClientProtocolException e) {  
@@ -233,7 +234,8 @@ public class DsnProxyGrab {
 	            	return entityStr;
                }
            } 
-           finally {  
+           finally {
+        	   httpget.releaseConnection();
                response.close(); 
            }  
        } catch (ClientProtocolException e) {  
@@ -304,6 +306,7 @@ public class DsnProxyGrab {
                  return rmNum;
         	 }
         	 finally{
+        		 httpget.releaseConnection();
         		 response.close(); 
         	 }
          } catch (ClientProtocolException e) {  
