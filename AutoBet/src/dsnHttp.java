@@ -31,6 +31,7 @@ import org.apache.http.entity.StringEntity;
 
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,6 +48,13 @@ public class dsnHttp {
     static CloseableHttpClient httpclient = null;
     static RequestConfig requestConfig = null;
     static HttpClientContext clientContext = null;
+    
+    
+    static {
+        requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//设置超时
+        httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
+   }
     
     
     //这个变量用来存储
@@ -72,32 +80,48 @@ public class dsnHttp {
     	
     	loginURI = ConfigReader.getBetAddress() + loginURI;
     	
-    	String code = doGetLoginPage(loginURI);
+    	//String code = doGetLoginPage(loginURI);
+    	String loginPage = doGet(loginURI, "", "");
+    	//System.out.println(loginPage);
+    	
+        if(loginPage != null) {
+        	//cookieuid = strCookies;
+        	int posStart = loginPage.indexOf("img src=") + 9;
+        	if(posStart >= 0) {
+        		int posEnd = loginPage.indexOf('"', posStart);
+        		String rmNum = getPicNum(ConfigReader.getBetAddress() + "/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		System.out.println("验证码");
+        		System.out.println(rmNum);
+        		if(!Common.isNum(rmNum)) {
+        			return false;
+        		}
     	
 
-        String type = "1";  //remove hardcode later
-        String account = ConfigReader.getBetAccount();
-        String password = ConfigReader.getBetPassword();
+		        String type = "1";  //remove hardcode later
+		        String account = ConfigReader.getBetAccount();
+		        String password = ConfigReader.getBetPassword();
+		        
+		
+		        
+		        List<NameValuePair> params = new ArrayList<NameValuePair>();
+		        params.add(new BasicNameValuePair("type", type));
+		        params.add(new BasicNameValuePair("account", account));
+		        params.add(new BasicNameValuePair("password", password));
+		        params.add(new BasicNameValuePair("code", rmNum));
+		    	
+		        String location = doPost(loginURI, params, "");
+		        
+		        System.out.println("location: " + location); 
+		        
+				if(location.indexOf("agreement?_") > 0) {
+		
+					if(doGet(location, cookieCfduid, "") != null){
+						return true;
+					}
+				}
+        	}
         
-
-        
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("type", type));
-        params.add(new BasicNameValuePair("account", account));
-        params.add(new BasicNameValuePair("password", password));
-        params.add(new BasicNameValuePair("code", code));
-    	
-        String location = doPost(loginURI, params, "");
-        
-        System.out.println("location: " + location); 
-        
-		if(location.indexOf("agreement?_") > 0) {
-
-			if(doGet(location, cookieCfduid, "") != null){
-				return true;
-			}
-		}
-        
+        }
 
     	return false;
     }
@@ -117,6 +141,8 @@ public class dsnHttp {
         	System.out.println("get period failed");
         	return System.currentTimeMillis();
         }
+        
+        
         
         System.out.println("preiod:");
         System.out.println(response);
@@ -299,6 +325,9 @@ public class dsnHttp {
     		
     		}
     	}
+    	
+    	autoBet.outputMessage.append("下单失败！\n");
+    	
     	return false;
     }
     
@@ -419,8 +448,7 @@ public class dsnHttp {
     	
     	String res = betsObj.toString();
     	
-    	System.out.println("下单总额：");
-    	System.out.println(totalAmount);
+
     	
     	return res;
     	
@@ -466,83 +494,7 @@ public class dsnHttp {
     
 
 
-    public static String doGetLoginPage(String url) {
 
-
-    	requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
-        httpclient =HttpClients.custom().setDefaultRequestConfig(requestConfig).build(); //HttpClients.createDefault();;//
-
-                                
-        try {  
-           // 创建httpget.    
-           HttpGet httpget = new HttpGet(url);
-           httpget.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
-           httpget.addHeader("Accept-Language","Accept-Language: zh-CN,zh;q=0.8");
-           httpget.addHeader("Connection","keep-alive");
-           httpget.addHeader("Upgrade-Insecure-Requests","1");
-           httpget.addHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-           //httpget.addHeader("Referer","http://www.lashou.com/");
-           httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
-           System.out.println("executing request " + httpget.getURI()); 
-          
-           // 执行get请求.    
-           CloseableHttpResponse response = httpclient.execute(httpget); 
-           
-           cookieCfduid = setCookie(response);
-           
-           
-           
-           try {          	           	   
-        	            	            	          	   
-               // 获取响应实体    
-               HttpEntity entity = response.getEntity(); 
-               System.out.println("--------------------------------------"); 
-               // 打印响应状态    
-               System.out.println(response.getStatusLine()); 
-               if (entity != null) {  
-            	   
-            	String entityStr = EntityUtils.toString(entity);
-            	
-            	//getyzmUrl
-            	String strs1[] = entityStr.split("img src=\"");
-            	String strs2[] = strs1[1].split("\" alt=\"none\"");
-            	String yzmURL = strs2[0];    
-            	
-            	
-            	//System.out.println(entityStr); 
-            	
-            	//response.close();
-            	
-            	//setQueryParams(yzmURL);
-            	
-            	//get yzm
-            	String hostUrl = "http://835b1195.dsn.ww311.com/";
-            	yzmURL = hostUrl + yzmURL;
- 
-            	httpget.releaseConnection();
-            	
-            	
-            	String code = getPicNum(yzmURL);
-            	
-
-                System.out.println(code);
-
-            	
-                return code;
-               }  
-               
-           } finally {  
-               response.close(); 
-           }  
-       } catch (ClientProtocolException e) {  
-           e.printStackTrace(); 
-       } catch (ParseException e) {  
-           e.printStackTrace(); 
-       } catch (IOException e) {  
-           e.printStackTrace(); 
-       } 
-        return null;
-    }
 
 
     /**以utf-8形式读取*/
@@ -596,6 +548,9 @@ public class dsnHttp {
             e1.printStackTrace(); 
         } catch (IOException e) {  
             e.printStackTrace(); 
+            return null;
+
+            
         } 
         return null;
     }
@@ -648,6 +603,8 @@ public class dsnHttp {
             e.printStackTrace(); 
         } catch (IOException e) {  
             e.printStackTrace(); 
+            return null;
+
         } 
         
         return null;
@@ -703,6 +660,7 @@ public class dsnHttp {
                e1.printStackTrace(); 
            } catch (IOException e) {  
                e.printStackTrace(); 
+               return null;
            } 
            return null;
        }
@@ -755,6 +713,7 @@ public class dsnHttp {
                 String rmNum;
                 rmNum = reader.readLine();
                 reader.close();
+                httpget.releaseConnection();
                 return rmNum;
        	 }
        	 finally{

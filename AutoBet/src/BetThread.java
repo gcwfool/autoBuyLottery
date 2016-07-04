@@ -42,7 +42,10 @@ class BetThread extends Thread{
 
 				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
 					String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
-					if(data == null ){//获取数据失败
+					if(data != null && data.equals("timeout")){//超时，重新获取数据
+						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
+					}
+					if(data == null || data.equals("timeout")){//获取数据失败
 						while(DsnProxyGrab.doLogin() == false); //重新连接
 						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
 					}
@@ -55,14 +58,36 @@ class BetThread extends Thread{
 				}
 				
 				if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){
-					String dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");					
-					if(dataGY == null ){//获取数据失败
+					//冠亚
+					String dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");		
+					if(dataGY != null && dataGY.equals("timeout")){//超时，重新获取数据
+						dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
+					}
+					if(dataGY == null || dataGY.equals("timeout")){//获取数据失败
 						while(DsnProxyGrab.doLogin() == false); //重新连接
 						dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
 					}
 					
+					//三四五六
 					String dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
+					if(dataSSWL != null && dataSSWL.equals("timeout")){//超时，重新获取数据
+						dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
+					}
+					if(dataSSWL == null || dataSSWL.equals("timeout")){//获取数据失败
+						while(DsnProxyGrab.doLogin() == false); //重新连接
+						dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
+					}
+					
+					//七八九十
 					String dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
+					if(dataQBJS != null && dataQBJS.equals("timeout")){//超时，重新获取数据
+						dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
+					}
+					if(dataQBJS == null || dataQBJS.equals("timeout")){//获取数据失败
+						while(DsnProxyGrab.doLogin() == false); //重新连接
+						dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
+					}
+					
 					
 					String[] betBJSCData = {dataGY, dataSSWL, dataQBJS};
 					
