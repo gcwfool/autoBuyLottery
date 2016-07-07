@@ -147,9 +147,19 @@ public class dsnHttp {
         System.out.println("preiod:");
         System.out.println(response);
         
-        JSONObject periodJson = new JSONObject(response);
-        long closeTime = periodJson.getLong("closeTime");
-        CQSSCdrawNumber = periodJson.getString("drawNumber");
+        long closeTime = 0;
+        
+        try{
+            JSONObject periodJson = new JSONObject(response);
+            closeTime = periodJson.getLong("closeTime");
+            CQSSCdrawNumber = periodJson.getString("drawNumber");
+        }
+        catch(Exception e){
+        	autoBet.outputMessage.append("获取迪斯尼时间错误！");
+        	return System.currentTimeMillis();
+        }
+        
+
         
 
         
@@ -172,6 +182,8 @@ public class dsnHttp {
     	return remainTime;
     }
     
+    
+    
     public static long getBJSCRemainTime(){
         //get period
     	String response = "";
@@ -192,9 +204,18 @@ public class dsnHttp {
         System.out.println("preiod:");
         System.out.println(response);
         
-        JSONObject periodJson = new JSONObject(response);
-        long closeTime = periodJson.getLong("closeTime");
-        BJSCdrawNumber = periodJson.getString("drawNumber");
+        long closeTime = 0;
+        
+        try{
+            JSONObject periodJson = new JSONObject(response);
+            closeTime = periodJson.getLong("closeTime");
+            BJSCdrawNumber = periodJson.getString("drawNumber");
+        }
+        catch(Exception e){
+        	autoBet.outputMessage.append("获取迪斯尼时间错误！");
+        	return System.currentTimeMillis();
+        }
+
         
 
         
@@ -216,6 +237,8 @@ public class dsnHttp {
         
     	return remainTime;
     }    
+    
+    
     
     public static boolean doBetCQSSC(String[] betData, double percent, boolean opposite)
     {
@@ -300,14 +323,21 @@ public class dsnHttp {
     public static boolean parseBetResult(String str){
     	if(str != null && str.length()>0){
     		String outputStr = "";
-    		JSONObject betResult = new JSONObject(str);
+    		JSONObject betResult = null;
+    		try{
+        		betResult = new JSONObject(str);	
+    		}catch(Exception e)
+    		{
+    			autoBet.outputMessage.append("迪斯尼下单失败，内部错误\n");
+    			return false;
+    		}
     		int status = betResult.getInt("status");
     		switch(status){
     		case 0:
     			JSONObject account = betResult.getJSONObject("account");
     			double balance = account.getDouble("balance");
     			int betting = account.getInt("betting");
-    			outputStr  = String.format("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
+    			outputStr  = String.format("迪斯尼下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
     			autoBet.outputMessage.append(outputStr);
     			//System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
     			return true;
@@ -315,18 +345,18 @@ public class dsnHttp {
 
     		case 2:
     			//System.out.println("下单失败:已封盘！\n");
-    			autoBet.outputMessage.append("下单失败:已封盘！\n");
+    			autoBet.outputMessage.append("迪斯尼下单失败:已封盘！\n");
     			return false;
     		case 3:
     			String message = betResult.getString("message");
-    			outputStr  = String.format("下单失败：%s\n",message);
+    			outputStr  = String.format("迪斯尼下单失败：%s\n",message);
     			autoBet.outputMessage.append(outputStr);
     			return false;
     		
     		}
     	}
     	
-    	autoBet.outputMessage.append("下单失败！\n");
+    	autoBet.outputMessage.append("迪斯尼下单失败！\n");
     	
     	return false;
     }
@@ -337,116 +367,156 @@ public class dsnHttp {
     	//data = "[[{\"k\":\"DX2\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX3\",\"i\":\"D\",\"c\":3,\"a\":130,\"r\":258.294,\"cm\":0},{\"k\":\"DX4\",\"i\":\"D\",\"c\":4,\"a\":660,\"r\":1319.868,\"cm\":0},{\"k\":\"DS1\",\"i\":\"D\",\"c\":1,\"a\":10,\"r\":19.998,\"cm\":0},{\"k\":\"DX2\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DX3\",\"i\":\"X\",\"c\":1,\"a\":5,\"r\":9.999,\"cm\":0},{\"k\":\"DX5\",\"i\":\"D\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DX1\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX4\",\"i\":\"X\",\"c\":1,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDX\",\"i\":\"D\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS1\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"D\",\"c\":3,\"a\":100,\"r\":199.98,\"cm\":0},{\"k\":\"DS3\",\"i\":\"D\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DS3\",\"i\":\"S\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"S\",\"c\":2,\"a\":45,\"r\":89.991,\"cm\":0},{\"k\":\"DS5\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX1\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX5\",\"i\":\"X\",\"c\":3,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDS\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"S\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DS5\",\"i\":\"S\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0}],{\"DS1_S\":1.983,\"DS1_D\":1.983,\"DS2_S\":1.983,\"DS2_D\":1.983,\"DS3_S\":1.983,\"DS3_D\":1.983,\"DS4_S\":1.983,\"DS4_D\":1.983,\"DS5_S\":1.983,\"DS5_D\":1.983,\"DX1_X\":1.983,\"DX1_D\":1.983,\"DX2_X\":1.983,\"DX2_D\":1.983,\"DX3_X\":1.983,\"DX3_D\":1.983,\"DX4_X\":1.983,\"DX4_D\":1.983,\"DX5_X\":1.983,\"DX5_D\":1.983,\"LH_T\":9.28,\"LH_H\":1.983,\"LH_L\":1.983,\"ZDS_S\":1.983,\"ZDS_D\":1.983,\"ZDX_X\":1.983,\"ZDX_D\":1.983},{\"B1\":64,\"B4\":142,\"LM\":1535,\"B3\":64,\"B5\":334,\"B2\":64}]";
     	int totalAmount = 0;
     	
-    	JSONArray gamesArray = new JSONArray();
+    	String res = "";
     	
-    	for(int i = 0; i < data.length; i++){
+    	
+    	
+    	try{
     		
-        	JSONArray cqsscLMGrabData = new JSONArray(data[i]);
+    		List<String> parsedGames = new ArrayList<String>();;
+    		
+	    	JSONArray gamesArray = new JSONArray();
+	    	
+	    	for(int i = 0; i < data.length; i++){
+    		
+    		
+            	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
+            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);        	
+            	JSONObject oddsGrabData = cqsscLMGrabData.getJSONObject(1);
+    			
+    		
         	
-        	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
-        	
-        	JSONObject oddsGrabData = cqsscLMGrabData.getJSONObject(1);
         	
         	
-        	
-        	for(int j = 0; j < gamesGrabData.length(); j++){
-        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
-        		
-        		
-        		
-    			String game = gameGrabData.getString("k");
-    			String contents = gameGrabData.getString("i");
-    			String oddsKey = game + "_" + contents;
-    			double odds = oddsGrabData.getDouble(oddsKey);
-    			int amount = gameGrabData.getInt("a");
-    			//只下赔率二以下的
-        		if(odds < 2.5 && amount >0){
-        			amount = (int)(amount*percent);  
-        			if(amount == 0)
-        				amount = 1;
-        			totalAmount += amount;
-        			
-        			JSONObject gameObj = new JSONObject();
-        			gameObj.put("game", game);
-        			
-        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
-        			if(opposite){
-        				if(game.indexOf("DX") != -1){//反大小
-        					if(contents.indexOf("D") != -1){
-        						contents = "X";        						
-        					}
-        					else{
-        						contents = "D";
-        					}
-        					oddsKey = game + "_" + contents;
-        					odds = oddsGrabData.getDouble(oddsKey);
-        				}
-        				
-        				
-        				if(game.indexOf("DS") != -1){//反单双
-        					if(contents.indexOf("D") != -1){
-        						contents = "S";        						
-        					}
-        					else{
-        						contents = "D";
-        					}
-        					oddsKey = game + "_" + contents;
-        					odds = oddsGrabData.getDouble(oddsKey);
-        				}
-        				
-        				if(game.indexOf("LH") != -1){//反龙虎
-        					if(contents.indexOf("L") != -1){
-        						contents = "H";        						
-        					}
-        					else{
-        						contents = "L";
-        					}
-        					oddsKey = game + "_" + contents;
-        					odds = oddsGrabData.getDouble(oddsKey);
+	        	for(int j = 0; j < gamesGrabData.length(); j++){
+	        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
+	        		
+	    			String game = gameGrabData.getString("k");
+	    			String contents = gameGrabData.getString("i");
+	    			int amount = gameGrabData.getInt("a");
+	    			String oddsKey = game + "_" + contents;
+	    			double odds = oddsGrabData.getDouble(oddsKey);
+	    			
+	    			if(parsedGames.contains(game) == true)
+	    				continue;
+	    			
+	    			//计算差值
+	        		for(int k = j +1 ; k < gamesGrabData.length(); k++){
+	        			JSONObject oppositeGameGrabData = gamesGrabData.getJSONObject(k);
+	        			String oppositeGame = oppositeGameGrabData.getString("k");
+	        			if(oppositeGame.equals(game)){
+	        				int oppositeAmount = oppositeGameGrabData.getInt("a");
+	        				if(oppositeAmount > amount){
+	        					amount = oppositeAmount - amount;
+	        					contents = oppositeGameGrabData.getString("i");
+	        					oddsKey = oppositeGame + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				else{
+	        					amount = amount - oppositeAmount;
+	        				}
+	        				break;
+	        			}
+	        		}
+	        		
+	        		parsedGames.add(game);
 
-        				}
-
-        				
-        			}
-        			//反投处理结束
-        			
-        			
-        			gameObj.put("contents", contents);
-        			gameObj.put("amount", amount);
-        			gameObj.put("odds", odds);
-        			
-        			gamesArray.put(gameObj);
-        		}
-        		
-        	}
+	    			
+	    			
+	    			
+	    			//只下赔率二以下的
+	        		if(odds < 2.5 && amount >0){
+	        			amount = (int)(amount*percent);  
+	        			if(amount == 0)
+	        				amount = 1;
+	        			totalAmount += amount;
+	        			
+	        			JSONObject gameObj = new JSONObject();
+	        			gameObj.put("game", game);
+	        			
+	        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
+	        			if(opposite){
+	        				if(game.indexOf("DX") != -1){//反大小
+	        					if(contents.indexOf("D") != -1){
+	        						contents = "X";        						
+	        					}
+	        					else{
+	        						contents = "D";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				
+	        				
+	        				if(game.indexOf("DS") != -1){//反单双
+	        					if(contents.indexOf("D") != -1){
+	        						contents = "S";        						
+	        					}
+	        					else{
+	        						contents = "D";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				
+	        				if(game.indexOf("LH") != -1){//反龙虎
+	        					if(contents.indexOf("L") != -1){
+	        						contents = "H";        						
+	        					}
+	        					else{
+	        						contents = "L";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	
+	        				}
+	
+	        				
+	        			}
+	        			//反投处理结束
+	        			
+	        			
+	        			gameObj.put("contents", contents);
+	        			gameObj.put("amount", amount);
+	        			gameObj.put("odds", odds);
+	        			
+	        			gamesArray.put(gameObj);
+	        		}
+	        		
+	        	}
+	    	}
+	    	
+	
+	    	
+	    	
+	    	
+	    	
+	    	
+	    	JSONObject betsObj = new JSONObject();
+	    	
+	    	boolean ignore = false;
+	    	betsObj.put("ignore", ignore);
+	    	betsObj.put("bets", gamesArray);
+	    	
+	    	if(betType == BetType.CQSSC){
+	        	betsObj.put("drawNumber",CQSSCdrawNumber);
+	        	
+	        	betsObj.put("lottery", "CQSSC");
+	    	}
+	    	else if(betType == BetType.BJSC){
+	        	betsObj.put("drawNumber",BJSCdrawNumber);
+	        	
+	        	betsObj.put("lottery", "BJPK10");
+	
+	    	}
+	
+	    	
+	    	res = betsObj.toString();
+    	
+    	}catch(Exception e){
+    		autoBet.outputMessage.append("构造下单数据错误！\n");
+    		return "";
     	}
-    	
-
-    	
-    	
-    	
-    	
-    	
-    	JSONObject betsObj = new JSONObject();
-    	
-    	boolean ignore = false;
-    	betsObj.put("ignore", ignore);
-    	betsObj.put("bets", gamesArray);
-    	
-    	if(betType == BetType.CQSSC){
-        	betsObj.put("drawNumber",CQSSCdrawNumber);
-        	
-        	betsObj.put("lottery", "CQSSC");
-    	}
-    	else if(betType == BetType.BJSC){
-        	betsObj.put("drawNumber",BJSCdrawNumber);
-        	
-        	betsObj.put("lottery", "BJPK10");
-
-    	}
-
-    	
-    	String res = betsObj.toString();
     	
 
     	
@@ -530,7 +600,7 @@ public class dsnHttp {
             		String location = response.getFirstHeader("Location").getValue();
             		System.out.println(response.getStatusLine());
             		
-            		httppost.releaseConnection();
+            		
             		
             		if(location != null) {
             			return location;
@@ -540,6 +610,7 @@ public class dsnHttp {
             	
 
             } finally {  
+            	httppost.releaseConnection();
                 response.close(); 
             }  
         } catch (ClientProtocolException e) {  
@@ -548,9 +619,7 @@ public class dsnHttp {
             e1.printStackTrace(); 
         } catch (IOException e) {  
             e.printStackTrace(); 
-            return null;
-
-            
+     
         } 
         return null;
     }
@@ -583,18 +652,22 @@ public class dsnHttp {
             CloseableHttpResponse response = httpclient.execute(httpget); 
             System.out.println(response.getStatusLine());
             
+            try{
+                HttpEntity entity = response.getEntity(); 
+                
+                String res = EntityUtils.toString(entity);
 
-            
-            HttpEntity entity = response.getEntity(); 
-            
-            String res = EntityUtils.toString(entity);
 
-            httpget.releaseConnection();
-            response.close();
-            
-            if(res != null && res.length() > 0 ){            	
-                return res;
+                
+                if(res != null && res.length() > 0 ){            	
+                    return res;
+                }
+            }finally{
+                httpget.releaseConnection();
+                response.close();
             }
+            
+
             
 
         } catch (ClientProtocolException e) {  
@@ -603,7 +676,6 @@ public class dsnHttp {
             e.printStackTrace(); 
         } catch (IOException e) {  
             e.printStackTrace(); 
-            return null;
 
         } 
         
@@ -643,15 +715,12 @@ public class dsnHttp {
                     
                     String res = EntityUtils.toString(entity);
                     
-                    
 
-                    httppost.releaseConnection();
-                    
-                    
                     if (entity != null) {  
                        return res;
                     }  
                } finally {  
+            	   httppost.releaseConnection();
                    response.close(); 
                }  
            } catch (ClientProtocolException e) {  
@@ -660,7 +729,6 @@ public class dsnHttp {
                e1.printStackTrace(); 
            } catch (IOException e) {  
                e.printStackTrace(); 
-               return null;
            } 
            return null;
        }
@@ -713,10 +781,11 @@ public class dsnHttp {
                 String rmNum;
                 rmNum = reader.readLine();
                 reader.close();
-                httpget.releaseConnection();
+                
                 return rmNum;
        	 }
        	 finally{
+       		httpget.releaseConnection();
        		 response.close(); 
        	 }
         } catch (ClientProtocolException e) {  
