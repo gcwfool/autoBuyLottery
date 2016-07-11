@@ -115,7 +115,7 @@ public class dsnHttp {
 		        
 		        System.out.println("location: " + location); 
 		        
-				if(location.indexOf("agreement?_") > 0) {
+				if(location != null && location.indexOf("agreement?_") > 0) {
 		
 					if(doGet(location, cookieCfduid, "") != null){
 						return true;
