@@ -101,13 +101,25 @@ class BetThread extends Thread{
 					}
 				}
 
-
-					
-				String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");  //请求服务器，保持连接
-				if(data == null || data.length() <= 0){//获取数据失败
-					while(DsnProxyGrab.doLogin() == false); //重新连接
-					data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
+				
+				//保持代理端连接
+				if(CQSSCremainTime >= 0){
+					String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");  //请求服务器，保持连接
+					if(data == null || data.length() <= 0){//获取数据失败
+						while(DsnProxyGrab.doLogin() == false); //重新连接
+						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
+					}
 				}
+				else if(BJSCremainTime >= 0){
+					String data = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");		
+
+					if(data == null || data.equals("timeout")){//获取数据失败
+						while(DsnProxyGrab.doLogin() == false); //重新连接
+						data = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
+					}
+				}
+					
+
 				
 				
 				sleepTime = 10*1000;

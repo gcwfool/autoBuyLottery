@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Date;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -73,6 +74,7 @@ public class dsnHttp {
     static String previousBJSCBetNumber = "";
     
     
+    
     public static boolean loginToDsn(){
   	
     	String loginURI = "";
@@ -125,10 +127,62 @@ public class dsnHttp {
 
     	return false;
     }
+    
+    
+    //开盘时间为9点到24点
+    public static boolean  isInBJSCBetTime(long time){
+        Date date = new Date(time);
+        int currentHour = date.getHours();
+        int currentMinutes = date.getMinutes();
+        int currentSeconds = date.getSeconds();
+        
+        if(currentHour >=9 && currentHour <= 24){
+        	return true;
+        }
+        
+        return false;
+    }
+  
+    //北京赛车开盘时间为10点到01:55
+    public static boolean isInCQSSCBetTime(long time){
+        Date date = new Date(time);
+        int currentHour = date.getHours();
+        int currentMinutes = date.getMinutes();
+        int currentSeconds = date.getSeconds();
+
+        if(currentHour <10 && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
+           return false;
+        
+        return true;
+    }
+
+    
+    
     public static long getCQSSCRemainTime(){
         //get period
     	String response = "";
     	String host = ConfigReader.getBetAddress();
+    	
+    	
+    	
+        String getTimeUrl = host + "/time?&_=";
+        getTimeUrl += Long.toString(System.currentTimeMillis());
+        
+        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
+        
+        if(response != null && Common.isNum(response))
+        {
+        	time = Long.parseLong(response);
+        }
+        else{
+        	time = System.currentTimeMillis();
+        }
+    	
+        if(!isInCQSSCBetTime(time)){
+        	return -1;
+        }
+        
+        
         String getPeriodUrl = host + "/member/period?lottery=CQSSC&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
@@ -164,18 +218,7 @@ public class dsnHttp {
 
         
     	
-        String getTimeUrl = host + "/time?&_=";
-        getTimeUrl += Long.toString(System.currentTimeMillis());
-        
-        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
-        
-        if(response != null && Common.isNum(response))
-        {
-        	time = Long.parseLong(response);
-        }
-        else{
-        	time = System.currentTimeMillis();
-        }
+
         
         long remainTime = closeTime - time;
         
@@ -188,6 +231,25 @@ public class dsnHttp {
         //get period
     	String response = "";
     	String host = ConfigReader.getBetAddress();
+    	
+    	
+        String getTimeUrl = host + "/time?&_=";
+        getTimeUrl += Long.toString(System.currentTimeMillis());
+        
+        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=BJPK10&page=lm");
+        
+        if(response != null && Common.isNum(response))
+        {
+        	time = Long.parseLong(response);
+        }
+        else{
+        	time = System.currentTimeMillis();
+        }
+        
+        if(!isInBJSCBetTime(time)){
+        	return -1;
+        }
+    	
         String getPeriodUrl = host + "/member/period?lottery=BJPK10&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
@@ -219,19 +281,6 @@ public class dsnHttp {
         
 
         
-    	
-        String getTimeUrl = host + "/time?&_=";
-        getTimeUrl += Long.toString(System.currentTimeMillis());
-        
-        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=BJPK10&page=lm");
-        
-        if(response != null && Common.isNum(response))
-        {
-        	time = Long.parseLong(response);
-        }
-        else{
-        	time = System.currentTimeMillis();
-        }
         
         long remainTime = closeTime - time;
         
