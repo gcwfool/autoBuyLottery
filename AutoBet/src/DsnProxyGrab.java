@@ -38,24 +38,24 @@ public class DsnProxyGrab {
     static String strCookies = "";
     static String cookieuid = "";
     static String cookiedae = "";
-    static String dataCQSSC = null;
-    static String dataBJSC_GY = null;
-    static String dataBJSC_SSWL = null;
-    static String dataBJSC_QBJS = null;
+    static String [] dataCQSSC = {"", ""};
+    static String [] dataBJSC = {"", "", "", ""};
+    static boolean isCQSSCdataOk = false;
+    static boolean isBJSCdataOk = false;
     
     static {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
          requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookiedae
-         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(8*1000).setConnectionRequestTimeout(8*1000).setSocketTimeout(8*1000).build();//设置超时
+         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(15*1000).setConnectionRequestTimeout(15*1000).setSocketTimeout(15*1000).build();//设置超时
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     }
 
 	public static String setCookie(CloseableHttpResponse httpResponse) {
-		System.out.println("----setCookieStore");
+		//System.out.println("----setCookieStore");
 		Header headers[] = httpResponse.getHeaders("Set-Cookie");
 		if (headers == null || headers.length==0)
 		{
-			System.out.println("----there are no cookies");
+			//System.out.println("----there are no cookies");
 			return "";
 		}
 		String cookie = "";
@@ -66,7 +66,7 @@ public class DsnProxyGrab {
 				cookie += ";";
 			}
 		}
-		System.out.println("----cookies:" + cookie);
+		//System.out.println("----cookies:" + cookie);
 		String cookies[] = cookie.split(";");
 		
 		for (String c : cookies)
@@ -83,8 +83,8 @@ public class DsnProxyGrab {
 		{
 			strCookies = strCookies.substring(binPos);
 		}
-		System.out.println("----cookies:" + strCookies);
-		System.out.println("----setCookieStore success");
+		//System.out.println("----cookies:" + strCookies);
+		//System.out.println("----setCookieStore success");
 
 		return strCookies;
 	}
@@ -208,6 +208,7 @@ public class DsnProxyGrab {
     public static String doGet(String url, String cookies) { 
         try {  
            // 创建httpget.    
+        	System.out.println(cookies); 
            HttpGet httpget = new HttpGet(url);
            
            httpget.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
@@ -221,7 +222,7 @@ public class DsnProxyGrab {
            if(cookies != ""){
         	   httpget.addHeader("Cookie", cookies);
            }
-           System.out.println("executing request " + httpget.getURI()); 
+          // System.out.println("executing request " + httpget.getURI()); 
           
            // 执行get请求.    
            CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
@@ -399,47 +400,65 @@ public class DsnProxyGrab {
       	return null;
       }
       
-      public static void setCQSSCdata(String data) {
-    	  dataCQSSC = data;
+      public static void setCQSSCdata(String drawNumber, String data) {
+    	  synchronized(DsnProxyGrab.class) {
+	    	  dataCQSSC[0] = drawNumber;
+	    	  dataCQSSC[1] = data;
+	    	  isCQSSCdataOk = true;
+	    	  System.out.println("set  CQSSCdata   ok");
+    	  }
       }
       
-      public static void setBJSC_GY(String data) {
-    	  dataBJSC_GY = data;
+      public static void setBJSCdata(String drawNumber, String [] data) {
+    	  synchronized(DsnProxyGrab.class) {
+	    	  dataBJSC[0] = drawNumber;
+	    	  dataBJSC[1] = data[0];
+	    	  dataBJSC[2] = data[1];
+	    	  dataBJSC[3] = data[2];
+	    	  isBJSCdataOk = true;
+	    	  System.out.println("set  BJSCdata   ok");
+    	  }
       }
       
-      public static void setBJSC_SSWL(String data) {
-    	  dataBJSC_SSWL = data;
+      //! @brief    读取cqssc下单数据
+      //! @return   数据可用(String[0]:期数， String[1]:data);  数据不可用(null)
+      public static String[] getCQSSCdata() {
+    	  synchronized(DsnProxyGrab.class) {
+	    	  if(isCQSSCdataOk) {
+	    		  return dataCQSSC;
+	    	  }
+	    	  return null;
+    	  }
       }
       
-      public static void setBJSC_QBJS(String data) {
-    	  dataBJSC_QBJS = data;
+      //! @brief     读取取BJSC下单数据
+      //! @return    数据可用(String[0]:期数, String[1]:冠亚, String[2]:三四五六, String[3]:七八九十); 数据不可用(null)
+      public static String[] getBJSCdata() {
+    	  synchronized(DsnProxyGrab.class) {
+	    	  if(isBJSCdataOk) {
+	    		  return dataBJSC;
+	    	  }
+	    	  return null;
+    	  }
       }
       
-      public static String getCQSSCdata(String data) {
-    	  return dataCQSSC;
+      public static void disableCQSSCData() {
+    	  synchronized(DsnProxyGrab.class) {
+    		  isCQSSCdataOk = false;
+    		  System.out.println("disable  CQSSCdata   ok");
+    	  }
       }
       
-      public static String getBJSC_GY(String data) {
-    	  return dataBJSC_GY;
+      public static void disableBJSCData() {
+    	  synchronized(DsnProxyGrab.class) {
+    		  isBJSCdataOk = false;
+    		  System.out.println("disable  BJSCdata   ok");
+    	  }
       }
       
-      public static String getBJSC_SSWL(String data) {
-    	  return dataBJSC_SSWL;
-      }
-      
-      public static String getBJSC_QBJS(String data) {
-    	  return dataBJSC_QBJS;
-      }
-      
-      public static void resetData() {
-    	  dataCQSSC = null;
-    	  dataBJSC_GY = null;
-    	  dataBJSC_SSWL = null;
-    	  dataBJSC_QBJS = null;
-      }
-      
-      public static long getCQSSCRemainTime(){
+      public static String [] getCQSSCTime(){
           //get period
+    	  String [] time = {"", "", ""};
     	  String response = "";
     	  String host = ConfigReader.getProxyAddress();
     	  String getPeriodUrl = host + "/agent/period?lottery=CQSSC&_=";
@@ -450,7 +469,8 @@ public class DsnProxyGrab {
 		          
     	  if(response == "") {	
     		  System.out.println("get period failed");
-    		  return System.currentTimeMillis();
+    		  time[0] = Long.toString(System.currentTimeMillis());
+    		  return time;
 	      }
     	  
     	  if(response == "timeout") {
@@ -459,34 +479,48 @@ public class DsnProxyGrab {
           
           if(response == "" || response == "timeout") {
             	System.out.println("get period failed");
-            	return System.currentTimeMillis();
+            	time[0] = Long.toString(System.currentTimeMillis());
+      		  	return time;
            }
 	          
     	  System.out.println("preiod:");
     	  System.out.println(response);
 				          
-    	  JSONObject periodJson = new JSONObject(response);
-    	  long closeTime = periodJson.getLong("closeTime");
+    	  long closeTime = 0;
+    	  long drawTime = 0;
+    	  try{
+              JSONObject periodJson = new JSONObject(response);
+              closeTime = periodJson.getLong("closeTime");
+              time[1] = periodJson.getString("drawNumber");
+              drawTime = periodJson.getLong("drawTime");
+          }
+          catch(Exception e){
+        	  System.out.println("获取时间异常");
+        	  time[0] = Long.toString(System.currentTimeMillis());
+    		  return time;
+          }
 				          
     	  String getTimeUrl = host + "/time?&_=";
     	  getTimeUrl += Long.toString(System.currentTimeMillis());
 				          
     	  response = doGet(getTimeUrl, "");
 				        
-    	  long time = 0;
+    	  long time1 = 0;
 				          
     	  if(response != null && Common.isNum(response)) {
-    		  time = Long.parseLong(response);
+    		  time1 = Long.parseLong(response);
     	  }
     	  else{
-    		  time = System.currentTimeMillis();
+    		  time1 = System.currentTimeMillis();
     	  }
-				          
-    	  return closeTime - time;
+    	  time[0] = Long.toString(closeTime - time1);
+    	  time[2] = Long.toString(drawTime - time1);
+    	  return time;
       }
       
-      public static long getBJSCRemainTime(){
+      public static String [] getBJSCTime(){
           //get period
+    	  String [] time = {"", "", ""};
     	  String response = "";
     	  String host = ConfigReader.getProxyAddress();
           String getPeriodUrl = host + "/agent/period?lottery=BJPK10&_=";
@@ -497,7 +531,8 @@ public class DsnProxyGrab {
           
           if(response == "") {
           	System.out.println("get period failed");
-          	return System.currentTimeMillis();
+          	time[0] = Long.toString(System.currentTimeMillis());
+          	return time;
           }
           
           if(response == "timeout") {
@@ -505,34 +540,73 @@ public class DsnProxyGrab {
           }
           
           if(response == "" || response == "timeout") {
-            	System.out.println("get period failed");
-            	return System.currentTimeMillis();
+        	  System.out.println("get period failed");
+        	  time[0] = Long.toString(System.currentTimeMillis());
+      		  return time;
            }
           
           System.out.println("preiod:");
           System.out.println(response);
           
-          JSONObject periodJson = new JSONObject(response);
-          long closeTime = periodJson.getLong("closeTime");
+          //JSONObject periodJson = new JSONObject(response);
+          long closeTime = 0;
+    	  long drawTime = 0;
+          try{
+              JSONObject periodJson = new JSONObject(response);
+              closeTime = periodJson.getLong("closeTime");
+              time[1] = periodJson.getString("drawNumber");
+              drawTime = periodJson.getLong("drawTime");
+          }
+          catch(Exception e){
+        	  System.out.println("获取时间异常");
+        	  time[0] = Long.toString(System.currentTimeMillis());
+      		  return time;
+          }
           
       	
           String getTimeUrl = host + "/time?&_=";
           getTimeUrl += Long.toString(System.currentTimeMillis());
           
           response = doGet(getTimeUrl, "");
-          long time = 0;
+          long time1 = 0;
           
           if(response != null && Common.isNum(response))
           {
-          	time = Long.parseLong(response);
+          	time1 = Long.parseLong(response);
           }
           else{
-          	time = System.currentTimeMillis();
+          	time1 = System.currentTimeMillis();
           }
           
-          long remainTime = closeTime - time;
-          
-      	return remainTime;
+          time[0] = Long.toString(closeTime - time1);
+    	  time[2] = Long.toString(drawTime - time1);
+    	  return time;
       }    
+      
+      public static String grabCQSSCdataByCookie(String game, String all, String range, String uid, String dae){
+      	if((game == "LM" || game == "DH" || game == "QZHS") && (range == "" || range == "A" ||
+      			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
+      		switch (game) {
+      		    case "LM":
+      		      game = "DX1%2CDS1%2CDX2%2CDS2%2CDX3%2CDS3%2CDX4%2CDS4%2CDX5%2CDS5%2CZDX%2CZDS%2CLH";
+      		      break;
+      		    case "DH":
+        		      game = "B1%2CB2%2CB3%2CB4%2CB5";
+        		      break;
+      		    case "QZHS":
+          		  game = "TS1%2CTS2%2CTS3";
+          		  break;
+      		   default :
+      		}
+      		long time =  System.currentTimeMillis();
+      		String strTime = Long.toString(time);
+      		String data = doGet("http://3f071b45.dsn.ww311.com/agent/control/risk?lottery=CQSSC&games=" + game +"&all=" 
+      								+ all + "&range=" + range + "&multiple=false&_=" + strTime, uid + dae);
+      		if(data != "") {
+      			return data;
+      		}
+      	}
+      	return null;
+      }
     
 }

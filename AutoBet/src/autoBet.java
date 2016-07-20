@@ -14,13 +14,14 @@ public class autoBet{
 	public TextField textFieldBJSCBetPercent;
 	public TextField textFieldBetTime;
 	public static TextArea outputMessage;
+	private GrabThread grabThread;
 	
 	
 	public static void main(String[] args) throws Exception {
 		
 
 		ConfigReader.read("common.config");
-
+		
 		new autoBet().launchFrame();
 
 	}
@@ -135,6 +136,54 @@ public class autoBet{
 		outputMessage = new TextArea();
 		outputMessage.setSize(400, 500);
 		outputMessage.setLocation(25, 300);
+		
+		//!lin 抓取界面使用测试
+		Button btnStartGrabCQSSC = new Button("开始抓取重庆");
+		btnStartGrabCQSSC.setSize(75, 25);
+		btnStartGrabCQSSC.setLocation(50, 230);
+		Button btnStopGrabCQSSC = new Button("停止抓取重庆");
+		btnStopGrabCQSSC.setSize(75, 25);
+		btnStopGrabCQSSC.setLocation(150, 230);
+		
+		Button btnStartGrabBJSC = new Button("开始抓取北京");
+		btnStartGrabBJSC.setSize(75, 25);
+		btnStartGrabBJSC.setLocation(50, 260);
+		Button btnStopGrabBJSC = new Button("停止抓取北京");
+		btnStopGrabBJSC.setSize(75, 25);
+		btnStopGrabBJSC.setLocation(150, 260);
+		
+		grabThread = new GrabThread(new GrabCQSSCwindow(), new GrabBJSCwindow());//启动抓包线程
+		grabThread.start();	
+		
+		btnStartGrabCQSSC.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				grabThread.startGrabCQSSC();
+			}
+		});
+		
+		btnStopGrabCQSSC.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				grabThread.stopGrabCQSSC();
+			}
+		});
+		
+		btnStartGrabBJSC.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				grabThread.startGrabBJSC();
+			}
+		});
+		
+		btnStopGrabBJSC.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				grabThread.stopGrabBJSC();
+			}
+		});
+					
+		panel.add(btnStartGrabCQSSC);
+		panel.add(btnStopGrabCQSSC);
+		panel.add(btnStartGrabBJSC);
+		panel.add(btnStopGrabBJSC);	
+		//!lin end
 		
 		
 		panel.add(btnLogin);
