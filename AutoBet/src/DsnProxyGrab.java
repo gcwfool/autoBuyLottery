@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -607,6 +608,33 @@ public class DsnProxyGrab {
       		}
       	}
       	return null;
+      }
+      
+      public static boolean isInCQSSCgrabTime() {
+    	  long time = System.currentTimeMillis();
+    	  Date date = new Date(time);
+          int currentHour = date.getHours();
+          int currentMinutes = date.getMinutes();
+          int currentSeconds = date.getSeconds();
+          
+          if(currentHour <10 && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
+              return false;
+           
+           return true;
+      }
+      
+      public static boolean isInBJSCgrabTime() {
+    	  long time = System.currentTimeMillis();
+    	  Date date = new Date(time);
+          int currentHour = date.getHours();
+          int currentMinutes = date.getMinutes();
+          int currentSeconds = date.getSeconds();
+          
+          if(currentHour >=9 && currentHour <= 24){
+          		return true;
+          }
+           
+           return false;
       }
     
 }

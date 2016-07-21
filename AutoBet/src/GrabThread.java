@@ -27,9 +27,16 @@ class GrabThread extends Thread{
 				long CQSSCremainTime = 0;
 				long BJSCremainTime = 0;
 				if(grabCQSSC) {
+					boolean inGrabTime = true;
 					CQSSCTime= DsnProxyGrab.getCQSSCTime();
 					CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
 					while(CQSSCremainTime > 10*60*1000) {//获取时间失败
+						inGrabTime = DsnProxyGrab.isInCQSSCgrabTime();
+						if(!inGrabTime) {
+							CQSSCremainTime = -1;
+							isCQSSCclose = true;
+							break;
+						}
 						if(!DsnProxyGrab.login()) {
 							//todo
 							return;
@@ -38,7 +45,7 @@ class GrabThread extends Thread{
 						CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
 					}
 					
-					if(CQSSCremainTime > 0) {
+					if(CQSSCremainTime > 0 && inGrabTime) {
 						if(isCQSSCclose) {
 							gwCQSSC.setCloseText(false);
 							gwCQSSC.resetData();
@@ -50,7 +57,7 @@ class GrabThread extends Thread{
 						if(CQSSCremainTime < almostTime) {
 							sleepTime = 3*1000;
 						}
-					}else {
+					}else if(CQSSCremainTime <= 0 && inGrabTime){
 						if(!isCQSSCclose) {
 							gwCQSSC.setCloseText(true);
 							isCQSSCclose = true;
@@ -62,13 +69,22 @@ class GrabThread extends Thread{
 						gwCQSSC.setRemainTime(Long.parseLong(CQSSCTime[2]));
 					}
 					
-					gwCQSSC.setDrawNumber(CQSSCTime[1]);
+					if(inGrabTime) {
+						gwCQSSC.setDrawNumber(CQSSCTime[1]);
+					}
 				}
 				
 				if(grabBJSC) {
 					BJSCTime= DsnProxyGrab.getBJSCTime();
 					BJSCremainTime = Long.parseLong(BJSCTime[0]);
+					boolean inGrabTime = true;
 					while(BJSCremainTime > 10*60*1000) {//获取时间失败
+						inGrabTime = DsnProxyGrab.isInBJSCgrabTime();
+						if(!inGrabTime) {
+							BJSCremainTime = -1;
+							isBJSCclose = true;
+							break;
+						}
 						if(!DsnProxyGrab.login()) {
 							//todo
 							return;
@@ -77,7 +93,7 @@ class GrabThread extends Thread{
 						BJSCremainTime = Long.parseLong(BJSCTime[0]);
 					}
 					
-					if(BJSCremainTime > 0) {
+					if(BJSCremainTime > 0 && inGrabTime) {
 						if(isBJSCclose) {
 							gwBJSC.setCloseText(false);
 							gwBJSC.resetData();
@@ -89,7 +105,7 @@ class GrabThread extends Thread{
 						if(BJSCremainTime < almostTime) {
 							sleepTime = 3*1000;
 						}
-					}else {
+					}else if(BJSCremainTime <= 0 && inGrabTime){
 						if(!isBJSCclose) {
 							gwBJSC.setCloseText(true);
 							isBJSCclose = true;
@@ -101,7 +117,9 @@ class GrabThread extends Thread{
 						gwBJSC.setRemainTime(Long.parseLong(BJSCTime[2]));
 					}
 					
-					gwBJSC.setDrawNumber(BJSCTime[1]);
+					if(inGrabTime) {
+						gwBJSC.setDrawNumber(BJSCTime[1]);
+					}
 				}			
 				
 				if(grabCQSSC && CQSSCremainTime > 3000 && !((CQSSCremainTime > almostTime) && grabBJSC && (BJSCremainTime < almostTime) && (BJSCremainTime > 0))) {
@@ -176,11 +194,13 @@ class GrabThread extends Thread{
     
     public  void stopGrabCQSSC() {
     	grabCQSSC = false;
+    	gwCQSSC.resetData();
     	gwCQSSC.setVisible(false);
     }
     
     public  void stopGrabBJSC() {
     	grabBJSC = false;
+    	gwBJSC.resetData();
     	gwBJSC.setVisible(false);
     }
     
