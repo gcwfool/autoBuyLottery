@@ -554,9 +554,9 @@ public class GrabBJSCwindow extends JFrame {
     	//textFieldC.setText((time/1000 + 3) + "秒");
     }
     
-    public void setDataOk(boolean ok) {
+    public void setDataOk(boolean ok, long remainTime) {
     	if(ok) {
-    		textFieldC.setText("可用");
+    		textFieldC.setText("可用,距封盘" + remainTime + "秒");
     	} else {
     		textFieldC.setText("不可用");
     	}

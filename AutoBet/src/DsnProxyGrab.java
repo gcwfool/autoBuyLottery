@@ -223,7 +223,8 @@ public class DsnProxyGrab {
            if(cookies != ""){
         	   httpget.addHeader("Cookie", cookies);
            }
-          // System.out.println("executing request " + httpget.getURI()); 
+           
+           System.out.println("executing request " + url); 
           
            // ÷¥––get«Î«Û.    
            CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 

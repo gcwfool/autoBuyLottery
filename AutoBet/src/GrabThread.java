@@ -1,11 +1,11 @@
 class GrabThread extends Thread{
-	static long almostTime = 40*1000;  //进入加速时间
+	long almostTime = 45*1000;  //进入加速时间
 	long sleepTime = 7*1000;	//平时睡眠时间
     
-    static boolean grabCQSSC = false;
-    static boolean grabBJSC = false;
-    static boolean isCQSSCclose = false;
-    static boolean isBJSCclose = false;
+    boolean grabCQSSC = false;
+    boolean grabBJSC = false;
+    boolean isCQSSCclose = false;
+    boolean isBJSCclose = false;
     GrabCQSSCwindow gwCQSSC;
     GrabBJSCwindow gwBJSC;
     public GrabThread(GrabCQSSCwindow gwCQSSC, GrabBJSCwindow gwBJSC) {
@@ -160,17 +160,17 @@ class GrabThread extends Thread{
 				}
 				
 				if(DsnProxyGrab.getCQSSCdata() != null) {
-					gwCQSSC.setDataOk(true);
+					gwCQSSC.setDataOk(true, CQSSCremainTime/1000);
 				}
 				else {
-					gwCQSSC.setDataOk(false);
+					gwCQSSC.setDataOk(false, 0);
 				}
 				
 				if(DsnProxyGrab.getBJSCdata() != null) {
-					gwBJSC.setDataOk(true);
+					gwBJSC.setDataOk(true, BJSCremainTime/1000);
 				}
 				else {
-					gwBJSC.setDataOk(false);
+					gwBJSC.setDataOk(false, 0);
 				}
 					
 				Thread.currentThread().sleep(sleepTime);
