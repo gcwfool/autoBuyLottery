@@ -12,7 +12,7 @@ public class LoginListener implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		if(ab.loginSuccess == true)
+		/*if(ab.loginSuccess == true)
 			return;
 		
 		while(DsnProxyGrab.doLogin() == false) {
@@ -21,6 +21,6 @@ public class LoginListener implements ActionListener
 		
 		ab.loginSuccess = true;
 		
-		ab.outputMessage.append("登录成功\n");
+		ab.outputMessage.append("登录成功\n");*/
 	}
 }

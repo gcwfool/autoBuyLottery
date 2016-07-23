@@ -16,10 +16,6 @@ class GrabThread extends Thread{
     @Override
     public void run() {
     	try {
-    		if(!DsnProxyGrab.login()) {
-    			//todo
-    			return;
-    		}
     		
 			while(true){
 				String[] CQSSCTime = {"", "", ""};

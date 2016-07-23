@@ -33,6 +33,7 @@ import org.apache.http.entity.StringEntity;
 
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,13 +75,37 @@ public class dsnHttp {
     static String previousBJSCBetNumber = "";
     
     
+    static String ADDRESS = "";
+    static String ACCOUNT = "";
+    static String PASSWORD = "";
+    
+    
+    public static void setLoginParams(String address, String account, String password){
+    	ADDRESS = address;
+    	ACCOUNT = account;
+    	PASSWORD = password;
+    }
+    
+    
+    public static boolean login() {    	
+    	boolean res = false;
+    	for(int i = 0; i < 15; i++) {
+    		if(loginToDsn()) {
+    			res = true;
+    			break;
+    		}
+    	}
+    	
+    	return res;
+    }
+    
     
     public static boolean loginToDsn(){
   	
     	String loginURI = "";
     	loginURI = "/login";
     	
-    	loginURI = ConfigReader.getBetAddress() + loginURI;
+    	loginURI = ADDRESS + loginURI;
     	
     	//String code = doGetLoginPage(loginURI);
     	String loginPage = doGet(loginURI, "", "");
@@ -91,7 +116,7 @@ public class dsnHttp {
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
-        		String rmNum = getPicNum(ConfigReader.getBetAddress() + "/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get 验证码
         		System.out.println("验证码");
         		System.out.println(rmNum);
         		if(!Common.isNum(rmNum)) {
@@ -100,8 +125,8 @@ public class dsnHttp {
     	
 
 		        String type = "1";  //remove hardcode later
-		        String account = ConfigReader.getBetAccount();
-		        String password = ConfigReader.getBetPassword();
+		        String account = ACCOUNT;
+		        String password = PASSWORD;
 		        
 		
 		        
@@ -161,14 +186,14 @@ public class dsnHttp {
     public static long getCQSSCRemainTime(){
         //get period
     	String response = "";
-    	String host = ConfigReader.getBetAddress();
+    	String host = ADDRESS;
     	
     	
     	
         String getTimeUrl = host + "/time?&_=";
         getTimeUrl += Long.toString(System.currentTimeMillis());
         
-        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
+        response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         
         if(response != null && Common.isNum(response))
         {
@@ -187,7 +212,7 @@ public class dsnHttp {
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
         
-        response = doGet(getPeriodUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=CQSSC&page=lm");
+        response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         
         if(response == null)
         {
@@ -230,13 +255,13 @@ public class dsnHttp {
     public static long getBJSCRemainTime(){
         //get period
     	String response = "";
-    	String host = ConfigReader.getBetAddress();
+    	String host = ADDRESS;
     	
     	
         String getTimeUrl = host + "/time?&_=";
         getTimeUrl += Long.toString(System.currentTimeMillis());
         
-        response = doGet(getTimeUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=BJPK10&page=lm");
+        response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=BJPK10&page=lm");
         
         if(response != null && Common.isNum(response))
         {
@@ -254,7 +279,7 @@ public class dsnHttp {
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
         
-        response = doGet(getPeriodUrl, "", ConfigReader.getBetAddress() + "/member/load?lottery=BJPK10&page=lm");
+        response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=BJPK10&page=lm");
         
         if(response == null)
         {
@@ -292,7 +317,7 @@ public class dsnHttp {
     public static boolean doBetCQSSC(String[] betData, double percent, boolean opposite)
     {
 
-    	String host = ConfigReader.getBetAddress();
+    	String host = ADDRESS;
        	
         String jsonParam = "";
         
@@ -332,7 +357,7 @@ public class dsnHttp {
     public static boolean doBetBJSC(String[] betData, double percent,boolean opposite)
     {
 
-    	String host = ConfigReader.getBetAddress();
+    	String host = ADDRESS;
        	
         String jsonParam = "";
         
