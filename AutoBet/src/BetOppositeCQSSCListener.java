@@ -14,7 +14,7 @@ public class BetOppositeCQSSCListener implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		if(ab.loginSuccess == false){			
+		if(ab.loginToDSNMemberSuccess == false){			
 			return;
 		}
 		

@@ -44,6 +44,10 @@ public class DsnProxyGrab {
     static boolean isCQSSCdataOk = false;
     static boolean isBJSCdataOk = false;
     
+    private static String ADDRESS = "";
+    private static String ACCOUNT = "";
+    private static String PASSWORD = "";
+    
     static {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
          requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookiedae
@@ -100,14 +104,14 @@ public class DsnProxyGrab {
 
     public static boolean doLogin() { 	
         loginInit();
-        String loginPage = doGet(ConfigReader.getProxyAddress() + "/login", ""); //get 登录页面
+        String loginPage = doGet(ADDRESS + "/login", ""); //get 登录页面
         
         if(loginPage != "" && loginPage != "timeout") {
         	cookieuid = strCookies;
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
-        		String rmNum = getPicNum(ConfigReader.getProxyAddress() + "/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get 验证码
         		if(!Common.isNum(rmNum)) {
         			return false;
         		}
@@ -115,10 +119,10 @@ public class DsnProxyGrab {
         		//发送post
         		List<NameValuePair> params = new ArrayList<NameValuePair>();
         		params.add(new BasicNameValuePair("type", "2"));
-        		params.add(new BasicNameValuePair("account", ConfigReader.getProxyAccount()));
-        		params.add(new BasicNameValuePair("password", ConfigReader.getProxyPassword()));
+        		params.add(new BasicNameValuePair("account", ACCOUNT));
+        		params.add(new BasicNameValuePair("password", PASSWORD));
         		params.add(new BasicNameValuePair("code", rmNum));
-        		String location = doPost(ConfigReader.getProxyAddress() + "/login", params, strCookies, "");
+        		String location = doPost(ADDRESS + "/login", params, strCookies, "");
         		
         		System.out.println("location: " + location); 
 
@@ -140,7 +144,13 @@ public class DsnProxyGrab {
         return false;
     }
     
-    public static boolean login() {
+    public static void setLoginParams(String address, String account, String password){
+    	ADDRESS = address;
+    	ACCOUNT = account;
+    	PASSWORD = password;
+    }
+    
+    public static boolean login() {    	
     	boolean res = false;
     	for(int i = 0; i < 15; i++) {
     		if(doLogin()) {
@@ -361,7 +371,7 @@ public class DsnProxyGrab {
     		}
     		long time =  System.currentTimeMillis();
     		String strTime = Long.toString(time);
-    		String data = doGet(ConfigReader.getProxyAddress() + "/agent/control/risk?lottery=CQSSC&games=" + game +"&all=" 
+    		String data = doGet(ADDRESS + "/agent/control/risk?lottery=CQSSC&games=" + game +"&all=" 
     								+ all + "&range=" + range + "&multiple=false&_=" + strTime, cookieuid + cookiedae);
     		if(data != "") {
     			return data;
@@ -393,7 +403,7 @@ public class DsnProxyGrab {
       		}
       		long time =  System.currentTimeMillis();
       		String strTime = Long.toString(time);
-      		String data = doGet(ConfigReader.getProxyAddress() + "/agent/control/risk?lottery=BJPK10&games=" + game +"&all=" 
+      		String data = doGet(ADDRESS + "/agent/control/risk?lottery=BJPK10&games=" + game +"&all=" 
       								+ all + "&range=" + range + "&multiple=false&_=" + strTime, cookieuid + cookiedae);
       		if(data != "") {
       			return data;
@@ -462,7 +472,7 @@ public class DsnProxyGrab {
           //get period
     	  String [] time = {"", "", ""};
     	  String response = "";
-    	  String host = ConfigReader.getProxyAddress();
+    	  String host = ADDRESS;
     	  String getPeriodUrl = host + "/agent/period?lottery=CQSSC&_=";
     	  getPeriodUrl += Long.toString(System.currentTimeMillis());
 
@@ -524,7 +534,7 @@ public class DsnProxyGrab {
           //get period
     	  String [] time = {"", "", ""};
     	  String response = "";
-    	  String host = ConfigReader.getProxyAddress();
+    	  String host = ADDRESS;
           String getPeriodUrl = host + "/agent/period?lottery=BJPK10&_=";
           getPeriodUrl += Long.toString(System.currentTimeMillis());
 
