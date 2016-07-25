@@ -6,6 +6,8 @@ class GrabThread extends Thread{
     boolean grabBJSC = false;
     boolean isCQSSCclose = false;
     boolean isBJSCclose = false;
+    boolean isNeedLogin = false;
+    boolean requestTime = true;
     GrabCQSSCwindow gwCQSSC;
     GrabBJSCwindow gwBJSC;
     public GrabThread(GrabCQSSCwindow gwCQSSC, GrabBJSCwindow gwBJSC) {
@@ -16,16 +18,34 @@ class GrabThread extends Thread{
     @Override
     public void run() {
     	try {
-    		
+    		String[] CQSSCTime = {"0", "0", "0"};
+			String[] BJSCTime = {"0", "0", "0"};
 			while(true){
-				String[] CQSSCTime = {"", "", ""};
-				String[] BJSCTime = {"", "", ""};
+				if(isNeedLogin) {
+					if(!DsnProxyGrab.login()) {
+						//todo
+						return;
+					}
+					isNeedLogin = false;
+				}
 				long CQSSCremainTime = 0;
 				long BJSCremainTime = 0;
 				if(grabCQSSC) {
 					boolean inGrabTime = true;
-					CQSSCTime= DsnProxyGrab.getCQSSCTime();
-					CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
+					CQSSCremainTime = gwCQSSC.getRemainTime();
+					if(requestTime) {
+						CQSSCTime= DsnProxyGrab.getCQSSCTime();
+						CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
+						if(CQSSCremainTime > 0) {
+							System.out.println("距离重庆时时彩封盘:" + CQSSCremainTime/1000);
+							gwCQSSC.setRemainTime(CQSSCremainTime);
+						}
+						else {
+							System.out.println("距离重庆时时彩开盘:" + Long.parseLong(CQSSCTime[2])/1000);
+							gwCQSSC.setRemainTime(Long.parseLong(CQSSCTime[2]));
+						}
+						
+					}
 					while(CQSSCremainTime > 10*60*1000) {//获取时间失败
 						inGrabTime = DsnProxyGrab.isInCQSSCgrabTime();
 						if(!inGrabTime) {
@@ -47,22 +67,23 @@ class GrabThread extends Thread{
 							gwCQSSC.resetData();
 							isCQSSCclose = false;
 						}
-						System.out.println("距离重庆时时彩封盘时间为:");
-						System.out.println(CQSSCremainTime/1000);
-						gwCQSSC.setRemainTime(CQSSCremainTime);
+						if(!requestTime) {
+							System.out.println("[距离重庆时时彩封盘时间为]:" + CQSSCremainTime/1000);
+						}
 						if(CQSSCremainTime < almostTime) {
 							sleepTime = 3*1000;
+							requestTime = false;
 						}
-					}else if(CQSSCremainTime <= 0 && inGrabTime){
+						
+					} else if(CQSSCremainTime <= 0 && inGrabTime){
 						if(!isCQSSCclose) {
 							gwCQSSC.setCloseText(true);
 							isCQSSCclose = true;
+							requestTime = true;
 							sleepTime = 7*1000;
 							DsnProxyGrab.disableCQSSCData();
+							continue;
 						}
-						System.out.println("距离重庆时时彩开盘:");
-						System.out.println(Long.parseLong(CQSSCTime[2])/1000);
-						gwCQSSC.setRemainTime(Long.parseLong(CQSSCTime[2]));
 					}
 					
 					if(inGrabTime) {
@@ -71,9 +92,20 @@ class GrabThread extends Thread{
 				}
 				
 				if(grabBJSC) {
-					BJSCTime= DsnProxyGrab.getBJSCTime();
-					BJSCremainTime = Long.parseLong(BJSCTime[0]);
 					boolean inGrabTime = true;
+					BJSCremainTime = gwBJSC.getRemainTime();
+					if(requestTime) {
+						BJSCTime= DsnProxyGrab.getBJSCTime();
+						BJSCremainTime = Long.parseLong(BJSCTime[0]);
+						if(BJSCremainTime > 0) {
+							System.out.println("距离北京赛车封盘:" + BJSCremainTime/1000);
+							gwBJSC.setRemainTime(BJSCremainTime);
+						}
+						else {
+							System.out.println("距离北京赛车开盘:" + Long.parseLong(BJSCTime[2])/1000);
+							gwBJSC.setRemainTime(Long.parseLong(BJSCTime[2]));
+						}
+					}
 					while(BJSCremainTime > 10*60*1000) {//获取时间失败
 						inGrabTime = DsnProxyGrab.isInBJSCgrabTime();
 						if(!inGrabTime) {
@@ -95,22 +127,24 @@ class GrabThread extends Thread{
 							gwBJSC.resetData();
 							isBJSCclose = false;
 						}
-						System.out.println("距离北京赛车彩封盘时间为:");
-						System.out.println(BJSCremainTime/1000);
-						gwBJSC.setRemainTime(BJSCremainTime);
+						
+						if(!requestTime) {
+							System.out.println("[距离北京赛车彩封盘时间为]:" + BJSCremainTime/1000);
+						}
+						
 						if(BJSCremainTime < almostTime) {
 							sleepTime = 3*1000;
+							requestTime = false;
 						}
 					}else if(BJSCremainTime <= 0 && inGrabTime){
 						if(!isBJSCclose) {
 							gwBJSC.setCloseText(true);
 							isBJSCclose = true;
+							requestTime = true;
 							sleepTime = 7*1000;
 							DsnProxyGrab.disableBJSCData();
+							continue;
 						}
-						System.out.println("距离北京赛车开盘:");
-						System.out.println(Long.parseLong(BJSCTime[2])/1000);
-						gwBJSC.setRemainTime(Long.parseLong(BJSCTime[2]));
 					}
 					
 					if(inGrabTime) {
@@ -120,7 +154,10 @@ class GrabThread extends Thread{
 				
 				if(grabCQSSC && CQSSCremainTime > 3000 && !((CQSSCremainTime > almostTime) && grabBJSC && (BJSCremainTime < almostTime) && (BJSCremainTime > 0))) {
 					String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
-					if(data == "timeout" || data == null) {
+					if(data == "timeout") {
+						continue;
+					}else if(data == null) {
+						isNeedLogin = true;
 						continue;
 					}
 					
@@ -134,17 +171,26 @@ class GrabThread extends Thread{
 			    
 				if(grabBJSC && BJSCremainTime > 3000 && !((BJSCremainTime > almostTime) && grabCQSSC && (CQSSCremainTime < almostTime) && (CQSSCremainTime > 0))) {
 					String dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
-					if(dataGY == "timeout" || dataGY == null) {
+					if(dataGY == "timeout") {
+						continue;
+					}else if(dataGY == null) {
+						isNeedLogin = true;
 						continue;
 					}
 					
 					String dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
-					if(dataSSWL == "timeout" || dataGY == null) {
+					if(dataSSWL == "timeout") {
+						continue;
+					}else if(dataSSWL == null) {
+						isNeedLogin = true;
 						continue;
 					}
 					
 					String dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
-					if(dataQBJS == "timeout" || dataQBJS == null) {
+					if(dataQBJS == "timeout") {
+						continue;
+					}else if(dataQBJS == null) {
+						isNeedLogin = true;
 						continue;
 					}
 					
@@ -156,17 +202,17 @@ class GrabThread extends Thread{
 				}
 				
 				if(DsnProxyGrab.getCQSSCdata() != null) {
-					gwCQSSC.setDataOk(true, CQSSCremainTime/1000);
+					gwCQSSC.setDataOk(true);
 				}
 				else {
-					gwCQSSC.setDataOk(false, 0);
+					gwCQSSC.setDataOk(false);
 				}
 				
 				if(DsnProxyGrab.getBJSCdata() != null) {
-					gwBJSC.setDataOk(true, BJSCremainTime/1000);
+					gwBJSC.setDataOk(true);
 				}
 				else {
-					gwBJSC.setDataOk(false, 0);
+					gwBJSC.setDataOk(false);
 				}
 					
 				Thread.currentThread().sleep(sleepTime);

@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.atomic.AtomicLong;
    
 public class GrabBJSCwindow extends JFrame {  
   
@@ -40,7 +41,9 @@ public class GrabBJSCwindow extends JFrame {
     final private JTextField textFieldA = new JTextField(15);  
     final private JTextField textFieldB = new JTextField(15);
     final private JTextField textFieldC = new JTextField(15);
-    private long remainTime = 0;
+    private AtomicLong remainTime = new AtomicLong(0);
+
+  //  private long remainTime = 0;
   
     public GrabBJSCwindow() {  
         // TODO Auto-generated constructor stub  
@@ -498,7 +501,7 @@ public class GrabBJSCwindow extends JFrame {
         
         setTitle("北京赛车");  
        //pack(); //Realize the components.  
-        setBounds(100, 100, 1220, 900);  
+        setBounds(100, 100, 1220, 630);  
 //      textFieldA.requestFocus();  
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);  
@@ -523,23 +526,27 @@ public class GrabBJSCwindow extends JFrame {
         Timer timeAction = new Timer(1000, new ActionListener() {          
             public void actionPerformed(ActionEvent e) {       
                 SimpleDateFormat df = new SimpleDateFormat("mm:ss");   
-                if(remainTime < 0) {
-                	remainTime = 0;
+                if(remainTime.get() < 0) {
+                	remainTime.set(0);;
                 }
-                varTime.setText(df.format(new Date(remainTime)));
-                remainTime -= 1000;
+                varTime.setText(df.format(new Date(remainTime.get())));
+                remainTime.set(remainTime.get() - 1000);
             }      
         });            
         timeAction.start();        
     } 
     
     public void setRemainTime(long time) {
-    	remainTime = time;
+    	remainTime.set(time);
+    }
+    
+    public long getRemainTime() {
+    	return remainTime.get();
     }
     
     public void setCloseText(boolean close) {
     	if(close) {
-    		labelA.setText("距开奖:");
+    		labelA.setText("已封盘，距开奖:");
     	}
     	else {
     		labelA.setText("距封盘:");
@@ -554,9 +561,9 @@ public class GrabBJSCwindow extends JFrame {
     	//textFieldC.setText((time/1000 + 3) + "秒");
     }
     
-    public void setDataOk(boolean ok, long remainTime) {
+    public void setDataOk(boolean ok) {
     	if(ok) {
-    		textFieldC.setText("可用,距封盘" + remainTime + "秒");
+    		textFieldC.setText("可用,距封盘" + remainTime.get()/1000 + "秒");
     	} else {
     		textFieldC.setText("不可用");
     	}

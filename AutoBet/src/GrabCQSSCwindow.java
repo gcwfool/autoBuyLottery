@@ -1,34 +1,34 @@
-import java.awt.BorderLayout;  
+//import java.awt.BorderLayout;  
 import java.awt.Container;  
-import java.awt.Point;  
+//import java.awt.Point;  
 import java.awt.event.ActionEvent;  
 import java.awt.event.ActionListener;  
-import java.awt.event.InputEvent;  
-import java.awt.event.MouseAdapter;  
-import java.awt.event.MouseEvent;  
+//import java.awt.event.InputEvent;  
+//import java.awt.event.MouseAdapter;  
+//import java.awt.event.MouseEvent;  
 import java.awt.event.WindowAdapter;  
 import java.awt.event.WindowEvent;  
-import java.util.ArrayList;
-import java.util.Arrays;  
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.Arrays;  
+//import java.util.List;
 import java.util.Vector;  
   
 
 
-import javax.swing.JButton;  
+//import javax.swing.JButton;  
 import javax.swing.JFrame;  
 import javax.swing.JLabel;  
-import javax.swing.JOptionPane;  
+//import javax.swing.JOptionPane;  
 import javax.swing.JPanel;  
 import javax.swing.JScrollPane;  
 import javax.swing.JTable;  
 import javax.swing.JTextField;  
-import javax.swing.ListSelectionModel;  
-import javax.swing.event.TableModelEvent;  
-import javax.swing.event.TableModelListener;  
+//import javax.swing.ListSelectionModel;  
+//import javax.swing.event.TableModelEvent;  
+//import javax.swing.event.TableModelListener;  
 import javax.swing.table.DefaultTableModel;  
-import javax.swing.table.JTableHeader;  
-import javax.swing.table.TableColumnModel;  
+//import javax.swing.table.JTableHeader;  
+//import javax.swing.table.TableColumnModel;  
 
 import java.util.Date;      
 
@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.atomic.AtomicLong;
    
 public class GrabCQSSCwindow extends JFrame {  
   
@@ -53,7 +54,8 @@ public class GrabCQSSCwindow extends JFrame {
     final private JTextField textFieldA = new JTextField(15);  
     final private JTextField textFieldB = new JTextField(15);
     final private JTextField textFieldC = new JTextField(15);
-    private long remainTime = 0;
+    //private long remainTime = 0;
+    private AtomicLong remainTime = new AtomicLong(0);
   
     public GrabCQSSCwindow() {  
         // TODO Auto-generated constructor stub  
@@ -333,7 +335,7 @@ public class GrabCQSSCwindow extends JFrame {
         
         setTitle("÷ÿ«Ï ± ±≤ ");  
        //pack(); //Realize the components.  
-        setBounds(100, 100, 1220, 900);  
+        setBounds(100, 100, 1220, 480);  
 //      textFieldA.requestFocus();  
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);  
@@ -353,23 +355,27 @@ public class GrabCQSSCwindow extends JFrame {
         Timer timeAction = new Timer(1000, new ActionListener() {          
             public void actionPerformed(ActionEvent e) {       
                 SimpleDateFormat df = new SimpleDateFormat("mm:ss");   
-                if(remainTime < 0) {
-                	remainTime = 0;
+                if(remainTime.get() < 0) {
+                	remainTime.set(0);
                 }
-                varTime.setText(df.format(new Date(remainTime)));
-                remainTime -= 1000;
+                varTime.setText(df.format(new Date(remainTime.get())));
+                remainTime.set(remainTime.get() - 1000);
             }      
         });            
         timeAction.start();        
     } 
     
     public void setRemainTime(long time) {
-    	remainTime = time;
+    	remainTime.set(time);
+    }
+    
+    public long getRemainTime() {
+    	return remainTime.get();
     }
     
     public void setCloseText(boolean close) {
     	if(close) {
-    		labelA.setText("æ‡ø™Ω±:");
+    		labelA.setText("“—∑‚≈Ã£¨æ‡ø™Ω±:");
     	}
     	else {
     		labelA.setText("æ‡∑‚≈Ã:");
@@ -384,9 +390,9 @@ public class GrabCQSSCwindow extends JFrame {
     	//textFieldC.setText((time/1000 + 3) + "√Î");
     }
     
-    public void setDataOk(boolean ok, long remainTime) {
+    public void setDataOk(boolean ok) {
     	if(ok) {
-    		textFieldC.setText("ø…”√,æ‡∑‚≈Ã" + remainTime + "√Î");
+    		textFieldC.setText("ø…”√,æ‡∑‚≈Ã" + remainTime.get()/1000 + "√Î");
     	} else {
     		textFieldC.setText("≤ªø…”√");
     	}
