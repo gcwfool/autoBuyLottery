@@ -79,6 +79,44 @@ public class dsnHttp {
     static String ACCOUNT = "";
     static String PASSWORD = "";
     
+    static String CQSSCoddsData = null;
+    static String BJSCoddsData = null;
+    
+    
+    public static String getCQSSCoddsData(){
+    	String url = ADDRESS + "/member/odds?lottery=CQSSC&games=DX1%2CDX2%2CDX3%2CDX4%2CDX5%2CDS1%2CDS2%2CDS3%2CDS4%2CDS5%2CZDX%2CZDS%2CLH%2CTS1%2CTS2%2CTS3%2CB1%2CB2%2CB3%2CB4%2CB5&_=";
+    	url += Long.toString(System.currentTimeMillis());
+    	
+    	CQSSCoddsData = doGet(url, "", "");
+    	
+    	if(CQSSCoddsData == null){
+    		CQSSCoddsData = doGet(url, "", "");
+    	}
+    	
+    	return  CQSSCoddsData; 	
+   	
+    }
+    
+    public static String getBJSCoddsData(){
+    	String url = ADDRESS + "/member/odds?lottery=BJPK10&games=DX1%2CDX2%2CDX3%2CDX4%2CDX5%2CDX6%2CDX7%2CDX8%2CDX9%2CDX10%2CDS1%2CDS2%2CDS3%2CDS4%2CDS5%2CDS6%2CDS7%2CDS8%2CDS9%2CDS10%2CGDX%2CGDS%2CLH1%2CLH2%2CLH3%2CLH4%2CLH5&_=";    	
+    	url += Long.toString(System.currentTimeMillis());
+    	
+    	BJSCoddsData = doGet(url, "", "");
+    	
+    	if(BJSCoddsData == null){
+    		BJSCoddsData = doGet(url, "", "");
+    	}
+ 
+    	return BJSCoddsData;
+    }
+    
+    public static String getCQSSCdrawNumber(){
+    	return CQSSCdrawNumber;
+    }
+    
+    public static String getBJSCdrawNumber(){
+    	return BJSCdrawNumber;
+    }
     
     public static void setLoginParams(String address, String account, String password){
     	ADDRESS = address;
@@ -312,7 +350,215 @@ public class dsnHttp {
     	return remainTime;
     }    
     
-    
+    public static void outputBetsDetails(String jsonData, BetType betType){
+    	
+    	autoBet.outputMessage.append("下注详情：\n");
+    	try{
+        	if(betType == BetType.BJSC){
+            	
+            	JSONObject betsData = new JSONObject(jsonData);
+            	JSONArray gamesData = betsData.getJSONArray("bets");
+            	
+            	for(int i = 1; i <= 10 ; i++){
+            		String gameDX = "DX" + Integer.toString(i);
+            		String gameDS = "DS" + Integer.toString(i);
+            		String gameLH = "LH" + Integer.toString(i);
+            		JSONObject gameData;
+            		int amountDX = 0;
+            		String contentsDX = "";
+            		int amountDS = 0;
+            		String contentsDS = "";
+            		int amountLH = 0;
+            		String contentsLH = "";
+            		for(int j = 0; j < gamesData.length(); j++){
+            			
+            			gameData = gamesData.getJSONObject(j);
+            			
+            			String game = gameData.getString("game");
+            			if(game.equals(gameDX)){
+            				amountDX = gameData.getInt("amount");
+            				contentsDX = gameData.getString("contents");
+            				contentsDX = contentsDX.equals("D")?"大":"小";
+            			}
+            			if(game.equals(gameDS)){
+            				amountDS = gameData.getInt("amount");  
+            				contentsDS = gameData.getString("contents");
+            				contentsDS = contentsDS.equals("D")?"单":"双";
+            			}
+    					if(game.equals(gameLH)){
+    						amountLH = gameData.getInt("amount");
+    						contentsLH = gameData.getString("contents");
+    						contentsLH = contentsLH.equals("L")?"龙":"虎";
+    					}
+
+    					
+
+            		}
+            		
+    				String outputStr = "";
+    				if(amountDX != 0 ){
+    					if(i == 1){
+    						outputStr  = String.format("冠军%s: %d,", contentsDX, amountDX);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					else if(i == 2){
+    						outputStr  = String.format("亚军%s: %d,", contentsDX, amountDX);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					else{
+    						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsDX, amountDX);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					
+    				}
+    				
+    				if(amountDS != 0 ){
+    					if(i == 1){
+    						outputStr  = String.format("冠军%s: %d,", contentsDS, amountDS);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					else if(i == 2){
+    						outputStr  = String.format("亚军%s: %d,", contentsDS, amountDS);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					else{
+    						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsDS, amountDS);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					
+    				}
+    				
+    				if(amountLH != 0 ){
+    					if(i == 1){
+    						outputStr  = String.format("冠军%s: %d,", contentsLH, amountLH);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					else if(i == 2){
+    						outputStr  = String.format("亚军%s: %d,", contentsLH, amountLH);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					else{
+    						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsLH, amountLH);
+    						autoBet.outputMessage.append(outputStr);
+    					}
+    					
+    				}
+            		
+    				autoBet.outputMessage.append("\n");
+            	}
+
+        	}
+        	
+        	
+        	if(betType == BetType.CQSSC){
+            	
+            	JSONObject betsData = new JSONObject(jsonData);
+            	JSONArray gamesData = betsData.getJSONArray("bets");
+            	
+            	for(int i = 1; i <= 5 ; i++){
+            		String gameDX = "DX" + Integer.toString(i);
+            		String gameDS = "DS" + Integer.toString(i);        		
+            		JSONObject gameData;
+            		int amountDX = 0;
+            		String contentsDX = "";
+            		int amountDS = 0;
+            		String contentsDS = "";
+            		for(int j = 0; j < gamesData.length(); j++){
+            			gameData = gamesData.getJSONObject(j);
+            			String game = gameData.getString("game");
+            			if(game.equals(gameDX)){
+            				amountDX = gameData.getInt("amount");
+            				contentsDX = gameData.getString("contents");
+            				contentsDX = contentsDX.equals("D")?"大":"小";
+            			}
+            			if(game.equals(gameDS)){
+            				amountDS = gameData.getInt("amount");  
+            				contentsDS = gameData.getString("contents");
+            				contentsDS = contentsDS.equals("D")?"单":"双";
+            			}
+            			
+
+            		}
+            		
+            		
+        			String outputStr = "";
+        			
+    				if(amountDX != 0 ){
+    						outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDX, amountDX);
+    						autoBet.outputMessage.append(outputStr);
+
+    				}
+    				
+    				if(amountDS != 0 ){
+    					outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDS, amountDS);
+    					autoBet.outputMessage.append(outputStr);
+
+    				}
+    				
+    				autoBet.outputMessage.append("\n");
+            		
+            	}
+            	
+            	
+            	String gameZDX = "ZDX";
+            	String gameZDS = "ZDS";
+            	String gameLH = "LH";
+            	
+            	int amountZDX = 0;
+            	int amountZDS = 0;
+            	int amountLH = 0;
+            	
+            	String contentsZDX = "";
+            	String contentsZDS = "";
+            	String contentsLH = "";
+            	
+        		for(int j = 0; j < gamesData.length(); j++){
+        			JSONObject gameData;
+        			gameData = gamesData.getJSONObject(j);
+        			String game = gameData.getString("game");
+        			
+        			if(game.equals(gameZDX)){
+        				amountZDX = gameData.getInt("amount");
+        				contentsZDX = gameData.getString("contents");
+        				contentsZDX = contentsZDX.equals("D")?"大":"小";
+        			}
+        			if(game.equals(gameZDS)){
+        				amountZDS = gameData.getInt("amount");  
+        				contentsZDS = gameData.getString("contents");
+        				contentsZDS = contentsZDS.equals("D")?"单":"双";
+        			}
+    				if(game.equals(gameLH)){
+    					amountLH = gameData.getInt("amount");
+    					contentsLH = gameData.getString("contents");
+    					contentsLH = contentsLH.equals("L")?"龙":"虎";
+    				}
+    	
+        		}
+        		
+    			String outputStr = "";
+    			if(amountZDX != 0){
+    				outputStr  = String.format("总%s: %d,",  contentsZDX, amountZDX);
+    				autoBet.outputMessage.append(outputStr);
+    			}
+    			
+    			if(amountZDS != 0){
+    				outputStr  = String.format("总%s: %d,",  contentsZDS, amountZDS);
+    				autoBet.outputMessage.append(outputStr);
+    			}
+    			
+    			if(amountLH != 0){
+    				outputStr  = String.format("%s: %d,",  contentsLH, amountLH);
+    				autoBet.outputMessage.append(outputStr);
+    			}
+    			
+    			autoBet.outputMessage.append("\n");
+        	}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+
+    	
+    }
     
     public static boolean doBetCQSSC(String[] betData, double percent, boolean opposite)
     {
@@ -334,6 +580,8 @@ public class dsnHttp {
         	String outputStr = "下注重庆时时彩第" + CQSSCdrawNumber + "期\n";
         	autoBet.outputMessage.append(outputStr);
 
+        	outputBetsDetails(jsonParam, BetType.CQSSC);
+        	
         	
         	System.out.println(jsonParam);
         	
@@ -373,7 +621,7 @@ public class dsnHttp {
         	
         	String outputStr = "下注北京赛车第" + BJSCdrawNumber + "期\n";
         	autoBet.outputMessage.append(outputStr);
-        	
+        	outputBetsDetails(jsonParam, BetType.BJSC);
         	
         	System.out.println(jsonParam);
         	
@@ -443,6 +691,7 @@ public class dsnHttp {
     	
     	String res = "";
     	
+    	String oddsData = "";
     	
     	
     	try{
@@ -450,17 +699,33 @@ public class dsnHttp {
     		List<String> parsedGames = new ArrayList<String>();;
     		
 	    	JSONArray gamesArray = new JSONArray();
+	    	JSONObject oddsGrabData = null;
+	    	
+	    	if(betType == BetType.BJSC){
+	    		
+	    		if(BJSCoddsData == null){
+	    			getBJSCoddsData();
+	    		}
+	    		
+	    		oddsData = BJSCoddsData;
+	    	}
+	    	else if(betType == BetType.CQSSC){
+	    		
+	    		if(CQSSCoddsData == null){
+	    			getCQSSCoddsData();
+	    		}
+	    		
+	    		oddsData = CQSSCoddsData;
+	    	}
+	    	
+	    	oddsGrabData = new JSONObject(oddsData);
 	    	
 	    	for(int i = 0; i < data.length; i++){
     		
     		
             	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
             	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);        	
-            	JSONObject oddsGrabData = cqsscLMGrabData.getJSONObject(1);
-    			
-    		
-        	
-        	
+
         	
 	        	for(int j = 0; j < gamesGrabData.length(); j++){
 	        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
@@ -469,7 +734,15 @@ public class dsnHttp {
 	    			String contents = gameGrabData.getString("i");
 	    			int amount = gameGrabData.getInt("a");
 	    			String oddsKey = game + "_" + contents;
+	    			
+	    			if(oddsData.contains(oddsKey) == false)
+	    				continue;
+	    			
 	    			double odds = oddsGrabData.getDouble(oddsKey);
+	    			
+	    			//剔除北京赛车冠亚军 和 两面
+	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
+	    				continue;
 	    			
 	    			if(parsedGames.contains(game) == true)
 	    				continue;
@@ -548,11 +821,20 @@ public class dsnHttp {
 	        				
 	        			}
 	        			//反投处理结束
-	        			
-	        			
+	        				        			
+	        				        			
 	        			gameObj.put("contents", contents);
 	        			gameObj.put("amount", amount);
 	        			gameObj.put("odds", odds);
+	        			
+	        			
+	        			//输出显示
+	        	    	if(betType == BetType.CQSSC){
+	        	        	
+	        	    	}
+	        	    	else if(betType == BetType.BJSC){
+	        	
+	        	    	}
 	        			
 	        			gamesArray.put(gameObj);
 	        		}

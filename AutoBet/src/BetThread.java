@@ -22,11 +22,16 @@ class BetThread extends Thread{
     public void run() {
     	try{
 	    	boolean autoBetSuccess = false;
+	    	
+			boolean getCQSSCOddsData = false;
+			boolean getBJSCOddsData = false;
+	    	
 			while(true){
 				long CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 				long BJSCremainTime = dsnHttp.getBJSCRemainTime();
 				if(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
-					while(dsnHttp.loginToDsn() == false); //重新登录
+					if(dsnHttp.login() == false)
+						;//todo
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
 				}
@@ -40,88 +45,72 @@ class BetThread extends Thread{
 				boolean timeTobetCQSSC = CQSSCremainTime <= betRemainTime && CQSSCremainTime >=0;
 				boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime >=0;
 
+
+				//每盘拿一次赔率数据
+				if(!timeTobetCQSSC && !timeTobetBJSC && (CQSSCremainTime <= 90*1000) && getCQSSCOddsData == false){
+					
+					dsnHttp.getCQSSCoddsData();
+					getCQSSCOddsData = true;
+					
+				}
+				
+				if(!timeTobetCQSSC && !timeTobetBJSC && (BJSCremainTime <= 90*1000) && getBJSCOddsData == false){
+					
+					dsnHttp.getBJSCoddsData();
+					getBJSCOddsData = true;
+					
+				}
+				
 				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
-					String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
-					if(data != null && data.equals("timeout")){//超时，重新获取数据
-						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
+
+					String[] betCQSSCData = null;
+					
+					while((betCQSSCData = DsnProxyGrab.getCQSSCdata()) == null){
+						
+					}					
+
+					
+					if(betCQSSCData[0].equals(dsnHttp.getCQSSCdrawNumber())){
+						
+						String[] betsData = {betCQSSCData[1]};
+						
+						autoBetSuccess = dsnHttp.doBetCQSSC(betsData, betCQSSCPercent, betOppositeCQSSC);
+						
+						if(autoBetSuccess == true)
+							getCQSSCOddsData = false;
+						
+						System.out.println("下单数据：");
+						System.out.println(betCQSSCData[1]);
 					}
-					if(data == null || data.equals("timeout")){//获取数据失败
-						while(DsnProxyGrab.doLogin() == false); //重新连接
-						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
-					}
-					String[] betData = {data};
-					System.out.println("下单数据：");
-					System.out.println(data);
-					if(data != null){
-					autoBetSuccess = dsnHttp.doBetCQSSC(betData, betCQSSCPercent, betOppositeCQSSC);
-					}
+					
+					
+
 				}
 				
 				if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){
-					//冠亚
-					String dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");		
-					if(dataGY != null && dataGY.equals("timeout")){//超时，重新获取数据
-						dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
-					}
-					if(dataGY == null || dataGY.equals("timeout")){//获取数据失败
-						while(DsnProxyGrab.doLogin() == false); //重新连接
-						dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
-					}
 					
-					//三四五六
-					String dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
-					if(dataSSWL != null && dataSSWL.equals("timeout")){//超时，重新获取数据
-						dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
-					}
-					if(dataSSWL == null || dataSSWL.equals("timeout")){//获取数据失败
-						while(DsnProxyGrab.doLogin() == false); //重新连接
-						dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
-					}
+					String[] betBJSCData;
 					
-					//七八九十
-					String dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
-					if(dataQBJS != null && dataQBJS.equals("timeout")){//超时，重新获取数据
-						dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
+					while((betBJSCData = DsnProxyGrab.getBJSCdata()) == null){
+						
+					}	
+
+					if(betBJSCData[0].equals(dsnHttp.getBJSCdrawNumber())){
+						String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
+						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC);
+						
+						if(autoBetSuccess == true)
+							getBJSCOddsData = false;
+						
+						System.out.println("下单数据：");
+						System.out.println(betBJSCData[1]);
+						System.out.println(betBJSCData[2]);
+						System.out.println(betBJSCData[3]);
 					}
-					if(dataQBJS == null || dataQBJS.equals("timeout")){//获取数据失败
-						while(DsnProxyGrab.doLogin() == false); //重新连接
-						dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
-					}
-					
-					
-					String[] betBJSCData = {dataGY, dataSSWL, dataQBJS};
-					
-					System.out.println("下单数据：");
-					System.out.println(dataGY);
-					System.out.println(dataSSWL);
-					System.out.println(dataQBJS);
-					
-					if(dataGY != null && dataSSWL != null && dataQBJS != null){
-					autoBetSuccess = dsnHttp.doBetBJSC(betBJSCData, betBJSCPercent, betOppositeBJSC);
-					}
+
 				}
 
-				
-				//保持代理端连接
-				if(CQSSCremainTime >= 0){
-					String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");  //请求服务器，保持连接
-					if(data == null || data.length() <= 0){//获取数据失败
-						while(DsnProxyGrab.doLogin() == false); //重新连接
-						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
-					}
-				}
-				else if(BJSCremainTime >= 0){
-					String data = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");		
 
-					if(data == null || data.equals("timeout")){//获取数据失败
-						while(DsnProxyGrab.doLogin() == false); //重新连接
-						data = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
-					}
-				}
-					
-
-				
-				
 				sleepTime = 10*1000;
 				
 				
