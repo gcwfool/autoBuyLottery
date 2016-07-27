@@ -201,18 +201,22 @@ class GrabThread extends Thread{
 					gwBJSC.setData(data);
 				}
 				
-				if(DsnProxyGrab.getCQSSCdata() != null) {
-					gwCQSSC.setDataOk(true);
-				}
-				else {
-					gwCQSSC.setDataOk(false);
+				if(grabCQSSC) {
+					if(DsnProxyGrab.getCQSSCdata() != null) {
+						gwCQSSC.setDataOk(true);
+					}
+					else {
+						gwCQSSC.setDataOk(false);
+					}
 				}
 				
-				if(DsnProxyGrab.getBJSCdata() != null) {
-					gwBJSC.setDataOk(true);
-				}
-				else {
-					gwBJSC.setDataOk(false);
+				if(grabBJSC) {
+					if(DsnProxyGrab.getBJSCdata() != null) {
+						gwBJSC.setDataOk(true);
+					}
+					else {
+						gwBJSC.setDataOk(false);
+					}
 				}
 					
 				Thread.currentThread().sleep(sleepTime);

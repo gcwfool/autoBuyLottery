@@ -15,6 +15,8 @@ import java.util.Vector;
   
 
 
+
+
 //import javax.swing.JButton;  
 import javax.swing.JFrame;  
 import javax.swing.JLabel;  
@@ -29,6 +31,8 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;  
 //import javax.swing.table.JTableHeader;  
 //import javax.swing.table.TableColumnModel;  
+
+
 
 import java.util.Date;      
 
@@ -54,6 +58,7 @@ public class GrabCQSSCwindow extends JFrame {
     final private JTextField textFieldA = new JTextField(15);  
     final private JTextField textFieldB = new JTextField(15);
     final private JTextField textFieldC = new JTextField(15);
+    final private JTextField textFieldD = new JTextField(15);
     //private long remainTime = 0;
     private AtomicLong remainTime = new AtomicLong(0);
   
@@ -298,7 +303,7 @@ public class GrabCQSSCwindow extends JFrame {
         ////////////////////////////////////////
         
         JPanel panel = new JPanel();
-        panel.setSize(900, 50);
+        panel.setSize(1000, 50);
         panel.setLocation(0, 0);
         container.add(panel);  
         labelA = new JLabel("距封盘: ");   
@@ -307,12 +312,16 @@ public class GrabCQSSCwindow extends JFrame {
         textFieldB.setEditable(false);
         JLabel labelC = new JLabel("数据是否可用: ");
         textFieldC.setEditable(false);
+        JLabel labelD = new JLabel("差值总额: ");
+        textFieldD.setEditable(false);
         panel.add(labelA);  
         panel.add(textFieldA);  
         panel.add(labelB);
         panel.add(textFieldB);   
         panel.add(labelC);
-        panel.add(textFieldC); 
+        panel.add(textFieldC);
+        panel.add(labelD);
+        panel.add(textFieldD); 
           
         // make the text field focused every time the window is activated  
         addWindowFocusListener(new WindowAdapter() {  
@@ -527,30 +536,60 @@ public class GrabCQSSCwindow extends JFrame {
     	}
     	
     	//计算差值
+    	long totalValue = 0;
+    	long tmpValue = 0;
     	table1.setValueAt(Long.parseLong(table1.getValueAt(0, 2).toString()) - Long.parseLong(table1.getValueAt(1, 2).toString()), 0, 3);
     	table1.setValueAt(-Long.parseLong(table1.getValueAt(0, 3).toString()), 1, 3);
     	table1.setValueAt(Long.parseLong(table1.getValueAt(2, 2).toString()) - Long.parseLong(table1.getValueAt(3, 2).toString()), 2, 3);
     	table1.setValueAt(-Long.parseLong(table1.getValueAt(2, 3).toString()), 3, 3);
+    	
+    	tmpValue = Long.parseLong(table1.getValueAt(0, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	tmpValue = Long.parseLong(table1.getValueAt(2, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	
     	
     	table2.setValueAt(Long.parseLong(table2.getValueAt(0, 2).toString()) - Long.parseLong(table2.getValueAt(1, 2).toString()), 0, 3);
     	table2.setValueAt(-Long.parseLong(table2.getValueAt(0, 3).toString()), 1, 3);
     	table2.setValueAt(Long.parseLong(table2.getValueAt(2, 2).toString()) - Long.parseLong(table2.getValueAt(3, 2).toString()), 2, 3);
     	table2.setValueAt(-Long.parseLong(table2.getValueAt(2, 3).toString()), 3, 3);
     	
+    	tmpValue = Long.parseLong(table2.getValueAt(0, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	tmpValue = Long.parseLong(table2.getValueAt(2, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	
+    	
     	table3.setValueAt(Long.parseLong(table3.getValueAt(0, 2).toString()) - Long.parseLong(table3.getValueAt(1, 2).toString()), 0, 3);
     	table3.setValueAt(-Long.parseLong(table3.getValueAt(0, 3).toString()), 1, 3);
     	table3.setValueAt(Long.parseLong(table3.getValueAt(2, 2).toString()) - Long.parseLong(table3.getValueAt(3, 2).toString()), 2, 3);
     	table3.setValueAt(-Long.parseLong(table3.getValueAt(2, 3).toString()), 3, 3);
+    	
+    	tmpValue = Long.parseLong(table3.getValueAt(0, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	tmpValue = Long.parseLong(table3.getValueAt(2, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	
     	
     	table4.setValueAt(Long.parseLong(table4.getValueAt(0, 2).toString()) - Long.parseLong(table4.getValueAt(1, 2).toString()), 0, 3);
     	table4.setValueAt(-Long.parseLong(table4.getValueAt(0, 3).toString()), 1, 3);
     	table4.setValueAt(Long.parseLong(table4.getValueAt(2, 2).toString()) - Long.parseLong(table4.getValueAt(3, 2).toString()), 2, 3);
     	table4.setValueAt(-Long.parseLong(table4.getValueAt(2, 3).toString()), 3, 3);
     	
+    	tmpValue = Long.parseLong(table4.getValueAt(0, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	tmpValue = Long.parseLong(table4.getValueAt(2, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	
     	table5.setValueAt(Long.parseLong(table5.getValueAt(0, 2).toString()) - Long.parseLong(table5.getValueAt(1, 2).toString()), 0, 3);
     	table5.setValueAt(-Long.parseLong(table5.getValueAt(0, 3).toString()), 1, 3);
     	table5.setValueAt(Long.parseLong(table5.getValueAt(2, 2).toString()) - Long.parseLong(table5.getValueAt(3, 2).toString()), 2, 3);
     	table5.setValueAt(-Long.parseLong(table5.getValueAt(2, 3).toString()), 3, 3);
+    	
+    	tmpValue = Long.parseLong(table5.getValueAt(0, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	tmpValue = Long.parseLong(table5.getValueAt(2, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
     	
     	table.setValueAt(Long.parseLong(table.getValueAt(0, 2).toString()) - Long.parseLong(table.getValueAt(1, 2).toString()), 0, 3);
     	table.setValueAt(-Long.parseLong(table.getValueAt(0, 3).toString()), 1, 3);
@@ -558,6 +597,15 @@ public class GrabCQSSCwindow extends JFrame {
     	table.setValueAt(-Long.parseLong(table.getValueAt(2, 3).toString()), 3, 3);
     	table.setValueAt(Long.parseLong(table.getValueAt(4, 2).toString()) - Long.parseLong(table.getValueAt(5, 2).toString()), 4, 3);
     	table.setValueAt(-Long.parseLong(table.getValueAt(4, 3).toString()), 5, 3);
+    	
+    	tmpValue = Long.parseLong(table.getValueAt(0, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	tmpValue = Long.parseLong(table.getValueAt(2, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	tmpValue = Long.parseLong(table.getValueAt(4, 3).toString());
+    	totalValue += tmpValue >= 0 ? tmpValue : -tmpValue;
+    	
+    	textFieldD.setText(Long.toString(totalValue));
     }
     
     public void resetData() {
@@ -571,9 +619,12 @@ public class GrabCQSSCwindow extends JFrame {
     			table5.setValueAt(0, i, j);
     		}
     	}
+    	
     	table.setValueAt(0, 4, 2);
     	table.setValueAt(0, 4, 3);
     	table.setValueAt(0, 5, 2);
     	table.setValueAt(0, 5, 3);
+    	
+    	textFieldD.setText("0");
     }
 }
