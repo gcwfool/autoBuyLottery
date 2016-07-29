@@ -40,6 +40,9 @@ public class autoBet{
 	
 	
 	public static TextArea outputMessage;
+	public static Label labelTotalBets;
+	public static Label labelSuccessBets;
+	public static Label labelFailBets;
 	private GrabThread grabThread;
 	
 	
@@ -140,6 +143,7 @@ public class autoBet{
 		textFieldProxyPassword.setSize(300,25);
 		textFieldProxyPassword.setLocation(DsnProxyX + 50, DsnProxyY +90);
 		textFieldProxyPassword.setText(ConfigReader.getProxyPassword());
+		textFieldProxyPassword.setEchoChar('*');
 		
 
 		
@@ -243,6 +247,7 @@ public class autoBet{
 		textFieldMemberPassword.setSize(300,25);
 		textFieldMemberPassword.setLocation(DsnMemberX + 50, DsnMemberY +90);
 		textFieldMemberPassword.setText(ConfigReader.getBetPassword());	
+		textFieldMemberPassword.setEchoChar('*');
 		
 		
 		Button btnMemberLogin = new Button("登录");
@@ -413,9 +418,30 @@ public class autoBet{
 		panel.add(btnStopGrabCQSSC);
 		panel.add(btnStartGrabBJSC);
 		panel.add(btnStopGrabBJSC);	
+		
+		labelTotalBets = new Label();
+		labelTotalBets.setSize(300,25);
+		labelTotalBets.setLocation(50, 400);
+		labelTotalBets.setText("下单次数:0");
+		
+		labelSuccessBets = new Label();
+		labelSuccessBets.setSize(300,25);
+		labelSuccessBets.setLocation(50, 430);
+		labelSuccessBets.setText("成功次数:0");
+		
+		labelFailBets = new Label();
+		labelFailBets.setSize(300,25);
+		labelFailBets.setLocation(50, 460);
+		labelFailBets.setText("失败次数:0");
+		
+		
+		panel.add(labelTotalBets);
+		panel.add(labelSuccessBets);
+		panel.add(labelFailBets);
+		
 		//!lin end
 		
-
+		
 		outputMessage = new TextArea();
 		outputMessage.setSize(400, 500);
 		outputMessage.setLocation(50, 500);

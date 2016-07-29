@@ -34,6 +34,7 @@ import org.apache.http.entity.StringEntity;
 
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,7 +55,7 @@ public class dsnHttp {
     
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//设置超时
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(9*1000).setConnectionRequestTimeout(9*1000).setSocketTimeout(9*1000).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
@@ -81,6 +82,13 @@ public class dsnHttp {
     
     static String CQSSCoddsData = null;
     static String BJSCoddsData = null;
+    
+    static long timeDValue = 0;  //网站时间和电脑时间的差值  网页时间 - 当前时间
+    static long CQSSCcloseTime = 0;    //封盘时间
+    static long BJSCcloseTime = 0;
+    
+    static int failTimes = 0;    //下单失败次数
+    static int successTimes = 0; //下单成功次数
     
     
     public static String getCQSSCoddsData(){
@@ -225,9 +233,7 @@ public class dsnHttp {
         //get period
     	String response = "";
     	String host = ADDRESS;
-    	
-    	
-    	
+    		
         String getTimeUrl = host + "/time?&_=";
         getTimeUrl += Long.toString(System.currentTimeMillis());
         
@@ -236,6 +242,7 @@ public class dsnHttp {
         if(response != null && Common.isNum(response))
         {
         	time = Long.parseLong(response);
+        	timeDValue = time - System.currentTimeMillis();
         }
         else{
         	time = System.currentTimeMillis();
@@ -264,26 +271,18 @@ public class dsnHttp {
         System.out.println("preiod:");
         System.out.println(response);
         
-        long closeTime = 0;
-        
         try{
             JSONObject periodJson = new JSONObject(response);
-            closeTime = periodJson.getLong("closeTime");
+            CQSSCcloseTime = periodJson.getLong("closeTime");
             CQSSCdrawNumber = periodJson.getString("drawNumber");
         }
         catch(Exception e){
         	autoBet.outputMessage.append("获取迪斯尼时间错误！");
         	return System.currentTimeMillis();
         }
+       
         
-
-        
-
-        
-    	
-
-        
-        long remainTime = closeTime - time;
+        long remainTime = CQSSCcloseTime - (System.currentTimeMillis() + timeDValue); //用差值计算  防止两次请求期间间隔过长
         
     	return remainTime;
     }
@@ -304,6 +303,7 @@ public class dsnHttp {
         if(response != null && Common.isNum(response))
         {
         	time = Long.parseLong(response);
+        	timeDValue = time - System.currentTimeMillis();
         }
         else{
         	time = System.currentTimeMillis();
@@ -327,28 +327,30 @@ public class dsnHttp {
         }
         
         System.out.println("preiod:");
-        System.out.println(response);
-        
-        long closeTime = 0;
+        System.out.println(response);       
         
         try{
             JSONObject periodJson = new JSONObject(response);
-            closeTime = periodJson.getLong("closeTime");
+            BJSCcloseTime = periodJson.getLong("closeTime");
             BJSCdrawNumber = periodJson.getString("drawNumber");
         }
         catch(Exception e){
         	autoBet.outputMessage.append("获取迪斯尼时间错误！");
         	return System.currentTimeMillis();
         }
-
-        
-
-        
-        
-        long remainTime = closeTime - time;
+ 
+        long remainTime = BJSCcloseTime - (System.currentTimeMillis() + timeDValue);
         
     	return remainTime;
-    }    
+    }
+    
+    public static long getCQSSClocalRemainTime() {
+    	return CQSSCcloseTime - (System.currentTimeMillis() + timeDValue);
+    }
+    
+    public static long getBJSClocalRemainTime() {
+    	return BJSCcloseTime - (System.currentTimeMillis() + timeDValue);
+    }
     
     public static void outputBetsDetails(String jsonData, BetType betType){
     	
@@ -560,7 +562,7 @@ public class dsnHttp {
     	
     }
     
-    public static boolean doBetCQSSC(String[] betData, double percent, boolean opposite)
+    public static boolean doBetCQSSC(String[] betData, double percent, boolean opposite, String remainTime)
     {
 
     	String host = ADDRESS;
@@ -577,7 +579,7 @@ public class dsnHttp {
         	//System.out.printf("下注重庆时时彩第%s期\n",CQSSCdrawNumber);
         	jsonParam = constructBetsData(betData, percent, BetType.CQSSC, opposite);
         	
-        	String outputStr = "下注重庆时时彩第" + CQSSCdrawNumber + "期\n";
+        	String outputStr = "下注重庆时时彩第" + CQSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputMessage.append(outputStr);
 
         	outputBetsDetails(jsonParam, BetType.CQSSC);
@@ -595,6 +597,16 @@ public class dsnHttp {
         	
         	boolean result = parseBetResult(response);
         	
+        	if(result == true) {
+				successTimes++;
+				autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
+			} else {
+				failTimes++;
+				autoBet.labelFailBets.setText("失败次数:" + failTimes);
+			}
+			
+			autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	
         	return result;
         
         }
@@ -602,7 +614,7 @@ public class dsnHttp {
         return false;
     }
     
-    public static boolean doBetBJSC(String[] betData, double percent,boolean opposite)
+    public static boolean doBetBJSC(String[] betData, double percent,boolean opposite, String remainTime)
     {
 
     	String host = ADDRESS;
@@ -619,7 +631,7 @@ public class dsnHttp {
         	//System.out.printf("下注北京赛车第%s期\n",BJSCdrawNumber);
         	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
         	
-        	String outputStr = "下注北京赛车第" + BJSCdrawNumber + "期\n";
+        	String outputStr = "下注北京赛车第" + BJSCdrawNumber + "期\n"  + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputMessage.append(outputStr);
         	outputBetsDetails(jsonParam, BetType.BJSC);
         	
@@ -635,6 +647,16 @@ public class dsnHttp {
         	
         	boolean result = parseBetResult(response);
         	
+        	if(result == true) {
+				successTimes++;
+				autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
+			} else {
+				failTimes++;
+				autoBet.labelFailBets.setText("失败次数:" + failTimes);
+			}
+			
+			autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	
         	return result;
         }
         
@@ -643,6 +665,10 @@ public class dsnHttp {
     
     
     public static boolean parseBetResult(String str){
+    	if(str != null) {
+    		System.out.println("下单结果：" + str);
+    	}
+    	
     	if(str != null && str.length()>0){
     		String outputStr = "";
     		JSONObject betResult = null;
@@ -650,7 +676,7 @@ public class dsnHttp {
         		betResult = new JSONObject(str);	
     		}catch(Exception e)
     		{
-    			autoBet.outputMessage.append("迪斯尼下单失败，内部错误\n");
+    			autoBet.outputMessage.append("迪斯尼下单失败，内部错误\n\n");
     			return false;
     		}
     		int status = betResult.getInt("status");
@@ -659,7 +685,7 @@ public class dsnHttp {
     			JSONObject account = betResult.getJSONObject("account");
     			double balance = account.getDouble("balance");
     			int betting = account.getInt("betting");
-    			outputStr  = String.format("迪斯尼下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
+    			outputStr  = String.format("迪斯尼下单成功！ 下单金额：%d, 账户余额:%f\n\n", betting, balance);
     			autoBet.outputMessage.append(outputStr);
     			//System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
     			return true;
@@ -667,18 +693,18 @@ public class dsnHttp {
 
     		case 2:
     			//System.out.println("下单失败:已封盘！\n");
-    			autoBet.outputMessage.append("迪斯尼下单失败:已封盘！\n");
+    			autoBet.outputMessage.append("迪斯尼下单失败:已封盘！\n\n");
     			return false;
     		case 3:
     			String message = betResult.getString("message");
-    			outputStr  = String.format("迪斯尼下单失败：%s\n",message);
+    			outputStr  = String.format("迪斯尼下单失败：%s\n\n",message);
     			autoBet.outputMessage.append(outputStr);
     			return false;
     		
     		}
     	}
     	
-    	autoBet.outputMessage.append("迪斯尼下单失败！\n");
+    	autoBet.outputMessage.append("迪斯尼下单失败！\n\n");
     	
     	return false;
     }

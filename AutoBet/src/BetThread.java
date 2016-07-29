@@ -6,6 +6,7 @@ class BetThread extends Thread{
 	long almostTime = 25*1000;  //进行最后一次sleep计算的时间
 	
 	long sleepTime = 10*1000;	//平时水淼时间
+	boolean requestTime = true;
 	
     static double betCQSSCPercent = 1.0;
     static double betBJSCPercent = 1.0;
@@ -17,7 +18,6 @@ class BetThread extends Thread{
     static boolean betBJSC = false;
     static boolean betOppositeBJSC = false;
     
-    
     @Override
     public void run() {
     	try{
@@ -25,38 +25,59 @@ class BetThread extends Thread{
 	    	
 			boolean getCQSSCOddsData = false;
 			boolean getBJSCOddsData = false;
+
 	    	
 			while(true){
-				long CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
-				long BJSCremainTime = dsnHttp.getBJSCRemainTime();
-				if(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
-					if(dsnHttp.login() == false)
-						;//todo
+				long CQSSCremainTime = 0;
+				long BJSCremainTime = 0;
+				if(requestTime) {
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
+					while(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
+						if(dsnHttp.login() == false) {
+							//todo
+							return;
+						}
+						CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
+						BJSCremainTime = dsnHttp.getBJSCRemainTime();
+					}
+					
+					System.out.println("距离重庆时时彩封盘时间为:");
+					System.out.println(CQSSCremainTime/1000);			
+					System.out.println("距离北京赛车封盘时间为:");
+					System.out.println(BJSCremainTime/1000);
+					
+					if((CQSSCremainTime > 0 && CQSSCremainTime <= almostTime) || (BJSCremainTime > 0 && BJSCremainTime <= almostTime)) {//如果将近封盘不发请求，获取本地时间
+						requestTime = false;
+					}
+					
+				} else {		
+					CQSSCremainTime = dsnHttp.getCQSSClocalRemainTime();
+					BJSCremainTime = dsnHttp.getBJSClocalRemainTime();
+					
+					System.out.println("距离重庆时时彩封盘时间为[local]:");
+					System.out.println(CQSSCremainTime/1000);					
+					System.out.println("距离北京赛车封盘时间为[local]:");
+					System.out.println(BJSCremainTime/1000);
+					
+					if((CQSSCremainTime <= 0 || CQSSCremainTime > almostTime) && (BJSCremainTime <= 0 || BJSCremainTime > almostTime)) {
+						requestTime = true;
+					}
 				}
 				
-				System.out.println("距离重庆时时彩封盘时间为:");
-				System.out.println(CQSSCremainTime/1000);
-				
-				System.out.println("距离北京赛车封盘时间为:");
-				System.out.println(BJSCremainTime/1000);
-				
-				boolean timeTobetCQSSC = CQSSCremainTime <= betRemainTime && CQSSCremainTime >=0;
-				boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime >=0;
+				boolean timeTobetCQSSC = CQSSCremainTime <= betRemainTime && CQSSCremainTime > 1;
+				boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime > 1;
 
 
 				//每盘拿一次赔率数据
-				if(!timeTobetCQSSC && !timeTobetBJSC && (CQSSCremainTime <= 90*1000) && getCQSSCOddsData == false){
-					
-					dsnHttp.getCQSSCoddsData();
+				if(!timeTobetCQSSC && !timeTobetBJSC && (CQSSCremainTime <= 90*1000) && CQSSCremainTime > 0 && getCQSSCOddsData == false){
+					String odds = dsnHttp.getCQSSCoddsData();
 					getCQSSCOddsData = true;
 					
 				}
 				
-				if(!timeTobetCQSSC && !timeTobetBJSC && (BJSCremainTime <= 90*1000) && getBJSCOddsData == false){
-					
-					dsnHttp.getBJSCoddsData();
+				if(!timeTobetCQSSC && !timeTobetBJSC && (BJSCremainTime <= 90*1000) && BJSCremainTime > 0 && getBJSCOddsData == false){
+					String odds = dsnHttp.getBJSCoddsData();
 					getBJSCOddsData = true;
 					
 				}
@@ -65,22 +86,30 @@ class BetThread extends Thread{
 
 					String[] betCQSSCData = null;
 					
-					while((betCQSSCData = DsnProxyGrab.getCQSSCdata()) == null){
-						
-					}					
-
+					for(int i = 0; i < 4; i++) {
+						if((betCQSSCData = DsnProxyGrab.getCQSSCdata()) == null){
+							Thread.currentThread().sleep(1*1000);
+						}
+						else {
+							break;
+						}
+					}
 					
-					if(betCQSSCData[0].equals(dsnHttp.getCQSSCdrawNumber())){
+					if(betCQSSCData == null) {
+						System.out.println("下单失败,未获取到下单数据");
+					} else if(betCQSSCData != null &&betCQSSCData[0].equals(dsnHttp.getCQSSCdrawNumber())) {
 						
 						String[] betsData = {betCQSSCData[1]};
 						
-						autoBetSuccess = dsnHttp.doBetCQSSC(betsData, betCQSSCPercent, betOppositeCQSSC);
-						
-						if(autoBetSuccess == true)
-							getCQSSCOddsData = false;
-						
 						System.out.println("下单数据：");
 						System.out.println(betCQSSCData[1]);
+						
+						autoBetSuccess = dsnHttp.doBetCQSSC(betsData, betCQSSCPercent, betOppositeCQSSC, betCQSSCData[2]);
+						
+						if(autoBetSuccess == true) {
+							getCQSSCOddsData = false;
+						}
+						
 					}
 					
 					
@@ -89,23 +118,30 @@ class BetThread extends Thread{
 				
 				if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){
 					
-					String[] betBJSCData;
+					String[] betBJSCData = null;
 					
-					while((betBJSCData = DsnProxyGrab.getBJSCdata()) == null){
-						
-					}	
-
-					if(betBJSCData[0].equals(dsnHttp.getBJSCdrawNumber())){
+					for(int i = 0; i < 4; i++) {
+						if((betBJSCData = DsnProxyGrab.getBJSCdata()) == null) {
+							Thread.currentThread().sleep(1*1000);
+						}else {
+							break;
+						}
+					}
+					
+					if(betBJSCData == null) {
+						System.out.println("未获取到下单数据");
+					} else if(betBJSCData[0].equals(dsnHttp.getBJSCdrawNumber())){
 						String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
-						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC);
-						
-						if(autoBetSuccess == true)
-							getBJSCOddsData = false;
 						
 						System.out.println("下单数据：");
 						System.out.println(betBJSCData[1]);
 						System.out.println(betBJSCData[2]);
 						System.out.println(betBJSCData[3]);
+						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
+						
+						if(autoBetSuccess == true) {
+							getBJSCOddsData = false;
+						}
 					}
 
 				}
@@ -125,6 +161,7 @@ class BetThread extends Thread{
 					if(littleTime > 0 && littleTime <= (almostTime - betRemainTime))
 						sleepTime = littleTime;
 				}
+
 				Thread.currentThread().sleep(sleepTime);
 
 				

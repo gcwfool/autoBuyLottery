@@ -1,6 +1,6 @@
 class GrabThread extends Thread{
 	long almostTime = 45*1000;  //进入加速时间
-	long sleepTime = 7*1000;	//平时睡眠时间
+	long sleepTime = 9*1000;	//平时睡眠时间
     
     boolean grabCQSSC = false;
     boolean grabBJSC = false;
@@ -51,6 +51,9 @@ class GrabThread extends Thread{
 						if(!inGrabTime) {
 							CQSSCremainTime = -1;
 							isCQSSCclose = true;
+							grabCQSSC = false;
+							gwCQSSC.resetData();
+							gwCQSSC.setRemainTime(0);
 							break;
 						}
 						if(!DsnProxyGrab.login()) {
@@ -71,7 +74,7 @@ class GrabThread extends Thread{
 							System.out.println("[距离重庆时时彩封盘时间为]:" + CQSSCremainTime/1000);
 						}
 						if(CQSSCremainTime < almostTime) {
-							sleepTime = 3*1000;
+							sleepTime = 4*1000;
 							requestTime = false;
 						}
 						
@@ -80,7 +83,7 @@ class GrabThread extends Thread{
 							gwCQSSC.setCloseText(true);
 							isCQSSCclose = true;
 							requestTime = true;
-							sleepTime = 7*1000;
+							sleepTime = 9*1000;
 							DsnProxyGrab.disableCQSSCData();
 							continue;
 						}
@@ -111,6 +114,9 @@ class GrabThread extends Thread{
 						if(!inGrabTime) {
 							BJSCremainTime = -1;
 							isBJSCclose = true;
+							grabBJSC = false;
+							gwBJSC.resetData();
+							gwBJSC.setRemainTime(0);
 							break;
 						}
 						if(!DsnProxyGrab.login()) {
@@ -141,7 +147,7 @@ class GrabThread extends Thread{
 							gwBJSC.setCloseText(true);
 							isBJSCclose = true;
 							requestTime = true;
-							sleepTime = 7*1000;
+							sleepTime = 9*1000;
 							DsnProxyGrab.disableBJSCData();
 							continue;
 						}
@@ -162,7 +168,7 @@ class GrabThread extends Thread{
 					}
 					
 					if(CQSSCremainTime < almostTime) {
-						DsnProxyGrab.setCQSSCdata(CQSSCTime[1], data);
+						DsnProxyGrab.setCQSSCdata(CQSSCTime[1], data, Long.toString(gwCQSSC.getRemainTime()/1000));
 					}
 					String [] datas = {data};
 					gwCQSSC.setData(datas);
@@ -196,7 +202,7 @@ class GrabThread extends Thread{
 					
 					String [] data = {dataGY, dataSSWL, dataQBJS};
 					if(BJSCremainTime < almostTime) {
-						DsnProxyGrab.setBJSCdata(BJSCTime[1], data);
+						DsnProxyGrab.setBJSCdata(BJSCTime[1], data, Long.toString(gwBJSC.getRemainTime()/1000));
 					}
 					gwBJSC.setData(data);
 				}
