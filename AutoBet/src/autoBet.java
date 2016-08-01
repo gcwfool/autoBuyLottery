@@ -43,7 +43,7 @@ public class autoBet{
 	public static Label labelTotalBets;
 	public static Label labelSuccessBets;
 	public static Label labelFailBets;
-	private GrabThread grabThread;
+	public GrabThread grabThread;
 	
 	
 	public static void main(String[] args) throws Exception {
@@ -195,6 +195,7 @@ public class autoBet{
 		
 		textFieldBetTime = new TextField();
 		textFieldBetTime.setSize(30, 25);
+		textFieldBetTime.setText("12");
 		textFieldBetTime.setLocation(DsnProxyX + 65, DsnProxyY + 150);
 		
 		

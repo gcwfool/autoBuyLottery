@@ -18,6 +18,8 @@ public class BetCQSSCListener implements ActionListener
 			return;
 		}
 		
+		ab.grabThread.startGrabCQSSC();
+		
 		String s = ab.textFieldCQSSCBetPercent.getText();
 		
 		if(Common.isNum(s)){

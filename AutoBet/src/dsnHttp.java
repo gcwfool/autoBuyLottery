@@ -35,6 +35,7 @@ import org.apache.http.entity.StringEntity;
 
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,13 +56,16 @@ public class dsnHttp {
     
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
+        requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(9*1000).setConnectionRequestTimeout(9*1000).setSocketTimeout(9*1000).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
     
     //这个变量用来存储
+    static String strCookies = "";
     static String cookieCfduid = "";
+    static String cookieb18 = "";
     static String cookie2ae = "";
     static String cookiedefaultLT = "";
     static String cookiesb18 = "";
@@ -74,6 +78,9 @@ public class dsnHttp {
     static String BJSCdrawNumber = "";
     static String previousCQSSCBetNumber = "";
     static String previousBJSCBetNumber = "";
+    
+    static boolean previousCQSSCBetResult = false;
+    static boolean previousBJSCBetResult = false;
     
     
     static String ADDRESS = "";
@@ -149,16 +156,19 @@ public class dsnHttp {
     public static boolean loginToDsn(){
   	
     	String loginURI = "";
-    	loginURI = "/login";
+    	loginURI = "/login?dcwpf0dc4=" + System.currentTimeMillis();
     	
     	loginURI = ADDRESS + loginURI;
     	
     	//String code = doGetLoginPage(loginURI);
-    	String loginPage = doGet(loginURI, "", "");
+    	String loginPage = doGet(loginURI, cookieCfduid, ADDRESS+"/login");
+    	
     	//System.out.println(loginPage);
     	
         if(loginPage != null) {
-        	//cookieuid = strCookies;
+        	if(strCookies.indexOf("__cfduid") != -1) {
+        		cookieCfduid = strCookies;
+        	}
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
@@ -189,6 +199,10 @@ public class dsnHttp {
 				if(location != null && location.indexOf("agreement?_") > 0) {
 		
 					if(doGet(location, cookieCfduid, "") != null){
+						if(strCookies.indexOf("b1845c0da5f1") != -1) {
+							cookieb18 = strCookies; 
+							System.out.println("cookies: " + cookieCfduid + cookieb18);
+			        	}
 						return true;
 					}
 				}
@@ -256,7 +270,7 @@ public class dsnHttp {
         String getPeriodUrl = host + "/member/period?lottery=CQSSC&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
-        
+        System.out.println(cookieb18 + "defaultLT=CQSSC;" + cookieCfduid);
         response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         
         if(response == null)
@@ -278,6 +292,7 @@ public class dsnHttp {
         }
         catch(Exception e){
         	autoBet.outputMessage.append("获取迪斯尼时间错误！");
+        	System.out.println("getCQSSCRemainTime()获取时间异常" + response);
         	return System.currentTimeMillis();
         }
        
@@ -336,6 +351,7 @@ public class dsnHttp {
         }
         catch(Exception e){
         	autoBet.outputMessage.append("获取迪斯尼时间错误！");
+        	System.out.println("getBJSCRemainTime()获取时间异常" + response);
         	return System.currentTimeMillis();
         }
  
@@ -569,7 +585,7 @@ public class dsnHttp {
        	
         String jsonParam = "";
         
-        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber)) //之前如果已经下过单就直接返回
+        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber) && previousCQSSCBetResult == true) //之前如果已经下过单并且成功下单就直接返回
         	return false;
         
         
@@ -577,25 +593,32 @@ public class dsnHttp {
         if( CQSSCdrawNumber != null){
         	
         	//System.out.printf("下注重庆时时彩第%s期\n",CQSSCdrawNumber);
-        	jsonParam = constructBetsData(betData, percent, BetType.CQSSC, opposite);
-        	
         	String outputStr = "下注重庆时时彩第" + CQSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputMessage.append(outputStr);
-
+        	
+        	if(isEmptyData(betData, BetType.CQSSC)) {
+        		outputStr = "代理无人投注\n\n";
+        		autoBet.outputMessage.append(outputStr);
+        		return false;
+        	}
+        	
+        	jsonParam = constructBetsData(betData, percent, BetType.CQSSC, opposite);
+        
         	outputBetsDetails(jsonParam, BetType.CQSSC);
         	
         	
         	System.out.println(jsonParam);
         	
         	String response = "";
-        	
-        	previousCQSSCBetNumber = CQSSCdrawNumber;
-        	
+
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
         	System.out.println(response);
         	
         	boolean result = parseBetResult(response);
+        	
+        	previousCQSSCBetNumber = CQSSCdrawNumber;
+        	previousCQSSCBetResult = result;
         	
         	if(result == true) {
 				successTimes++;
@@ -621,7 +644,7 @@ public class dsnHttp {
        	
         String jsonParam = "";
         
-        if(previousBJSCBetNumber.equals(BJSCdrawNumber)) //之前如果已经下过单就直接返回
+        if(previousBJSCBetNumber.equals(BJSCdrawNumber) && previousBJSCBetResult == true) //之前如果已经下过单并且成功下单就直接返回
         	return false;
         
         
@@ -629,23 +652,30 @@ public class dsnHttp {
         if( BJSCdrawNumber != null){
         	
         	//System.out.printf("下注北京赛车第%s期\n",BJSCdrawNumber);
-        	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
-        	
         	String outputStr = "下注北京赛车第" + BJSCdrawNumber + "期\n"  + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputMessage.append(outputStr);
+        	if(isEmptyData(betData, BetType.BJSC)) {
+        		outputStr = "代理无人投注\n\n";
+        		autoBet.outputMessage.append(outputStr);
+        		return false;
+        	}
+        	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
+        	        	
         	outputBetsDetails(jsonParam, BetType.BJSC);
         	
         	System.out.println(jsonParam);
         	
-        	String response = "";
-        	
-        	previousBJSCBetNumber = BJSCdrawNumber;
+        	String response = "";  	
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
 
         	System.out.println(response);
         	
         	boolean result = parseBetResult(response);
+        	
+        	previousBJSCBetNumber = BJSCdrawNumber;
+        	previousBJSCBetResult = result;
+        	
         	
         	if(result == true) {
 				successTimes++;
@@ -750,7 +780,7 @@ public class dsnHttp {
     		
     		
             	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
-            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);        	
+            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
 
         	
 	        	for(int j = 0; j < gamesGrabData.length(); j++){
@@ -899,27 +929,23 @@ public class dsnHttp {
     		autoBet.outputMessage.append("构造下单数据错误！\n");
     		return "";
     	}
-    	
-
-    	
-    	return res;
-    	
-    	
-
-    	
+   	
+    	return res;	
     }
 
 
     
 	public static String setCookie(CloseableHttpResponse httpResponse)
 	{
-		System.out.println("----setCookieStore");
+		strCookies = "";
+		//System.out.println("----setCookieStore");
 		Header headers[] = httpResponse.getHeaders("Set-Cookie");
 		if (headers == null || headers.length==0)
 		{
-			System.out.println("----there are no cookies");
+			//System.out.println("----there are no cookies");
 			return null;
 		}
+
 		String cookie = "";
 		for (int i = 0; i < headers.length; i++) {
 			cookie += headers[i].getValue();
@@ -930,18 +956,16 @@ public class dsnHttp {
 		}
 		String cookies[] = cookie.split(";");
 		
-		String strcookies = "";
-		
 		for (String c : cookies)
 		{
 			if(c.indexOf("path=") != -1 || c.indexOf("expires=") != -1 || c.indexOf("domain=") != -1 || c.indexOf("HttpOnly") != -1)
 				continue;
-			strcookies += c;
-			strcookies += ";";
+			strCookies += c;
+			strCookies += ";";
 		}
-		System.out.println("----setCookieStore success");
+		//System.out.println("----setCookieStore success");
 
-		return strcookies;
+		return strCookies;
 	}
     
 
@@ -977,7 +1001,8 @@ public class dsnHttp {
             CloseableHttpResponse response = httpclient.execute(httppost);
             try {
                 // 打印响应状态    
-            	
+            	setCookie(response);
+            	//System.out.println("设置cookie:" + strCookies);
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
             		String location = response.getFirstHeader("Location").getValue();
             		System.out.println(response.getStatusLine());
@@ -1013,7 +1038,9 @@ public class dsnHttp {
             // 创建httpget.    
             HttpGet httpget = new HttpGet(url);
             
-            //httpget.addHeader("Cookie",cookies);
+            if(cookies != "") {
+            	httpget.addHeader("Cookie",cookies);
+            }
             httpget.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
             httpget.addHeader("Accept-Language","Accept-Language: zh-CN,zh;q=0.8");
             httpget.addHeader("Connection","keep-alive");
@@ -1035,13 +1062,20 @@ public class dsnHttp {
             System.out.println(response.getStatusLine());
             
             try{
+            	setCookie(response);  	
+            	//System.out.println("设置cookie:" + strCookies);
+            	
+            	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
+             	   return response.getFirstHeader("Location").getValue();
+                }
                 HttpEntity entity = response.getEntity(); 
                 
                 String res = EntityUtils.toString(entity);
 
 
                 
-                if(res != null && res.length() > 0 ){            	
+                if(res != null && res.length() > 0 ){     
+                	System.out.println(res);
                     return res;
                 }
             }finally{
@@ -1064,7 +1098,32 @@ public class dsnHttp {
         return null;
     }
     
-    
+    public static boolean isEmptyData(String[] data, BetType betType) {
+    	try {
+	    	if(betType == BetType.CQSSC) {
+	    		JSONArray cqsscLMGrabData = new JSONArray(data[0]);        	
+	    		JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+	    		if(gamesGrabData.length() == 0) {
+	    			return true;
+	    		}
+	    		else {
+	    			return false;
+	    		}
+	    	} else {
+	    		for(int i = 0; i < 3; i++) {
+		    		JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
+		    		JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+		    		if(gamesGrabData.length() > 0) {
+		    			return false;
+		    		}
+	    		}
+	    		return true;
+	    	}
+	    } catch(Exception e){
+	    	autoBet.outputMessage.append("isEmptyData()构造下单数据错误！\n");
+	    	return true;
+	    }
+    }
 
     
     
@@ -1128,7 +1187,7 @@ public class dsnHttp {
         try {
        	 CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
        	 try {
-       		 setCookie(response);
+       		    setCookie(response);
                 // 打印响应状态    
                 System.out.println(response.getStatusLine()); 
                 System.out.println("------------------------------------");

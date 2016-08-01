@@ -47,7 +47,7 @@ class BetThread extends Thread{
 					System.out.println("距离北京赛车封盘时间为:");
 					System.out.println(BJSCremainTime/1000);
 					
-					if((CQSSCremainTime > 0 && CQSSCremainTime <= almostTime) || (BJSCremainTime > 0 && BJSCremainTime <= almostTime)) {//如果将近封盘不发请求，获取本地时间
+					if((CQSSCremainTime > 0 && CQSSCremainTime <= 40*1000) || (BJSCremainTime > 0 && BJSCremainTime <= 40*1000)) {//如果将近封盘不发请求，获取本地时间
 						requestTime = false;
 					}
 					
@@ -60,7 +60,7 @@ class BetThread extends Thread{
 					System.out.println("距离北京赛车封盘时间为[local]:");
 					System.out.println(BJSCremainTime/1000);
 					
-					if((CQSSCremainTime <= 0 || CQSSCremainTime > almostTime) && (BJSCremainTime <= 0 || BJSCremainTime > almostTime)) {
+					if((CQSSCremainTime <= 0 || CQSSCremainTime > 40*1000) && (BJSCremainTime <= 0 || BJSCremainTime > 40*1000)) {
 						requestTime = true;
 					}
 				}

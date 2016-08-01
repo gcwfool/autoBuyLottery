@@ -219,7 +219,7 @@ public class DsnProxyGrab {
     public static String doGet(String url, String cookies) { 
         try {  
            // ´´½¨httpget.    
-        	System.out.println(cookies); 
+           //System.out.println(cookies); 
            HttpGet httpget = new HttpGet(url);
            
            httpget.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
@@ -668,7 +668,7 @@ public class DsnProxyGrab {
           int currentMinutes = date.getMinutes();
           int currentSeconds = date.getSeconds();
           
-          if(currentHour >=9 && currentHour <= 24){
+          if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 59)){
           		return true;
           }
            

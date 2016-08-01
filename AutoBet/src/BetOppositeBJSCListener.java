@@ -18,6 +18,8 @@ public class BetOppositeBJSCListener implements ActionListener
 			return;
 		}
 		
+		ab.grabThread.startGrabBJSC();
+		
 		String s = ab.textFieldBJSCBetPercent.getText();
 		
 		if(Common.isNum(s)){
