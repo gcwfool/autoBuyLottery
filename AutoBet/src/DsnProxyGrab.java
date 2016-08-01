@@ -279,6 +279,7 @@ public class DsnProxyGrab {
     }
     
     public static String getPicNum(String picUri) {
+    	try {
     	 HttpGet httpget = new HttpGet(picUri);
          httpget.addHeader("Connection","keep-alive");
          if(strCookies != ""){
@@ -289,7 +290,6 @@ public class DsnProxyGrab {
          System.out.println("executing request " + httpget.getURI()); 
         
          // ÷¥––get«Î«Û.    
-         try {
         	 CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
         	 try {
         		 setCookie(response);

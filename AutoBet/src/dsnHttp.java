@@ -1176,16 +1176,17 @@ public class dsnHttp {
     
     
     public static String getPicNum(String picUri) {
-   	 HttpGet httpget = new HttpGet(picUri);
-        httpget.addHeader("Connection","keep-alive");
-
-        httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 "
-        					+ "(KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
-        System.out.println("executing request " + httpget.getURI()); 
+    	try {
+	   	    HttpGet httpget = new HttpGet(picUri);
+	        httpget.addHeader("Connection","keep-alive");
+	
+	        httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 "
+	        					+ "(KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
+	        System.out.println("executing request " + httpget.getURI()); 
        
-        // 执行get请求.    
-        try {
-       	 CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
+	        // 执行get请求.    
+        
+	        CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
        	 try {
        		    setCookie(response);
                 // 打印响应状态    
