@@ -61,6 +61,15 @@ class GrabThread extends Thread{
 						
 					}
 					while(CQSSCremainTime > 10*60*1000) {//获取时间失败
+						if(!DsnProxyGrab.isInCQSSCgrabTime()) {
+							CQSSCremainTime = -1;
+							isCQSSCclose = true;
+							gwCQSSC.resetData();
+							gwCQSSC.setRemainTime(0);
+							DsnProxyGrab.disableCQSSCData();
+							inCQSSCgrabTime = false;
+							break;
+						}
 						if(!DsnProxyGrab.login()) {
 							//todo
 							return;
@@ -125,6 +134,15 @@ class GrabThread extends Thread{
 						}
 					}
 					while(BJSCremainTime > 10*60*1000) {//获取时间失败
+						if(!DsnProxyGrab.isInBJSCgrabTime()) {
+							BJSCremainTime = -1;
+							isBJSCclose = true;
+							gwBJSC.resetData();
+							gwBJSC.setRemainTime(0);
+							DsnProxyGrab.disableBJSCData();
+							inBJSCgrabTime = false;
+							break;
+						}
 						if(!DsnProxyGrab.login()) {
 							//todo
 							return;
