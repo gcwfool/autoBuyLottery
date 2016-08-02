@@ -8,6 +8,8 @@ class GrabThread extends Thread{
     boolean isBJSCclose = false;
     boolean isNeedLogin = false;
     boolean requestTime = true;
+    boolean inCQSSCgrabTime = true;
+    boolean inBJSCgrabTime = true;
     GrabCQSSCwindow gwCQSSC;
     GrabBJSCwindow gwBJSC;
     public GrabThread(GrabCQSSCwindow gwCQSSC, GrabBJSCwindow gwBJSC) {
@@ -30,8 +32,20 @@ class GrabThread extends Thread{
 				}
 				long CQSSCremainTime = 0;
 				long BJSCremainTime = 0;
-				if(grabCQSSC && DsnProxyGrab.isInCQSSCgrabTime()) {
-					boolean inGrabTime = true;
+				if(DsnProxyGrab.isInCQSSCgrabTime()) {
+						inCQSSCgrabTime = true;
+				} else {
+					if(inCQSSCgrabTime) {
+						CQSSCremainTime = -1;
+						isCQSSCclose = true;
+						gwCQSSC.resetData();
+						gwCQSSC.setRemainTime(0);
+						DsnProxyGrab.disableCQSSCData();
+						inCQSSCgrabTime = false;
+					}
+				}
+				
+				if(grabCQSSC && inCQSSCgrabTime) {
 					CQSSCremainTime = gwCQSSC.getRemainTime();
 					if(requestTime) {
 						CQSSCTime= DsnProxyGrab.getCQSSCTime();
@@ -47,15 +61,6 @@ class GrabThread extends Thread{
 						
 					}
 					while(CQSSCremainTime > 10*60*1000) {//获取时间失败
-						inGrabTime = DsnProxyGrab.isInCQSSCgrabTime();
-						if(!inGrabTime) {
-							CQSSCremainTime = -1;
-							isCQSSCclose = true;
-							gwCQSSC.resetData();
-							gwCQSSC.setRemainTime(0);
-							DsnProxyGrab.disableCQSSCData();
-							break;
-						}
 						if(!DsnProxyGrab.login()) {
 							//todo
 							return;
@@ -64,7 +69,7 @@ class GrabThread extends Thread{
 						CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
 					}
 					
-					if(CQSSCremainTime > 0 && inGrabTime) {
+					if(CQSSCremainTime > 0) {
 						if(isCQSSCclose) {
 							gwCQSSC.setCloseText(false);
 							gwCQSSC.resetData();
@@ -78,7 +83,7 @@ class GrabThread extends Thread{
 							requestTime = false;
 						}
 						
-					} else if(CQSSCremainTime <= 0 && inGrabTime){
+					} else if(CQSSCremainTime <= 0){
 						if(!isCQSSCclose) {
 							gwCQSSC.setCloseText(true);
 							isCQSSCclose = true;
@@ -89,13 +94,23 @@ class GrabThread extends Thread{
 						}
 					}
 					
-					if(inGrabTime) {
-						gwCQSSC.setDrawNumber(CQSSCTime[1]);
+					gwCQSSC.setDrawNumber(CQSSCTime[1]);
+				}
+				
+				if(DsnProxyGrab.isInBJSCgrabTime()) {
+					inBJSCgrabTime = true;
+				} else {
+					if(inBJSCgrabTime) {
+						BJSCremainTime = -1;
+						isBJSCclose = true;
+						gwBJSC.resetData();
+						gwBJSC.setRemainTime(0);
+						DsnProxyGrab.disableBJSCData();
+						inBJSCgrabTime = false;
 					}
 				}
 				
-				if(grabBJSC && DsnProxyGrab.isInBJSCgrabTime()) {
-					boolean inGrabTime = true;
+				if(grabBJSC && inBJSCgrabTime) {
 					BJSCremainTime = gwBJSC.getRemainTime();
 					if(requestTime) {
 						BJSCTime= DsnProxyGrab.getBJSCTime();
@@ -110,15 +125,6 @@ class GrabThread extends Thread{
 						}
 					}
 					while(BJSCremainTime > 10*60*1000) {//获取时间失败
-						inGrabTime = DsnProxyGrab.isInBJSCgrabTime();
-						if(!inGrabTime) {
-							BJSCremainTime = -1;
-							isBJSCclose = true;
-							gwBJSC.resetData();
-							gwBJSC.setRemainTime(0);
-							DsnProxyGrab.disableBJSCData();
-							break;
-						}
 						if(!DsnProxyGrab.login()) {
 							//todo
 							return;
@@ -127,7 +133,7 @@ class GrabThread extends Thread{
 						BJSCremainTime = Long.parseLong(BJSCTime[0]);
 					}
 					
-					if(BJSCremainTime > 0 && inGrabTime) {
+					if(BJSCremainTime > 0) {
 						if(isBJSCclose) {
 							gwBJSC.setCloseText(false);
 							gwBJSC.resetData();
@@ -142,7 +148,7 @@ class GrabThread extends Thread{
 							sleepTime = 3*1000;
 							requestTime = false;
 						}
-					}else if(BJSCremainTime <= 0 && inGrabTime){
+					}else if(BJSCremainTime <= 0){
 						if(!isBJSCclose) {
 							gwBJSC.setCloseText(true);
 							isBJSCclose = true;
@@ -153,12 +159,10 @@ class GrabThread extends Thread{
 						}
 					}
 					
-					if(inGrabTime) {
-						gwBJSC.setDrawNumber(BJSCTime[1]);
-					}
+					gwBJSC.setDrawNumber(BJSCTime[1]);
 				}			
 				
-				if(grabCQSSC && CQSSCremainTime > 3000 && !((CQSSCremainTime > almostTime) && grabBJSC && (BJSCremainTime < almostTime) && (BJSCremainTime > 0))) {
+				if(grabCQSSC && inCQSSCgrabTime && CQSSCremainTime > 3000 && !((CQSSCremainTime > almostTime) && grabBJSC && (BJSCremainTime < almostTime) && (BJSCremainTime > 0))) {
 					String data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
 					if(data == "timeout") {
 						continue;
@@ -175,7 +179,7 @@ class GrabThread extends Thread{
 					
 				}
 			    
-				if(grabBJSC && BJSCremainTime > 3000 && !((BJSCremainTime > almostTime) && grabCQSSC && (CQSSCremainTime < almostTime) && (CQSSCremainTime > 0))) {
+				if(grabBJSC && inBJSCgrabTime && BJSCremainTime > 3000 && !((BJSCremainTime > almostTime) && grabCQSSC && (CQSSCremainTime < almostTime) && (CQSSCremainTime > 0))) {
 					String dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
 					if(dataGY == "timeout") {
 						continue;
@@ -207,7 +211,7 @@ class GrabThread extends Thread{
 					gwBJSC.setData(data);
 				}
 				
-				if(grabCQSSC) {
+				if(grabCQSSC && inCQSSCgrabTime) {
 					if(DsnProxyGrab.getCQSSCdata() != null) {
 						gwCQSSC.setDataOk(true);
 					}
@@ -216,7 +220,7 @@ class GrabThread extends Thread{
 					}
 				}
 				
-				if(grabBJSC) {
+				if(grabBJSC && inBJSCgrabTime) {
 					if(DsnProxyGrab.getBJSCdata() != null) {
 						gwBJSC.setDataOk(true);
 					}
