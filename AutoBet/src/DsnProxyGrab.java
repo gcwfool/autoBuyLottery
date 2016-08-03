@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import org.apache.http.message.BasicNameValuePair;
 
-
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -152,7 +151,7 @@ public class DsnProxyGrab {
     
     public static boolean login() {    	
     	boolean res = false;
-    	for(int i = 0; i < 15; i++) {
+    	for(int i = 0; i < 10; i++) {
     		if(doLogin()) {
     			res = true;
     			break;
@@ -160,6 +159,16 @@ public class DsnProxyGrab {
     	}
     	
     	return res;
+    }
+    
+    public static void connFailLogin() {
+    	while(!doLogin()) {
+    		try {
+    			Thread.currentThread().sleep(60*1000);
+    		} catch(InterruptedException e) {
+    			//todo
+    		}
+    	}
     }
 
 

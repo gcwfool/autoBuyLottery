@@ -36,6 +36,8 @@ import org.apache.http.entity.StringEntity;
 
 
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -142,14 +144,30 @@ public class dsnHttp {
     
     public static boolean login() {    	
     	boolean res = false;
-    	for(int i = 0; i < 15; i++) {
+    	for(int i = 0; i < 10; i++) {
     		if(loginToDsn()) {
     			res = true;
     			break;
     		}
     	}
     	
-    	return res;
+    	if(res == false) {
+    		autoBet.outputMessage.append("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
+	    	while(!loginToDsn()) {
+	    		try {
+	    			Thread.currentThread().sleep(60*1000);
+	    		} catch(InterruptedException e) {
+	    			//todo
+	    		}
+	    	}
+	    	autoBet.outputMessage.append("会员" + ACCOUNT + "重新登录成功\n");
+    	}
+    	
+    	return true;
+    }
+    
+    public static void connFailLogin() {
+    	
     }
     
     

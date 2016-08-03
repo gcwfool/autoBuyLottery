@@ -26,7 +26,15 @@ class GrabThread extends Thread{
 				if(isNeedLogin) {
 					if(!DsnProxyGrab.login()) {
 						//todo
-						return;
+						gwCQSSC.setOnlineStatus(false);
+						gwBJSC.setOnlineStatus(false);
+						DsnProxyGrab.disableCQSSCData();
+						DsnProxyGrab.disableBJSCData();
+						autoBet.outputMessage.append("代理端网络连接失败,正在重新登录....\n");
+						DsnProxyGrab.connFailLogin();
+						autoBet.outputMessage.append("代理重新登录成功\n");
+						gwCQSSC.setOnlineStatus(true);
+						gwBJSC.setOnlineStatus(true);
 					}
 					isNeedLogin = false;
 				}
@@ -72,7 +80,15 @@ class GrabThread extends Thread{
 						}
 						if(!DsnProxyGrab.login()) {
 							//todo
-							return;
+							gwCQSSC.setOnlineStatus(false);
+							gwBJSC.setOnlineStatus(false);
+							DsnProxyGrab.disableCQSSCData();
+							DsnProxyGrab.disableBJSCData();
+							autoBet.outputMessage.append("代理端网络连接失败,正在重新登录....\n");
+							DsnProxyGrab.connFailLogin();
+							autoBet.outputMessage.append("代理重新登录成功\n");
+							gwCQSSC.setOnlineStatus(true);
+							gwBJSC.setOnlineStatus(true);
 						}
 						CQSSCTime = DsnProxyGrab.getCQSSCTime();
 						CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
@@ -144,8 +160,15 @@ class GrabThread extends Thread{
 							break;
 						}
 						if(!DsnProxyGrab.login()) {
-							//todo
-							return;
+							gwCQSSC.setOnlineStatus(false);
+							gwBJSC.setOnlineStatus(false);
+							DsnProxyGrab.disableCQSSCData();
+							DsnProxyGrab.disableBJSCData();
+							autoBet.outputMessage.append("代理端网络连接失败,正在重新登录....\n");
+							DsnProxyGrab.connFailLogin();
+							autoBet.outputMessage.append("代理重新登录成功\n");
+							gwCQSSC.setOnlineStatus(true);
+							gwBJSC.setOnlineStatus(true);
 						}
 						BJSCTime = DsnProxyGrab.getBJSCTime();
 						BJSCremainTime = Long.parseLong(BJSCTime[0]);
@@ -227,24 +250,6 @@ class GrabThread extends Thread{
 						DsnProxyGrab.setBJSCdata(BJSCTime[1], data, Long.toString(gwBJSC.getRemainTime()/1000));
 					}
 					gwBJSC.setData(data);
-				}
-				
-				if(grabCQSSC && inCQSSCgrabTime) {
-					if(DsnProxyGrab.getCQSSCdata() != null) {
-						gwCQSSC.setDataOk(true);
-					}
-					else {
-						gwCQSSC.setDataOk(false);
-					}
-				}
-				
-				if(grabBJSC && inBJSCgrabTime) {
-					if(DsnProxyGrab.getBJSCdata() != null) {
-						gwBJSC.setDataOk(true);
-					}
-					else {
-						gwBJSC.setDataOk(false);
-					}
 				}
 					
 				Thread.currentThread().sleep(sleepTime);

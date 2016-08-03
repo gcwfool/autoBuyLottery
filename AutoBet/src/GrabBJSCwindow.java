@@ -493,8 +493,9 @@ public class GrabBJSCwindow extends JFrame {
         textFieldA.setEditable(false);
         JLabel labelB = new JLabel("期数: "); 
         textFieldB.setEditable(false);
-        JLabel labelC = new JLabel("数据是否可用: ");
+        JLabel labelC = new JLabel("在线状态: ");
         textFieldC.setEditable(false);
+        textFieldC.setText("正常在线");
         JLabel labelD = new JLabel("差值总额: ");
         textFieldD.setEditable(false);
         panel.add(labelA);  
@@ -568,11 +569,11 @@ public class GrabBJSCwindow extends JFrame {
     	//textFieldC.setText((time/1000 + 3) + "秒");
     }
     
-    public void setDataOk(boolean ok) {
-    	if(ok) {
-    		textFieldC.setText("可用,距封盘" + remainTime.get()/1000 + "秒");
+    public void setOnlineStatus(boolean online) {
+    	if(online) {
+    		textFieldC.setText("正常在线");
     	} else {
-    		textFieldC.setText("不可用");
+    		textFieldC.setText("网络连接断开");
     	}
     }
     
