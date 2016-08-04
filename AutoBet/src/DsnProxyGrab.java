@@ -46,6 +46,7 @@ public class DsnProxyGrab {
     private static String ADDRESS = "";
     private static String ACCOUNT = "";
     private static String PASSWORD = "";
+    private static long timeDValue = 0;  //网站时间和电脑时间的差值  网页时间 - 当前时间
     
     static {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
@@ -486,9 +487,7 @@ public class DsnProxyGrab {
     	  String getTimeUrl = host + "/time?&_=";
     	  getTimeUrl += Long.toString(System.currentTimeMillis());
 				          
-    	  response = doGet(getTimeUrl, "");
-				        
-    	  long timeDValue = 0;
+    	  response = doGet(getTimeUrl, "");				        
     	  
 //    	  if(response == "") {	
 //    		  System.out.println("get period failed");
@@ -564,8 +563,6 @@ public class DsnProxyGrab {
           getTimeUrl += Long.toString(System.currentTimeMillis());
           
           response = doGet(getTimeUrl, "");
-          
-          long timeDValue = 0;
           
 //          if(response == "") {
 //        	  System.out.println("get period failed");
@@ -658,7 +655,7 @@ public class DsnProxyGrab {
       }
       
       public static boolean isInCQSSCgrabTime() {
-    	  long time = System.currentTimeMillis();
+    	  long time = System.currentTimeMillis() + timeDValue;
     	  Date date = new Date(time);
           int currentHour = date.getHours();
           int currentMinutes = date.getMinutes();
@@ -671,13 +668,13 @@ public class DsnProxyGrab {
       }
       
       public static boolean isInBJSCgrabTime() {
-    	  long time = System.currentTimeMillis();
+    	  long time = System.currentTimeMillis() + timeDValue;
     	  Date date = new Date(time);
           int currentHour = date.getHours();
           int currentMinutes = date.getMinutes();
           int currentSeconds = date.getSeconds();
           
-          if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 59)){
+          if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
           		return true;
           }
            

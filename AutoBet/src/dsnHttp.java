@@ -394,6 +394,7 @@ public class dsnHttp {
             	
             	JSONObject betsData = new JSONObject(jsonData);
             	JSONArray gamesData = betsData.getJSONArray("bets");
+            	int totalAmout = 0;
             	
             	for(int i = 1; i <= 10 ; i++){
             		String gameDX = "DX" + Integer.toString(i);
@@ -446,6 +447,7 @@ public class dsnHttp {
     						autoBet.outputMessage.append(outputStr);
     					}
     					
+    					totalAmout += amountDX;
     				}
     				
     				if(amountDS != 0 ){
@@ -461,7 +463,7 @@ public class dsnHttp {
     						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsDS, amountDS);
     						autoBet.outputMessage.append(outputStr);
     					}
-    					
+    					totalAmout += amountDS;
     				}
     				
     				if(amountLH != 0 ){
@@ -477,12 +479,13 @@ public class dsnHttp {
     						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsLH, amountLH);
     						autoBet.outputMessage.append(outputStr);
     					}
+    					totalAmout += amountLH;
     					
     				}
             		
     				autoBet.outputMessage.append("\n");
             	}
-
+            	autoBet.outputMessage.append("下单总金额:" + totalAmout + "\n");
         	}
         	
         	
@@ -490,6 +493,7 @@ public class dsnHttp {
             	
             	JSONObject betsData = new JSONObject(jsonData);
             	JSONArray gamesData = betsData.getJSONArray("bets");
+            	int totalAmount = 0;
             	
             	for(int i = 1; i <= 5 ; i++){
             		String gameDX = "DX" + Integer.toString(i);
@@ -522,13 +526,13 @@ public class dsnHttp {
     				if(amountDX != 0 ){
     						outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDX, amountDX);
     						autoBet.outputMessage.append(outputStr);
-
+    						totalAmount += amountDX;
     				}
     				
     				if(amountDS != 0 ){
     					outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDS, amountDS);
     					autoBet.outputMessage.append(outputStr);
-
+    					totalAmount += amountDS;
     				}
     				
     				autoBet.outputMessage.append("\n");
@@ -575,19 +579,23 @@ public class dsnHttp {
     			if(amountZDX != 0){
     				outputStr  = String.format("总%s: %d,",  contentsZDX, amountZDX);
     				autoBet.outputMessage.append(outputStr);
+    				totalAmount += amountZDX;
     			}
     			
     			if(amountZDS != 0){
     				outputStr  = String.format("总%s: %d,",  contentsZDS, amountZDS);
     				autoBet.outputMessage.append(outputStr);
+    				totalAmount += amountZDS;
     			}
     			
     			if(amountLH != 0){
     				outputStr  = String.format("%s: %d,",  contentsLH, amountLH);
     				autoBet.outputMessage.append(outputStr);
+    				totalAmount += amountLH;
     			}
     			
     			autoBet.outputMessage.append("\n");
+    			autoBet.outputMessage.append("下单总金额:" + totalAmount +"\n");
         	}
     	}catch(Exception e){
     		e.printStackTrace();
@@ -621,9 +629,14 @@ public class dsnHttp {
         	}
         	
         	jsonParam = constructBetsData(betData, percent, BetType.CQSSC, opposite);
-        
-        	outputBetsDetails(jsonParam, BetType.CQSSC);
         	
+        	if(jsonParam == "") {
+        		outputStr = "代理无人投注\n\n";
+        		autoBet.outputMessage.append(outputStr);
+        		return false;
+        	}
+        
+        	outputBetsDetails(jsonParam, BetType.CQSSC);	
         	
         	System.out.println(jsonParam);
         	
@@ -677,7 +690,14 @@ public class dsnHttp {
         		autoBet.outputMessage.append(outputStr);
         		return false;
         	}
+        	
         	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
+        	
+        	if(jsonParam == "") {
+        		outputStr = "代理无人投注\n\n";
+        		autoBet.outputMessage.append(outputStr);
+        		return false;
+        	}
         	        	
         	outputBetsDetails(jsonParam, BetType.BJSC);
         	
@@ -732,8 +752,8 @@ public class dsnHttp {
     		case 0:
     			JSONObject account = betResult.getJSONObject("account");
     			double balance = account.getDouble("balance");
-    			int betting = account.getInt("betting");
-    			outputStr  = String.format("迪斯尼下单成功！ 下单金额：%d, 账户余额:%f\n\n", betting, balance);
+    			//int betting = account.getInt("betting");
+    			outputStr  = String.format("迪斯尼下单成功！ 账户余额:%f\n\n", balance);
     			autoBet.outputMessage.append(outputStr);
     			//System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
     			return true;
@@ -840,10 +860,7 @@ public class dsnHttp {
 	        			}
 	        		}
 	        		
-	        		parsedGames.add(game);
-
-	    			
-	    			
+	        		parsedGames.add(game);    			
 	    			
 	    			//只下赔率二以下的
 	        		if(odds < 2.5 && amount >0){
@@ -918,9 +935,9 @@ public class dsnHttp {
 	    	
 	
 	    	
-	    	
-	    	
-	    	
+	    	if(gamesArray.length() == 0) {
+	    		return "";
+	    	}
 	    	
 	    	JSONObject betsObj = new JSONObject();
 	    	
@@ -939,7 +956,6 @@ public class dsnHttp {
 	        	betsObj.put("lottery", "BJPK10");
 	
 	    	}
-	
 	    	
 	    	res = betsObj.toString();
     	

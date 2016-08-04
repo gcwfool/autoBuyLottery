@@ -65,19 +65,27 @@ class BetThread extends Thread{
 					}
 				}
 				
+				if(CQSSCremainTime < 0) {
+					getCQSSCOddsData = false;
+				}
+				
+				if(BJSCremainTime < 0) {
+					getBJSCOddsData = false;
+				}
+				
 				boolean timeTobetCQSSC = CQSSCremainTime <= betRemainTime && CQSSCremainTime > 1;
 				boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime > 1;
 
 
 				//每盘拿一次赔率数据
 				if(!timeTobetCQSSC && !timeTobetBJSC && (CQSSCremainTime <= 90*1000) && CQSSCremainTime > 0 && getCQSSCOddsData == false){
-					String odds = dsnHttp.getCQSSCoddsData();
+					dsnHttp.getCQSSCoddsData();
 					getCQSSCOddsData = true;
 					
 				}
 				
 				if(!timeTobetCQSSC && !timeTobetBJSC && (BJSCremainTime <= 90*1000) && BJSCremainTime > 0 && getBJSCOddsData == false){
-					String odds = dsnHttp.getBJSCoddsData();
+					dsnHttp.getBJSCoddsData();
 					getBJSCOddsData = true;
 					
 				}
@@ -105,10 +113,6 @@ class BetThread extends Thread{
 						System.out.println(betCQSSCData[1]);
 						
 						autoBetSuccess = dsnHttp.doBetCQSSC(betsData, betCQSSCPercent, betOppositeCQSSC, betCQSSCData[2]);
-						
-						if(autoBetSuccess == true) {
-							getCQSSCOddsData = false;
-						}
 						
 					}
 					
@@ -138,10 +142,7 @@ class BetThread extends Thread{
 						System.out.println(betBJSCData[2]);
 						System.out.println(betBJSCData[3]);
 						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
-						
-						if(autoBetSuccess == true) {
-							getBJSCOddsData = false;
-						}
+					
 					}
 
 				}
