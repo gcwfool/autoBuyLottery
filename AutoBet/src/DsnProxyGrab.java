@@ -124,7 +124,7 @@ public class DsnProxyGrab {
         		params.add(new BasicNameValuePair("code", rmNum));
         		String location = doPost(ADDRESS + "/login", params, strCookies, "");
         		
-        		System.out.println("location: " + location); 
+        		//System.out.println("location: " + location); 
 
             
         		if(location.indexOf("index?") > 0) {
@@ -254,14 +254,16 @@ public class DsnProxyGrab {
                // 获取响应实体    
         	   setCookie(response);
                HttpEntity entity = response.getEntity(); 
-               System.out.println("--------------------------------------"); 
+               //System.out.println("--------------------------------------"); 
                
                String statusLine = response.getStatusLine().toString();
-               System.out.println(statusLine); 
+               if(statusLine.indexOf("200 OK") == -1) {
+            	   System.out.println(statusLine); 
+               }
                if(statusLine.indexOf("302 Found") > 0) {
             	   return response.getFirstHeader("Location").getValue();
                }
-               System.out.println("------------------------------------"); 
+               //System.out.println("------------------------------------"); 
                if (entity != null) {
 	            	String entityStr = EntityUtils.toString(entity);
 	            	//System.out.println("entityStr: " + entityStr);
@@ -305,7 +307,7 @@ public class DsnProxyGrab {
         		 setCookie(response);
                  // 打印响应状态    
                  System.out.println(response.getStatusLine()); 
-                 System.out.println("------------------------------------");
+                 //System.out.println("------------------------------------");
                  if(response.getStatusLine().toString().indexOf("200 OK") < 0) {
                 	 return "";
                  }

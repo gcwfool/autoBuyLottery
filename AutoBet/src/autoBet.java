@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;   
 import java.util.Date;  
 import java.io.File;
+import javax.swing.JOptionPane;
 
 enum BetType{
 	CQSSC,
@@ -480,7 +481,11 @@ public class autoBet{
         (
                 new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
-                        System.exit(0);
+                    	int n = JOptionPane.showConfirmDialog(null, "确认退出吗?", "退出程序", JOptionPane.YES_NO_OPTION);  
+                        if (n == JOptionPane.YES_OPTION) {
+                        	System.out.println(outputMessage.getText()); //退出时保存界面输出到log
+                        	System.exit(0);  
+                        }  
                     }
                 }
         );

@@ -25,19 +25,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -288,7 +275,7 @@ public class dsnHttp {
         String getPeriodUrl = host + "/member/period?lottery=CQSSC&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
-        System.out.println(cookieb18 + "defaultLT=CQSSC;" + cookieCfduid);
+        //System.out.println(cookieb18 + "defaultLT=CQSSC;" + cookieCfduid);
         response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         
         if(response == null)
@@ -1093,7 +1080,11 @@ public class dsnHttp {
            
             // Ö´ĞĞgetÇëÇó.    
             CloseableHttpResponse response = httpclient.execute(httpget); 
-            System.out.println(response.getStatusLine());
+            
+            String statusLine = response.getStatusLine().toString();   
+            if(statusLine.indexOf("200 OK") == -1) {
+         	   System.out.println(statusLine); 
+            }
             
             try{
             	setCookie(response);  	
@@ -1105,11 +1096,9 @@ public class dsnHttp {
                 HttpEntity entity = response.getEntity(); 
                 
                 String res = EntityUtils.toString(entity);
-
-
                 
                 if(res != null && res.length() > 0 ){     
-                	System.out.println(res);
+                	//System.out.println(res);
                     return res;
                 }
             }finally{
