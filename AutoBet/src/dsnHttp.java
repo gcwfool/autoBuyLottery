@@ -46,7 +46,7 @@ public class dsnHttp {
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
         requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(9*1000).setConnectionRequestTimeout(9*1000).setSocketTimeout(9*1000).build();//设置超时
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
@@ -226,7 +226,7 @@ public class dsnHttp {
         int currentMinutes = date.getMinutes();
         int currentSeconds = date.getSeconds();
         
-        if(currentHour >=9 && currentHour <= 24){
+        if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
         	return true;
         }
         
