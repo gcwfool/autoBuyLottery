@@ -16,6 +16,7 @@ public class autoBet{
 	
 	public boolean loginToProxySuccess = false;
 	public boolean loginToDSNMemberSuccess = false;
+	public boolean loginToWeiCaiMemberSuccess = false;
 	public boolean inBet = false;
 
 	
@@ -44,6 +45,28 @@ public class autoBet{
 	public Button btnOppositeBJSC;
 	public Button btnStopBetBJSC;
 	
+	//微彩会员界面
+	public TextField textFieldWeiCaiMemberAddress;
+	public TextField textFieldWeiCaiMemberAccount;
+	public TextField textFieldWeiCaiMemberPassword;
+	public TextField textFieldCQSSCBetWeiCaiPercent;
+	public TextField textFieldBJSCBetWeiCaiPercent;
+
+	
+	public Button btnBetWeiCaiCQSSC;
+	public Button btnOppositeBetWeiCaiCQSSC;
+	public Button btnStopBetWeiCaiCQSSC;
+	public Button btnBetWeiCaiBJSC;
+	public Button btnOppositeWeiCaiBJSC;
+	public Button btnStopBetWeiCaiBJSC;
+	
+	public static Label labelWeiCaiTotalBets;
+	public static Label labelWeiCaiSuccessBets;
+	public static Label labelWeiCaiFailBets;
+	
+	
+	
+	
 	
 	public static TextArea outputMessage;
 	public static Label labelTotalBets;
@@ -54,6 +77,9 @@ public class autoBet{
 	
 	
 	public static void main(String[] args) throws Exception {
+		
+
+		
 		
 	    try {  
 	    	//生成路径  
@@ -77,6 +103,8 @@ public class autoBet{
 		ConfigWriter.open("common.config");
 		
 		new autoBet().launchFrame();
+		
+
 
 	}
 	
@@ -108,6 +136,17 @@ public class autoBet{
 		btnOppositeBJSC.setEnabled(flag);
 		btnStopBetBJSC.setEnabled(flag);
 	}
+	
+	public void enableWeiCaiMemberBet(boolean flag){
+		btnBetWeiCaiCQSSC.setEnabled(false);
+		btnOppositeBetWeiCaiCQSSC.setEnabled(flag);
+		btnStopBetWeiCaiCQSSC.setEnabled(flag);
+		btnBetWeiCaiBJSC.setEnabled(false);
+		//todo
+		btnOppositeWeiCaiBJSC.setEnabled(false);
+		btnStopBetWeiCaiBJSC.setEnabled(false);
+	}
+	
 	
 	public  void launchFrame()
 	{
@@ -204,6 +243,9 @@ public class autoBet{
 				
 				if(loginToDSNMemberSuccess&& loginToProxySuccess)
 					enableDSNMemberBet(true);
+				
+				if(loginToWeiCaiMemberSuccess&& loginToProxySuccess)
+					enableWeiCaiMemberBet(true);
 				
 				outputMessage.append("登录迪士尼代理成功!\n");
 			}
@@ -393,6 +435,191 @@ public class autoBet{
 		
 		enableDSNMemberBet(false);
 
+		
+
+		//微彩会员界面
+		int WeiCaiMemberX = 1000;
+		int WeiCaiMemberY = 50;		
+		
+		
+		Label labelWeiCaiMemberLogin = new Label("微彩会员登录:");
+		labelWeiCaiMemberLogin.setSize(100, 25);
+		labelWeiCaiMemberLogin.setLocation(WeiCaiMemberX, WeiCaiMemberY);
+		
+		Label labelWeiCaiMemberAddress = new Label("网址:");
+		labelWeiCaiMemberAddress.setSize(50, 25);
+		labelWeiCaiMemberAddress.setLocation(WeiCaiMemberX, WeiCaiMemberY +30);
+		
+		
+		textFieldWeiCaiMemberAddress = new TextField();
+		textFieldWeiCaiMemberAddress.setSize(300,25);
+		textFieldWeiCaiMemberAddress.setLocation(WeiCaiMemberX + 50, WeiCaiMemberY +30);
+		textFieldWeiCaiMemberAddress.setText(ConfigReader.getweicaiBetAddress());
+		
+		Label labelWeiCaiMemberAccount = new Label("账户:");
+		labelWeiCaiMemberAccount.setSize(50, 25);
+		labelWeiCaiMemberAccount.setLocation(WeiCaiMemberX, WeiCaiMemberY +60);
+		
+		textFieldWeiCaiMemberAccount = new TextField();
+		textFieldWeiCaiMemberAccount.setSize(300,25);
+		textFieldWeiCaiMemberAccount.setLocation(WeiCaiMemberX + 50, WeiCaiMemberY +60);
+		textFieldWeiCaiMemberAccount.setText(ConfigReader.getweicaiBetAccount());	
+		
+		Label labelWeiCaiMemberPassword = new Label("密码:");
+		labelWeiCaiMemberPassword.setSize(50, 25);
+		labelWeiCaiMemberPassword.setLocation(WeiCaiMemberX, WeiCaiMemberY +90);
+		
+		textFieldWeiCaiMemberPassword = new TextField();
+		textFieldWeiCaiMemberPassword.setSize(300,25);
+		textFieldWeiCaiMemberPassword.setLocation(WeiCaiMemberX + 50, WeiCaiMemberY +90);
+		textFieldWeiCaiMemberPassword.setText(ConfigReader.getweicaiBetPassword());	
+		textFieldWeiCaiMemberPassword.setEchoChar('*');
+		
+		
+		Button btnWeiCaiMemberLogin = new Button("登录");
+		btnWeiCaiMemberLogin.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(loginToWeiCaiMemberSuccess == true)
+					return;
+				
+				String address = textFieldWeiCaiMemberAddress.getText();
+				String account = textFieldWeiCaiMemberAccount.getText();
+				String password = textFieldWeiCaiMemberPassword.getText();
+				
+				WeiCaiHttp.setLoginParams(address, account, password);
+
+				if(!WeiCaiHttp.login()) {
+					outputMessage.append("登录微彩会员失败!\n");
+					return;
+				}
+				
+				loginToWeiCaiMemberSuccess = true;
+				
+				ConfigWriter.updateWeiCaiMemberAddress(address);
+				ConfigWriter.updateWeiCaiMemberAccount(account);
+				ConfigWriter.updateWeiCaiMemberPassword(password);
+				
+				ConfigWriter.saveTofile("common.config");
+
+				if(loginToWeiCaiMemberSuccess&& loginToProxySuccess)
+					enableWeiCaiMemberBet(true);
+				
+				outputMessage.append("登录微彩会员成功!\n");
+			}
+		});
+		
+		btnWeiCaiMemberLogin.setSize(50, 25);
+		btnWeiCaiMemberLogin.setLocation(WeiCaiMemberX, WeiCaiMemberY + 120);
+		
+
+		btnBetWeiCaiCQSSC = new Button("正投重庆时时彩");
+		btnBetWeiCaiCQSSC.addActionListener(new BetWeiCaiOppositeCQSSCListener(this));
+		
+		btnBetWeiCaiCQSSC.setSize(90, 25);
+		btnBetWeiCaiCQSSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 150);
+		
+
+		Label labelWeiCaiPercent = new Label("投注比例:");
+		labelWeiCaiPercent.setSize(60, 25);
+		labelWeiCaiPercent.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 150);
+		
+		textFieldCQSSCBetWeiCaiPercent = new TextField();
+		textFieldCQSSCBetWeiCaiPercent.setSize(60, 25);
+		textFieldCQSSCBetWeiCaiPercent.setLocation(WeiCaiMemberX + 160, WeiCaiMemberY + 150);
+		
+
+		btnOppositeBetWeiCaiCQSSC = new Button("反投重庆时时彩");
+		btnOppositeBetWeiCaiCQSSC.addActionListener(new BetWeiCaiOppositeCQSSCListener(this));
+		
+		btnOppositeBetWeiCaiCQSSC.setSize(90, 25);
+		btnOppositeBetWeiCaiCQSSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 180);
+		
+		btnStopBetWeiCaiCQSSC = new Button("停止投注");
+		btnStopBetWeiCaiCQSSC.addActionListener(new StopBetWeiCaiCQSSCListener(this));
+		
+		btnStopBetWeiCaiCQSSC.setSize(90, 25);
+		btnStopBetWeiCaiCQSSC.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 180);
+		
+		
+		
+		
+		btnBetWeiCaiBJSC = new Button("正投北京赛车");
+		btnBetWeiCaiBJSC.addActionListener(new BetBJSCListener(this));
+		
+		btnBetWeiCaiBJSC.setSize(75, 25);
+		btnBetWeiCaiBJSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 210);
+
+		Label BJSClabelWeiCaiPercent = new Label("投注比例:");
+		BJSClabelWeiCaiPercent.setSize(60, 25);
+		BJSClabelWeiCaiPercent.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 210);
+		
+		textFieldBJSCBetWeiCaiPercent = new TextField();
+		textFieldBJSCBetWeiCaiPercent.setSize(60, 25);
+		textFieldBJSCBetWeiCaiPercent.setLocation(WeiCaiMemberX + 160, WeiCaiMemberY + 210);
+
+		
+		btnOppositeWeiCaiBJSC = new Button("反投北京赛车");
+		btnOppositeWeiCaiBJSC.addActionListener(new BetOppositeBJSCListener(this));
+		
+		btnOppositeWeiCaiBJSC.setSize(75, 25);
+		btnOppositeWeiCaiBJSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 240);
+		
+
+		
+		btnStopBetWeiCaiBJSC = new Button("停止投注");
+		btnStopBetWeiCaiBJSC.addActionListener(new StopBetBJSCListener(this));
+		
+		btnStopBetWeiCaiBJSC.setSize(90, 25);
+		btnStopBetWeiCaiBJSC.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 240);
+		
+		
+		
+		labelWeiCaiTotalBets = new Label();
+		labelWeiCaiTotalBets.setSize(300,25);
+		labelWeiCaiTotalBets.setLocation(WeiCaiMemberX, 400);
+		labelWeiCaiTotalBets.setText("下单次数:0");
+		
+		labelWeiCaiSuccessBets = new Label();
+		labelWeiCaiSuccessBets.setSize(300,25);
+		labelWeiCaiSuccessBets.setLocation(WeiCaiMemberX, 430);
+		labelWeiCaiSuccessBets.setText("成功次数:0");
+		
+		labelWeiCaiFailBets = new Label();
+		labelWeiCaiFailBets.setSize(300,25);
+		labelWeiCaiFailBets.setLocation(WeiCaiMemberX, 460);
+		labelWeiCaiFailBets.setText("失败次数:0");
+		
+		
+		panel.add(labelWeiCaiTotalBets);
+		panel.add(labelWeiCaiSuccessBets);
+		panel.add(labelWeiCaiFailBets);
+		
+		
+		
+		panel.add(labelWeiCaiMemberLogin);
+		panel.add(labelWeiCaiMemberAddress);
+		panel.add(textFieldWeiCaiMemberAddress);
+		panel.add(labelWeiCaiMemberAccount);
+		panel.add(textFieldWeiCaiMemberAccount);
+		panel.add(labelWeiCaiMemberPassword);
+		panel.add(textFieldWeiCaiMemberPassword);		
+		panel.add(btnWeiCaiMemberLogin);
+		
+		panel.add(btnBetWeiCaiCQSSC);
+		panel.add(labelWeiCaiPercent);
+		panel.add(btnOppositeBetWeiCaiCQSSC);
+		panel.add(btnBetWeiCaiBJSC);
+		panel.add(btnOppositeWeiCaiBJSC);
+		panel.add(BJSClabelWeiCaiPercent);
+		panel.add(textFieldCQSSCBetWeiCaiPercent);
+		panel.add(textFieldBJSCBetWeiCaiPercent);
+		panel.add(btnStopBetWeiCaiCQSSC);
+		panel.add(btnStopBetWeiCaiBJSC);
+		
+		
+		enableWeiCaiMemberBet(false);
+		
+		
 		
 		//!lin 抓取界面使用测试
 		btnStartGrabCQSSC = new Button("开始抓取重庆");

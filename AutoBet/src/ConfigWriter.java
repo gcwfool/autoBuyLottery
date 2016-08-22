@@ -151,5 +151,58 @@ public class ConfigWriter {
 		return false;
 	}
 	
+	
+	
+	
+	public static boolean updateWeiCaiMemberAddress(String address){
+		
+		try{
+	        NodeList list = document.getElementsByTagName("BETLOGIN");        
+	        Element element = (Element)list.item(0);  
+	        
+	        element.getElementsByTagName("ADDRESS").item(0).getFirstChild().setNodeValue(address);     
+	        return true;
+
+		}catch(Exception e) {   
+			e.printStackTrace();	   
+		}
+
+		return false;
+	}
+	
+	public static boolean updateWeiCaiMemberAccount(String account){
+		
+		try{
+	        NodeList list = document.getElementsByTagName("BETLOGIN");        
+	        Element element = (Element)list.item(0);  
+	        
+	        element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().setNodeValue(account);     
+	        return true;
+
+		}catch(Exception e) {   
+			e.printStackTrace();	   
+		}
+
+		return false;
+	}
+	
+	
+	public static boolean updateWeiCaiMemberPassword(String password){
+		
+		try{
+	        NodeList list = document.getElementsByTagName("BETLOGIN");        
+	        Element element = (Element)list.item(0);  
+	        
+	        element.getElementsByTagName("PASSWORD").item(0).getFirstChild().setNodeValue(password);     
+	        return true;
+
+		}catch(Exception e) {   
+			e.printStackTrace();	   
+		}
+
+		return false;
+	}
+	
+	
 }
 

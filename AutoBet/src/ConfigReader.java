@@ -15,6 +15,9 @@ public class ConfigReader {
 	static String betAddress = "";
 	static String betAccount = "";
 	static String betPassword = "";
+	static String weicaibetAddress = "";
+	static String weicaibetAccount = "";
+	static String weicaibetPassword = "";
 	static String tessPath = "";
 	
 	public static boolean read(String filename) {
@@ -48,6 +51,21 @@ public class ConfigReader {
 	              
 	        betPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
 	        System.out.println("betpassword:" + betPassword);
+	        
+	        
+	        
+	        //read weicai bet login msg
+	        list = document.getElementsByTagName("WEICAIBETLOGIN");        
+	        element = (Element)list.item(0);  
+            
+	        weicaibetAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("weicaibetaddress:" + weicaibetAddress);  
+	              
+	        weicaibetAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
+	        System.out.println("weicaibetaccount:" + weicaibetAccount);  
+	              
+	        weicaibetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("weicaibetpassword:" + weicaibetPassword);
 	        
 	        //read tesseract-ocr path
 	        list = document.getElementsByTagName("PATH");   
@@ -87,6 +105,20 @@ public class ConfigReader {
 	public static String getBetPassword() {
 		return betPassword;
 	}
+	
+	
+	public static String getweicaiBetAddress() {
+		return weicaibetAddress;
+	}
+	
+	public static String getweicaiBetAccount() {
+		return weicaibetAccount;
+	}
+	
+	public static String getweicaiBetPassword() {
+		return weicaibetPassword;
+	}
+	
 	
 	public static String getTessPath() {
 		return tessPath;
