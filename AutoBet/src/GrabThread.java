@@ -1,5 +1,5 @@
 class GrabThread extends Thread{
-	long almostTime = 45*1000;  //进入加速时间
+	long almostTime = 70*1000;  //进入加速时间
 	long sleepTime = 9*1000;	//平时睡眠时间
     
     boolean grabCQSSC = false;
