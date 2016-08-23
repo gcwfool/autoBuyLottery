@@ -18,6 +18,8 @@ public class autoBet{
 	public boolean loginToDSNMemberSuccess = false;
 	public boolean loginToWeiCaiMemberSuccess = false;
 	public boolean inBet = false;
+	
+	public boolean inBetWeiCai = false;
 
 	
 	//代理登录界面
@@ -97,7 +99,7 @@ public class autoBet{
 	    	System.setErr(ps);
 	    } catch (FileNotFoundException e) {  
 	    	e.printStackTrace();
-		}  
+		} 
 	    
 	    ConfigReader.read("common.config");		
 		ConfigWriter.open("common.config");
@@ -142,9 +144,8 @@ public class autoBet{
 		btnOppositeBetWeiCaiCQSSC.setEnabled(flag);
 		btnStopBetWeiCaiCQSSC.setEnabled(flag);
 		btnBetWeiCaiBJSC.setEnabled(false);
-		//todo
-		btnOppositeWeiCaiBJSC.setEnabled(false);
-		btnStopBetWeiCaiBJSC.setEnabled(false);
+		btnOppositeWeiCaiBJSC.setEnabled(flag);
+		btnStopBetWeiCaiBJSC.setEnabled(flag);
 	}
 	
 	
@@ -559,7 +560,7 @@ public class autoBet{
 
 		
 		btnOppositeWeiCaiBJSC = new Button("反投北京赛车");
-		btnOppositeWeiCaiBJSC.addActionListener(new BetOppositeBJSCListener(this));
+		btnOppositeWeiCaiBJSC.addActionListener(new BetWeiCaiOppositeBJSCListener(this));
 		
 		btnOppositeWeiCaiBJSC.setSize(75, 25);
 		btnOppositeWeiCaiBJSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 240);
@@ -567,7 +568,7 @@ public class autoBet{
 
 		
 		btnStopBetWeiCaiBJSC = new Button("停止投注");
-		btnStopBetWeiCaiBJSC.addActionListener(new StopBetBJSCListener(this));
+		btnStopBetWeiCaiBJSC.addActionListener(new StopBetWeiCaiBJSCListener(this));
 		
 		btnStopBetWeiCaiBJSC.setSize(90, 25);
 		btnStopBetWeiCaiBJSC.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 240);

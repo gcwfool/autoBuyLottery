@@ -32,10 +32,31 @@ public class BetWeiCaiThread extends Thread{
 				long CQSSCremainTime = 0;
 				long BJSCremainTime = 0;
 				if(requestTime) {
-					boolean success = false;					
-					for(int i = 0; i< 4; i++){
-						success = WeiCaiHttp.getCQSSCData();
-						if(success== false){
+					boolean bSuccessgetCQSSCmarketData = false;	
+					boolean bSuccessgetBJSCmarketData = false;	
+					
+					if(WeiCaiHttp.isCQSSCselectionTypeIdListEmpty() == true){
+						WeiCaiHttp.getCQSSCselectionTypeIdListData();
+					}
+					
+					if(WeiCaiHttp.isBJSCselectionTypeIdListEmpty() == true){
+						WeiCaiHttp.getBJSCselectionTypeIdListData();
+					}
+
+					
+					for(int i = 0; i< 2; i++){
+						bSuccessgetCQSSCmarketData = WeiCaiHttp.getCQSSCmarketData();
+						if(bSuccessgetCQSSCmarketData== false){
+							Thread.currentThread().sleep(1*1000);
+						}
+						else{
+							break;
+						}
+					}
+					
+					for(int i = 0; i< 2; i++){
+						bSuccessgetBJSCmarketData = WeiCaiHttp.getBJSCmarketData();
+						if(bSuccessgetBJSCmarketData== false){
 							Thread.currentThread().sleep(1*1000);
 						}
 						else{
@@ -44,7 +65,7 @@ public class BetWeiCaiThread extends Thread{
 					}
 
 
-					if(success == false){//重新登录
+					if(bSuccessgetCQSSCmarketData == false || bSuccessgetBJSCmarketData == false){//重新登录
 						WeiCaiHttp.login();
 					}
 						
@@ -129,14 +150,14 @@ public class BetWeiCaiThread extends Thread{
 					
 					if(betBJSCData == null) {
 						System.out.println("未获取到下单数据");
-					} else if(betBJSCData[0].equals(dsnHttp.getBJSCdrawNumber())){
+					} else if(betBJSCData[0].equals(WeiCaiHttp.getBJSCdrawNumber())){
 						String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
 						
 						System.out.println("下单数据：");
 						System.out.println(betBJSCData[1]);
 						System.out.println(betBJSCData[2]);
 						System.out.println(betBJSCData[3]);
-						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
+						autoBetSuccess = WeiCaiHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
 						
 						if(autoBetSuccess == true) {
 							getBJSCOddsData = false;

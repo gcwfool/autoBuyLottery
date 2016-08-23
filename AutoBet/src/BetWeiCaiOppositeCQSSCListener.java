@@ -40,7 +40,7 @@ public class BetWeiCaiOppositeCQSSCListener implements ActionListener
 		
 		autoBet.outputMessage.append(outputStr);
 		
-		if(ab.inBet == true){					
+		if(ab.inBetWeiCai == true){					
 			return;
 		}
 		
@@ -48,7 +48,7 @@ public class BetWeiCaiOppositeCQSSCListener implements ActionListener
 								
 		betWeiCaiThread.start();
 		
-		ab.inBet = true;
+		ab.inBetWeiCai = true;
 		
 	}	
 

@@ -108,14 +108,23 @@ public class WeiCaiHttp {
     static String CQSSCdrawNumber = "";
     static String previousCQSSCBetNumber = "";
     
+    static String BJSCdrawNumber = "";
+    static String previousBJSCBetNumber = "";
+    
     
     static String host = "http://pxiagme1.lot7777.net";
     
-    static ArrayList<String[]> selectionTypeIdList = new ArrayList<String[]>();
+    static ArrayList<String[]> CQSSCselectionTypeIdList = new ArrayList<String[]>();
     
-    static ArrayList<String[]> oddsList = new ArrayList<String[]>();
+    static ArrayList<String[]> CQSSCoddsList = new ArrayList<String[]>();
+    
+    static ArrayList<String[]> BJSCselectionTypeIdList = new ArrayList<String[]>();
+    
+    static ArrayList<String[]> BJSCoddsList = new ArrayList<String[]>();
     
     static String CQSSCeventID = "";
+    
+    static String BJSCeventID = "";
     
     static int totalAmount = 0;
    
@@ -132,6 +141,7 @@ public class WeiCaiHttp {
     static int failTimes = 0;
     
     static boolean previousCQSSCBetResult = false;
+    static boolean previousBJSCBetResult = false;
     
     
     public static boolean login() {    	
@@ -156,6 +166,10 @@ public class WeiCaiHttp {
     
     public static String getCQSSCdrawNumber(){
     	return CQSSCdrawNumber;
+    }
+    
+    public static String getBJSCdrawNumber(){
+    	return BJSCdrawNumber;
     }
     
     public static boolean loginToWeiCai(){
@@ -272,8 +286,6 @@ public class WeiCaiHttp {
     	
     	String res = "";
     	
-    	String oddsData = "";
-    	
     	
     	try{
     		
@@ -350,12 +362,9 @@ public class WeiCaiHttp {
 	    			//只下赔率二以下的
 	        		if(odds < 2.5 && amount >0){
 	        			amount = (int)(amount*percent);  
-	        			if(amount == 0)
-	        				amount = 1;
-	        			if(game.contains("2") == true || game.contains("2") == true)
-	        				amount = 2000;//todo
-	        			else
-	        				amount = 2;
+	        			if(amount <= 1)
+	        				amount = 2; //微彩每注最低2元
+
 	        			totalAmount += amount;
 	        			
 	        			JSONObject gameObj = new JSONObject();
@@ -467,14 +476,14 @@ public class WeiCaiHttp {
 	        	        		break;
 	        	        	}
 	        	        	
-	        	        	for(int k = 0; k < selectionTypeIdList.size(); k ++){
-	        	        		String[] idItem = (String[]) selectionTypeIdList.get(k);
+	        	        	for(int k = 0; k < CQSSCselectionTypeIdList.size(); k ++){
+	        	        		String[] idItem = (String[]) CQSSCselectionTypeIdList.get(k);
 	        	        		if(contents.equals(idItem[1])&&idItem[2].contains(selectionTypeName)){
 	        	        			selectionTypeName = idItem[2];
 	        	        			selectionTypeId = idItem[0];
 	        	        			
-	        	        			for(int h = 0; h < oddsList.size(); h++){
-	        	        				String[] oddItem = (String[]) oddsList.get(h);
+	        	        			for(int h = 0; h < CQSSCoddsList.size(); h++){
+	        	        				String[] oddItem = (String[]) CQSSCoddsList.get(h);
 	        	        				if(selectionTypeId.equals(oddItem[0])){
 	        	        					betOdds = oddItem[1];
 	        	        				}
@@ -487,6 +496,125 @@ public class WeiCaiHttp {
 	        	    	}//北京赛车
 	        	    	else if(betType == BetType.BJSC){
 	        	    		
+	        	        	switch(game){
+	        	        	case "DX1":
+	        	        		selectionTypeName = "冠军";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS1":
+	        	        		selectionTypeName = "冠军";
+	        	        		contents = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "LH1":
+	        	        		selectionTypeName = "冠军";
+	        	        		contents = contents.equals("L")?"龙":"虎";
+	        	        		break;	
+	        	        		
+	        	        	case "DX2":
+	        	        		selectionTypeName = "亚军";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS2":
+	        	        		selectionTypeName = "亚军";
+	        	        		contents = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "LH2":
+	        	        		selectionTypeName = "亚军";
+	        	        		contents = contents.equals("L")?"龙":"虎";
+	        	        		break;		
+	        	        	case "DX3":
+	        	        		selectionTypeName = "第三名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS3":
+	        	        		selectionTypeName = "第三名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+	        	        	case "LH3":
+	        	        		selectionTypeName = "第三名";
+	        	        		contents = contents.equals("L")?"龙":"虎";
+	        	        		break;		
+	        	        	case "DX4":
+	        	        		selectionTypeName = "第四名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        	case "DS4":
+	        	        		selectionTypeName = "第四名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+	        	        	case "LH4":
+	        	        		selectionTypeName = "第四名";
+	        	        		contents = contents.equals("L")?"龙":"虎";
+	        	        		break;	
+	        	        	case "DX5":
+	        	        		selectionTypeName = "第五名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS5":
+	        	        		selectionTypeName = "第五名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+	        	        	case "LH5":
+	        	        		selectionTypeName = "第五名";
+	        	        		contents = contents.equals("L")?"龙":"虎";
+	        	        		break;	
+	        	        	case "DX6":
+	        	        		selectionTypeName = "第六名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS6":
+	        	        		selectionTypeName = "第六名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+	        	        	case "DX7":
+	        	        		selectionTypeName = "第七名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS7":
+	        	        		selectionTypeName = "第七名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+	        	        	case "DX8":
+	        	        		selectionTypeName = "第八名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS8":
+	        	        		selectionTypeName = "第八名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+	        	        	case "DX9":
+	        	        		selectionTypeName = "第九名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS9":
+	        	        		selectionTypeName = "第九名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+	        	        	case "DX10":
+	        	        		selectionTypeName = "第十名";
+	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS10":
+	        	        		selectionTypeName = "第十名";
+	        	        		contents = contents.equals("D")?"单":"双";	
+	        	        		break;
+
+	        	        	}
+	        	        	
+	        	        	for(int k = 0; k < BJSCselectionTypeIdList.size(); k ++){
+	        	        		String[] idItem = (String[]) BJSCselectionTypeIdList.get(k);
+	        	        		if(contents.equals(idItem[1])&&idItem[2].contains(selectionTypeName)){
+	        	        			selectionTypeName = idItem[2];
+	        	        			selectionTypeId = idItem[0];
+	        	        			
+	        	        			for(int h = 0; h < BJSCoddsList.size(); h++){
+	        	        				String[] oddItem = (String[]) BJSCoddsList.get(h);
+	        	        				if(selectionTypeId.equals(oddItem[0])){
+	        	        					betOdds = oddItem[1];
+	        	        				}
+	        	        			}
+	        	        			break;
+	        	        		}
+	        	        	}
 	        	    	}
 	        	    	
 	        	    	
@@ -522,7 +650,9 @@ public class WeiCaiHttp {
 	        	betsObj.put("isAccessNewOdds", 0);
 	    	}
 	    	else if(betType == BetType.BJSC){
-
+	        	betsObj.put("eventId",BJSCeventID);
+	        	
+	        	betsObj.put("isAccessNewOdds", 0);
 	
 	    	}
 	
@@ -548,19 +678,20 @@ public class WeiCaiHttp {
     }
     
     
+    public static boolean isBJSCselectionTypeIdListEmpty(){
+    	return BJSCselectionTypeIdList.size() == 0;
+    }
     
+    public static boolean isCQSSCselectionTypeIdListEmpty(){
+    	return CQSSCselectionTypeIdList.size() == 0;
+    }
     
-    public static boolean getCQSSCData(){
-    	
-    	
+    public static boolean getBJSCselectionTypeIdListData(){
     	String market = "";
-    	String marketRefresh = "";
-    	
+   	
     	try{
     		
-        	String marketUrl = memberUrl + "CQSSC/Market.action?viewName=consolidated_market&gameTypeId=401&marketTypeIds=4001%2C4002%2C4003%2C4021%2C4022%2C4023%2C4041%2C4042%2C4043%2C4061%2C4062%2C4063%2C4081%2C4082%2C4083%2C4101%2C4102%2C4004%2C4123%2C4122%2C4121";
-        	
-        	//http://pxiagme1.lot7777.net/member/fos4iaf1lrb2nslbeu1ol8o12q/
+        	String marketUrl = memberUrl + "BJPKS/Market.action?viewName=two_way_market&gameTypeId=201&marketTypeIds=2012%2C2013%2C2022%2C2023%2C2032%2C2033%2C2042%2C2043%2C2052%2C2053%2C2062%2C2063%2C2072%2C2073%2C2082%2C2083%2C2092%2C2093%2C2102%2C2103%2C2014%2C2024%2C2034%2C2044%2C2054%2C2002%2C2003";
         	
         	//拿selectionTypeID
         	market = doGet(marketUrl, "", "");
@@ -572,33 +703,33 @@ public class WeiCaiHttp {
         	int posEnd = -1;
         	
         	if(market != null){
-            	posStart = market.indexOf("['400201");
-            	posEnd = market.indexOf("['400403'",  posStart);
+            	posStart = market.indexOf("[201201");
+            	posEnd = market.indexOf("[200201",  posStart);
             	
             	if(posStart >=0 && posEnd >= posStart){
-                	String strSelectionTypeIdList = market.substring(posStart, posEnd);
+                	String strCQSSCselectionTypeIdList = market.substring(posStart, posEnd);
                 	
-                	String[] strArraySelectionTypeIdList = strSelectionTypeIdList.split("\r\n");
+                	String[] strArrayCQSSCselectionTypeIdList = strCQSSCselectionTypeIdList.split("\r\n");
                 	
                 	
-                	for(int i = 0; i < strArraySelectionTypeIdList.length; i++){
+                	for(int i = 0; i < strArrayCQSSCselectionTypeIdList.length; i++){
                 		
                 		
-                		strArraySelectionTypeIdList[i] = strArraySelectionTypeIdList[i].replace("'", "");
-                		strArraySelectionTypeIdList[i]= strArraySelectionTypeIdList[i].replace("[", "");
-                		strArraySelectionTypeIdList[i] = strArraySelectionTypeIdList[i].replace("],", "");
+                		strArrayCQSSCselectionTypeIdList[i] = strArrayCQSSCselectionTypeIdList[i].replace("'", "");
+                		strArrayCQSSCselectionTypeIdList[i]= strArrayCQSSCselectionTypeIdList[i].replace("[", "");
+                		strArrayCQSSCselectionTypeIdList[i] = strArrayCQSSCselectionTypeIdList[i].replace("],", "");
                 		
-                		String[] selectionTypeId = strArraySelectionTypeIdList[i].split(",");
+                		String[] selectionTypeId = strArrayCQSSCselectionTypeIdList[i].split(",");
                 		
                 		
                 		
-                		selectionTypeIdList.add(selectionTypeId);
+                		BJSCselectionTypeIdList.add(selectionTypeId);
 
                 	}
                 	
                 	//打印
-                	/*for(int k = 0; k < selectionTypeIdList.size(); k ++){
-                		String[] idItem = (String[]) selectionTypeIdList.get(k);
+                	/*for(int k = 0; k < CQSSCselectionTypeIdList.size(); k ++){
+                		String[] idItem = (String[]) CQSSCselectionTypeIdList.get(k);
                 		for(int h = 0; h < idItem.length; h++){
                 			System.out.print(idItem[h]);
                 		}
@@ -616,11 +747,35 @@ public class WeiCaiHttp {
         		System.out.println(market);
         		return false;
         	}
-        	
-        	
+    	
+    	}catch(Exception e){
+        		
+    		System.out.println(market);
+
+    		
+    		return false;
+        }
+    	
+    	return true;
+    }
+    
+    
+    public static boolean getBJSCmarketData(){
+    	
+    	
+
+    	String marketRefresh = "";
+    	
+    	try{
+    		
+    		
+        	int posStart = -1;
+        	int posEnd = -1;
+    		
+
 
         	
-        	String oddsUrl = memberUrl + "CQSSC/MarketRefresh.action?viewName=consolidated_market_refresh&gameTypeId=401&marketTypeIds=4001%2C4002%2C4003%2C4021%2C4022%2C4023%2C4041%2C4042%2C4043%2C4061%2C4062%2C4063%2C4081%2C4082%2C4083%2C4101%2C4102%2C4004%2C4123%2C4122%2C4121&lastActionLogId=2975424";
+        	String oddsUrl = memberUrl + "BJPKS/MarketRefresh.action?viewName=two_way_market_refresh&gameTypeId=201&marketTypeIds=2012%2C2013%2C2022%2C2023%2C2032%2C2033%2C2042%2C2043%2C2052%2C2053%2C2062%2C2063%2C2072%2C2073%2C2082%2C2083%2C2092%2C2093%2C2102%2C2103%2C2014%2C2024%2C2034%2C2044%2C2054%2C2002%2C2003";
         	
 
         	
@@ -633,44 +788,274 @@ public class WeiCaiHttp {
             	posStart = marketRefresh.indexOf("pItm=[]");
             	posEnd = marketRefresh.indexOf("\r\n", posStart);
             	
-        		if(posStart == -1 || posEnd == -1){
+
+            	
+        		if(posStart != -1){
+                	String strOdds = marketRefresh.substring(posStart, posEnd);
+
+                	
+            		posStart = strOdds.indexOf("pItm=[");
+            		posStart = strOdds.indexOf("pItm=[", posStart+1);
+
+            		while(posStart != -1){
+            			posEnd = strOdds.indexOf(";", posStart);
+            			
+            			String strOddsItem = strOdds.substring(posStart + 5, posEnd);
+            			
+            			strOddsItem = strOddsItem.replace("'", "");
+            			strOddsItem = strOddsItem.replace("[", "");
+            			strOddsItem = strOddsItem.replace("]", "");
+            			
+            			String[] odds = strOddsItem.split(",");
+            			
+            			BJSCoddsList.add(odds);
+            			
+            			posStart = strOdds.indexOf("pItm=[", posEnd);
+            			posStart = strOdds.indexOf("pItm=[", posStart+1);
+            			
+            		}
+            		
+            		//打印
+                	/*for(int k = 0; k < CQSSCoddsList.size(); k ++){
+                		String[] idItem = (String[]) CQSSCoddsList.get(k);
+                		for(int h = 0; h < idItem.length; h++){
+                			System.out.print(idItem[h]);
+                			System.out.print("   ");
+                		}
+                		System.out.println();
+                	}*/
+        		}
+        		else{
+        			System.out.println("没有赔率数据\n");
+        		}
+        		
+
+        		
+        		//拿eventID
+        		posStart = marketRefresh.indexOf("selectedEventId = ");
+        		
+        		if(posStart == -1){
         			System.out.println(marketRefresh);
         			return false;
         		}
-            	
-            	String strOdds = marketRefresh.substring(posStart, posEnd);
-
-            	
-        		posStart = strOdds.indexOf("pItm=[");
-        		posStart = strOdds.indexOf("pItm=[", posStart+1);
-
-        		while(posStart != -1){
-        			posEnd = strOdds.indexOf(";", posStart);
-        			
-        			String strOddsItem = strOdds.substring(posStart + 5, posEnd);
-        			
-        			strOddsItem = strOddsItem.replace("'", "");
-        			strOddsItem = strOddsItem.replace("[", "");
-        			strOddsItem = strOddsItem.replace("]", "");
-        			
-        			String[] odds = strOddsItem.split(",");
-        			
-        			oddsList.add(odds);
-        			
-        			posStart = strOdds.indexOf("pItm=[", posEnd);
-        			posStart = strOdds.indexOf("pItm=[", posStart+1);
-        			
+        		
+        		posStart = marketRefresh.indexOf("\"", posStart);
+        		posEnd = marketRefresh.indexOf("\"", posStart + 1);
+        		
+        		BJSCeventID = marketRefresh.substring(posStart+1, posEnd);
+        		
+        		
+        		//拿DrawNumber
+        		posStart = marketRefresh.indexOf("selectedEventNo = ");
+        		
+        		if(posStart == -1){
+        			System.out.println(marketRefresh);
+        			return false;
         		}
         		
-        		//打印
-            	/*for(int k = 0; k < oddsList.size(); k ++){
-            		String[] idItem = (String[]) oddsList.get(k);
-            		for(int h = 0; h < idItem.length; h++){
-            			System.out.print(idItem[h]);
-            			System.out.print("   ");
+        		posStart = marketRefresh.indexOf("\"", posStart);
+        		posEnd = marketRefresh.indexOf("\"", posStart + 1);
+        		
+        		BJSCdrawNumber = marketRefresh.substring(posStart+1, posEnd);
+        		
+        		
+        		//拿距离开盘的时间
+        		posStart = marketRefresh.indexOf("parent.setEventIsPaused(");
+        		
+        		if(posStart == -1){
+        			System.out.println(marketRefresh);
+        			return false;
+        		}
+        		
+        		posStart = marketRefresh.indexOf(",'", posStart);
+        		posStart = marketRefresh.indexOf(",'", posStart + 1);
+        		posStart = marketRefresh.indexOf(",'", posStart + 1);
+        		//封盘时间
+        		posEnd = marketRefresh.indexOf("'", posStart + 2);
+        		
+        		BJSCcloseTime = Long.parseLong(marketRefresh.substring(posStart+2, posEnd));
+        		
+        		//现在时间
+        		
+        		posStart = marketRefresh.indexOf(",'", posEnd);
+        		posEnd = marketRefresh.indexOf("'", posStart + 2);
+        		
+        		long currentTime = Long.parseLong(marketRefresh.substring(posStart+2, posEnd));
+        		
+        		timeDValue = currentTime - System.currentTimeMillis();
+        		
+        		BJSCRemainTime = BJSCcloseTime - currentTime;
+        	}
+        	else{
+        		System.out.println(marketRefresh);
+        		return false;
+        	}
+        	
+
+    		
+
+        	return true;
+    		
+    	}catch(Exception e){
+
+    		System.out.println(marketRefresh);
+    		
+    		return false;
+    	}
+    	
+
+    }
+    
+    
+    
+    
+    public static boolean getCQSSCselectionTypeIdListData(){
+    	String market = "";
+       	
+    	try{
+    		
+        	String marketUrl = memberUrl + "CQSSC/Market.action?viewName=consolidated_market&gameTypeId=401&marketTypeIds=4001%2C4002%2C4003%2C4021%2C4022%2C4023%2C4041%2C4042%2C4043%2C4061%2C4062%2C4063%2C4081%2C4082%2C4083%2C4101%2C4102%2C4004%2C4123%2C4122%2C4121";
+        	
+        	//拿selectionTypeID
+        	market = doGet(marketUrl, "", "");
+        	
+        	if(market == null)
+        		market = doGet(marketUrl, "", "");
+        	
+        	int posStart = -1;
+        	int posEnd = -1;
+        	
+        	if(market != null){
+            	posStart = market.indexOf("['400201");
+            	posEnd = market.indexOf("['400403'",  posStart);
+            	
+            	if(posStart >=0 && posEnd >= posStart){
+                	String strCQSSCselectionTypeIdList = market.substring(posStart, posEnd);
+                	
+                	String[] strArrayCQSSCselectionTypeIdList = strCQSSCselectionTypeIdList.split("\r\n");
+                	
+                	
+                	for(int i = 0; i < strArrayCQSSCselectionTypeIdList.length; i++){
+                		
+                		
+                		strArrayCQSSCselectionTypeIdList[i] = strArrayCQSSCselectionTypeIdList[i].replace("'", "");
+                		strArrayCQSSCselectionTypeIdList[i]= strArrayCQSSCselectionTypeIdList[i].replace("[", "");
+                		strArrayCQSSCselectionTypeIdList[i] = strArrayCQSSCselectionTypeIdList[i].replace("],", "");
+                		
+                		String[] selectionTypeId = strArrayCQSSCselectionTypeIdList[i].split(",");
+                		
+                		
+                		
+                		CQSSCselectionTypeIdList.add(selectionTypeId);
+
+                	}
+                	
+                	//打印
+                	/*for(int k = 0; k < CQSSCselectionTypeIdList.size(); k ++){
+                		String[] idItem = (String[]) CQSSCselectionTypeIdList.get(k);
+                		for(int h = 0; h < idItem.length; h++){
+                			System.out.print(idItem[h]);
+                		}
+                		System.out.println();
+                	}*/
+            	}
+            	else{
+            		System.out.println(market);
+            		return false;
+            	}
+            	
+
+
+        	}else{
+        		System.out.println(market);
+        		return false;
+        	}
+    	
+    	}catch(Exception e){
+        		
+    		System.out.println(market);
+
+    		
+    		return false;
+        }
+    	
+    	return true;
+    }
+    
+    
+    
+    
+    public static boolean getCQSSCmarketData(){
+    	
+    	
+    	String market = "";
+    	String marketRefresh = "";
+    	
+    	try{
+    		
+    		
+        	int posStart = -1;
+        	int posEnd = -1;
+    		
+
+
+        	
+        	String oddsUrl = memberUrl + "CQSSC/MarketRefresh.action?viewName=consolidated_market_refresh&gameTypeId=401&marketTypeIds=4001%2C4002%2C4003%2C4021%2C4022%2C4023%2C4041%2C4042%2C4043%2C4061%2C4062%2C4063%2C4081%2C4082%2C4083%2C4101%2C4102%2C4004%2C4123%2C4122%2C4121";
+        	
+
+        	
+        	marketRefresh =  doGet(oddsUrl, "", "");
+        	
+        	if(marketRefresh == null)
+        		marketRefresh =  doGet(oddsUrl, "", "");
+        	
+        	if(marketRefresh != null){
+            	posStart = marketRefresh.indexOf("pItm=[]");
+            	posEnd = marketRefresh.indexOf("\r\n", posStart);
+            	
+
+            	
+        		if(posStart != -1){
+                	String strOdds = marketRefresh.substring(posStart, posEnd);
+
+                	
+            		posStart = strOdds.indexOf("pItm=[");
+            		posStart = strOdds.indexOf("pItm=[", posStart+1);
+
+            		while(posStart != -1){
+            			posEnd = strOdds.indexOf(";", posStart);
+            			
+            			String strOddsItem = strOdds.substring(posStart + 5, posEnd);
+            			
+            			strOddsItem = strOddsItem.replace("'", "");
+            			strOddsItem = strOddsItem.replace("[", "");
+            			strOddsItem = strOddsItem.replace("]", "");
+            			
+            			String[] odds = strOddsItem.split(",");
+            			
+            			CQSSCoddsList.add(odds);
+            			
+            			posStart = strOdds.indexOf("pItm=[", posEnd);
+            			posStart = strOdds.indexOf("pItm=[", posStart+1);
+            			
             		}
-            		System.out.println();
-            	}*/
+            		
+            		//打印
+                	/*for(int k = 0; k < CQSSCoddsList.size(); k ++){
+                		String[] idItem = (String[]) CQSSCoddsList.get(k);
+                		for(int h = 0; h < idItem.length; h++){
+                			System.out.print(idItem[h]);
+                			System.out.print("   ");
+                		}
+                		System.out.println();
+                	}*/
+        		}
+        		else{
+        			System.out.println(marketRefresh);
+        			System.out.println("没有赔率数据\n");
+        		}
+        		
+
         		
         		//拿eventID
         		posStart = marketRefresh.indexOf("selectedEventId = ");
@@ -898,6 +1283,71 @@ public class WeiCaiHttp {
     }
     
     
+    public static boolean doBetBJSC(String[] betData, double percent, boolean opposite, String remainTime){
+    	String host = ADDRESS;
+       	
+        String jsonParam = "";
+        
+        if(previousBJSCBetNumber.equals(BJSCdrawNumber) && previousBJSCBetResult == true) //之前如果已经下过单并且成功下单就直接返回
+        	return false;
+        
+        
+        //如果未到封盘时间
+        if( BJSCdrawNumber != null){
+        	
+        	//System.out.printf("下注重庆时时彩第%s期\n",BJSCdrawNumber);
+        	String outputStr = "[微彩]下注北京赛车第" + BJSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
+        	autoBet.outputMessage.append(outputStr);
+        	
+        	if(isEmptyData(betData, BetType.BJSC)) {
+        		outputStr = "代理无人投注\n\n";
+        		autoBet.outputMessage.append(outputStr);
+        		return false;
+        	}
+        	
+        	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
+        
+        	//outputBetsDetails(jsonParam, BetType.BJSC);
+        	
+        	
+        	System.out.println(jsonParam);
+        	
+        	String response = "";
+
+        	response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
+        	
+        	if(response == null){
+        		response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
+        	}
+        	
+        	System.out.println("微彩下单结果");
+        	System.out.println(response);
+        	
+        	boolean result = parseBetResult(response);
+        	
+        	previousBJSCBetNumber = BJSCdrawNumber;
+        	previousBJSCBetResult = result;
+        	
+        	if(result == true) {
+				successTimes++;
+				autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
+			} else {
+				failTimes++;
+				autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
+			}
+			
+			autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	
+        	return result;
+        
+        }
+        
+        return false;
+    }
+    
+    
+    
+    
     public static boolean parseBetResult(String betResult){
     	//todo
     	
@@ -946,6 +1396,7 @@ public class WeiCaiHttp {
         	}
         	else{
         		autoBet.outputMessage.append("微彩下注失败\n\n");
+        		return false;
         	}
         	
         	
@@ -954,6 +1405,7 @@ public class WeiCaiHttp {
     	}
     	else{
     		autoBet.outputMessage.append("微彩下注失败\n");
+    		return false;
     	}
 
     	

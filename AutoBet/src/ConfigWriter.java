@@ -157,7 +157,7 @@ public class ConfigWriter {
 	public static boolean updateWeiCaiMemberAddress(String address){
 		
 		try{
-	        NodeList list = document.getElementsByTagName("BETLOGIN");        
+	        NodeList list = document.getElementsByTagName("WEICAIBETLOGIN");        
 	        Element element = (Element)list.item(0);  
 	        
 	        element.getElementsByTagName("ADDRESS").item(0).getFirstChild().setNodeValue(address);     
@@ -173,7 +173,7 @@ public class ConfigWriter {
 	public static boolean updateWeiCaiMemberAccount(String account){
 		
 		try{
-	        NodeList list = document.getElementsByTagName("BETLOGIN");        
+	        NodeList list = document.getElementsByTagName("WEICAIBETLOGIN");        
 	        Element element = (Element)list.item(0);  
 	        
 	        element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().setNodeValue(account);     
@@ -190,7 +190,7 @@ public class ConfigWriter {
 	public static boolean updateWeiCaiMemberPassword(String password){
 		
 		try{
-	        NodeList list = document.getElementsByTagName("BETLOGIN");        
+	        NodeList list = document.getElementsByTagName("WEICAIBETLOGIN");        
 	        Element element = (Element)list.item(0);  
 	        
 	        element.getElementsByTagName("PASSWORD").item(0).getFirstChild().setNodeValue(password);     
