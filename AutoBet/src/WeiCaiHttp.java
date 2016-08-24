@@ -143,6 +143,8 @@ public class WeiCaiHttp {
     static boolean previousCQSSCBetResult = false;
     static boolean previousBJSCBetResult = false;
     
+    static int accountBalance = 0;
+    
     
     public static boolean login() {    	
     	boolean res = false;
@@ -262,7 +264,7 @@ public class WeiCaiHttp {
     		    	
     		        String res = doPost(loginUrl, loginParams, "");
     				
-    		        if(res.contains("Agree.action") == true)
+    		        if(res != null && res.contains("Agree.action") == true)
     		        	return true;
     				
     				//System.out.println(res);
@@ -279,6 +281,49 @@ public class WeiCaiHttp {
     	
     }
     
+    
+    public static int getAccountBalance(){
+    	String accountUrl = memberUrl + "Bet/LastTenBets.action?";
+    	
+    	String res = doGet(accountUrl, "",  "");
+    	
+    	if(res != null){
+    		
+
+    		
+    		if(res.contains("请重新登录") == true || res.contains("你已在其他地方登录") == true){
+    			login();
+    			res = doGet(accountUrl, "",  "");
+    		}
+    		
+    		if(res != null){
+    			int posStart = res.indexOf("parent.setMemberInfo(");
+    			posStart = res.indexOf(",\"", posStart);
+    			
+    			if(posStart == -1){
+    				return accountBalance;
+    			}
+    			
+    			try{
+        			int posEnd = res.indexOf("\"", posStart + 2);
+        			String balance = res.substring(posStart + 2, posEnd);
+        			balance = balance.replace(",", "");
+        			
+        			
+        			if(Common.isNum(balance)== true){
+        				accountBalance = Integer.parseInt(balance);
+        			}
+    				
+    			}catch(Exception e){
+    				return accountBalance;
+    			}
+    			
+
+    		}
+    	}
+    	
+    	return accountBalance;
+    }
     
     public static String constructBetsData(String[] data, double percent, BetType betType, boolean opposite){
     	
@@ -686,7 +731,7 @@ public class WeiCaiHttp {
     	return CQSSCselectionTypeIdList.size() == 0;
     }
     
-    public static boolean getBJSCselectionTypeIdListData(){
+    public static String getBJSCselectionTypeIdListData(){
     	String market = "";
    	
     	try{
@@ -703,6 +748,15 @@ public class WeiCaiHttp {
         	int posEnd = -1;
         	
         	if(market != null){
+        		
+        		if(market.contains("没有赛事") == true){
+        			return "没有赛事";
+        		}
+        		
+        		if(market.contains("请重新登录") == true || market.contains("你已在其他地方登录") == true){
+        			return "请重新登录";
+        		}
+        		
             	posStart = market.indexOf("[201201");
             	posEnd = market.indexOf("[200201",  posStart);
             	
@@ -737,15 +791,16 @@ public class WeiCaiHttp {
                 	}*/
             	}
             	else{
+            		System.out.println("未拿到selectionTypeID");
             		System.out.println(market);
-            		return false;
+            		return "false";
             	}
             	
 
 
         	}else{
         		System.out.println(market);
-        		return false;
+        		return "false";
         	}
     	
     	}catch(Exception e){
@@ -753,14 +808,14 @@ public class WeiCaiHttp {
     		System.out.println(market);
 
     		
-    		return false;
+    		return "false";
         }
     	
-    	return true;
+    	return "true";
     }
     
     
-    public static boolean getBJSCmarketData(){
+    public static String getBJSCmarketData(){
     	
     	
 
@@ -788,6 +843,10 @@ public class WeiCaiHttp {
             	posStart = marketRefresh.indexOf("pItm=[]");
             	posEnd = marketRefresh.indexOf("\r\n", posStart);
             	
+            	
+        		if(marketRefresh.contains("请重新登录") == true || marketRefresh.contains("你已在其他地方登录") == true){
+        			return "请重新登录";
+        		}
 
             	
         		if(posStart != -1){
@@ -826,6 +885,7 @@ public class WeiCaiHttp {
                 	}*/
         		}
         		else{
+        			System.out.println(marketRefresh);
         			System.out.println("没有赔率数据\n");
         		}
         		
@@ -836,7 +896,7 @@ public class WeiCaiHttp {
         		
         		if(posStart == -1){
         			System.out.println(marketRefresh);
-        			return false;
+        			return "false";
         		}
         		
         		posStart = marketRefresh.indexOf("\"", posStart);
@@ -850,7 +910,7 @@ public class WeiCaiHttp {
         		
         		if(posStart == -1){
         			System.out.println(marketRefresh);
-        			return false;
+        			return "false";
         		}
         		
         		posStart = marketRefresh.indexOf("\"", posStart);
@@ -864,7 +924,7 @@ public class WeiCaiHttp {
         		
         		if(posStart == -1){
         			System.out.println(marketRefresh);
-        			return false;
+        			return "false";
         		}
         		
         		posStart = marketRefresh.indexOf(",'", posStart);
@@ -888,19 +948,19 @@ public class WeiCaiHttp {
         	}
         	else{
         		System.out.println(marketRefresh);
-        		return false;
+        		return "false";
         	}
         	
 
     		
 
-        	return true;
+        	return "true";
     		
     	}catch(Exception e){
 
     		System.out.println(marketRefresh);
     		
-    		return false;
+    		return "false";
     	}
     	
 
@@ -960,6 +1020,7 @@ public class WeiCaiHttp {
                 	}*/
             	}
             	else{
+            		System.out.println("未拿到selectionTypeID");
             		System.out.println(market);
             		return false;
             	}
@@ -985,7 +1046,7 @@ public class WeiCaiHttp {
     
     
     
-    public static boolean getCQSSCmarketData(){
+    public static String getCQSSCmarketData(){
     	
     	
     	String market = "";
@@ -1010,6 +1071,11 @@ public class WeiCaiHttp {
         		marketRefresh =  doGet(oddsUrl, "", "");
         	
         	if(marketRefresh != null){
+        		
+        		if(marketRefresh.contains("请重新登录") == true || marketRefresh.contains("你已在其他地方登录") == true){
+        			return "请重新登录";
+        		}
+        		
             	posStart = marketRefresh.indexOf("pItm=[]");
             	posEnd = marketRefresh.indexOf("\r\n", posStart);
             	
@@ -1062,7 +1128,7 @@ public class WeiCaiHttp {
         		
         		if(posStart == -1){
         			System.out.println(marketRefresh);
-        			return false;
+        			return "false";
         		}
         		
         		posStart = marketRefresh.indexOf("\"", posStart);
@@ -1076,7 +1142,7 @@ public class WeiCaiHttp {
         		
         		if(posStart == -1){
         			System.out.println(marketRefresh);
-        			return false;
+        			return "false";
         		}
         		
         		posStart = marketRefresh.indexOf("\"", posStart);
@@ -1090,7 +1156,7 @@ public class WeiCaiHttp {
         		
         		if(posStart == -1){
         			System.out.println(marketRefresh);
-        			return false;
+        			return "false";
         		}
         		
         		posStart = marketRefresh.indexOf(",'", posStart);
@@ -1114,20 +1180,20 @@ public class WeiCaiHttp {
         	}
         	else{
         		System.out.println(marketRefresh);
-        		return false;
+        		return "false";
         	}
         	
 
     		
 
-        	return true;
+        	return "true";
     		
     	}catch(Exception e){
     		
     		System.out.println(market);
     		System.out.println(marketRefresh);
     		
-    		return false;
+    		return "false";
     	}
     	
 
@@ -1253,7 +1319,11 @@ public class WeiCaiHttp {
 
         	response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
         	
-        	if(response == null){
+    		if(response != null && (response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true)){
+    			login();
+    		}
+        	
+        	if(response == null || response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true){
         		response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
         	}
         	
@@ -1274,6 +1344,10 @@ public class WeiCaiHttp {
 			}
 			
 			autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+			
+			String out = "账户余额:" + getAccountBalance() + "\n\n";
+			
+			autoBet.outputMessage.append(out);
         	
         	return result;
         
@@ -1337,6 +1411,11 @@ public class WeiCaiHttp {
 			}
 			
 			autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+			
+			String out = "账户余额:" + getAccountBalance() + "\n\n";
+			
+			autoBet.outputMessage.append(out);
+			
         	
         	return result;
         
@@ -1391,11 +1470,11 @@ public class WeiCaiHttp {
         	}
         	
         	if(betAmount >0){
-        		String outputStr  = String.format("微彩下注成功! 下单总额: %d\n\n", betAmount);
+        		String outputStr  = String.format("微彩下注成功! 下单总额: %d  ", betAmount);
         		autoBet.outputMessage.append(outputStr);
         	}
         	else{
-        		autoBet.outputMessage.append("微彩下注失败\n\n");
+        		autoBet.outputMessage.append("微彩下注失败. ");
         		return false;
         	}
         	
@@ -1404,7 +1483,11 @@ public class WeiCaiHttp {
         	
     	}
     	else{
-    		autoBet.outputMessage.append("微彩下注失败\n");
+    		autoBet.outputMessage.append("微彩下注失败. ");
+    		if(betResult != null){
+    			autoBet.outputMessage.append(betResult);
+    		}
+    		
     		return false;
     	}
 

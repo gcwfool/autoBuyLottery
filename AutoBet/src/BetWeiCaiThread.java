@@ -32,45 +32,60 @@ public class BetWeiCaiThread extends Thread{
 				long CQSSCremainTime = 0;
 				long BJSCremainTime = 0;
 				if(requestTime) {
-					boolean bSuccessgetCQSSCmarketData = false;	
-					boolean bSuccessgetBJSCmarketData = false;	
+					String getCQSSCmarketDataResult = "";	
+					String getBJSCmarketDataResult = "";	
+					
+					String result = "";
 					
 					if(WeiCaiHttp.isCQSSCselectionTypeIdListEmpty() == true){
 						WeiCaiHttp.getCQSSCselectionTypeIdListData();
 					}
 					
 					if(WeiCaiHttp.isBJSCselectionTypeIdListEmpty() == true){
-						WeiCaiHttp.getBJSCselectionTypeIdListData();
+						result = WeiCaiHttp.getBJSCselectionTypeIdListData();
 					}
 
-					
-					for(int i = 0; i< 2; i++){
-						bSuccessgetCQSSCmarketData = WeiCaiHttp.getCQSSCmarketData();
-						if(bSuccessgetCQSSCmarketData== false){
-							Thread.currentThread().sleep(1*1000);
-						}
-						else{
-							break;
-						}
-					}
-					
-					for(int i = 0; i< 2; i++){
-						bSuccessgetBJSCmarketData = WeiCaiHttp.getBJSCmarketData();
-						if(bSuccessgetBJSCmarketData== false){
-							Thread.currentThread().sleep(1*1000);
-						}
-						else{
-							break;
-						}
-					}
-
-
-					if(bSuccessgetCQSSCmarketData == false || bSuccessgetBJSCmarketData == false){//重新登录
+					if(result.contains("请重新登录") == true){
 						WeiCaiHttp.login();
 					}
+					
+					
+					for(int i = 0; i< 3; i++){
+						getCQSSCmarketDataResult = WeiCaiHttp.getCQSSCmarketData();
+						if(getCQSSCmarketDataResult.contains("请重新登录") == true){
+							WeiCaiHttp.login();
+						}
+						else if(getCQSSCmarketDataResult.contains("true") == true){
+							break;
+						}
+					}
+					
+					for(int i = 0; i< 3; i++){
+						getBJSCmarketDataResult = WeiCaiHttp.getBJSCmarketData();
+						if(getBJSCmarketDataResult.contains("请重新登录")== true){
+							WeiCaiHttp.login();
+						}
+						else if(getBJSCmarketDataResult.contains("true") == true){
+							break;
+						}
+					}
+
+
+					if(getCQSSCmarketDataResult.contains("true") == true){
+						CQSSCremainTime = WeiCaiHttp.getCQSSCRemainTime();
+					}
+					else{
+						CQSSCremainTime = WeiCaiHttp.getCQSSClocalRemainTime();
+					}
 						
-					CQSSCremainTime = WeiCaiHttp.getCQSSCRemainTime();
-					BJSCremainTime = WeiCaiHttp.getBJSCRemainTime();
+					if(getBJSCmarketDataResult.contains("true") == true){
+						BJSCremainTime = WeiCaiHttp.getBJSCRemainTime();
+					}
+					else{
+						BJSCremainTime = WeiCaiHttp.getBJSClocalRemainTime();
+					}
+					
+
 
 					
 					System.out.println("[微彩]距离重庆时时彩封盘时间为:");
