@@ -34,7 +34,7 @@ class BetThread extends Thread{
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
 					while(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
-						if(dsnHttp.login() == false) {
+						if(dsnHttp.connFailLogin() == false) {
 							//todo
 							return;
 						}
@@ -92,6 +92,8 @@ class BetThread extends Thread{
 				
 				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
 
+					dsnHttp.prepareBetTime1 = System.currentTimeMillis();
+					
 					String[] betCQSSCData = null;
 					
 					for(int i = 0; i < 4; i++) {
@@ -121,6 +123,8 @@ class BetThread extends Thread{
 				}
 				
 				if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){
+					
+					dsnHttp.prepareBetTime1 = System.currentTimeMillis();
 					
 					String[] betBJSCData = null;
 					

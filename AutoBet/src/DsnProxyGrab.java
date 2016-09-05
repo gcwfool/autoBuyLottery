@@ -164,8 +164,26 @@ public class DsnProxyGrab {
     }
     
     public static void connFailLogin() {
-    	while(!doLogin()) {
+    	
+    	
+    	boolean res = false;
+    	for(int i = 0; i < 10; i++) {
+    		if(doLogin()) {
+    			res = true;
+    			break;
+    		}
+    	}
+    	
+    	while(!res) {
     		try {
+    			
+    	    	for(int i = 0; i < 10; i++) {
+    	    		if(doLogin()) {
+    	    			res = true;
+    	    			break;
+    	    		}
+    	    	}
+    			
     			Thread.currentThread().sleep(60*1000);
     		} catch(InterruptedException e) {
     			//todo

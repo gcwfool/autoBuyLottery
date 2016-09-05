@@ -46,10 +46,15 @@ public class dsnHttp {
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
         requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//设置超时
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(6000).setConnectionRequestTimeout(6000).setSocketTimeout(6000).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
+    
+    
+    //test var
+    static long prepareBetTime1 = 0;
+    static long prepareBetTime2 = 0;
     
     //这个变量用来存储
     static String strCookies = "";
@@ -131,29 +136,49 @@ public class dsnHttp {
     
     public static boolean login() {    	
     	boolean res = false;
-    	for(int i = 0; i < 10; i++) {
+    	for(int i = 0; i < 20; i++) {
     		if(loginToDsn()) {
     			res = true;
     			break;
     		}
     	}
     	
-    	if(res == false) {
-    		autoBet.outputMessage.append("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
-	    	while(!loginToDsn()) {
-	    		try {
-	    			Thread.currentThread().sleep(60*1000);
-	    		} catch(InterruptedException e) {
-	    			//todo
-	    		}
-	    	}
-	    	autoBet.outputMessage.append("会员" + ACCOUNT + "重新登录成功\n");
-    	}
+
     	
-    	return true;
+    	return res;
     }
     
-    public static void connFailLogin() {
+    public static boolean connFailLogin() {
+    	
+    	boolean res = false;
+    	
+		autoBet.outputMessage.append("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
+		
+    	for(int i = 0; i < 20; i++) {
+    		if(loginToDsn()) {
+    			res = true;
+    			break;
+    		}
+    	}
+		
+    	while(!res) {
+    		try {
+    			Thread.currentThread().sleep(20*1000);
+    			
+            	for(int i = 0; i < 20; i++) {
+            		if(loginToDsn()) {
+            			res = true;
+            			break;
+            		}
+            	}
+    			
+    		} catch(InterruptedException e) {
+    			//todo
+    		}
+    	}
+    	autoBet.outputMessage.append("会员" + ACCOUNT + "重新登录成功\n");
+    	
+    	return res;
     	
     }
     
@@ -178,6 +203,13 @@ public class dsnHttp {
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
         		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		
+        		/*for(int k = 0; k < 10; k++){
+        			if(Common.isNum(rmNum))
+        				break;
+        			rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		}*/
+        		
         		System.out.println("验证码");
         		System.out.println(rmNum);
         		if(!Common.isNum(rmNum)) {
@@ -256,12 +288,26 @@ public class dsnHttp {
         String getTimeUrl = host + "/time?&_=";
         getTimeUrl += Long.toString(System.currentTimeMillis());
         
+        long startTime = System.currentTimeMillis();
+        
         response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
+        
+        if(response == null){//再拿一次
+        	startTime = System.currentTimeMillis();
+        	response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
+        }
+        
+        long endTime = System.currentTimeMillis();
+        
+        long requestTime = endTime - startTime;
+        
+        requestTime = requestTime /2;
+        
         
         if(response != null && Common.isNum(response))
         {
         	time = Long.parseLong(response);
-        	timeDValue = time - System.currentTimeMillis();
+        	timeDValue = time + requestTime - System.currentTimeMillis();
         }
         else{
         	time = System.currentTimeMillis();
@@ -277,6 +323,10 @@ public class dsnHttp {
 
         //System.out.println(cookieb18 + "defaultLT=CQSSC;" + cookieCfduid);
         response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
+        
+        if(response == null){
+        	response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
+        }
         
         if(response == null)
         {
@@ -318,12 +368,27 @@ public class dsnHttp {
         String getTimeUrl = host + "/time?&_=";
         getTimeUrl += Long.toString(System.currentTimeMillis());
         
+        long startTime = System.currentTimeMillis();
+        
         response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=BJPK10&page=lm");
+        
+        if(response == null){
+        	startTime = System.currentTimeMillis();
+        	 response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=BJPK10&page=lm");
+        }
+        
+        
+        long endTime = System.currentTimeMillis();
+        
+        long requestTime = endTime - startTime;
+        
+        requestTime = requestTime /2;
+        
         
         if(response != null && Common.isNum(response))
         {
         	time = Long.parseLong(response);
-        	timeDValue = time - System.currentTimeMillis();
+        	timeDValue = time + requestTime - System.currentTimeMillis();
         }
         else{
         	time = System.currentTimeMillis();
@@ -338,6 +403,10 @@ public class dsnHttp {
 
         
         response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=BJPK10&page=lm");
+        
+        if(response == null){
+        	response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=BJPK10&page=lm");
+        }
         
         if(response == null)
         {
@@ -628,8 +697,38 @@ public class dsnHttp {
         	System.out.println(jsonParam);
         	
         	String response = "";
+        	
+        	
+        	prepareBetTime2 = System.currentTimeMillis();
+        	
+        	long timeD = prepareBetTime2 - prepareBetTime1;
+        	
+        	double parpareTime = timeD;
+        	
+        	parpareTime = parpareTime / 1000;
+        	
 
+        	long time1 = System.currentTimeMillis();
+        	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
+        	
+        	if(response == null || response.contains("balance") == false || response.contains("内部错误") == true){
+        		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
+        	}
+        	
+        	long time2 = System.currentTimeMillis();
+        	
+        	timeD = time2 - time1;
+        	
+        	double usingTime = timeD;
+        	
+        	usingTime = usingTime/1000;
+        	
+        	String strUsingTime  = String.format("下单用时！ :%f 秒\n\n", usingTime);
+        	
+        	autoBet.outputMessage.append(strUsingTime);
+        	
+        	
         	
         	System.out.println(response);
         	
@@ -692,8 +791,40 @@ public class dsnHttp {
         	
         	String response = "";  	
         	
+        	
+        	
+        	prepareBetTime2 = System.currentTimeMillis();
+        	
+        	long timeD = prepareBetTime2 - prepareBetTime1;
+        	
+        	double parpareTime = timeD;
+        	
+        	parpareTime = parpareTime / 1000;
+        	
+        	
+        	
+        	long time1 = System.currentTimeMillis();
+        	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
+        	
+        	if(response == null || response.contains("balance") == false || response.contains("内部错误") == true){
+        		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
+        	}
+        	
 
+        	long time2 = System.currentTimeMillis();
+        	
+        	timeD = time2 - time1;
+        	
+        	double usingTime = timeD;
+        	
+        	usingTime = usingTime/1000;
+        	
+        	String strUsingTime  = String.format("下单用时！ :%f 秒\n\n", usingTime);
+        	
+        	autoBet.outputMessage.append(strUsingTime);
+
+        	
         	System.out.println(response);
         	
         	boolean result = parseBetResult(response);
