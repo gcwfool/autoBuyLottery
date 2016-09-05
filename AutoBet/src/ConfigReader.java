@@ -18,6 +18,9 @@ public class ConfigReader {
 	static String weicaibetAddress = "";
 	static String weicaibetAccount = "";
 	static String weicaibetPassword = "";
+	static String tiancaibetAddress = "";
+	static String tiancaibetAccount = "";
+	static String tiancaibetPassword = "";
 	static String tessPath = "";
 	
 	public static boolean read(String filename) {
@@ -66,6 +69,19 @@ public class ConfigReader {
 	              
 	        weicaibetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
 	        System.out.println("weicaibetpassword:" + weicaibetPassword);
+	        
+	        //read tiancai bet login msg
+	        list = document.getElementsByTagName("TIANCAIBETLOGIN");        
+	        element = (Element)list.item(0);  
+            
+	        tiancaibetAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("tiancaibetaddress:" + tiancaibetAddress);  
+	              
+	        tiancaibetAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
+	        System.out.println("tiancaibetaccount:" + tiancaibetAccount);  
+	              
+	        tiancaibetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("tiancaibetpassword:" + tiancaibetPassword);
 	        
 	        //read tesseract-ocr path
 	        list = document.getElementsByTagName("PATH");   
@@ -117,6 +133,18 @@ public class ConfigReader {
 	
 	public static String getweicaiBetPassword() {
 		return weicaibetPassword;
+	}
+	
+	public static String gettiancaiBetAddress() {
+		return tiancaibetAddress;
+	}
+	
+	public static String gettiancaiBetAccount() {
+		return tiancaibetAccount;
+	}
+	
+	public static String gettiancaiBetPassword() {
+		return tiancaibetPassword;
 	}
 	
 	

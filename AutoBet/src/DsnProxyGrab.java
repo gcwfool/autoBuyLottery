@@ -112,6 +112,7 @@ public class DsnProxyGrab {
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
         		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get 验证码
+        		System.out.println("yzm: " + rmNum); 
         		if(!Common.isNum(rmNum)) {
         			return false;
         		}
@@ -124,7 +125,7 @@ public class DsnProxyGrab {
         		params.add(new BasicNameValuePair("code", rmNum));
         		String location = doPost(ADDRESS + "/login", params, strCookies, "");
         		
-        		//System.out.println("location: " + location); 
+        		System.out.println("location: " + location); 
 
             
         		if(location.indexOf("index?") > 0) {
@@ -202,9 +203,10 @@ public class DsnProxyGrab {
             try {
                 // 打印响应状态    
             	setCookie(response);
+            	System.out.println(response.getStatusLine());
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
             		String location = response.getFirstHeader("Location").getValue();
-            		System.out.println(response.getStatusLine());
+            		//System.out.println(response.getStatusLine());
             		if(location != null) {
             			return location;
             		}

@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;   
 import java.util.Date;  
 import java.io.File;
+
 import javax.swing.JOptionPane;
 
 enum BetType{
@@ -17,9 +18,11 @@ public class autoBet{
 	public boolean loginToProxySuccess = false;
 	public boolean loginToDSNMemberSuccess = false;
 	public boolean loginToWeiCaiMemberSuccess = false;
+	public boolean loginToTianCaiMemberSuccess = false;
 	public boolean inBet = false;
 	
 	public boolean inBetWeiCai = false;
+	public boolean inBetTianCai = false;
 
 	
 	//代理登录界面
@@ -66,6 +69,27 @@ public class autoBet{
 	public static Label labelWeiCaiSuccessBets;
 	public static Label labelWeiCaiFailBets;
 	
+	//添彩会员界面
+	public TextField textFieldTianCaiMemberAddress;
+	public TextField textFieldTianCaiMemberAccount;
+	public TextField textFieldTianCaiMemberPassword;
+	public TextField textFieldCQSSCBetTianCaiPercent;
+	public TextField textFieldBJSCBetTianCaiPercent;
+
+	
+	public Button btnBetTianCaiCQSSC;
+	public Button btnOppositeBetTianCaiCQSSC;
+	public Button btnStopBetTianCaiCQSSC;
+	public Button btnBetTianCaiBJSC;
+	public Button btnOppositeTianCaiBJSC;
+	public Button btnStopBetTianCaiBJSC;
+	
+	public static Label labelTianCaiTotalBets;
+	public static Label labelTianCaiSuccessBets;
+	public static Label labelTianCaiFailBets;
+	
+	
+	
 	
 	
 	
@@ -75,6 +99,7 @@ public class autoBet{
 	public static Label labelSuccessBets;
 	public static Label labelFailBets;
 	public GrabThread grabThread;
+	TianCaiHttp tianCaiHttp = null;
 	
 	
 	
@@ -83,23 +108,23 @@ public class autoBet{
 
 		
 		
-	    try {  
-	    	//生成路径  
-	    	File dir = new File("log");  
-	        if (dir.exists()) {   
-	        } 
-	        else {
-	        	dir.mkdirs();
-	        }
-	         
-	        //把输出重定向到文件
-	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//设置日期格式
-	    	PrintStream ps=new PrintStream("log/" + df.format(new Date()) + ".txt");  
-	    	System.setOut(ps);
-	    	System.setErr(ps);
-	    } catch (FileNotFoundException e) {  
-	    	e.printStackTrace();
-		} 
+//	    try {  
+//	    	//生成路径  
+//	    	File dir = new File("log");  
+//	        if (dir.exists()) {   
+//	        } 
+//	        else {
+//	        	dir.mkdirs();
+//	        }
+//	         
+//	        //把输出重定向到文件
+//	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//设置日期格式
+//	    	PrintStream ps=new PrintStream("log/" + df.format(new Date()) + ".txt");  
+//	    	System.setOut(ps);
+//	    	System.setErr(ps);
+//	    } catch (FileNotFoundException e) {  
+//	    	e.printStackTrace();
+//		} 
 	    
 	    ConfigReader.read("common.config");		
 		ConfigWriter.open("common.config");
@@ -116,6 +141,7 @@ public class autoBet{
 		if(Common.isNum(betTime)){
 			int timeSeconds = Integer.parseInt(betTime);
 			BetThread.betRemainTime = timeSeconds*1000;
+			BetTianCaiThread.betRemainTime = timeSeconds;
 		}
 		else{
 			//TODO 弹出对话框，提示输入错误
@@ -146,6 +172,15 @@ public class autoBet{
 		btnBetWeiCaiBJSC.setEnabled(false);
 		btnOppositeWeiCaiBJSC.setEnabled(flag);
 		btnStopBetWeiCaiBJSC.setEnabled(flag);
+	}
+	
+	public void enableTianCaiMemberBet(boolean flag){
+		btnBetTianCaiCQSSC.setEnabled(false);
+		btnOppositeBetTianCaiCQSSC.setEnabled(flag);
+		btnStopBetTianCaiCQSSC.setEnabled(flag);
+		btnBetTianCaiBJSC.setEnabled(false);
+		btnOppositeTianCaiBJSC.setEnabled(flag);
+		btnStopBetTianCaiBJSC.setEnabled(flag);
 	}
 	
 	
@@ -247,6 +282,9 @@ public class autoBet{
 				
 				if(loginToWeiCaiMemberSuccess&& loginToProxySuccess)
 					enableWeiCaiMemberBet(true);
+				
+				if(loginToTianCaiMemberSuccess&& loginToProxySuccess)
+					enableTianCaiMemberBet(true);
 				
 				outputMessage.append("登录迪士尼代理成功!\n");
 			}
@@ -619,6 +657,193 @@ public class autoBet{
 		
 		
 		enableWeiCaiMemberBet(false);
+		
+		//添彩会员界面
+		int TianCaiMemberX = 1500;
+		int TianCaiMemberY = 50;		
+		
+		
+		Label labelTianCaiMemberLogin = new Label("添彩会员登录:");
+		labelTianCaiMemberLogin.setSize(100, 25);
+		labelTianCaiMemberLogin.setLocation(TianCaiMemberX, TianCaiMemberY);
+		
+		Label labelTianCaiMemberAddress = new Label("网址:");
+		labelTianCaiMemberAddress.setSize(50, 25);
+		labelTianCaiMemberAddress.setLocation(TianCaiMemberX, TianCaiMemberY +30);
+		
+		
+		textFieldTianCaiMemberAddress = new TextField();
+		textFieldTianCaiMemberAddress.setSize(300,25);
+		textFieldTianCaiMemberAddress.setLocation(TianCaiMemberX + 50, TianCaiMemberY +30);
+		textFieldTianCaiMemberAddress.setText(ConfigReader.gettiancaiBetAddress());
+		
+		Label labelTianCaiMemberAccount = new Label("账户:");
+		labelTianCaiMemberAccount.setSize(50, 25);
+		labelTianCaiMemberAccount.setLocation(TianCaiMemberX, TianCaiMemberY +60);
+		
+		textFieldTianCaiMemberAccount = new TextField();
+		textFieldTianCaiMemberAccount.setSize(300,25);
+		textFieldTianCaiMemberAccount.setLocation(TianCaiMemberX + 50, TianCaiMemberY +60);
+		textFieldTianCaiMemberAccount.setText(ConfigReader.gettiancaiBetAccount());	
+		
+		Label labelTianCaiMemberPassword = new Label("密码:");
+		labelTianCaiMemberPassword.setSize(50, 25);
+		labelTianCaiMemberPassword.setLocation(TianCaiMemberX, TianCaiMemberY +90);
+		
+		textFieldTianCaiMemberPassword = new TextField();
+		textFieldTianCaiMemberPassword.setSize(300,25);
+		textFieldTianCaiMemberPassword.setLocation(TianCaiMemberX + 50, TianCaiMemberY +90);
+		textFieldTianCaiMemberPassword.setText(ConfigReader.gettiancaiBetPassword());	
+		textFieldTianCaiMemberPassword.setEchoChar('*');
+		
+		
+		Button btnTianCaiMemberLogin = new Button("登录");
+		btnTianCaiMemberLogin.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(loginToTianCaiMemberSuccess == true)
+					return;
+				
+				String address = textFieldTianCaiMemberAddress.getText();
+				String account = textFieldTianCaiMemberAccount.getText();
+				String password = textFieldTianCaiMemberPassword.getText();
+				
+				tianCaiHttp = new TianCaiHttp();
+				
+				tianCaiHttp.setLoginParams(address, account, password);
+
+				if(!tianCaiHttp.login()) {
+					outputMessage.append("登录添彩会员失败!\n");
+					return;
+				}
+				
+				loginToTianCaiMemberSuccess = true;
+				
+				ConfigWriter.updateTianCaiMemberAddress(address);
+				ConfigWriter.updateTianCaiMemberAccount(account);
+				ConfigWriter.updateTianCaiMemberPassword(password);
+				
+				ConfigWriter.saveTofile("common.config");
+
+				if(loginToTianCaiMemberSuccess&& loginToProxySuccess)
+					enableTianCaiMemberBet(true);
+				
+				outputMessage.append("登录添彩会员成功!\n");
+				
+			}
+		});
+		
+		btnTianCaiMemberLogin.setSize(50, 25);
+		btnTianCaiMemberLogin.setLocation(TianCaiMemberX, TianCaiMemberY + 120);
+		
+
+		btnBetTianCaiCQSSC = new Button("正投重庆时时彩");
+		btnBetTianCaiCQSSC.addActionListener(new BetTianCaiOppositeCQSSCListener(this));
+		
+		btnBetTianCaiCQSSC.setSize(90, 25);
+		btnBetTianCaiCQSSC.setLocation(TianCaiMemberX,TianCaiMemberY + 150);
+		
+
+		Label labelTianCaiPercent = new Label("投注比例:");
+		labelTianCaiPercent.setSize(60, 25);
+		labelTianCaiPercent.setLocation(TianCaiMemberX + 100, TianCaiMemberY + 150);
+		
+		textFieldCQSSCBetTianCaiPercent = new TextField();
+		textFieldCQSSCBetTianCaiPercent.setSize(60, 25);
+		textFieldCQSSCBetTianCaiPercent.setLocation(TianCaiMemberX + 160, TianCaiMemberY + 150);
+		
+
+		btnOppositeBetTianCaiCQSSC = new Button("反投重庆时时彩");
+		btnOppositeBetTianCaiCQSSC.addActionListener(new BetTianCaiOppositeCQSSCListener(this));
+		
+		btnOppositeBetTianCaiCQSSC.setSize(90, 25);
+		btnOppositeBetTianCaiCQSSC.setLocation(TianCaiMemberX,TianCaiMemberY + 180);
+		
+		btnStopBetTianCaiCQSSC = new Button("停止投注");
+		btnStopBetTianCaiCQSSC.addActionListener(new StopBetTianCaiCQSSCListener(this));
+		
+		btnStopBetTianCaiCQSSC.setSize(90, 25);
+		btnStopBetTianCaiCQSSC.setLocation(TianCaiMemberX + 100, TianCaiMemberY + 180);
+		
+		
+		
+		
+		btnBetTianCaiBJSC = new Button("正投北京赛车");
+		btnBetTianCaiBJSC.addActionListener(new BetBJSCListener(this));
+		
+		btnBetTianCaiBJSC.setSize(75, 25);
+		btnBetTianCaiBJSC.setLocation(TianCaiMemberX,TianCaiMemberY + 210);
+
+		Label BJSClabelTianCaiPercent = new Label("投注比例:");
+		BJSClabelTianCaiPercent.setSize(60, 25);
+		BJSClabelTianCaiPercent.setLocation(TianCaiMemberX + 100, TianCaiMemberY + 210);
+		
+		textFieldBJSCBetTianCaiPercent = new TextField();
+		textFieldBJSCBetTianCaiPercent.setSize(60, 25);
+		textFieldBJSCBetTianCaiPercent.setLocation(TianCaiMemberX + 160, TianCaiMemberY + 210);
+
+		
+		btnOppositeTianCaiBJSC = new Button("反投北京赛车");
+		btnOppositeTianCaiBJSC.addActionListener(new BetTianCaiOppositeBJSCListener(this));
+		
+		btnOppositeTianCaiBJSC.setSize(75, 25);
+		btnOppositeTianCaiBJSC.setLocation(TianCaiMemberX,TianCaiMemberY + 240);
+		
+
+		
+		btnStopBetTianCaiBJSC = new Button("停止投注");
+		btnStopBetTianCaiBJSC.addActionListener(new StopBetTianCaiBJSCListener(this));
+		
+		btnStopBetTianCaiBJSC.setSize(90, 25);
+		btnStopBetTianCaiBJSC.setLocation(TianCaiMemberX + 100, TianCaiMemberY + 240);
+		
+		
+		
+		labelTianCaiTotalBets = new Label();
+		labelTianCaiTotalBets.setSize(300,25);
+		labelTianCaiTotalBets.setLocation(TianCaiMemberX, 400);
+		labelTianCaiTotalBets.setText("下单次数:0");
+		
+		labelTianCaiSuccessBets = new Label();
+		labelTianCaiSuccessBets.setSize(300,25);
+		labelTianCaiSuccessBets.setLocation(TianCaiMemberX, 430);
+		labelTianCaiSuccessBets.setText("成功次数:0");
+		
+		labelTianCaiFailBets = new Label();
+		labelTianCaiFailBets.setSize(300,25);
+		labelTianCaiFailBets.setLocation(TianCaiMemberX, 460);
+		labelTianCaiFailBets.setText("失败次数:0");
+		
+		
+		panel.add(labelTianCaiTotalBets);
+		panel.add(labelTianCaiSuccessBets);
+		panel.add(labelTianCaiFailBets);
+		
+		
+		
+		panel.add(labelTianCaiMemberLogin);
+		panel.add(labelTianCaiMemberAddress);
+		panel.add(textFieldTianCaiMemberAddress);
+		panel.add(labelTianCaiMemberAccount);
+		panel.add(textFieldTianCaiMemberAccount);
+		panel.add(labelTianCaiMemberPassword);
+		panel.add(textFieldTianCaiMemberPassword);		
+		panel.add(btnTianCaiMemberLogin);
+		
+		panel.add(btnBetTianCaiCQSSC);
+		panel.add(labelTianCaiPercent);
+		panel.add(btnOppositeBetTianCaiCQSSC);
+		panel.add(btnBetTianCaiBJSC);
+		panel.add(btnOppositeTianCaiBJSC);
+		panel.add(BJSClabelTianCaiPercent);
+		panel.add(textFieldCQSSCBetTianCaiPercent);
+		panel.add(textFieldBJSCBetTianCaiPercent);
+		panel.add(btnStopBetTianCaiCQSSC);
+		panel.add(btnStopBetTianCaiBJSC);
+		
+		
+		enableTianCaiMemberBet(false);
+		
+		
 		
 		
 		
