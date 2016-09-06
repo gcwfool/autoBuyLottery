@@ -25,6 +25,11 @@ class BetThread extends Thread{
 	    	
 			boolean getCQSSCOddsData = false;
 			boolean getBJSCOddsData = false;
+			
+			
+			//用来控制打印封盘数据数据与下单数据差值的变量
+			boolean printBJSCErrorValue = false;
+			boolean printCQSSCErrorValue = false;
 
 	    	
 			while(true){
@@ -114,7 +119,15 @@ class BetThread extends Thread{
 						System.out.println("下单数据：");
 						System.out.println(betCQSSCData[1]);
 						
+						
+						
 						autoBetSuccess = dsnHttp.doBetCQSSC(betsData, betCQSSCPercent, betOppositeCQSSC, betCQSSCData[2]);
+						
+						if(autoBetSuccess == true){
+							dsnHttp.setCQSSCBetData(betsData);
+						}
+						
+						printCQSSCErrorValue = false;
 						
 					}
 					
@@ -145,7 +158,16 @@ class BetThread extends Thread{
 						System.out.println(betBJSCData[1]);
 						System.out.println(betBJSCData[2]);
 						System.out.println(betBJSCData[3]);
+						
+						
+						
 						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
+						
+						if(autoBetSuccess == true){
+							dsnHttp.setBJSCBetData(betsData);
+						}
+						
+						printBJSCErrorValue = false;
 					
 					}
 
@@ -153,6 +175,117 @@ class BetThread extends Thread{
 
 
 				sleepTime = 10*1000;
+				
+				
+				//打印封盘数据与下单数据差额
+				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true){
+					
+					
+					
+					String dataGY = null;
+					String dataSSWL = null;
+					String dataQBJS = null;
+					
+					for(int i = 0; i < 4; i++) {
+						
+						dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
+
+
+						if(dataGY == null || dataGY.equals("timeout")) {
+							dataGY = null;
+							Thread.currentThread().sleep(1*1000);
+						}else {
+							break;
+						}
+					}
+					
+					
+					for(int i = 0; i < 4; i++) {
+						
+						dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
+
+
+						if(dataSSWL == null || dataSSWL.equals("timeout")) {
+							dataSSWL = null;
+							Thread.currentThread().sleep(1*1000);
+						}else {
+							break;
+						}
+					}
+					
+					
+					for(int i = 0; i < 4; i++) {
+						
+						dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
+
+
+						if(dataQBJS == null || dataQBJS.equals("timeout")) {
+							dataQBJS = null;
+							Thread.currentThread().sleep(1*1000);
+						}else {
+							break;
+						}
+					}
+					
+					
+					
+					if(dataGY == null || dataSSWL == null || dataQBJS == null) {
+						System.out.println("未获取到封盘数据");
+					}else{
+						String[] betsData = {dataGY, dataSSWL, dataQBJS};
+						
+						System.out.println("北京赛车封盘数据：");
+						System.out.println(betsData[0]);
+						System.out.println(betsData[1]);
+						System.out.println(betsData[2]);
+
+						dsnHttp.calcBetDataErrorValue(betsData, BetType.BJSC);
+
+						
+					}
+					
+					printBJSCErrorValue = true;
+					
+				}
+				
+				
+				
+				if(CQSSCremainTime < -2*1000 && printCQSSCErrorValue == false && dsnHttp.previousCQSSCBetResult == true){
+					
+					String data = null;
+					
+					for(int i = 0; i < 4; i++) {
+						
+						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
+						
+						if( data == null || data.equals("timeout")) {
+							data = null;
+							Thread.currentThread().sleep(1*1000);
+						}else {
+							
+							break;
+						}
+					}
+					
+					if(data == null) {
+						System.out.println("未获取到封盘数据");
+					}else{
+		
+						System.out.println("重庆时时彩封盘数据：");
+						System.out.println(data);
+
+						String[] betData = {data};
+						
+						dsnHttp.calcBetDataErrorValue(betData, BetType.CQSSC);
+
+						
+					}
+					
+					printCQSSCErrorValue = true;
+					
+				}
+				
+				
 				
 				
 				if(BJSCremainTime <= almostTime || CQSSCremainTime <= almostTime){					

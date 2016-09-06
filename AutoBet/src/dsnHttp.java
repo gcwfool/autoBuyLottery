@@ -92,6 +92,168 @@ public class dsnHttp {
     static int successTimes = 0; //下单成功次数
     
     
+    static String[] BJSCBetData = null;
+    static String[] CQSSCBetData = null;
+    
+    static int BJSCBetDataErrorValue = 0;
+    static int CQSSCBetDataErrorValue = 0;
+    
+    
+    //计算封盘与实际下注差值
+    static int CQSSCbetTotalAmount = 0;
+    static int BJSCbetTotalAmount = 0;
+    
+    
+    
+    public static void setBJSCBetData(String[] betData){
+    	BJSCBetData = betData;
+    }
+    
+    public static void setCQSSCBetData(String[] betData){
+    	CQSSCBetData = betData;
+    }
+    
+    
+    public static void calcBetDataErrorValue(String[] closedData, BetType betType){
+    	
+    	
+    	int totalAmount = 0;
+    	
+    	String res = "";
+    	
+    	String oddsData = "";
+    	
+    	String[] betData = null;
+    	
+    	
+    	
+    	try{
+    		
+    		List<String> parsedGames = new ArrayList<String>();
+    		
+	    	JSONArray gamesArray = new JSONArray();
+	    	JSONObject oddsGrabData = null;
+	    	
+	    	if(betType == BetType.BJSC){
+	    		
+	    		betData = BJSCBetData;
+	    		
+	    		if(BJSCoddsData == null){
+	    			getBJSCoddsData();
+	    		}
+	    		
+	    		oddsData = BJSCoddsData;
+	    	}
+	    	else if(betType == BetType.CQSSC){
+	    		
+	    		betData = CQSSCBetData;
+	    		
+	    		if(CQSSCoddsData == null){
+	    			getCQSSCoddsData();
+	    		}
+	    		
+	    		oddsData = CQSSCoddsData;
+	    	}
+	    	
+	    	oddsGrabData = new JSONObject(oddsData);
+	    	
+	    	for(int i = 0; i < closedData.length; i++){
+    		
+    		
+            	JSONArray colsedLMData = new JSONArray(closedData[i]);        	
+            	JSONArray closedGamesData = colsedLMData.getJSONArray(0);
+            	
+            	
+            	JSONArray betLMData = new JSONArray(betData[i]);        	
+            	JSONArray betGamesData = betLMData.getJSONArray(0);
+            	
+            	
+
+        	
+	        	for(int j = 0; j < closedGamesData.length(); j++){
+	        		JSONObject closedGameData = closedGamesData.getJSONObject(j);
+	        		
+	    			String game = closedGameData.getString("k");
+	    			
+	    			String contents = closedGameData.getString("i");
+	    			int closedAmount = closedGameData.getInt("a");
+	    			String oddsKey = game + "_" + contents;
+	    			
+	    			if(oddsData.contains(oddsKey) == false)
+	    				continue;
+	    			
+	    			double odds = oddsGrabData.getDouble(oddsKey);
+	    			
+	    			if(odds > 2)//只计算投注的差值
+	    				continue;
+	    			
+	    			//剔除北京赛车冠亚军 和 两面
+	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
+	    				continue;
+	    			
+	    			
+	    			for(int k = 0; k < betGamesData.length(); k++){
+	    				
+	    				JSONObject betGameData = betGamesData.getJSONObject(k);
+	    				String betGame = betGameData.getString("k");
+	    				
+	    				String betContents = betGameData.getString("i");
+	    				
+	    				if(betGame.equals(game)&&betContents.equals(contents)){
+	    					int betAmount = betGameData.getInt("a");
+	    					
+	    					int errorValue = closedAmount - betAmount;
+	    					
+	    					totalAmount += errorValue;
+	    					break;
+	    					
+	    				}
+	    				
+	    			}
+	    			
+	    			
+	        	}
+	    	
+	    	}
+    	
+    	}catch(Exception e){
+    		
+    		
+    		
+    		System.out.println("ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc");
+    		
+    	}
+    	
+    	
+    	if(betType == BetType.BJSC){
+    		
+    		totalAmount -= BJSCbetTotalAmount;
+    		
+    		BJSCBetDataErrorValue += totalAmount;
+    		
+			String outputStr  = String.format("北京赛车第%s期,封盘数据与实际下单数据差值为:%d\n总差值为:%d\n\n",BJSCdrawNumber, totalAmount, BJSCBetDataErrorValue);
+			autoBet.outputMessage.append(outputStr);
+			
+    		
+    	}
+    	
+    	if(betType == BetType.CQSSC){
+    		
+    		totalAmount -= CQSSCbetTotalAmount;
+    		
+    		CQSSCBetDataErrorValue += totalAmount;
+    		
+			String outputStr  = String.format("重庆时时彩第%s期,封盘数据与实际下单数据差值为:%d\n总差值为:%d\n\n",CQSSCdrawNumber, totalAmount, CQSSCBetDataErrorValue);
+			autoBet.outputMessage.append(outputStr);
+			
+    		
+    	}
+    	
+    	
+    	
+    }
+    
+    
     public static String getCQSSCoddsData(){
     	String url = ADDRESS + "/member/odds?lottery=CQSSC&games=DX1%2CDX2%2CDX3%2CDX4%2CDX5%2CDS1%2CDS2%2CDS3%2CDS4%2CDS5%2CZDX%2CZDS%2CLH%2CTS1%2CTS2%2CTS3%2CB1%2CB2%2CB3%2CB4%2CB5&_=";
     	url += Long.toString(System.currentTimeMillis());
@@ -542,6 +704,7 @@ public class dsnHttp {
     				autoBet.outputMessage.append("\n");
             	}
             	autoBet.outputMessage.append("下单总金额:" + totalAmout + "\n");
+            	BJSCbetTotalAmount = totalAmout;
         	}
         	
         	
@@ -652,6 +815,9 @@ public class dsnHttp {
     			
     			autoBet.outputMessage.append("\n");
     			autoBet.outputMessage.append("下单总金额:" + totalAmount +"\n");
+    			
+    			CQSSCbetTotalAmount = totalAmount;
+    			
         	}
     	}catch(Exception e){
     		e.printStackTrace();
@@ -724,7 +890,7 @@ public class dsnHttp {
         	
         	usingTime = usingTime/1000;
         	
-        	String strUsingTime  = String.format("下单用时！ :%f 秒\n\n", usingTime);
+        	String strUsingTime  = String.format("下单用时！ :%f 秒\n", usingTime);
         	
         	autoBet.outputMessage.append(strUsingTime);
         	
@@ -820,7 +986,7 @@ public class dsnHttp {
         	
         	usingTime = usingTime/1000;
         	
-        	String strUsingTime  = String.format("下单用时！ :%f 秒\n\n", usingTime);
+        	String strUsingTime  = String.format("下单用时！ :%f 秒\n", usingTime);
         	
         	autoBet.outputMessage.append(strUsingTime);
 
@@ -871,7 +1037,7 @@ public class dsnHttp {
     			JSONObject account = betResult.getJSONObject("account");
     			double balance = account.getDouble("balance");
     			//int betting = account.getInt("betting");
-    			outputStr  = String.format("迪斯尼下单成功！ 账户余额:%f\n\n", balance);
+    			outputStr  = String.format("迪斯尼下单成功！ 账户余额:%f\n", balance);
     			autoBet.outputMessage.append(outputStr);
     			//System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
     			return true;
@@ -879,11 +1045,11 @@ public class dsnHttp {
 
     		case 2:
     			//System.out.println("下单失败:已封盘！\n");
-    			autoBet.outputMessage.append("迪斯尼下单失败:已封盘！\n\n");
+    			autoBet.outputMessage.append("迪斯尼下单失败:已封盘！\n");
     			return false;
     		case 3:
     			String message = betResult.getString("message");
-    			outputStr  = String.format("迪斯尼下单失败：%s\n\n",message);
+    			outputStr  = String.format("迪斯尼下单失败：%s\n",message);
     			autoBet.outputMessage.append(outputStr);
     			return false;
     		
