@@ -899,19 +899,26 @@ public class dsnHttp {
         	System.out.println(response);
         	
         	boolean result = parseBetResult(response);
-        	
-        	previousCQSSCBetNumber = CQSSCdrawNumber;
-        	previousCQSSCBetResult = result;
-        	
-        	if(result == true) {
-				successTimes++;
-				autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
-			} else {
-				failTimes++;
+        	    
+        	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) { //避免重复计数
+	        	if(result == true) {
+					successTimes++;
+					autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
+				} else {
+					failTimes++;
+					autoBet.labelFailBets.setText("失败次数:" + failTimes);
+				}
+				
+				autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	} else if(result) {
+        		successTimes++;
+    			autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
+    			failTimes--;
 				autoBet.labelFailBets.setText("失败次数:" + failTimes);
-			}
+        	}
 			
-			autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+			previousCQSSCBetNumber = CQSSCdrawNumber;
+        	previousCQSSCBetResult = result;
         	
         	return result;
         
@@ -995,19 +1002,27 @@ public class dsnHttp {
         	
         	boolean result = parseBetResult(response);
         	
-        	previousBJSCBetNumber = BJSCdrawNumber;
-        	previousBJSCBetResult = result;
         	
+        	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) { //避免重复计数
         	
-        	if(result == true) {
-				successTimes++;
-				autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
-			} else {
-				failTimes++;
-				autoBet.labelFailBets.setText("失败次数:" + failTimes);
-			}
+	        	if(result == true) {
+					successTimes++;
+					autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
+				} else {
+					failTimes++;
+					autoBet.labelFailBets.setText("失败次数:" + failTimes);
+				}
+				
+				autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	} else if(result) { //第二次进入下单成功 的话更改失败为成功
+        			successTimes++;
+        			autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
+        			failTimes--;
+					autoBet.labelFailBets.setText("失败次数:" + failTimes);
+        	}
 			
-			autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+			previousBJSCBetNumber = BJSCdrawNumber;
+        	previousBJSCBetResult = result;
         	
         	return result;
         }

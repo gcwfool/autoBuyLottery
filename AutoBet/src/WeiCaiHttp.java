@@ -1332,18 +1332,25 @@ public class WeiCaiHttp {
         	
         	boolean result = parseBetResult(response);
         	
-        	previousCQSSCBetNumber = CQSSCdrawNumber;
-        	previousCQSSCBetResult = result;
-        	
-        	if(result == true) {
-				successTimes++;
-				autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
-			} else {
-				failTimes++;
-				autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
-			}
+        	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) {
+	        	if(result == true) {
+					successTimes++;
+					autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
+				} else {
+					failTimes++;
+					autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
+				}
+				
+				autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	} else if(result) {
+        		successTimes++;
+        		autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
+        		failTimes--;
+        		autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
+        	}
 			
-			autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+			previousCQSSCBetNumber = CQSSCdrawNumber;
+        	previousCQSSCBetResult = result;
 			
 			String out = "账户余额:" + getAccountBalance() + "\n\n";
 			
@@ -1399,18 +1406,25 @@ public class WeiCaiHttp {
         	
         	boolean result = parseBetResult(response);
         	
-        	previousBJSCBetNumber = BJSCdrawNumber;
-        	previousBJSCBetResult = result;
-        	
-        	if(result == true) {
-				successTimes++;
-				autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
-			} else {
-				failTimes++;
-				autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
-			}
+        	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) {
+	        	if(result == true) {
+					successTimes++;
+					autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
+				} else {
+					failTimes++;
+					autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
+				}
+				
+				autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	} else if(result) {
+        		successTimes++;
+        		autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
+        		failTimes--;
+        		autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
+        	}
 			
-			autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+			previousBJSCBetNumber = BJSCdrawNumber;
+        	previousBJSCBetResult = result;
 			
 			String out = "账户余额:" + getAccountBalance() + "\n\n";
 			

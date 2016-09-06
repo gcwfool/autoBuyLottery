@@ -58,6 +58,8 @@ public class TianCaiHttp {
     
     String CQSSCdrawNumber = "";
     String BJSCdrawNumber = "";
+    String previousCQSSCdrawNumber = "";
+    String previousBJSCdrawNumber = "";
     String previousCQSSCBetNumber = "";
     String previousBJSCBetNumber = "";
     
@@ -286,15 +288,24 @@ public class TianCaiHttp {
 			
 			if(joResult.getInt("returnCode") == 0) {
 				JSONObject joGameInfo = joResult.getJSONObject("gameInfo");
-				System.out.println("gameNo:" + joGameInfo.getString("gameNo"));
+				//System.out.println("gameNo:" + joGameInfo.getString("gameNo"));
 				System.out.println("gameStatus:" + joGameInfo.getString("gameStatus"));
 				System.out.println("closeTime:" + joGameInfo.getLong("closeTime"));
-				System.out.println("gameTime:" + joGameInfo.getLong("gameTime"));
-				System.out.println("odds:" + joResult.getJSONObject("odds"));
+				//System.out.println("gameTime:" + joGameInfo.getLong("gameTime"));
+				//System.out.println("odds:" + joResult.getJSONObject("odds"));
 				remainTime = joGameInfo.getLong("gameTime") - joGameInfo.getLong("closeTime");
 				CQSSCcloseTime = System.currentTimeMillis() + (remainTime * 1000);
 				CQSSCoddsData = joResult.getJSONObject("odds");
-				CQSSCdrawNumber = joGameInfo.getString("gameNo");
+				if(!CQSSCdrawNumber.equals(joGameInfo.getString("gameNo"))) { //新的一期
+					previousCQSSCdrawNumber = CQSSCdrawNumber;
+					CQSSCdrawNumber = joGameInfo.getString("gameNo");
+					if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//判断上一期有没有漏投
+				        failTimes++;
+						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+						System.out.println("");
+				    }
+				}
 				
 			}
 			else {
@@ -305,10 +316,6 @@ public class TianCaiHttp {
 			return -9999;
 		}
         
-        
-        //{"returnCode":0,"announcement":"尊敬的用户，由於北京PK10官网开奖讯号出现不稳定，故第562372期开奖结果曾经出现问题，系统已重新结算有关期数之受影响的注单，不便之处，敬请原谅。","winLoss":0,"hasPlayerInfo":true,"gameInfo":{"gameType":"SSC","gameNo":"20160826055","lastGameResult":[],"lastGameNo":"20160826054","gameStatus":"BETTING","gameTime":521,"closeTime":90,"history":[],"roadMap":{"BALL_1":{"ODD":[[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,4],[0,1],[1,1],[0,1],[1,4],[0,1]],"BIG":[[0,4],[1,1],[0,1],[1,1],[0,4],[1,1],[0,1],[1,4],[0,4],[1,1],[0,1],[1,3],[0,3],[1,1],[0,1]],"NO_0":[[2,2],[1,1],[2,1],[7,1],[4,1],[5,1],[2,1],[4,1],[1,1],[4,1],[7,1],[2,1],[5,1],[6,1],[9,2],[2,1],[0,1],[3,2],[9,1],[3,1],[8,1],[7,1],[8,1],[1,3],[9,1],[4,1]]},"BALL_2":{"ODD":[[1,6],[0,4],[1,3],[0,2],[1,1],[0,2],[1,2],[0,1],[1,4],[0,1],[1,2],[0,1],[1,2]],"BIG":[[1,4],[0,2],[1,2],[0,2],[1,2],[0,3],[1,2],[0,2],[1,6],[0,1],[1,1],[0,3],[1,1]],"NO_0":[[7,1],[9,2],[7,1],[3,2],[8,2],[0,1],[2,1],[7,2],[3,1],[0,2],[9,1],[8,1],[0,1],[3,1],[5,1],[8,1],[7,1],[5,1],[9,2],[2,1],[9,1],[1,1],[2,1],[3,1],[5,1]]},"BALL_5":{"ODD":[[1,2],[0,1],[1,2],[0,3],[1,1],[0,1],[1,4],[0,1],[1,2],[0,2],[1,1],[0,1],[1,1],[0,2],[1,4],[0,1],[1,1],[0,1]],"BIG":[[1,3],[0,1],[1,2],[0,2],[1,5],[0,5],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,1],[1,3]],"NO_0":[[5,1],[9,1],[8,1],[1,1],[7,1],[8,1],[2,1],[4,1],[9,1],[8,1],[7,1],[5,1],[9,1],[3,1],[0,1],[3,2],[0,1],[6,1],[3,1],[4,1],[5,1],[0,1],[8,1],[9,1],[3,1],[7,1],[3,1],[8,1],[7,1],[6,1]]},"BALL_3":{"ODD":[[1,5],[0,3],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,5],[0,3],[1,1],[0,1],[1,1],[0,4]],"BIG":[[1,5],[0,1],[1,1],[0,2],[1,4],[0,2],[1,1],[0,1],[1,3],[0,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,2]],"NO_0":[[5,2],[9,1],[7,1],[9,1],[2,1],[6,1],[2,1],[1,1],[8,1],[5,1],[8,1],[7,1],[1,1],[0,1],[8,1],[1,1],[7,3],[3,1],[6,1],[2,1],[8,1],[7,1],[6,1],[9,1],[2,1],[8,1],[2,2]]},"D_T_T":{"DRAGON":[[1,3],[0,1],[2,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,5],[1,1],[2,1],[1,1],[0,2],[2,1],[1,1],[0,1],[1,3],[0,1],[1,1]]},"TOTAL":{"ODD":[[1,2],[0,1],[1,1],[0,1],[1,1],[0,2],[1,5],[0,2],[1,1],[0,2],[1,2],[0,3],[1,2],[0,1],[1,3],[0,2]],"BIG":[[0,1],[1,4],[0,1],[1,1],[0,3],[1,3],[0,2],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,2],[1,1],[0,1]]},"BALL_4":{"ODD":[[0,2],[1,1],[0,3],[1,1],[0,1],[1,1],[0,4],[1,1],[0,2],[1,4],[0,1],[1,1],[0,2],[1,3],[0,2],[1,2]],"BIG":[[0,1],[1,3],[0,2],[1,1],[0,1],[1,1],[0,6],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,4],[1,1],[0,1]],"NO_0":[[2,1],[8,1],[5,1],[6,1],[0,1],[4,1],[5,1],[0,1],[5,1],[0,2],[2,1],[4,1],[1,1],[4,1],[6,1],[1,1],[3,1],[9,1],[3,1],[2,1],[9,1],[4,1],[6,1],[5,1],[3,1],[1,1],[4,1],[2,1],[5,1],[3,1]]}},"twoSideRanking":[{"betOn":"BALL_3","betType":"EVEN","times":4},{"betOn":"BALL_5","betType":"BIG","times":3},{"betOn":"BALL_2","betType":"ODD","times":2},{"betOn":"BALL_3","betType":"SMALL","times":2},{"betOn":"BALL_4","betType":"ODD","times":2},{"betOn":"TOTAL","betType":"EVEN","times":2}],"appearanceList":[{"BALL_1":{"NO_6":1,"NO_1":5,"NO_7":3,"NO_0":1,"NO_2":6,"NO_5":2,"NO_8":2,"NO_9":4,"NO_3":3,"NO_4":4},"BALL_2":{"NO_6":0,"NO_1":1,"NO_7":5,"NO_0":4,"NO_2":3,"NO_5":3,"NO_8":4,"NO_9":6,"NO_3":5,"NO_4":0},"BALL_5":{"NO_6":2,"NO_1":1,"NO_7":4,"NO_0":3,"NO_2":1,"NO_5":3,"NO_8":5,"NO_9":4,"NO_3":6,"NO_4":2},"BALL_3":{"NO_6":3,"NO_1":3,"NO_7":6,"NO_0":1,"NO_2":6,"NO_5":3,"NO_8":5,"NO_9":3,"NO_3":1,"NO_4":0},"BALL_4":{"NO_6":3,"NO_1":3,"NO_7":0,"NO_0":4,"NO_2":4,"NO_5":5,"NO_8":1,"NO_9":2,"NO_3":4,"NO_4":5}},{"BALL_1":{"NO_6":16,"NO_1":2,"NO_7":6,"NO_0":12,"NO_2":13,"NO_5":17,"NO_8":5,"NO_9":1,"NO_3":8,"NO_4":0},"BALL_2":{"NO_6":31,"NO_1":3,"NO_7":9,"NO_0":13,"NO_2":2,"NO_5":0,"NO_8":10,"NO_9":4,"NO_3":1,"NO_4":31},"BALL_5":{"NO_6":0,"NO_1":27,"NO_7":1,"NO_0":8,"NO_2":24,"NO_5":9,"NO_8":2,"NO_9":6,"NO_3":3,"NO_4":10},"BALL_3":{"NO_6":5,"NO_1":14,"NO_7":6,"NO_0":16,"NO_2":0,"NO_5":20,"NO_8":2,"NO_9":4,"NO_3":10,"NO_4":31},"BALL_4":{"NO_6":7,"NO_1":4,"NO_7":31,"NO_0":20,"NO_2":2,"NO_5":1,"NO_8":29,"NO_9":9,"NO_3":0,"NO_4":3}}],"parameters":{"roundTime":"600"}},"odds":{"BALL_1":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"BALL_2":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"MIDDLE3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_5":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"FIRST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_3":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"LAST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"D_T_T":{"DRAGON":1.9838,"TIE":8.8000,"TIGER":1.9838},"TOTAL":{"EVEN":1.9838,"ODD":1.9838,"SMALL":1.9838,"BIG":1.9838},"BALL_4":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140}},"balance":10.00000,"sessionId":"eb212084-bffe-4523-9b61-f5463ba198ac","webServerId":"7d98c50a-2fd1-4edd-b707-834d46ed151f","lastResult":{"gameType":"SSC","gameNo":"20160826054","issueTime":null,"gameResult":[4,5,2,3,6]},"tray":0,"lotteryType":"SSC","command":"UPDATE"}
-
-
         return remainTime;
     }
     
@@ -329,7 +336,7 @@ public class TianCaiHttp {
         	return -1;
         }
         
-        System.out.println(response.toString());
+        //System.out.println(response.toString());
         
         JSONObject joResult = null;
         long remainTime = -9999;
@@ -338,15 +345,24 @@ public class TianCaiHttp {
 			
 			if(joResult.getInt("returnCode") == 0) {
 				JSONObject joGameInfo = joResult.getJSONObject("gameInfo");
-				System.out.println("gameNo:" + joGameInfo.getString("gameNo"));
+				//System.out.println("gameNo:" + joGameInfo.getString("gameNo"));
 				System.out.println("gameStatus:" + joGameInfo.getString("gameStatus"));
 				System.out.println("closeTime:" + joGameInfo.getLong("closeTime"));
-				System.out.println("gameTime:" + joGameInfo.getLong("gameTime"));
-				System.out.println("odds:" + joResult.getJSONObject("odds"));
+				//System.out.println("gameTime:" + joGameInfo.getLong("gameTime"));
+				//System.out.println("odds:" + joResult.getJSONObject("odds"));
 				remainTime = joGameInfo.getLong("gameTime") - joGameInfo.getLong("closeTime");
 				BJSCcloseTime = System.currentTimeMillis() + (remainTime * 1000);
 				BJSCoddsData = joResult.getJSONObject("odds");
-				BJSCdrawNumber = joGameInfo.getString("gameNo");
+				if(!BJSCdrawNumber.equals(joGameInfo.getString("gameNo"))) { //新的一期
+					previousBJSCdrawNumber = BJSCdrawNumber;
+					BJSCdrawNumber = joGameInfo.getString("gameNo");
+					if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//判断上一期有没有漏投
+				        failTimes++;
+						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+						System.out.println("");
+				    }
+				}			
 				
 			}
 			else {
@@ -613,30 +629,22 @@ public class TianCaiHttp {
         	//outputBetsDetails(jsonParam, BetType.CQSSC);
         	
         	boolean result = bet(strBet, BetType.CQSSC);
+     	
         	
-//    		if(response != null && (response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true)){
-//    			login();
-//    		}
-//        	
-//        	if(response == null || response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true){
-//        		response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
-//        	}
-//        	
-
-        	
-        	previousCQSSCBetNumber = CQSSCdrawNumber;
-        	previousCQSSCBetResult = result;
-        	
-        	if(result == true) {
-				successTimes++;
-				autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
-			} else {
-				failTimes++;
-				autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
-			}
+        	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) {//避免重复计数
+	        	if(result == true) {
+					successTimes++;
+					autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
+				} else {
+					failTimes++;
+					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+				}
+				
+				autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	}
 			
-			autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
-			
+			previousCQSSCBetNumber = CQSSCdrawNumber;
+        	previousCQSSCBetResult = result;	
         	
         	return result;
         
@@ -671,29 +679,22 @@ public class TianCaiHttp {
         	//outputBetsDetails(jsonParam, BetType.BJSC);
         	
         	boolean result = bet(strBet, BetType.BJSC);
+   
         	
-//    		if(response != null && (response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true)){
-//    			login();
-//    		}
-//        	
-//        	if(response == null || response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true){
-//        		response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
-//        	}
-//        	
-
-        	
-        	previousBJSCBetNumber = BJSCdrawNumber;
-        	previousBJSCBetResult = result;
-        	
-        	if(result == true) {
-				successTimes++;
-				autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
-			} else {
-				failTimes++;
-				autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
-			}
-			
-			autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) {//避免重复计数
+	        	if(result == true) {
+					successTimes++;
+					autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
+				} else {
+					failTimes++;
+					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+				}
+				
+				autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+        	}
+				
+			previousBJSCBetNumber = BJSCdrawNumber;
+	        previousBJSCBetResult = result;
 			
         	
         	return result;
@@ -1390,6 +1391,8 @@ public class TianCaiHttp {
         response = doPost(HOST + "/lotteryweb/WebClientAgent", params, "", HOST + "/lotteryweb/Login");
         if(response == "") {
         	System.out.println("下单失败  response == \"\"");
+        	String out = "下单失败！\n\n";	
+        	autoBet.outputMessage.append(out);
         	return false;
         }
         
@@ -1419,8 +1422,6 @@ public class TianCaiHttp {
 			return false;
 		}
         
-        //{"returnCode":0,"announcement":"尊敬的用户，由於北京PK10官网开奖讯号出现不稳定，故第562372期开奖结果曾经出现问题，系统已重新结算有关期数之受影响的注单，不便之处，敬请原谅。","winLoss":0,"hasPlayerInfo":true,"gameInfo":{"gameType":"SSC","gameNo":"20160826055","lastGameResult":[],"lastGameNo":"20160826054","gameStatus":"BETTING","gameTime":521,"closeTime":90,"history":[],"roadMap":{"BALL_1":{"ODD":[[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,4],[0,1],[1,1],[0,1],[1,4],[0,1]],"BIG":[[0,4],[1,1],[0,1],[1,1],[0,4],[1,1],[0,1],[1,4],[0,4],[1,1],[0,1],[1,3],[0,3],[1,1],[0,1]],"NO_0":[[2,2],[1,1],[2,1],[7,1],[4,1],[5,1],[2,1],[4,1],[1,1],[4,1],[7,1],[2,1],[5,1],[6,1],[9,2],[2,1],[0,1],[3,2],[9,1],[3,1],[8,1],[7,1],[8,1],[1,3],[9,1],[4,1]]},"BALL_2":{"ODD":[[1,6],[0,4],[1,3],[0,2],[1,1],[0,2],[1,2],[0,1],[1,4],[0,1],[1,2],[0,1],[1,2]],"BIG":[[1,4],[0,2],[1,2],[0,2],[1,2],[0,3],[1,2],[0,2],[1,6],[0,1],[1,1],[0,3],[1,1]],"NO_0":[[7,1],[9,2],[7,1],[3,2],[8,2],[0,1],[2,1],[7,2],[3,1],[0,2],[9,1],[8,1],[0,1],[3,1],[5,1],[8,1],[7,1],[5,1],[9,2],[2,1],[9,1],[1,1],[2,1],[3,1],[5,1]]},"BALL_5":{"ODD":[[1,2],[0,1],[1,2],[0,3],[1,1],[0,1],[1,4],[0,1],[1,2],[0,2],[1,1],[0,1],[1,1],[0,2],[1,4],[0,1],[1,1],[0,1]],"BIG":[[1,3],[0,1],[1,2],[0,2],[1,5],[0,5],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,1],[1,3]],"NO_0":[[5,1],[9,1],[8,1],[1,1],[7,1],[8,1],[2,1],[4,1],[9,1],[8,1],[7,1],[5,1],[9,1],[3,1],[0,1],[3,2],[0,1],[6,1],[3,1],[4,1],[5,1],[0,1],[8,1],[9,1],[3,1],[7,1],[3,1],[8,1],[7,1],[6,1]]},"BALL_3":{"ODD":[[1,5],[0,3],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,5],[0,3],[1,1],[0,1],[1,1],[0,4]],"BIG":[[1,5],[0,1],[1,1],[0,2],[1,4],[0,2],[1,1],[0,1],[1,3],[0,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,2]],"NO_0":[[5,2],[9,1],[7,1],[9,1],[2,1],[6,1],[2,1],[1,1],[8,1],[5,1],[8,1],[7,1],[1,1],[0,1],[8,1],[1,1],[7,3],[3,1],[6,1],[2,1],[8,1],[7,1],[6,1],[9,1],[2,1],[8,1],[2,2]]},"D_T_T":{"DRAGON":[[1,3],[0,1],[2,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,5],[1,1],[2,1],[1,1],[0,2],[2,1],[1,1],[0,1],[1,3],[0,1],[1,1]]},"TOTAL":{"ODD":[[1,2],[0,1],[1,1],[0,1],[1,1],[0,2],[1,5],[0,2],[1,1],[0,2],[1,2],[0,3],[1,2],[0,1],[1,3],[0,2]],"BIG":[[0,1],[1,4],[0,1],[1,1],[0,3],[1,3],[0,2],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,2],[1,1],[0,1]]},"BALL_4":{"ODD":[[0,2],[1,1],[0,3],[1,1],[0,1],[1,1],[0,4],[1,1],[0,2],[1,4],[0,1],[1,1],[0,2],[1,3],[0,2],[1,2]],"BIG":[[0,1],[1,3],[0,2],[1,1],[0,1],[1,1],[0,6],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,4],[1,1],[0,1]],"NO_0":[[2,1],[8,1],[5,1],[6,1],[0,1],[4,1],[5,1],[0,1],[5,1],[0,2],[2,1],[4,1],[1,1],[4,1],[6,1],[1,1],[3,1],[9,1],[3,1],[2,1],[9,1],[4,1],[6,1],[5,1],[3,1],[1,1],[4,1],[2,1],[5,1],[3,1]]}},"twoSideRanking":[{"betOn":"BALL_3","betType":"EVEN","times":4},{"betOn":"BALL_5","betType":"BIG","times":3},{"betOn":"BALL_2","betType":"ODD","times":2},{"betOn":"BALL_3","betType":"SMALL","times":2},{"betOn":"BALL_4","betType":"ODD","times":2},{"betOn":"TOTAL","betType":"EVEN","times":2}],"appearanceList":[{"BALL_1":{"NO_6":1,"NO_1":5,"NO_7":3,"NO_0":1,"NO_2":6,"NO_5":2,"NO_8":2,"NO_9":4,"NO_3":3,"NO_4":4},"BALL_2":{"NO_6":0,"NO_1":1,"NO_7":5,"NO_0":4,"NO_2":3,"NO_5":3,"NO_8":4,"NO_9":6,"NO_3":5,"NO_4":0},"BALL_5":{"NO_6":2,"NO_1":1,"NO_7":4,"NO_0":3,"NO_2":1,"NO_5":3,"NO_8":5,"NO_9":4,"NO_3":6,"NO_4":2},"BALL_3":{"NO_6":3,"NO_1":3,"NO_7":6,"NO_0":1,"NO_2":6,"NO_5":3,"NO_8":5,"NO_9":3,"NO_3":1,"NO_4":0},"BALL_4":{"NO_6":3,"NO_1":3,"NO_7":0,"NO_0":4,"NO_2":4,"NO_5":5,"NO_8":1,"NO_9":2,"NO_3":4,"NO_4":5}},{"BALL_1":{"NO_6":16,"NO_1":2,"NO_7":6,"NO_0":12,"NO_2":13,"NO_5":17,"NO_8":5,"NO_9":1,"NO_3":8,"NO_4":0},"BALL_2":{"NO_6":31,"NO_1":3,"NO_7":9,"NO_0":13,"NO_2":2,"NO_5":0,"NO_8":10,"NO_9":4,"NO_3":1,"NO_4":31},"BALL_5":{"NO_6":0,"NO_1":27,"NO_7":1,"NO_0":8,"NO_2":24,"NO_5":9,"NO_8":2,"NO_9":6,"NO_3":3,"NO_4":10},"BALL_3":{"NO_6":5,"NO_1":14,"NO_7":6,"NO_0":16,"NO_2":0,"NO_5":20,"NO_8":2,"NO_9":4,"NO_3":10,"NO_4":31},"BALL_4":{"NO_6":7,"NO_1":4,"NO_7":31,"NO_0":20,"NO_2":2,"NO_5":1,"NO_8":29,"NO_9":9,"NO_3":0,"NO_4":3}}],"parameters":{"roundTime":"600"}},"odds":{"BALL_1":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"BALL_2":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"MIDDLE3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_5":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"FIRST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_3":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"LAST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"D_T_T":{"DRAGON":1.9838,"TIE":8.8000,"TIGER":1.9838},"TOTAL":{"EVEN":1.9838,"ODD":1.9838,"SMALL":1.9838,"BIG":1.9838},"BALL_4":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140}},"balance":10.00000,"sessionId":"eb212084-bffe-4523-9b61-f5463ba198ac","webServerId":"7d98c50a-2fd1-4edd-b707-834d46ed151f","lastResult":{"gameType":"SSC","gameNo":"20160826054","issueTime":null,"gameResult":[4,5,2,3,6]},"tray":0,"lotteryType":"SSC","command":"UPDATE"}
-
     }
     
     

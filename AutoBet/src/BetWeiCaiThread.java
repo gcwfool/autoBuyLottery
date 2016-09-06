@@ -101,9 +101,9 @@ public class BetWeiCaiThread extends Thread{
 					CQSSCremainTime = WeiCaiHttp.getCQSSClocalRemainTime();
 					BJSCremainTime = WeiCaiHttp.getBJSClocalRemainTime();
 					
-					System.out.println("距离重庆时时彩封盘时间为[local]:");
+					System.out.println("[微彩]距离重庆时时彩封盘时间为[local]:");
 					System.out.println(CQSSCremainTime/1000);					
-					System.out.println("距离北京赛车封盘时间为[local]:");
+					System.out.println("[微彩]距离北京赛车封盘时间为[local]:");
 					System.out.println(BJSCremainTime/1000);
 					
 					if((CQSSCremainTime <= 0 || CQSSCremainTime > 40*1000) && (BJSCremainTime <= 0 || BJSCremainTime > 40*1000)) {
