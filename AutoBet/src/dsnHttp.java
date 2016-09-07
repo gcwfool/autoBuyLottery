@@ -67,7 +67,9 @@ public class dsnHttp {
     static long   queryParam = 0;
     
     static long time = 0;
-    
+      
+    static String previousCQSSCdrawNumber = "";
+    static String previousBJSCdrawNumber = "";
     static String CQSSCdrawNumber = "";
     static String BJSCdrawNumber = "";
     static String previousCQSSCBetNumber = "";
@@ -518,7 +520,29 @@ public class dsnHttp {
         try{
             JSONObject periodJson = new JSONObject(response);
             CQSSCcloseTime = periodJson.getLong("closeTime");
-            CQSSCdrawNumber = periodJson.getString("drawNumber");
+            if(!CQSSCdrawNumber.equals(periodJson.getString("drawNumber"))) {//新的一期
+            	previousCQSSCdrawNumber = CQSSCdrawNumber;
+            	CQSSCdrawNumber = periodJson.getString("drawNumber");
+            	if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//判断上一期有没有漏投
+					long dNum = 0;
+					try {
+					    long drawNum = Long.parseLong(BJSCdrawNumber)%1000;
+					    long preBetNum =  Long.parseLong(previousBJSCBetNumber)%1000;
+					    if(preBetNum - drawNum > 0) {
+					    	dNum = drawNum = preBetNum - 1;
+					    }else if(preBetNum - drawNum  < 0){
+					    	dNum = drawNum + 120 - preBetNum - 1;
+					    }
+					} catch (NumberFormatException e) {
+					    e.printStackTrace();
+					}
+					
+					failTimes += dNum;
+					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+					autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+					System.out.println("漏投" + dNum + "次");
+			    }
+            }
         }
         catch(Exception e){
         	autoBet.outputMessage.append("获取迪斯尼时间错误！");
@@ -596,7 +620,23 @@ public class dsnHttp {
         try{
             JSONObject periodJson = new JSONObject(response);
             BJSCcloseTime = periodJson.getLong("closeTime");
-            BJSCdrawNumber = periodJson.getString("drawNumber");
+            if(!BJSCdrawNumber.equals(periodJson.getString("drawNumber"))) {//新的一期
+            	previousBJSCdrawNumber = BJSCdrawNumber;
+            	BJSCdrawNumber = periodJson.getString("drawNumber");
+            	if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//判断上一期有没有漏投
+					int dNum = 0;
+					try {
+					    dNum = Integer.parseInt(BJSCdrawNumber) - Integer.parseInt(previousBJSCBetNumber) -1;
+					} catch (NumberFormatException e) {
+					    e.printStackTrace();
+					}
+					
+					failTimes += dNum;
+					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+					autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+					System.out.println("漏投" + dNum + "次");
+			    }
+            }
         }
         catch(Exception e){
         	autoBet.outputMessage.append("获取迪斯尼时间错误！");
@@ -1547,7 +1587,6 @@ public class dsnHttp {
                 output.write(a);  
                 output.close();  
                 
-         
                 InputStream ins = null;
         		 String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "hyyzm.png", "result", "-l", "eng"};
 

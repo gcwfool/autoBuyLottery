@@ -300,10 +300,23 @@ public class TianCaiHttp {
 					previousCQSSCdrawNumber = CQSSCdrawNumber;
 					CQSSCdrawNumber = joGameInfo.getString("gameNo");
 					if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//判断上一期有没有漏投
-				        failTimes++;
+						long dNum = 0;
+						try {
+						    long drawNum = Long.parseLong(BJSCdrawNumber)%1000;
+						    long preBetNum =  Long.parseLong(previousBJSCBetNumber)%1000;
+						    if(preBetNum - drawNum > 0) {
+						    	dNum = drawNum = preBetNum - 1;
+						    }else if(preBetNum - drawNum  < 0){
+						    	dNum = drawNum + 120 - preBetNum - 1;
+						    }
+						} catch (NumberFormatException e) {
+						    e.printStackTrace();
+						}
+						
+						failTimes += dNum;
 						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
 						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
-						System.out.println("");
+						System.out.println("漏投" + dNum + "次");
 				    }
 				}
 				
@@ -357,10 +370,17 @@ public class TianCaiHttp {
 					previousBJSCdrawNumber = BJSCdrawNumber;
 					BJSCdrawNumber = joGameInfo.getString("gameNo");
 					if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//判断上一期有没有漏投
-				        failTimes++;
+						int dNum = 0;
+						try {
+						    dNum = Integer.parseInt(BJSCdrawNumber) - Integer.parseInt(previousBJSCBetNumber) -1;
+						} catch (NumberFormatException e) {
+						    e.printStackTrace();
+						}
+						
+						failTimes += dNum;
 						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
 						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
-						System.out.println("");
+						System.out.println("漏投" + dNum + "次");
 				    }
 				}			
 				
