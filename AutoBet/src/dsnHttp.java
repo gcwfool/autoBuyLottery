@@ -184,13 +184,15 @@ public class dsnHttp {
 	    			
 	    			double odds = oddsGrabData.getDouble(oddsKey);
 	    			
-	    			if(odds > 2)//只计算投注的差值
+	    			if(odds > 2.0)//只计算投注的差值
 	    				continue;
 	    			
 	    			//剔除北京赛车冠亚军 和 两面
 	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
 	    				continue;
 	    			
+	    			
+	    			boolean findSameBet = false;
 	    			
 	    			for(int k = 0; k < betGamesData.length(); k++){
 	    				
@@ -204,13 +206,24 @@ public class dsnHttp {
 	    					
 	    					int errorValue = closedAmount - betAmount;
 	    					
+	    					
+	    					//String outstr = String.format("%s:%d\n", oddsKey, errorValue);
+	    					
+	    					//System.out.println(outstr);
+	    					
 	    					totalAmount += errorValue;
+	    					findSameBet = true;
 	    					break;
 	    					
 	    				}
 	    				
 	    			}
 	    			
+	    			if(findSameBet == false){
+	    				totalAmount += closedAmount;
+	    			}
+	    			
+	    			findSameBet = false;
 	    			
 	        	}
 	    	
