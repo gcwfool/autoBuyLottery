@@ -311,17 +311,57 @@ public class dsnHttp {
     }
     
     
+    public static void setLoginAddress(String address){
+    	ADDRESS = address;
+    }
+    
     public static boolean login() {    	
     	boolean res = false;
-    	for(int i = 0; i < 20; i++) {
+
+    		
+    	for(int i = 0; i < 15; i++) {
     		if(loginToDsn()) {
     			res = true;
     			break;
     		}
     	}
+        	
+    	String currentAddress = ADDRESS;
+
+    	if(res == false){
+    		
+        	String[] addressArray = ConfigReader.getBetAddressArray();
+        	
+        	
+        	
+        	for(int k = 0; k < addressArray.length; k++){
+        		
+        		
+        		if(currentAddress.equals(addressArray[k]))
+        				continue;
+        		
+        		setLoginAddress(addressArray[k]);
+        		
+        		for(int i = 0; i < 15; i++) {
+            		if(loginToDsn()) {
+            			res = true;
+            			
+            			ConfigWriter.updateDSNMemberAddress(ADDRESS);//更新到现在登得上的网址
+            			
+            			break;
+            		}
+            	}
+            	
+            	if(res == true){
+            		break;
+            	}
+        	}
+    	}
+    	
+    	
     	
 
-    	
+    	    	
     	return res;
     }
     
@@ -331,28 +371,20 @@ public class dsnHttp {
     	
 		autoBet.outputMessage.append("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
 		
-    	for(int i = 0; i < 20; i++) {
-    		if(loginToDsn()) {
-    			res = true;
-    			break;
-    		}
-    	}
+		res = login();
 		
-    	while(!res) {
-    		try {
-    			Thread.currentThread().sleep(20*1000);
-    			
-            	for(int i = 0; i < 20; i++) {
-            		if(loginToDsn()) {
-            			res = true;
-            			break;
-            		}
-            	}
-    			
-    		} catch(InterruptedException e) {
-    			//todo
-    		}
-    	}
+		while(!res){
+			try{
+				res = login();
+				Thread.currentThread().sleep(10*1000);
+				
+			}catch(Exception e){
+				
+			}
+
+		}
+		
+
     	autoBet.outputMessage.append("会员" + ACCOUNT + "重新登录成功\n");
     	
     	return res;

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.http.message.BasicNameValuePair;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -151,44 +150,83 @@ public class DsnProxyGrab {
     	PASSWORD = password;
     }
     
-    public static boolean login() {    	
+    public static void setLoginAddress(String address){
+    	ADDRESS = address;
+    }
+    
+    public static boolean login() {  
+    	
+    	
     	boolean res = false;
-    	for(int i = 0; i < 10; i++) {
+
+		
+    	for(int i = 0; i < 15; i++) {
     		if(doLogin()) {
     			res = true;
     			break;
     		}
     	}
+        	
+    	String currentAddress = ADDRESS;
+
+    	if(res == false){
+    		
+        	String[] addressArray = ConfigReader.getProxyAddressArray();
+        	
+        	
+        	
+        	for(int k = 0; k < addressArray.length; k++){
+        		
+        		
+        		if(currentAddress.equals(addressArray[k]))
+        				continue;
+        		
+        		setLoginAddress(addressArray[k]);
+        		
+        		for(int i = 0; i < 15; i++) {
+            		if(doLogin()) {
+            			res = true;
+            			
+            			ConfigWriter.updateProxyAddress(ADDRESS);//更新到现在登得上的网址
+            			
+            			break;
+            		}
+            	}
+            	
+            	if(res == true){
+            		break;
+            	}
+        	}
+    	}
     	
+    	
+    	
+
+    	    	
     	return res;
+    	
+
     }
     
     public static void connFailLogin() {
     	
     	
     	boolean res = false;
-    	for(int i = 0; i < 10; i++) {
-    		if(doLogin()) {
-    			res = true;
-    			break;
-    		}
-    	}
     	
-    	while(!res) {
-    		try {
-    			
-    	    	for(int i = 0; i < 10; i++) {
-    	    		if(doLogin()) {
-    	    			res = true;
-    	    			break;
-    	    		}
-    	    	}
-    			
-    			Thread.currentThread().sleep(60*1000);
-    		} catch(InterruptedException e) {
-    			//todo
-    		}
-    	}
+		
+		res = login();
+		
+		while(!res){
+			try{
+				res = login();
+				Thread.currentThread().sleep(10*1000);
+				
+			}catch(Exception e){
+				
+			}
+
+		}
+
     }
 
 
