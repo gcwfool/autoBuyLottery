@@ -319,7 +319,7 @@ public class dsnHttp {
     	boolean res = false;
 
     		
-    	for(int i = 0; i < 15; i++) {
+    	for(int i = 0; i < 10; i++) {
     		if(loginToDsn()) {
     			res = true;
     			break;
@@ -342,7 +342,7 @@ public class dsnHttp {
         		
         		setLoginAddress(addressArray[k]);
         		
-        		for(int i = 0; i < 15; i++) {
+        		for(int i = 0; i < 10; i++) {
             		if(loginToDsn()) {
             			res = true;
             			
@@ -369,20 +369,41 @@ public class dsnHttp {
     	
     	boolean res = false;
     	
-		autoBet.outputGUIMessage("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
 		
-		res = login();
 		
-		while(!res){
-			try{
-				res = login();
-				Thread.currentThread().sleep(10*1000);
-				
-			}catch(Exception e){
-				
-			}
+    	String currentAddress = ADDRESS;
 
-		}
+    	while(res == false){
+    		
+    		autoBet.outputGUIMessage("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
+    		
+        	String[] addressArray = ConfigReader.getBetAddressArray();
+        	
+        	
+        	
+        	for(int k = 0; k < addressArray.length; k++){
+        		
+        		
+        		if(currentAddress.equals(addressArray[k]))
+        				continue;
+        		
+        		setLoginAddress(addressArray[k]);
+        		
+        		for(int i = 0; i < 10; i++) {
+            		if(loginToDsn()) {
+            			res = true;
+            			
+            			ConfigWriter.updateDSNMemberAddress(ADDRESS);//更新到现在登得上的网址
+            			
+            			break;
+            		}
+            	}
+            	
+            	if(res == true){
+            		break;
+            	}
+        	}
+    	}
 		
 
     	autoBet.outputGUIMessage("会员" + ACCOUNT + "重新登录成功\n");
