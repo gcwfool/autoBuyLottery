@@ -302,11 +302,11 @@ public class TianCaiHttp {
 					if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//判断上一期有没有漏投
 						long dNum = 0;
 						try {
-						    long drawNum = Long.parseLong(BJSCdrawNumber)%1000;
-						    long preBetNum =  Long.parseLong(previousBJSCBetNumber)%1000;
-						    if(preBetNum - drawNum > 0) {
-						    	dNum = drawNum = preBetNum - 1;
-						    }else if(preBetNum - drawNum  < 0){
+						    long drawNum = Long.parseLong(CQSSCdrawNumber)%1000;
+						    long preBetNum =  Long.parseLong(previousCQSSCBetNumber)%1000;
+						    if(drawNum - preBetNum > 0) {
+						    	dNum = drawNum - preBetNum - 1;
+						    }else if(drawNum - preBetNum  < 0){
 						    	dNum = drawNum + 120 - preBetNum - 1;
 						    }
 						} catch (NumberFormatException e) {
@@ -314,9 +314,9 @@ public class TianCaiHttp {
 						}
 						
 						failTimes += dNum;
-						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
-						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
-						System.out.println("漏投" + dNum + "次");
+						autoBet.labelFailBets.setText("失败次数:" + failTimes);
+						autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+						System.out.println("漏投" + dNum + "次, 期数：" + CQSSCdrawNumber + "上次下单期数：" + previousCQSSCBetNumber);
 				    }
 				}
 				
@@ -380,7 +380,7 @@ public class TianCaiHttp {
 						failTimes += dNum;
 						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
 						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
-						System.out.println("漏投" + dNum + "次");
+						System.out.println("漏投" + dNum + "次, 期数：" + BJSCdrawNumber + "上次下单期数：" + previousBJSCBetNumber);
 				    }
 				}			
 				
