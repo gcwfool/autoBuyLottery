@@ -162,7 +162,7 @@ public class DsnProxyGrab {
     	boolean res = false;
 
 		
-    	for(int i = 0; i < 15; i++) {
+    	for(int i = 0; i < 10; i++) {
     		if(doLogin()) {
     			res = true;
     			break;
@@ -185,7 +185,7 @@ public class DsnProxyGrab {
         		
         		setLoginAddress(addressArray[k]);
         		
-        		for(int i = 0; i < 15; i++) {
+        		for(int i = 0; i < 10; i++) {
             		if(doLogin()) {
             			res = true;
             			
@@ -216,18 +216,38 @@ public class DsnProxyGrab {
     	boolean res = false;
     	
 		
-		res = login();
-		
-		while(!res){
-			try{
-				res = login();
-				Thread.currentThread().sleep(10*1000);
-				
-			}catch(Exception e){
-				
-			}
+    	String currentAddress = ADDRESS;
 
-		}
+    	while(res == false){
+    		
+        	String[] addressArray = ConfigReader.getProxyAddressArray();
+        	
+        	
+        	
+        	for(int k = 0; k < addressArray.length; k++){
+        		
+        		
+        		if(currentAddress.equals(addressArray[k]))
+        				continue;
+        		
+        		setLoginAddress(addressArray[k]);
+        		
+        		for(int i = 0; i < 10; i++) {
+            		if(doLogin()) {
+            			res = true;
+            			
+            			ConfigWriter.updateProxyAddress(ADDRESS);//更新到现在登得上的网址
+            			
+            			break;
+            		}
+            	}
+            	
+            	if(res == true){
+            		break;
+            	}
+        	}
+    	}
+    	
 
     }
 

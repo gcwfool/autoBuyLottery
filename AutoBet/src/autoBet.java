@@ -148,6 +148,15 @@ public class autoBet{
 		}
 	}
 	
+	
+	public static synchronized void outputGUIMessage(String outstr){
+		
+		if(outstr == null)
+			return;
+		
+		outputMessage.append(outstr);
+	}
+	
 	public void enableGrabBtn(boolean flag){
 		btnStartGrabCQSSC.setEnabled(flag);
 		btnStopGrabCQSSC.setEnabled(flag);
@@ -260,7 +269,7 @@ public class autoBet{
 				DsnProxyGrab.setLoginParams(address, account, password);
 				
 				if(!DsnProxyGrab.login()) {
-					outputMessage.append("登录迪士尼代理失败!\n");
+					outputGUIMessage("登录迪士尼代理失败!\n");
 					return;
 				}
 				
@@ -286,7 +295,7 @@ public class autoBet{
 				if(loginToTianCaiMemberSuccess&& loginToProxySuccess)
 					enableTianCaiMemberBet(true);
 				
-				outputMessage.append("登录迪士尼代理成功!\n");
+				outputGUIMessage("登录迪士尼代理成功!\n");
 			}
 		});
 		
@@ -368,7 +377,7 @@ public class autoBet{
 				dsnHttp.setLoginParams(address, account, password);
 
 				if(!dsnHttp.login()) {
-					outputMessage.append("登录迪士尼会员失败!\n");
+					outputGUIMessage("登录迪士尼会员失败!\n");
 					return;
 				}
 				
@@ -383,7 +392,7 @@ public class autoBet{
 				if(loginToDSNMemberSuccess&& loginToProxySuccess)
 					enableDSNMemberBet(true);
 				
-				outputMessage.append("登录迪士尼会员成功!\n");
+				outputGUIMessage("登录迪士尼会员成功!\n");
 			}
 		});
 		
@@ -528,7 +537,7 @@ public class autoBet{
 				WeiCaiHttp.setLoginParams(address, account, password);
 
 				if(!WeiCaiHttp.login()) {
-					outputMessage.append("登录微彩会员失败!\n");
+					outputGUIMessage("登录微彩会员失败!\n");
 					return;
 				}
 				
@@ -543,7 +552,7 @@ public class autoBet{
 				if(loginToWeiCaiMemberSuccess&& loginToProxySuccess)
 					enableWeiCaiMemberBet(true);
 				
-				outputMessage.append("登录微彩会员成功!\n");
+				outputGUIMessage("登录微彩会员成功!\n");
 			}
 		});
 		
@@ -712,7 +721,7 @@ public class autoBet{
 				tianCaiHttp.setLoginParams(address, account, password);
 
 				if(!tianCaiHttp.login()) {
-					outputMessage.append("登录添彩会员失败!\n");
+					outputGUIMessage("登录添彩会员失败!\n");
 					return;
 				}
 				
@@ -727,7 +736,7 @@ public class autoBet{
 				if(loginToTianCaiMemberSuccess&& loginToProxySuccess)
 					enableTianCaiMemberBet(true);
 				
-				outputMessage.append("登录添彩会员成功!\n");
+				outputGUIMessage("登录添彩会员成功!\n");
 				
 			}
 		});

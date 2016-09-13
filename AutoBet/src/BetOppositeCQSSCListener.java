@@ -37,7 +37,7 @@ public class BetOppositeCQSSCListener implements ActionListener
 
 		String outputStr = "开始反投重庆时时彩,投注比例：" + BetThread.betCQSSCPercent + "\n";
 		
-		autoBet.outputMessage.append(outputStr);
+		autoBet.outputGUIMessage(outputStr);
 		
 		if(ab.inBet == true){					
 			return;

@@ -707,7 +707,7 @@ public class WeiCaiHttp {
 	    	res = betsObj.toString();
     	
     	}catch(Exception e){
-    		autoBet.outputMessage.append("构造下单数据错误！\n");
+    		autoBet.outputGUIMessage("构造下单数据错误！\n");
     		return "";
     	}
    	
@@ -1233,7 +1233,7 @@ public class WeiCaiHttp {
 	    		return true;
 	    	}
 	    } catch(Exception e){
-	    	autoBet.outputMessage.append("isEmptyData()构造下单数据错误！\n");
+	    	autoBet.outputGUIMessage("isEmptyData()构造下单数据错误！\n");
 	    	return true;
 	    }
     }
@@ -1302,11 +1302,11 @@ public class WeiCaiHttp {
         	
         	//System.out.printf("下注重庆时时彩第%s期\n",CQSSCdrawNumber);
         	String outputStr = "[微彩]下注重庆时时彩第" + CQSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
-        	autoBet.outputMessage.append(outputStr);
+        	autoBet.outputGUIMessage(outputStr);
         	
         	if(isEmptyData(betData, BetType.CQSSC)) {
         		outputStr = "代理无人投注\n\n";
-        		autoBet.outputMessage.append(outputStr);
+        		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
         	
@@ -1356,7 +1356,7 @@ public class WeiCaiHttp {
 			
 			String out = "账户余额:" + getAccountBalance() + "\n\n";
 			
-			autoBet.outputMessage.append(out);
+			autoBet.outputGUIMessage(out);
         	
         	return result;
         
@@ -1380,11 +1380,11 @@ public class WeiCaiHttp {
         	
         	//System.out.printf("下注重庆时时彩第%s期\n",BJSCdrawNumber);
         	String outputStr = "[微彩]下注北京赛车第" + BJSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
-        	autoBet.outputMessage.append(outputStr);
+        	autoBet.outputGUIMessage(outputStr);
         	
         	if(isEmptyData(betData, BetType.BJSC)) {
         		outputStr = "代理无人投注\n\n";
-        		autoBet.outputMessage.append(outputStr);
+        		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
         	
@@ -1430,7 +1430,7 @@ public class WeiCaiHttp {
 			
 			String out = "账户余额:" + getAccountBalance() + "\n\n";
 			
-			autoBet.outputMessage.append(out);
+			autoBet.outputGUIMessage(out);
 			
         	
         	return result;
@@ -1460,7 +1460,7 @@ public class WeiCaiHttp {
     	}
 
     	
-    	autoBet.outputMessage.append("下注详情:\n");
+    	autoBet.outputGUIMessage("下注详情:\n");
     	
     	if(posStart != -1){
         	while(posStart != -1){
@@ -1473,12 +1473,12 @@ public class WeiCaiHttp {
         		//
         		if(betResultItmArr[4].equals("SUCCEEDED")){
         			String outputStr  = String.format("%s : %s\n", betResultItmArr[1], betResultItmArr[3]);
-        			autoBet.outputMessage.append(outputStr);
+        			autoBet.outputGUIMessage(outputStr);
         			betAmount = betAmount + Integer.parseInt(betResultItmArr[3]);
         		}
         		else if(betResultItmArr[4].equals("FAILED")){
         			String outputStr  = String.format("%s : %s %s\n", betResultItmArr[1], betResultItmArr[3], betResultItmArr[5]);
-        			autoBet.outputMessage.append(outputStr);
+        			autoBet.outputGUIMessage(outputStr);
         		}
         		
         		posStart = betResult.indexOf("betResultItm = [", posEnd);
@@ -1487,10 +1487,10 @@ public class WeiCaiHttp {
         	
         	if(betAmount >0){
         		String outputStr  = String.format("微彩下注成功! 下单总额: %d  ", betAmount);
-        		autoBet.outputMessage.append(outputStr);
+        		autoBet.outputGUIMessage(outputStr);
         	}
         	else{
-        		autoBet.outputMessage.append("微彩下注失败. ");
+        		autoBet.outputGUIMessage("微彩下注失败. ");
         		return false;
         	}
         	
@@ -1499,9 +1499,9 @@ public class WeiCaiHttp {
         	
     	}
     	else{
-    		autoBet.outputMessage.append("微彩下注失败. ");
+    		autoBet.outputGUIMessage("微彩下注失败. ");
     		if(betResult != null){
-    			autoBet.outputMessage.append(betResult);
+    			autoBet.outputGUIMessage(betResult);
     		}
     		
     		return false;

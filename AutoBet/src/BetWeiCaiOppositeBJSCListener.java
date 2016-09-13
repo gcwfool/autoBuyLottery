@@ -37,7 +37,7 @@ public class BetWeiCaiOppositeBJSCListener implements ActionListener
 		
 		String outputStr = "开始反投微彩北京赛车,投注比例：" + BetWeiCaiThread.betBJSCPercent + "\n";
 		
-		autoBet.outputMessage.append(outputStr);
+		autoBet.outputGUIMessage(outputStr);
 		
 		if(ab.inBetWeiCai == true){					
 			return;
@@ -73,7 +73,7 @@ class StopBetWeiCaiBJSCListener implements ActionListener
 		BetWeiCaiThread.betBJSC = false;
 		BetWeiCaiThread.betOppositeBJSC = false;
 		
-		autoBet.outputMessage.append("停止投注北京赛车\n");
+		autoBet.outputGUIMessage("停止投注北京赛车\n");
 	}	
 
 }
