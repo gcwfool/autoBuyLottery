@@ -38,7 +38,7 @@ public class BetCQSSCListener implements ActionListener
 		
 		String outputStr = "开始正投重庆时时彩,投注比例：" + BetThread.betCQSSCPercent + "\n";
 		
-		autoBet.outputMessage.append(outputStr);
+		autoBet.outputGUIMessage(outputStr);
 		
 		if(ab.inBet == true){					
 			return;
@@ -71,7 +71,7 @@ class StopBetCQSSCListener implements ActionListener
 		BetThread.betCQSSC = false;
 		BetThread.betOppositeCQSSC = false;
 		
-		autoBet.outputMessage.append("停止投注重庆时时彩\n");
+		autoBet.outputGUIMessage("停止投注重庆时时彩\n");
 	}	
 
 }

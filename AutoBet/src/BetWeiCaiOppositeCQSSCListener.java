@@ -38,7 +38,7 @@ public class BetWeiCaiOppositeCQSSCListener implements ActionListener
 		
 		String outputStr = "开始反投微彩重庆时时彩,投注比例：" + BetWeiCaiThread.betCQSSCPercent + "\n";
 		
-		autoBet.outputMessage.append(outputStr);
+		autoBet.outputGUIMessage(outputStr);
 		
 		if(ab.inBetWeiCai == true){					
 			return;
@@ -71,7 +71,7 @@ class StopBetWeiCaiCQSSCListener implements ActionListener
 		BetWeiCaiThread.betCQSSC = false;
 		BetWeiCaiThread.betOppositeCQSSC = false;
 		
-		autoBet.outputMessage.append("停止投注微彩重庆时时彩\n");
+		autoBet.outputGUIMessage("停止投注微彩重庆时时彩\n");
 	}	
 
 }

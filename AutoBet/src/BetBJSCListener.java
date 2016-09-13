@@ -37,7 +37,7 @@ public class BetBJSCListener implements ActionListener
 		
 		String outputStr = "开始正投北京赛车,投注比例：" + BetThread.betBJSCPercent + "\n";
 		
-		autoBet.outputMessage.append(outputStr);
+		autoBet.outputGUIMessage(outputStr);
 		
 		if(ab.inBet == true){					
 			return;
@@ -74,7 +74,7 @@ class StopBetBJSCListener implements ActionListener
 		BetThread.betBJSC = false;
 		BetThread.betOppositeBJSC = false;
 		
-		autoBet.outputMessage.append("停止投注北京赛车\n");
+		autoBet.outputGUIMessage("停止投注北京赛车\n");
 	}	
 
 }

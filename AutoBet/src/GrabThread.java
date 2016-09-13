@@ -30,9 +30,9 @@ class GrabThread extends Thread{
 						gwBJSC.setOnlineStatus(false);
 						DsnProxyGrab.disableCQSSCData();
 						DsnProxyGrab.disableBJSCData();
-						autoBet.outputMessage.append("代理端网络连接失败,正在重新登录....\n");
+						autoBet.outputGUIMessage("代理端网络连接失败,正在重新登录....\n");
 						DsnProxyGrab.connFailLogin();
-						autoBet.outputMessage.append("代理重新登录成功\n");
+						autoBet.outputGUIMessage("代理重新登录成功\n");
 						gwCQSSC.setOnlineStatus(true);
 						gwBJSC.setOnlineStatus(true);
 					}
@@ -84,9 +84,9 @@ class GrabThread extends Thread{
 							gwBJSC.setOnlineStatus(false);
 							DsnProxyGrab.disableCQSSCData();
 							DsnProxyGrab.disableBJSCData();
-							autoBet.outputMessage.append("代理端网络连接失败,正在重新登录....\n");
+							autoBet.outputGUIMessage("代理端网络连接失败,正在重新登录....\n");
 							DsnProxyGrab.connFailLogin();
-							autoBet.outputMessage.append("代理重新登录成功\n");
+							autoBet.outputGUIMessage("代理重新登录成功\n");
 							gwCQSSC.setOnlineStatus(true);
 							gwBJSC.setOnlineStatus(true);
 						}
@@ -164,9 +164,9 @@ class GrabThread extends Thread{
 							gwBJSC.setOnlineStatus(false);
 							DsnProxyGrab.disableCQSSCData();
 							DsnProxyGrab.disableBJSCData();
-							autoBet.outputMessage.append("代理端网络连接失败,正在重新登录....\n");
+							autoBet.outputGUIMessage("代理端网络连接失败,正在重新登录....\n");
 							DsnProxyGrab.connFailLogin();
-							autoBet.outputMessage.append("代理重新登录成功\n");
+							autoBet.outputGUIMessage("代理重新登录成功\n");
 							gwCQSSC.setOnlineStatus(true);
 							gwBJSC.setOnlineStatus(true);
 						}

@@ -117,7 +117,7 @@ public class TianCaiHttp {
     	}
     	
     	if(res == false) {
-    		autoBet.outputMessage.append("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
+    		autoBet.outputGUIMessage("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
 	    	while(!loginToTianCai()) {
 	    		try {
 	    			Thread.currentThread().sleep(60*1000);
@@ -125,7 +125,7 @@ public class TianCaiHttp {
 	    			//todo
 	    		}
 	    	}
-	    	autoBet.outputMessage.append("会员" + ACCOUNT + "重新登录成功\n");
+	    	autoBet.outputGUIMessage("会员" + ACCOUNT + "重新登录成功\n");
     	}
     	
     	return true;
@@ -409,7 +409,7 @@ public class TianCaiHttp {
     
     public static void outputBetsDetails(String jsonData, BetType betType){
     	
-    	autoBet.outputMessage.append("下注详情：\n");
+    	autoBet.outputGUIMessage("下注详情：\n");
     	try{
         	if(betType == BetType.BJSC){
             	
@@ -457,15 +457,15 @@ public class TianCaiHttp {
     				if(amountDX != 0 ){
     					if(i == 1){
     						outputStr  = String.format("冠军%s: %d,", contentsDX, amountDX);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
     						outputStr  = String.format("亚军%s: %d,", contentsDX, amountDX);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
     						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsDX, amountDX);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					
     					totalAmout += amountDX;
@@ -474,15 +474,15 @@ public class TianCaiHttp {
     				if(amountDS != 0 ){
     					if(i == 1){
     						outputStr  = String.format("冠军%s: %d,", contentsDS, amountDS);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
     						outputStr  = String.format("亚军%s: %d,", contentsDS, amountDS);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
     						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsDS, amountDS);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					totalAmout += amountDS;
     				}
@@ -490,23 +490,23 @@ public class TianCaiHttp {
     				if(amountLH != 0 ){
     					if(i == 1){
     						outputStr  = String.format("冠军%s: %d,", contentsLH, amountLH);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
     						outputStr  = String.format("亚军%s: %d,", contentsLH, amountLH);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
     						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsLH, amountLH);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     					}
     					totalAmout += amountLH;
     					
     				}
             		
-    				autoBet.outputMessage.append("\n");
+    				autoBet.outputGUIMessage("\n");
             	}
-            	autoBet.outputMessage.append("下单总金额:" + totalAmout + "\n");
+            	autoBet.outputGUIMessage("下单总金额:" + totalAmout + "\n");
         	}
         	
         	
@@ -546,17 +546,17 @@ public class TianCaiHttp {
         			
     				if(amountDX != 0 ){
     						outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDX, amountDX);
-    						autoBet.outputMessage.append(outputStr);
+    						autoBet.outputGUIMessage(outputStr);
     						totalAmount += amountDX;
     				}
     				
     				if(amountDS != 0 ){
     					outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDS, amountDS);
-    					autoBet.outputMessage.append(outputStr);
+    					autoBet.outputGUIMessage(outputStr);
     					totalAmount += amountDS;
     				}
     				
-    				autoBet.outputMessage.append("\n");
+    				autoBet.outputGUIMessage("\n");
             		
             	}
             	
@@ -599,24 +599,24 @@ public class TianCaiHttp {
     			String outputStr = "";
     			if(amountZDX != 0){
     				outputStr  = String.format("总%s: %d,",  contentsZDX, amountZDX);
-    				autoBet.outputMessage.append(outputStr);
+    				autoBet.outputGUIMessage(outputStr);
     				totalAmount += amountZDX;
     			}
     			
     			if(amountZDS != 0){
     				outputStr  = String.format("总%s: %d,",  contentsZDS, amountZDS);
-    				autoBet.outputMessage.append(outputStr);
+    				autoBet.outputGUIMessage(outputStr);
     				totalAmount += amountZDS;
     			}
     			
     			if(amountLH != 0){
     				outputStr  = String.format("%s: %d,",  contentsLH, amountLH);
-    				autoBet.outputMessage.append(outputStr);
+    				autoBet.outputGUIMessage(outputStr);
     				totalAmount += amountLH;
     			}
     			
-    			autoBet.outputMessage.append("\n");
-    			autoBet.outputMessage.append("下单总金额:" + totalAmount +"\n");
+    			autoBet.outputGUIMessage("\n");
+    			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
         	}
     	}catch(Exception e){
     		e.printStackTrace();
@@ -633,12 +633,12 @@ public class TianCaiHttp {
         }
         
         if(isEmptyData(betData, BetType.CQSSC)) {
-    		autoBet.outputMessage.append("代理无人投注\n\n");
+    		autoBet.outputGUIMessage("代理无人投注\n\n");
     		return false;
     	}
     	
         String outputStr = "[添彩]下注重庆时时彩第" + CQSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
-    	autoBet.outputMessage.append(outputStr);
+    	autoBet.outputGUIMessage(outputStr);
     	strBet = constructBetsData(betData, percent, BetType.CQSSC, opposite);
         
         
@@ -669,7 +669,7 @@ public class TianCaiHttp {
         	return result;
         
         } else {
-        	autoBet.outputMessage.append("下单失败 ,已封盘！\n\n");;
+        	autoBet.outputGUIMessage("下单失败 ,已封盘！\n\n");;
         }
         
         return false;
@@ -684,12 +684,12 @@ public class TianCaiHttp {
         }
         
         if(isEmptyData(betData, BetType.BJSC)) {
-    		autoBet.outputMessage.append("代理无人投注\n\n");
+    		autoBet.outputGUIMessage("代理无人投注\n\n");
     		return false;
     	}
     	
         String outputStr = "[添彩]下注北京赛车第" + BJSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
-    	autoBet.outputMessage.append(outputStr);
+    	autoBet.outputGUIMessage(outputStr);
     	strBet = constructBetsData(betData, percent, BetType.BJSC, opposite);
         
         
@@ -720,7 +720,7 @@ public class TianCaiHttp {
         	return result;
         
         } else {
-        	autoBet.outputMessage.append("下单失败 ,已封盘！\n\n");;
+        	autoBet.outputGUIMessage("下单失败 ,已封盘！\n\n");;
         }
         
         return false;
@@ -740,7 +740,7 @@ public class TianCaiHttp {
         		betResult = new JSONObject(str);	
     		}catch(Exception e)
     		{
-    			autoBet.outputMessage.append("迪斯尼下单失败，内部错误\n\n");
+    			autoBet.outputGUIMessage("迪斯尼下单失败，内部错误\n\n");
     			return false;
     		}
     		int status = betResult.getInt("status");
@@ -750,25 +750,25 @@ public class TianCaiHttp {
     			double balance = account.getDouble("balance");
     			//int betting = account.getInt("betting");
     			outputStr  = String.format("迪斯尼下单成功！ 账户余额:%f\n\n", balance);
-    			autoBet.outputMessage.append(outputStr);
+    			autoBet.outputGUIMessage(outputStr);
     			//System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
     			return true;
     		
 
     		case 2:
     			//System.out.println("下单失败:已封盘！\n");
-    			autoBet.outputMessage.append("迪斯尼下单失败:已封盘！\n\n");
+    			autoBet.outputGUIMessage("迪斯尼下单失败:已封盘！\n\n");
     			return false;
     		case 3:
     			String message = betResult.getString("message");
     			outputStr  = String.format("迪斯尼下单失败：%s\n\n",message);
-    			autoBet.outputMessage.append(outputStr);
+    			autoBet.outputGUIMessage(outputStr);
     			return false;
     		
     		}
     	}
     	
-    	autoBet.outputMessage.append("迪斯尼下单失败！\n\n");
+    	autoBet.outputGUIMessage("迪斯尼下单失败！\n\n");
     	
     	return false;
     }
@@ -1165,7 +1165,7 @@ public class TianCaiHttp {
 	        			res += oddsData.getJSONObject(selectionTypeName).getDouble(contents) + "],";
 	        			
 	        			String out = outputName + "_" + outputContent + ":" + amount + "\n";
-	        			autoBet.outputMessage.append(out);
+	        			autoBet.outputGUIMessage(out);
 	        	    	
 	        		}
 	        		
@@ -1174,14 +1174,14 @@ public class TianCaiHttp {
 	    	
 	    	if(res.length() > 1) {
 	    		res = "[" + res.substring(0, res.length() - 1) + "]"; 
-	    		autoBet.outputMessage.append("下单总额:" + totalAmount + "\n");
+	    		autoBet.outputGUIMessage("下单总额:" + totalAmount + "\n");
 	    	}
 	    	
 	    	System.out.println("下单数据：------------------------------------" + res);
     	
     	}catch(Exception e){
     		e.printStackTrace();
-    		autoBet.outputMessage.append("构造下单数据错误！\n");
+    		autoBet.outputGUIMessage("构造下单数据错误！\n");
     		return "";
     	}
    	
@@ -1386,7 +1386,7 @@ public class TianCaiHttp {
 	    		return true;
 	    	}
 	    } catch(Exception e){
-	    	autoBet.outputMessage.append("isEmptyData()构造下单数据错误！\n");
+	    	autoBet.outputGUIMessage("isEmptyData()构造下单数据错误！\n");
 	    	return true;
 	    }
     }
@@ -1412,7 +1412,7 @@ public class TianCaiHttp {
         if(response == "") {
         	System.out.println("下单失败  response == \"\"");
         	String out = "下单失败！\n\n";	
-        	autoBet.outputMessage.append(out);
+        	autoBet.outputGUIMessage(out);
         	return false;
         }
         
@@ -1426,7 +1426,7 @@ public class TianCaiHttp {
 				double balance = joResult.getDouble("balance");
 				//System.out.println(" 下单成功   余额:" + balance);
 				String out = "下单成功， 账户余额:" + balance + "\n\n";			
-				autoBet.outputMessage.append(out);
+				autoBet.outputGUIMessage(out);
 				
 				return true;
 				
@@ -1434,7 +1434,7 @@ public class TianCaiHttp {
 			else {
 				//System.out.println("下单失败, message:" + joResult.getString("returnMsg"));
 				String out = "下单失败" + joResult.getString("returnMsg") + "\n\n";			
-				autoBet.outputMessage.append(out);
+				autoBet.outputGUIMessage(out);
 				return false;
 			}
 		}catch(Exception e) {
