@@ -40,8 +40,10 @@ public class DsnProxyGrab {
     static String cookiedae = "";
     static String [] dataCQSSC = {"", "", ""};
     static String [] dataBJSC = {"", "", "", "", ""};
+    static String [] dataXYNC = {"", "", "", "", "", "", "", "", ""};
     static boolean isCQSSCdataOk = false;
     static boolean isBJSCdataOk = false;
+    static boolean isXYNCdataOk = false;
     
     private static String ADDRESS = "";
     private static String ACCOUNT = "";
@@ -442,6 +444,143 @@ public class DsnProxyGrab {
       		}
       	}
       	return null;
+      }
+      
+      public static boolean grabXYNCdata() {
+    	  String data1 = "";
+    	  String data2 = "";
+    	  String data3 = "";
+    	  String data4 = "";
+    	  String data5 = "";
+    	  String data6 = "";
+    	  String data7 = "";
+    	  String data8 = "";
+    	  String data9 = "";
+    	  
+    	  long time =  System.currentTimeMillis();
+    	  String strTime = Long.toString(time);
+    	  for(int i = 0; i < 3; i++) {
+    		  data1 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data1 != "" && data1 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data1 != "" && data1 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data2 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data2 != "" && data2 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data2 != "" && data2 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data3 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data3 != "" && data3 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data3 != "" && data3 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data4 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data4 != "" && data4 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data4 != "" && data4 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data5 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data5 != "" && data5 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data5 != "" && data5 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data6 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data6 != "" && data6 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data6 != "" && data6 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data7 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data7 != "" && data7 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data7 != "" && data7 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data8 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data8 != "" && data8 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data8 != "" && data8 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  for(int i = 0; i < 3; i++) {
+    		  data9 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
+    		  if(data9 != "" && data9 != "timeout") {
+    			  break;
+    		  }  
+    	  }
+    	  
+    	  if(data9 != "" && data9 != "timeout") {
+    		  return false;
+    	  }
+    	  
+    	  dataXYNC[0] = data1;
+    	  dataXYNC[1] = data2;
+    	  dataXYNC[2] = data3;
+    	  dataXYNC[3] = data4;
+    	  dataXYNC[4] = data5;
+    	  dataXYNC[5] = data6;
+    	  dataXYNC[6] = data7;
+    	  dataXYNC[7] = data8;
+    	  dataXYNC[8] = data9;
+    	  
+    	  	
+    	  
+
+    	  return true;
       }
       
       public static void setCQSSCdata(String drawNumber, String data, String remainTime) {
