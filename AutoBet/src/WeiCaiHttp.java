@@ -495,6 +495,7 @@ public class WeiCaiHttp {
 	        	        	case "DX4":
 	        	        		selectionTypeName = "第四球";
 	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
 	        	        	case "DS4":
 	        	        		selectionTypeName = "第四球";
 	        	        		contents = contents.equals("D")?"单":"双";	
@@ -582,6 +583,7 @@ public class WeiCaiHttp {
 	        	        	case "DX4":
 	        	        		selectionTypeName = "第四名";
 	        	        		contents = contents.equals("D")?"大":"小";
+	        	        		break;
 	        	        	case "DS4":
 	        	        		selectionTypeName = "第四名";
 	        	        		contents = contents.equals("D")?"单":"双";	

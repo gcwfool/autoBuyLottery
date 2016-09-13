@@ -23,6 +23,16 @@ public class ConfigReader {
 	static String tiancaibetPassword = "";
 	static String tessPath = "";
 	
+	
+	static String proxyAddress1 = "";
+	static String proxyAddress2 = "";
+	static String proxyAddress3 = "";
+	
+	static String betAddress1 = "";
+	static String betAddress2 = "";
+	static String betAddress3 = "";
+	
+	
 	public static boolean read(String filename) {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();           
 		try {
@@ -35,6 +45,16 @@ public class ConfigReader {
             
 	        proxyAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
 	        System.out.println("proxyaddress:" + proxyAddress);  
+	        
+	        //所有迪斯尼代理网址
+	        proxyAddress1 = element.getElementsByTagName("ADDRESS1").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("proxyaddress1:" + proxyAddress1);  
+	        
+	        proxyAddress2 = element.getElementsByTagName("ADDRESS2").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("proxyaddress2:" + proxyAddress2);  
+	        
+	        proxyAddress3 = element.getElementsByTagName("ADDRESS3").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("proxyaddress3:" + proxyAddress3);  
 	              
 	        proxyAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
 	        System.out.println("proxyaccount:" + proxyAccount);  
@@ -48,6 +68,17 @@ public class ConfigReader {
             
 	        betAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
 	        System.out.println("betaddress:" + betAddress);  
+	        
+	        //所有迪斯尼会员网址
+	        betAddress1 = element.getElementsByTagName("ADDRESS1").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("betaddress1:" + betAddress1);  
+	        
+	        betAddress2 = element.getElementsByTagName("ADDRESS2").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("betaddress2:" + betAddress2);  
+	        
+	        betAddress3 = element.getElementsByTagName("ADDRESS3").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("betaddress3:" + betAddress3);  
+	        
 	              
 	        betAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
 	        System.out.println("betaccount:" + betAccount);  
@@ -152,5 +183,20 @@ public class ConfigReader {
 		return tessPath;
 	}
 	
+	public static String[] getProxyAddressArray(){
+		
+		String[] addressArray = {proxyAddress1, proxyAddress2, proxyAddress3};
+		
+		return addressArray;
+	}
+	
+	
+	public static String[] getBetAddressArray(){
+		
+		String[] addressArray = {betAddress1, betAddress2, betAddress3};
+		
+		return addressArray;
+	}
+
 	
 }
