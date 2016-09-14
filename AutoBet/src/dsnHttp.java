@@ -347,6 +347,7 @@ public class dsnHttp {
             			res = true;
             			
             			ConfigWriter.updateDSNMemberAddress(ADDRESS);//更新到现在登得上的网址
+            			ConfigWriter.saveTofile("common.config");
             			
             			break;
             		}
@@ -365,27 +366,69 @@ public class dsnHttp {
     	return res;
     }
     
+    
+    
+    public static boolean changeLine() {    	
+    	boolean res = false;
+
+
+        	
+    	String currentAddress = ADDRESS;
+
+    		
+    	String[] addressArray = ConfigReader.getBetAddressArray();
+    	
+    	
+    	
+    	for(int k = 0; k < addressArray.length; k++){
+    		
+    		
+    		if(currentAddress.equals(addressArray[k]))
+    				continue;
+    		
+    		setLoginAddress(addressArray[k]);
+    		
+    		for(int i = 0; i < 10; i++) {
+        		if(loginToDsn()) {
+        			res = true;
+        			
+        			ConfigWriter.updateDSNMemberAddress(ADDRESS);//更新到现在登得上的网址
+        			ConfigWriter.saveTofile("common.config");
+        			
+        			break;
+        		}
+        	}
+        	
+        	if(res == true){
+        		break;
+        	}
+    	}
+    	
+
+    	    	
+    	return res;
+    }
+    
+    
+    
     public static boolean connFailLogin() {
     	
     	boolean res = false;
     	
 		
-		
-    	String currentAddress = ADDRESS;
+    	
+    	autoBet.outputGUIMessage("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
 
     	while(res == false){
     		
-    		autoBet.outputGUIMessage("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
+    		
     		
         	String[] addressArray = ConfigReader.getBetAddressArray();
         	
         	
         	
         	for(int k = 0; k < addressArray.length; k++){
-        		
-        		
-        		if(currentAddress.equals(addressArray[k]))
-        				continue;
+
         		
         		setLoginAddress(addressArray[k]);
         		
@@ -395,6 +438,8 @@ public class dsnHttp {
             			
             			ConfigWriter.updateDSNMemberAddress(ADDRESS);//更新到现在登得上的网址
             			
+            			ConfigWriter.saveTofile("common.config");
+            			
             			break;
             		}
             	}
@@ -403,6 +448,16 @@ public class dsnHttp {
             		break;
             	}
         	}
+        	
+        	if(res == false){
+            	try{
+            		Thread.currentThread().sleep(20*1000);
+            	}catch(Exception e){
+            		
+            	}
+        	}
+        	
+
     	}
 		
 
@@ -488,9 +543,15 @@ public class dsnHttp {
         int currentMinutes = date.getMinutes();
         int currentSeconds = date.getSeconds();
         
-        if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
+        /*if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
+        	return true;
+        }*/
+        
+        //两分钟分钟的缓冲
+        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
         	return true;
         }
+        
         
         return false;
     }
@@ -502,7 +563,8 @@ public class dsnHttp {
         int currentMinutes = date.getMinutes();
         int currentSeconds = date.getSeconds();
 
-        if(currentHour <10 && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
+        //两分钟缓冲
+        if( (currentHour*60 + currentMinutes < 10*60 +1) && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
            return false;
         
         return true;

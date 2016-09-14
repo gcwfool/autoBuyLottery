@@ -24,7 +24,7 @@ class GrabThread extends Thread{
 			String[] BJSCTime = {"0", "0", "0"};
 			while(true){
 				if(isNeedLogin) {
-					if(!DsnProxyGrab.login()) {
+					if(!DsnProxyGrab.changeLine()) {
 						//todo
 						gwCQSSC.setOnlineStatus(false);
 						gwBJSC.setOnlineStatus(false);
@@ -78,7 +78,7 @@ class GrabThread extends Thread{
 							inCQSSCgrabTime = false;
 							break;
 						}
-						if(!DsnProxyGrab.login()) {
+						if(!DsnProxyGrab.changeLine()) {
 							//todo
 							gwCQSSC.setOnlineStatus(false);
 							gwBJSC.setOnlineStatus(false);
@@ -159,7 +159,7 @@ class GrabThread extends Thread{
 							inBJSCgrabTime = false;
 							break;
 						}
-						if(!DsnProxyGrab.login()) {
+						if(!DsnProxyGrab.changeLine()) {
 							gwCQSSC.setOnlineStatus(false);
 							gwBJSC.setOnlineStatus(false);
 							DsnProxyGrab.disableCQSSCData();

@@ -191,6 +191,8 @@ public class DsnProxyGrab {
             			
             			ConfigWriter.updateProxyAddress(ADDRESS);//更新到现在登得上的网址
             			
+            			ConfigWriter.saveTofile("common.config");
+            			
             			break;
             		}
             	}
@@ -210,13 +212,62 @@ public class DsnProxyGrab {
 
     }
     
+    public static boolean changeLine() {  
+    	
+    	boolean res = false;
+
+
+        	
+    	String currentAddress = ADDRESS;
+
+
+    	String[] addressArray = ConfigReader.getProxyAddressArray();
+    	
+    	
+    	
+    	for(int k = 0; k < addressArray.length; k++){
+    		
+    		
+    		if(currentAddress.equals(addressArray[k]))
+    				continue;
+    		
+    		setLoginAddress(addressArray[k]);
+    		
+    		for(int i = 0; i < 10; i++) {
+        		if(doLogin()) {
+        			res = true;
+        			
+        			ConfigWriter.updateProxyAddress(ADDRESS);//更新到现在登得上的网址
+        			
+        			ConfigWriter.saveTofile("common.config");
+        			
+        			break;
+        		}
+        	}
+        	
+        	if(res == true){
+        		break;
+        	}
+    	}
+
+    	
+    	
+    	
+
+    	    	
+    	return res;
+    	
+
+    }
+    
+    
+    
+    
+    
     public static void connFailLogin() {
     	
     	
     	boolean res = false;
-    	
-		
-    	String currentAddress = ADDRESS;
 
     	while(res == false){
     		
@@ -225,11 +276,7 @@ public class DsnProxyGrab {
         	
         	
         	for(int k = 0; k < addressArray.length; k++){
-        		
-        		
-        		if(currentAddress.equals(addressArray[k]))
-        				continue;
-        		
+	
         		setLoginAddress(addressArray[k]);
         		
         		for(int i = 0; i < 10; i++) {
@@ -237,6 +284,8 @@ public class DsnProxyGrab {
             			res = true;
             			
             			ConfigWriter.updateProxyAddress(ADDRESS);//更新到现在登得上的网址
+            			
+            			ConfigWriter.saveTofile("common.config");
             			
             			break;
             		}
@@ -246,6 +295,16 @@ public class DsnProxyGrab {
             		break;
             	}
         	}
+        	
+        	if(res == false){
+            	try{
+            		Thread.currentThread().sleep(20*1000);
+            	}catch(Exception e){
+            		
+            	}
+        	}
+        	
+        	
     	}
     	
 
@@ -963,7 +1022,7 @@ public class DsnProxyGrab {
           int currentMinutes = date.getMinutes();
           int currentSeconds = date.getSeconds();
           
-          if(currentHour <10 && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
+          if((currentHour*60 + currentMinutes < 10*60 +1) && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
               return false;
            
            return true;
@@ -976,7 +1035,7 @@ public class DsnProxyGrab {
           int currentMinutes = date.getMinutes();
           int currentSeconds = date.getSeconds();
           
-          if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
+          if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
           		return true;
           }
            
