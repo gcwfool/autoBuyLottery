@@ -34,6 +34,8 @@ public class autoBet{
 	public Button btnStopGrabCQSSC;	
 	public Button btnStartGrabBJSC;
 	public Button btnStopGrabBJSC;
+	public Button btnStartGrabXYNC;
+	public Button btnStopGrabXYNC;
 	
 	//迪斯尼会员界面
 	public TextField textFieldMemberAddress;
@@ -99,6 +101,7 @@ public class autoBet{
 	public static Label labelSuccessBets;
 	public static Label labelFailBets;
 	public GrabThread grabThread;
+	public GrabXYNCthread XYNCthread;
 	TianCaiHttp tianCaiHttp = null;
 	
 	
@@ -162,6 +165,8 @@ public class autoBet{
 		btnStopGrabCQSSC.setEnabled(flag);
 		btnStartGrabBJSC.setEnabled(flag);
 		btnStopGrabBJSC.setEnabled(flag);
+		btnStartGrabXYNC.setEnabled(flag);
+		btnStopGrabXYNC.setEnabled(flag);
 	}
 	
 	
@@ -283,6 +288,9 @@ public class autoBet{
 				
 				grabThread = new GrabThread(new GrabCQSSCwindow(), new GrabBJSCwindow());//启动抓包线程
 				grabThread.start();	
+				
+				XYNCthread = new GrabXYNCthread();
+				XYNCthread.start();
 				
 				enableGrabBtn(true);
 				
@@ -857,19 +865,28 @@ public class autoBet{
 		
 		
 		//!lin 抓取界面使用测试
-		btnStartGrabCQSSC = new Button("开始抓取重庆");
+		btnStartGrabCQSSC = new Button("开抓重庆时彩");
 		btnStartGrabCQSSC.setSize(75, 25);
 		btnStartGrabCQSSC.setLocation(50, 230);
-		btnStopGrabCQSSC = new Button("停止抓取重庆");
+		btnStopGrabCQSSC = new Button("停抓重庆时彩");
 		btnStopGrabCQSSC.setSize(75, 25);
 		btnStopGrabCQSSC.setLocation(150, 230);
 		
-		btnStartGrabBJSC = new Button("开始抓取北京");
+		btnStartGrabBJSC = new Button("开抓北京赛车");
 		btnStartGrabBJSC.setSize(75, 25);
 		btnStartGrabBJSC.setLocation(50, 260);
-		btnStopGrabBJSC = new Button("停止抓取北京");
+		btnStopGrabBJSC = new Button("停抓北京赛车");
 		btnStopGrabBJSC.setSize(75, 25);
 		btnStopGrabBJSC.setLocation(150, 260);
+		
+		btnStartGrabXYNC = new Button("开抓幸运农场");
+		btnStartGrabXYNC.setSize(75,25);
+		btnStartGrabXYNC.setLocation(50, 290);
+		
+		btnStopGrabXYNC = new Button("停抓幸运农场");
+		btnStopGrabXYNC.setSize(75,25);
+		btnStopGrabXYNC.setLocation(150, 290);
+		
 		
 
 		
@@ -897,6 +914,17 @@ public class autoBet{
 			}
 		});
 		
+		btnStartGrabXYNC.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				XYNCthread.startGrabXYNC();
+			}
+		});
+		
+		btnStopGrabXYNC.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				XYNCthread.stopGrabXYNC();
+			}
+		});
 		
 		enableGrabBtn(false);
 					
@@ -904,6 +932,8 @@ public class autoBet{
 		panel.add(btnStopGrabCQSSC);
 		panel.add(btnStartGrabBJSC);
 		panel.add(btnStopGrabBJSC);	
+		panel.add(btnStartGrabXYNC);	
+		panel.add(btnStopGrabXYNC);
 		
 		labelTotalBets = new Label();
 		labelTotalBets.setSize(300,25);

@@ -39,7 +39,7 @@ public class DsnProxyGrab {
     static String cookiedae = "";
     static String [] dataCQSSC = {"", "", ""};
     static String [] dataBJSC = {"", "", "", "", ""};
-    static String [] dataXYNC = {"", "", "", "", "", "", "", "", ""};
+    static String [] dataXYNC = {"", "", "", "", "", "", "", "", "", "", ""};
     static boolean isCQSSCdataOk = false;
     static boolean isBJSCdataOk = false;
     static boolean isXYNCdataOk = false;
@@ -585,11 +585,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data1 != "" && data1 != "timeout") {
+    	  if(data1 == "" || data1 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data2 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B2%2CDX2%2CDS2%2CWDX2%2CHDS2%2CFW2%2CZFB2%2CLH2"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -598,11 +599,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data2 != "" && data2 != "timeout") {
+    	  if(data2 == "" || data2 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data3 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B3%2CDX3%2CDS3%2CWDX3%2CHDS3%2CFW3%2CZFB3%2CLH3"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -611,11 +613,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data3 != "" && data3 != "timeout") {
+    	  if(data3 == "" || data3 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data4 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B4%2CDX4%2CDS4%2CWDX4%2CHDS4%2CFW4%2CZFB4%2CLH4"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -624,11 +627,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data4 != "" && data4 != "timeout") {
+    	  if(data4 == "" || data4 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data5 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B5%2CDX5%2CDS5%2CWDX5%2CHDS5%2CFW5%2CZFB5%2CLH5"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -637,11 +641,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data5 != "" && data5 != "timeout") {
+    	  if(data5 == "" || data5 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data6 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B6%2CDX6%2CDS6%2CWDX6%2CHDS6%2CFW6%2CZFB6%2CLH6"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -650,11 +655,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data6 != "" && data6 != "timeout") {
+    	  if(data6 == "" || data6 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data7 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B7%2CDX7%2CDS7%2CWDX7%2CHDS7%2CFW7%2CZFB7%2CLH7"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -663,11 +669,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data7 != "" && data7 != "timeout") {
+    	  if(data7 == "" || data7 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data8 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B8%2CDX8%2CDS8%2CWDX8%2CHDS8%2CFW8%2CZFB8%2CLH8"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -676,11 +683,12 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data8 != "" && data8 != "timeout") {
+    	  if(data8 == "" || data8 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
+    	  strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data9 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=ZM%2CZDX%2CZDS%2CZWDX"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
@@ -689,26 +697,27 @@ public class DsnProxyGrab {
     		  }  
     	  }
     	  
-    	  if(data9 != "" && data9 != "timeout") {
+    	  if(data9 == "" || data9 == "timeout") {
     		  return false;
     	  }
     	  
     	  time =  System.currentTimeMillis();
-    	  System.out.println("抓取用时 :"  + (time - timeStart)/1000);
+    	  System.out.println("抓取用时 :"  + (time - timeStart));
     	  
-    	  dataXYNC[0] = data1;
-    	  dataXYNC[1] = data2;
-    	  dataXYNC[2] = data3;
-    	  dataXYNC[3] = data4;
-    	  dataXYNC[4] = data5;
-    	  dataXYNC[5] = data6;
-    	  dataXYNC[6] = data7;
-    	  dataXYNC[7] = data8;
-    	  dataXYNC[8] = data9;
+//    	  for(int i = 1; i < 10; i++) {
+//    		  System.out.println("农场数据:"  + dataXYNC[i]);
+//    	  }
     	  
-    	  	
+    	  dataXYNC[1] = data1;
+    	  dataXYNC[2] = data2;
+    	  dataXYNC[3] = data3;
+    	  dataXYNC[4] = data4;
+    	  dataXYNC[5] = data5;
+    	  dataXYNC[6] = data6;
+    	  dataXYNC[7] = data7;
+    	  dataXYNC[8] = data8;
+    	  dataXYNC[9] = data9;
     	  
-
     	  return true;
       }
       
@@ -734,8 +743,18 @@ public class DsnProxyGrab {
     	  }
       }
       
+      public static void setXYNCdata(String drawNumber, String remainTime) {
+    	  synchronized(DsnProxyGrab.class) {
+	    	  dataXYNC[0] = drawNumber;
+	    	  dataXYNC[10] = remainTime;
+	    	  isXYNCdataOk = true;
+	    	  System.out.println("set  XYNCdata   ok");
+    	  }
+      }
+      
+      
       //! @brief    读取cqssc下单数据
-      //! @return   数据可用(String[0]:期数， String[1]:data);  数据不可用(null)
+      //! @return   数据可用(String[0]:期数， String[1]:data, String[2]:数据时间);  数据不可用(null)
       public static String[] getCQSSCdata() {
 	    	  synchronized(DsnProxyGrab.class) {
 		    	  if(isCQSSCdataOk) {
@@ -746,7 +765,7 @@ public class DsnProxyGrab {
       }
       
       //! @brief     读取取BJSC下单数据
-      //! @return    数据可用(String[0]:期数, String[1]:冠亚, String[2]:三四五六, String[3]:七八九十); 数据不可用(null)
+      //! @return    数据可用(String[0]:期数, String[1]:冠亚, String[2]:三四五六, String[3]:七八九十, String[4]:数据时间); 数据不可用(null)
       public static String[] getBJSCdata() {
     	  synchronized(DsnProxyGrab.class) {
 	    	  if(isBJSCdataOk) {
@@ -756,13 +775,20 @@ public class DsnProxyGrab {
     	  }
       }
       
+      //! @brief     读取取XYNC下单数据
+      //! @return    数据可用(String[0]:期数, String[1~9]:下单数据, String[10]:数据时间); 数据不可用(null)
       public static String[] getXYNCdata() {
     	  synchronized(DsnProxyGrab.class) {
-	    	  if(isBJSCdataOk) {
-	    		  return dataBJSC;
+	    	  if(isXYNCdataOk) {
+	    		  return dataXYNC;
 	    	  }
 	    	  return null;
     	  }
+      }
+      
+      public static String [] getXYNCshowData() {
+    	  String [] data = {dataXYNC[1], dataXYNC[2], dataXYNC[3], dataXYNC[4], dataXYNC[5], dataXYNC[6], dataXYNC[7], dataXYNC[8], dataXYNC[9]};
+    	  return data;
       }
       
       public static void disableCQSSCData() {
@@ -777,9 +803,15 @@ public class DsnProxyGrab {
     	  }
       }
       
+      public static void disableXYNCData() {
+    	  synchronized(DsnProxyGrab.class) {
+    		  isXYNCdataOk = false;
+    	  }
+      }
+      
       public static String [] getCQSSCTime(){
           //get period
-    	  String [] time = {"", "", ""};
+    	  String [] time = {"0", "0", "0"};
     	  String response = "";
     	  String host = ADDRESS;
     	  
@@ -854,7 +886,7 @@ public class DsnProxyGrab {
       
       public static String [] getBJSCTime(){
           //get period
-    	  String [] time = {"", "", ""};
+    	  String [] time = {"0", "0", "0"};
     	  String response = "";
     	  String host = ADDRESS;
     	  
@@ -928,7 +960,7 @@ public class DsnProxyGrab {
       }    
       
       public static String [] getXYNCTime(){  
-    	  String [] time = {"", "", ""};
+    	  String [] time = {"0", "0", "0"};
     	  String response = "";
     	  String host = ADDRESS;
     	  
