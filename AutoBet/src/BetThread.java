@@ -39,9 +39,8 @@ class BetThread extends Thread{
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
 					while(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
-						if(dsnHttp.connFailLogin() == false) {
-							//todo
-							return;
+						if(dsnHttp.changeLine() == false) {
+							dsnHttp.connFailLogin();
 						}
 						CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 						BJSCremainTime = dsnHttp.getBJSCRemainTime();
