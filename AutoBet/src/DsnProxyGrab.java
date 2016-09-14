@@ -516,6 +516,7 @@ public class DsnProxyGrab {
     	  String data9 = "";
     	  
     	  long time =  System.currentTimeMillis();
+    	  long timeStart = time;
     	  String strTime = Long.toString(time);
     	  for(int i = 0; i < 3; i++) {
     		  data1 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
@@ -529,8 +530,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data2 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data2 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B2%2CDX2%2CDS2%2CWDX2%2CHDS2%2CFW2%2CZFB2%2CLH2"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data2 != "" && data2 != "timeout") {
     			  break;
@@ -541,8 +543,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data3 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data3 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B3%2CDX3%2CDS3%2CWDX3%2CHDS3%2CFW3%2CZFB3%2CLH3"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data3 != "" && data3 != "timeout") {
     			  break;
@@ -553,8 +556,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data4 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data4 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B4%2CDX4%2CDS4%2CWDX4%2CHDS4%2CFW4%2CZFB4%2CLH4"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data4 != "" && data4 != "timeout") {
     			  break;
@@ -565,8 +569,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data5 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data5 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B5%2CDX5%2CDS5%2CWDX5%2CHDS5%2CFW5%2CZFB5%2CLH5"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data5 != "" && data5 != "timeout") {
     			  break;
@@ -577,8 +582,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data6 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data6 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B6%2CDX6%2CDS6%2CWDX6%2CHDS6%2CFW6%2CZFB6%2CLH6"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data6 != "" && data6 != "timeout") {
     			  break;
@@ -589,8 +595,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data7 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data7 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B7%2CDX7%2CDS7%2CWDX7%2CHDS7%2CFW7%2CZFB7%2CLH7"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data7 != "" && data7 != "timeout") {
     			  break;
@@ -601,8 +608,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data8 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data8 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B8%2CDX8%2CDS8%2CWDX8%2CHDS8%2CFW8%2CZFB8%2CLH8"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data8 != "" && data8 != "timeout") {
     			  break;
@@ -613,8 +621,9 @@ public class DsnProxyGrab {
     		  return false;
     	  }
     	  
+    	  time =  System.currentTimeMillis();
     	  for(int i = 0; i < 3; i++) {
-    		  data9 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=B1%2CDX1%2CDS1%2CWDX1%2CHDS1%2CFW1%2CZFB1%2CLH1"
+    		  data9 = doGet(ADDRESS + "/agent/control/risk?lottery=XYNC&games=ZM%2CZDX%2CZDS%2CZWDX"
     	    	  		+ "&all=XZ&range=&multiple=false&_"  + strTime, cookieuid + cookiedae);
     		  if(data9 != "" && data9 != "timeout") {
     			  break;
@@ -624,6 +633,9 @@ public class DsnProxyGrab {
     	  if(data9 != "" && data9 != "timeout") {
     		  return false;
     	  }
+    	  
+    	  time =  System.currentTimeMillis();
+    	  System.out.println("抓取用时 :"  + (time - timeStart)/1000);
     	  
     	  dataXYNC[0] = data1;
     	  dataXYNC[1] = data2;
@@ -677,6 +689,15 @@ public class DsnProxyGrab {
       //! @brief     读取取BJSC下单数据
       //! @return    数据可用(String[0]:期数, String[1]:冠亚, String[2]:三四五六, String[3]:七八九十); 数据不可用(null)
       public static String[] getBJSCdata() {
+    	  synchronized(DsnProxyGrab.class) {
+	    	  if(isBJSCdataOk) {
+	    		  return dataBJSC;
+	    	  }
+	    	  return null;
+    	  }
+      }
+      
+      public static String[] getXYNCdata() {
     	  synchronized(DsnProxyGrab.class) {
 	    	  if(isBJSCdataOk) {
 	    		  return dataBJSC;
@@ -846,6 +867,68 @@ public class DsnProxyGrab {
     	  time[2] = Long.toString(drawTime - (System.currentTimeMillis() + timeDValue));
     	  return time;
       }    
+      
+      public static String [] getXYNCTime(){  
+    	  String [] time = {"", "", ""};
+    	  String response = "";
+    	  String host = ADDRESS;
+    	  
+    	  String getTimeUrl = host + "/time?&_=";
+    	  getTimeUrl += Long.toString(System.currentTimeMillis());
+				          
+    	  response = doGet(getTimeUrl, "");				        
+    	   	  
+    	  if(response == "timeout") {
+        	  response = doGet(getTimeUrl, "");
+          }
+				          
+    	  if(Common.isNum(response)) {
+    		  timeDValue = Long.parseLong(response) - System.currentTimeMillis();
+    	  }
+    	  
+    	  String getPeriodUrl = host + "/agent/period?lottery=XYNC&_=";
+    	  getPeriodUrl += Long.toString(System.currentTimeMillis());
+
+          
+    	  response = doGet(getPeriodUrl, "");
+		          
+    	  if(response == "") {	
+    		  System.out.println("get period failed");
+    		  time[0] = Long.toString(System.currentTimeMillis());
+    		  return time;
+	      }
+    	  
+    	  if(response == "timeout") {
+        	  response = doGet(getPeriodUrl, "");
+          }
+          
+          if(response == "" || response == "timeout") {
+            	System.out.println("get period failed");
+            	time[0] = Long.toString(System.currentTimeMillis());
+      		  	return time;
+           }
+	          
+    	  System.out.println("preiod:");
+    	  System.out.println(response);
+				          
+    	  long closeTime = 0;
+    	  long drawTime = 0;
+    	  try{
+              JSONObject periodJson = new JSONObject(response);
+              closeTime = periodJson.getLong("closeTime");
+              time[1] = periodJson.getString("drawNumber");
+              drawTime = periodJson.getLong("drawTime");
+          }
+          catch(Exception e){
+        	  System.out.println("获取时间异常");
+        	  time[0] = Long.toString(System.currentTimeMillis());
+    		  return time;
+          }
+				          
+    	  time[0] = Long.toString(closeTime - (timeDValue + System.currentTimeMillis()));
+    	  time[2] = Long.toString(drawTime - (timeDValue + System.currentTimeMillis()));
+    	  return time;
+      }
       
       public static String grabCQSSCdataByCookie(String game, String all, String range, String uid, String dae){
       	if((game == "LM" || game == "DH" || game == "QZHS") && (range == "" || range == "A" ||
