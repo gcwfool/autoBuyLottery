@@ -313,6 +313,7 @@ public class TianCaiHttp {
 						    e.printStackTrace();
 						}
 						
+						previousCQSSCBetNumber = previousCQSSCdrawNumber;
 						failTimes += dNum;
 						autoBet.labelFailBets.setText("失败次数:" + failTimes);
 						autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
@@ -377,6 +378,7 @@ public class TianCaiHttp {
 						    e.printStackTrace();
 						}
 						
+						previousBJSCBetNumber = previousBJSCdrawNumber;
 						failTimes += dNum;
 						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
 						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));

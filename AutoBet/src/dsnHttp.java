@@ -652,6 +652,7 @@ public class dsnHttp {
 					    e.printStackTrace();
 					}
 					
+					previousCQSSCBetNumber = previousCQSSCdrawNumber;
 					failTimes += dNum;
 					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
@@ -746,6 +747,7 @@ public class dsnHttp {
 					    e.printStackTrace();
 					}
 					
+					previousBJSCBetNumber = previousBJSCdrawNumber;
 					failTimes += dNum;
 					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
