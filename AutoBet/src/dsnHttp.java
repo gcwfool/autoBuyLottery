@@ -53,8 +53,7 @@ public class dsnHttp {
     
     
     //test var
-    static long prepareBetTime1 = 0;
-    static long prepareBetTime2 = 0;
+
     
     //这个变量用来存储
     static String strCookies = "";
@@ -1035,13 +1034,7 @@ public class dsnHttp {
         	String response = "";
         	
         	
-        	prepareBetTime2 = System.currentTimeMillis();
-        	
-        	long timeD = prepareBetTime2 - prepareBetTime1;
-        	
-        	double parpareTime = timeD;
-        	
-        	parpareTime = parpareTime / 1000;
+
         	
 
         	long time1 = System.currentTimeMillis();
@@ -1054,7 +1047,7 @@ public class dsnHttp {
         	
         	long time2 = System.currentTimeMillis();
         	
-        	timeD = time2 - time1;
+        	long timeD = time2 - time1;
         	
         	double usingTime = timeD;
         	
@@ -1136,14 +1129,6 @@ public class dsnHttp {
         	
         	
         	
-        	prepareBetTime2 = System.currentTimeMillis();
-        	
-        	long timeD = prepareBetTime2 - prepareBetTime1;
-        	
-        	double parpareTime = timeD;
-        	
-        	parpareTime = parpareTime / 1000;
-        	
         	
         	
         	long time1 = System.currentTimeMillis();
@@ -1157,7 +1142,7 @@ public class dsnHttp {
 
         	long time2 = System.currentTimeMillis();
         	
-        	timeD = time2 - time1;
+        	long timeD = time2 - time1;
         	
         	double usingTime = timeD;
         	

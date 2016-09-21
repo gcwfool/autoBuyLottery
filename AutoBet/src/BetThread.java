@@ -96,7 +96,7 @@ class BetThread extends Thread{
 				
 				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
 
-					dsnHttp.prepareBetTime1 = System.currentTimeMillis();
+					
 					
 					String[] betCQSSCData = null;
 					
@@ -136,7 +136,7 @@ class BetThread extends Thread{
 				
 				if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){
 					
-					dsnHttp.prepareBetTime1 = System.currentTimeMillis();
+					
 					
 					String[] betBJSCData = null;
 					
