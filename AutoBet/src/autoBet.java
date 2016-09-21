@@ -297,8 +297,8 @@ public class autoBet{
 				if(loginToDSNMemberSuccess&& loginToProxySuccess)
 					enableDSNMemberBet(true);
 				
-				if(loginToWeiCaiMemberSuccess&& loginToProxySuccess)
-					enableWeiCaiMemberBet(true);
+				/*if(loginToWeiCaiMemberSuccess&& loginToProxySuccess)
+					enableWeiCaiMemberBet(true);*/
 				
 				if(loginToTianCaiMemberSuccess&& loginToProxySuccess)
 					enableTianCaiMemberBet(true);
@@ -494,7 +494,7 @@ public class autoBet{
 		
 
 		//微彩会员界面
-		int WeiCaiMemberX = 1000;
+		/*int WeiCaiMemberX = 1000;
 		int WeiCaiMemberY = 50;		
 		
 		
@@ -673,10 +673,10 @@ public class autoBet{
 		panel.add(btnStopBetWeiCaiBJSC);
 		
 		
-		enableWeiCaiMemberBet(false);
+		enableWeiCaiMemberBet(false);*/
 		
 		//添彩会员界面
-		int TianCaiMemberX = 1500;
+		int TianCaiMemberX = 1000;
 		int TianCaiMemberY = 50;		
 		
 		
