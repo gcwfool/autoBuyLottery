@@ -39,16 +39,16 @@ class BetThread extends Thread{
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
 					while(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
-						if(dsnHttp.changeLine() == false) {
+						if(dsnHttp.reLogin() == false) {
 							dsnHttp.connFailLogin();
 						}
 						CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 						BJSCremainTime = dsnHttp.getBJSCRemainTime();
 					}
 					
-					System.out.println("距离重庆时时彩封盘时间为:");
+					System.out.println("[迪斯尼会员]距离重庆时时彩封盘时间为:");
 					System.out.println(CQSSCremainTime/1000);			
-					System.out.println("距离北京赛车封盘时间为:");
+					System.out.println("[迪斯尼会员]距离北京赛车封盘时间为:");
 					System.out.println(BJSCremainTime/1000);
 					
 					if((CQSSCremainTime > 0 && CQSSCremainTime <= 40*1000) || (BJSCremainTime > 0 && BJSCremainTime <= 40*1000)) {//如果将近封盘不发请求，获取本地时间
@@ -59,9 +59,9 @@ class BetThread extends Thread{
 					CQSSCremainTime = dsnHttp.getCQSSClocalRemainTime();
 					BJSCremainTime = dsnHttp.getBJSClocalRemainTime();
 					
-					System.out.println("距离重庆时时彩封盘时间为[local]:");
+					System.out.println("[迪斯尼会员]距离重庆时时彩封盘时间为[local]:");
 					System.out.println(CQSSCremainTime/1000);					
-					System.out.println("距离北京赛车封盘时间为[local]:");
+					System.out.println("[迪斯尼会员]距离北京赛车封盘时间为[local]:");
 					System.out.println(BJSCremainTime/1000);
 					
 					if((CQSSCremainTime <= 0 || CQSSCremainTime > 40*1000) && (BJSCremainTime <= 0 || BJSCremainTime > 40*1000)) {
@@ -110,12 +110,12 @@ class BetThread extends Thread{
 					}
 					
 					if(betCQSSCData == null) {
-						System.out.println("下单失败,未获取到下单数据");
+						System.out.println("[迪斯尼会员]下单失败,未获取到下单数据");
 					} else if(betCQSSCData != null &&betCQSSCData[0].equals(dsnHttp.getCQSSCdrawNumber())) {
 						
 						String[] betsData = {betCQSSCData[1]};
 						
-						System.out.println("下单数据：");
+						System.out.println("[迪斯尼会员]下单数据：");
 						System.out.println(betCQSSCData[1]);
 						
 						
@@ -149,11 +149,11 @@ class BetThread extends Thread{
 					}
 					
 					if(betBJSCData == null) {
-						System.out.println("未获取到下单数据");
+						System.out.println("[迪斯尼会员]未获取到下单数据");
 					} else if(betBJSCData[0].equals(dsnHttp.getBJSCdrawNumber())){
 						String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
 						
-						System.out.println("下单数据：");
+						System.out.println("[迪斯尼会员]下单数据：");
 						System.out.println(betBJSCData[1]);
 						System.out.println(betBJSCData[2]);
 						System.out.println(betBJSCData[3]);
@@ -229,14 +229,14 @@ class BetThread extends Thread{
 					
 					
 					if(dataGY == null || dataSSWL == null || dataQBJS == null) {
-						System.out.println("未获取到封盘数据");
+						System.out.println("[迪斯尼会员]未获取到封盘数据");
 					}else{
 						String[] betsData = {dataGY, dataSSWL, dataQBJS};
 						
-						System.out.println("北京赛车封盘数据：");
+						/*System.out.println("北京赛车封盘数据：");
 						System.out.println(betsData[0]);
 						System.out.println(betsData[1]);
-						System.out.println(betsData[2]);
+						System.out.println(betsData[2]);*/
 
 						dsnHttp.calcBetDataErrorValue(betsData, BetType.BJSC);
 
@@ -267,11 +267,11 @@ class BetThread extends Thread{
 					}
 					
 					if(data == null) {
-						System.out.println("未获取到封盘数据");
+						System.out.println("[迪斯尼会员]未获取到封盘数据");
 					}else{
 		
-						System.out.println("重庆时时彩封盘数据：");
-						System.out.println(data);
+/*						System.out.println("重庆时时彩封盘数据：");
+						System.out.println(data);*/
 
 						String[] betData = {data};
 						

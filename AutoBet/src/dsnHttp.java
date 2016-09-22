@@ -46,7 +46,7 @@ public class dsnHttp {
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
         requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(6000).setConnectionRequestTimeout(6000).setSocketTimeout(6000).build();//设置超时
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
@@ -113,6 +113,39 @@ public class dsnHttp {
     public static void setCQSSCBetData(String[] betData){
     	CQSSCBetData = betData;
     }
+    
+    
+    public static boolean isBetSuccess(String drawNumber){
+    	boolean betSuccessfully = false;
+    	
+    	String lastBetsURI = ADDRESS + "/member/bets";
+    	
+    	String res = doGet(lastBetsURI, "", "");
+    	
+    	if(res == null){
+    		res = doGet(lastBetsURI, "", "");
+    	}
+    	
+    	
+    	
+    	//System.out.println(res);
+    	
+    	try{
+        	if(res != null && res.contains(drawNumber))
+        		betSuccessfully = true;
+    	}catch(Exception e){
+    		
+    	}
+    	
+    	if(res == null){
+    		System.out.println("获取未结明细出现超时情况！");
+    	}
+    	
+
+    	
+    	return betSuccessfully;
+    }
+    
     
     
     public static void calcBetDataErrorValue(String[] closedData, BetType betType){
@@ -318,7 +351,7 @@ public class dsnHttp {
     	boolean res = false;
 
     		
-    	for(int i = 0; i < 10; i++) {
+    	for(int i = 0; i < 15; i++) {
     		if(loginToDsn()) {
     			res = true;
     			break;
@@ -367,12 +400,10 @@ public class dsnHttp {
     
     
     
-    public static boolean changeLine() {    	
+    public static boolean reLogin() {    	
     	boolean res = false;
 
 
-        	
-    	String currentAddress = ADDRESS;
 
     		
     	String[] addressArray = ConfigReader.getBetAddressArray();
@@ -381,19 +412,13 @@ public class dsnHttp {
     	
     	for(int k = 0; k < addressArray.length; k++){
     		
-    		
-    		if(currentAddress.equals(addressArray[k]))
-    				continue;
+
     		
     		setLoginAddress(addressArray[k]);
     		
     		for(int i = 0; i < 10; i++) {
         		if(loginToDsn()) {
-        			res = true;
-        			
-        			ConfigWriter.updateDSNMemberAddress(ADDRESS);//更新到现在登得上的网址
-        			ConfigWriter.saveTofile("common.config");
-        			
+        			res = true;      			
         			break;
         		}
         	}
@@ -434,11 +459,6 @@ public class dsnHttp {
         		for(int i = 0; i < 10; i++) {
             		if(loginToDsn()) {
             			res = true;
-            			
-            			ConfigWriter.updateDSNMemberAddress(ADDRESS);//更新到现在登得上的网址
-            			
-            			ConfigWriter.saveTofile("common.config");
-            			
             			break;
             		}
             	}
@@ -1041,7 +1061,9 @@ public class dsnHttp {
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
-        	if(response == null || response.contains("balance") == false || response.contains("内部错误") == true){
+        	boolean betRes = isBetSuccess(CQSSCdrawNumber);
+        	
+        	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("内部错误") == true)){
         		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	}
         	
@@ -1056,12 +1078,16 @@ public class dsnHttp {
         	String strUsingTime  = String.format("下单用时！ :%f 秒\n", usingTime);
         	
         	autoBet.outputGUIMessage(strUsingTime);
-        	
-        	
-        	
-        	System.out.println(response);
+
         	
         	boolean result = parseBetResult(response);
+        	
+        	if(betRes == false){
+        		betRes = isBetSuccess(CQSSCdrawNumber);
+        	}
+        	
+        	
+        	result = betRes;
         	    
         	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) { //避免重复计数
 	        	if(result == true) {
@@ -1135,7 +1161,9 @@ public class dsnHttp {
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
-        	if(response == null || response.contains("balance") == false || response.contains("内部错误") == true){
+        	boolean betRes = isBetSuccess(BJSCdrawNumber);
+        	
+        	if((betRes == false)&&(response == null || response.contains("balance") == false || response.contains("内部错误") == true)){
         		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	}
         	
@@ -1153,9 +1181,13 @@ public class dsnHttp {
         	autoBet.outputGUIMessage(strUsingTime);
 
         	
-        	System.out.println(response);
-        	
         	boolean result = parseBetResult(response);
+        	
+        	if(betRes == false){
+        		betRes = isBetSuccess(BJSCdrawNumber);
+        	}
+        	
+        	result = betRes;
         	
         	
         	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) { //避免重复计数

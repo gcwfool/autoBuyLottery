@@ -13,6 +13,13 @@ enum BetType{
 	BJSC
 }
 
+
+enum BetMode{
+	LESSTIME,
+	MIDDLETIME,
+	MORETIME
+}
+
 public class autoBet{
 	
 	public boolean loginToProxySuccess = false;
@@ -105,10 +112,30 @@ public class autoBet{
 	TianCaiHttp tianCaiHttp = null;
 	
 	
+	static int betTime = 12;
+	
+	public static int timeOut = 6*1000;
+	
+	public static BetMode betMode = BetMode.MORETIME;
 	
 	public static void main(String[] args) throws Exception {
 		
-
+		
+		
+		
+		if(betMode == BetMode.LESSTIME){
+			timeOut = 6*1000;
+			betTime = 5;
+		}else if(betMode == BetMode.MIDDLETIME){
+			timeOut = 6*1000;
+			betTime = 12;
+		}
+		else{
+			timeOut = 10*1000;
+			betTime = 24;
+		}
+		
+		
 		
 		
 	    try {  
@@ -316,7 +343,7 @@ public class autoBet{
 		
 		textFieldBetTime = new TextField();
 		textFieldBetTime.setSize(30, 25);
-		textFieldBetTime.setText("12");
+		textFieldBetTime.setText(Integer.toString(betTime));
 		textFieldBetTime.setLocation(DsnProxyX + 65, DsnProxyY + 150);
 		
 		

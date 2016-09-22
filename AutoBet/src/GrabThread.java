@@ -24,7 +24,7 @@ class GrabThread extends Thread{
 			String[] BJSCTime = {"0", "0", "0"};
 			while(true){
 				if(isNeedLogin) {
-					if(!DsnProxyGrab.changeLine()) {
+					if(!DsnProxyGrab.reLogin()) {
 						//todo
 						gwCQSSC.setOnlineStatus(false);
 						gwBJSC.setOnlineStatus(false);
@@ -59,11 +59,11 @@ class GrabThread extends Thread{
 						CQSSCTime= DsnProxyGrab.getCQSSCTime();
 						CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
 						if(CQSSCremainTime > 0) {
-							System.out.println("距离重庆时时彩封盘:" + CQSSCremainTime/1000);
+							System.out.println("[代理]距离重庆时时彩封盘:" + CQSSCremainTime/1000);
 							gwCQSSC.setRemainTime(CQSSCremainTime);
 						}
 						else {
-							System.out.println("距离重庆时时彩开盘:" + Long.parseLong(CQSSCTime[2])/1000);
+							System.out.println("[代理]距离重庆时时彩开盘:" + Long.parseLong(CQSSCTime[2])/1000);
 							gwCQSSC.setRemainTime(Long.parseLong(CQSSCTime[2]));
 						}
 						
@@ -78,7 +78,7 @@ class GrabThread extends Thread{
 							inCQSSCgrabTime = false;
 							break;
 						}
-						if(!DsnProxyGrab.changeLine()) {
+						if(!DsnProxyGrab.reLogin()) {
 							//todo
 							gwCQSSC.setOnlineStatus(false);
 							gwBJSC.setOnlineStatus(false);
@@ -101,7 +101,7 @@ class GrabThread extends Thread{
 							isCQSSCclose = false;
 						}
 						if(!requestTime) {
-							System.out.println("[距离重庆时时彩封盘时间为]:" + CQSSCremainTime/1000);
+							System.out.println("[代理][距离重庆时时彩封盘时间为]:" + CQSSCremainTime/1000);
 						}
 						if(CQSSCremainTime < almostTime) {
 							sleepTime = 4*1000;
@@ -141,11 +141,11 @@ class GrabThread extends Thread{
 						BJSCTime= DsnProxyGrab.getBJSCTime();
 						BJSCremainTime = Long.parseLong(BJSCTime[0]);
 						if(BJSCremainTime > 0) {
-							System.out.println("距离北京赛车封盘:" + BJSCremainTime/1000);
+							System.out.println("[代理]距离北京赛车封盘:" + BJSCremainTime/1000);
 							gwBJSC.setRemainTime(BJSCremainTime);
 						}
 						else {
-							System.out.println("距离北京赛车开盘:" + Long.parseLong(BJSCTime[2])/1000);
+							System.out.println("[代理]距离北京赛车开盘:" + Long.parseLong(BJSCTime[2])/1000);
 							gwBJSC.setRemainTime(Long.parseLong(BJSCTime[2]));
 						}
 					}
@@ -159,7 +159,7 @@ class GrabThread extends Thread{
 							inBJSCgrabTime = false;
 							break;
 						}
-						if(!DsnProxyGrab.changeLine()) {
+						if(!DsnProxyGrab.reLogin()) {
 							gwCQSSC.setOnlineStatus(false);
 							gwBJSC.setOnlineStatus(false);
 							DsnProxyGrab.disableCQSSCData();
@@ -182,7 +182,7 @@ class GrabThread extends Thread{
 						}
 						
 						if(!requestTime) {
-							System.out.println("[距离北京赛车彩封盘时间为]:" + BJSCremainTime/1000);
+							System.out.println("[代理][距离北京赛车彩封盘时间为]:" + BJSCremainTime/1000);
 						}
 						
 						if(BJSCremainTime < almostTime) {
