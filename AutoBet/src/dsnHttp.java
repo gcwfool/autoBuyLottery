@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -33,6 +35,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.json.*;
+
+import java.util.Vector;
+import java.util.Comparator;
+enum INDEXTYPE{
+	Date,
+	DrawNumber
+	
+}
+
 
 
 
@@ -52,8 +63,16 @@ public class dsnHttp {
     
     
     
-    //test var
 
+    
+    //优化线路选择
+    static Vector<Object[]> lines;
+    
+    static Vector<Long> lastTenRequestTime = new Vector<Long>();
+    static long avgRequestTime = 0;    
+    static boolean bcalcRequestTime = true;
+    static boolean bneedChangeLine = false;
+    
     
     //这个变量用来存储
     static String strCookies = "";
@@ -79,8 +98,8 @@ public class dsnHttp {
     
     
     static String ADDRESS = "";
-    static String ACCOUNT = "";
-    static String PASSWORD = "";
+    static String ACCOUNT = "hgg2277";
+    static String PASSWORD = "abcd1234";
     
     static String CQSSCoddsData = null;
     static String BJSCoddsData = null;
@@ -103,6 +122,8 @@ public class dsnHttp {
     //计算封盘与实际下注差值
     static int CQSSCbetTotalAmount = 0;
     static int BJSCbetTotalAmount = 0;
+    
+    
     
     
     
@@ -145,6 +166,116 @@ public class dsnHttp {
     	
     	return betSuccessfully;
     }
+    
+    public static String getBetProfit(String drawNumber){
+    	boolean betSuccessfully = false;
+    	
+    	String lastBetsURI = ADDRESS + "/member/bets?settled=true";
+    	
+    	String res = doGet(lastBetsURI, "", "");
+    	
+    	double totalProfit = 0;
+    	
+    	if(res == null){
+    		res = doGet(lastBetsURI, "", "");
+    	}
+    	
+    	if(res != null){
+    		
+    		if(res.contains("暂无数据")){
+    			return "none";
+    		}
+    		
+    		
+    		int posStart = res.indexOf("page_count"); 
+    		
+    		posStart = res.indexOf(" ", posStart); 
+    		
+    		int posEnd = res.indexOf(" ", posStart + 1);
+    		
+    		String pageCountstr = res.substring(posStart + 1, posEnd);
+    		
+    		int pageCount = 1;
+    		
+    		if(Common.isNum(pageCountstr)){
+    			
+    			pageCount = Integer.parseInt(pageCountstr);
+    		}
+    		
+    		pageCount = pageCount >10?10:pageCount;//只查看前十页
+    		
+    		String number = "";
+    		
+    		for(int i = 0; i< pageCount; i++){
+    			
+    			if(res == null)
+    				continue;
+    			
+    			posStart = res.indexOf("draw_number");
+        		
+        		while(posStart != -1){
+        			
+        			
+        			
+        			posStart = res.indexOf(" ", posStart);
+        			posEnd = res.indexOf(" ", posStart+1);
+        			
+        			number = res.substring(posStart + 1, posEnd);
+        			
+        			if(drawNumber.equals(number)){
+        				
+        				posStart = res.indexOf("result color\">", posEnd);
+        				posEnd = res.indexOf("<", posStart);
+        				
+        				String profitStr = res.substring(posStart + 14, posEnd);
+        				
+        				if(Common.isNum(profitStr)){
+        					totalProfit += Double.parseDouble(profitStr);
+        				}
+        			}
+        			
+        			if(!drawNumber.equals(number) && totalProfit != 0){
+        				break;
+        			}
+        			
+        			posStart = res.indexOf("draw_number", posEnd);
+        		}
+        		
+        		
+        		if(!drawNumber.equals(number) && totalProfit != 0){
+    				break;
+        		}
+        		
+        		
+        		lastBetsURI = ADDRESS + "/member/bets?settled=true";
+        		
+        		lastBetsURI += "&page=" + Integer.toString(i+2);
+            	
+            	res = doGet(lastBetsURI, "", "");
+            	
+            	
+            	if(res == null){
+            		res = doGet(lastBetsURI, "", "");
+            	}
+        		
+        		
+    		}
+    		
+
+    	}
+    	
+    	
+    	
+    	
+    	
+
+
+    	
+    	return Double.toString(totalProfit);
+    }
+    
+    
+    
     
     
     
@@ -347,11 +478,173 @@ public class dsnHttp {
     	ADDRESS = address;
     }
     
+    
+    public static void initLines(){
+    	String[] addressArray = ConfigReader.getBetAddressArray();
+    	
+
+    	
+    	lines = new Vector<Object[]>(addressArray.length);
+    	
+    	for(int k = 0; k < addressArray.length; k++){
+    		lines.add(new Object[2]);
+    		lines.elementAt(k)[0] = new String(addressArray[k]);
+    		
+    		lines.elementAt(k)[1] = new Long(10*1000);
+    	}
+    }
+    
+    
+    
+    @SuppressWarnings("unchecked")
+	public static void setLinePriority(){
+    	
+    	boolean res = false;
+
+    	long timeStart;
+    	long timeEnd;
+    	
+    	long averageTime;
+    	
+    	
+    	setIscalcRequestTime(false);
+
+
+    	for(int k = 0; k < lines.size(); k++){
+    		
+
+    		
+    		setLoginAddress((String)lines.elementAt(k)[0]);
+    		
+    		int i =0;
+    		
+    		long timePassing = 0;
+    		
+    		timeStart = System.currentTimeMillis();
+    		
+    		for( i = 0; i < 4; i++) {
+    			
+    			
+    			
+        		if(loginToDsn()) {
+        			res = true;
+
+        			break;
+        		}
+        		
+        		long time1 = System.currentTimeMillis();
+        		
+        		timePassing += (time1 - timeStart);
+        		
+        		if(timePassing > 10){
+        			break;
+        		}
+        	}
+    		
+    		timeEnd = System.currentTimeMillis();
+    		
+    		long usingTime = timeEnd - timeStart;
+    		
+    		
+    		averageTime = usingTime/(i+1);
+    		lines.elementAt(k)[1] = averageTime;
+    		
+    		
+    		
+    		res = false;
+    		
+    		
+
+    	}
+
+    	
+    	Comparator ct = new MyCompare();
+    	
+    	Collections.sort(lines, ct);
+    	
+    	setIscalcRequestTime(true);
+    	
+
+    	System.out.println("【迪斯尼会员】线路快慢排序:");
+    	
+    	for(int j = 0; j < lines.size(); j++){
+    		
+    		
+    		
+    		System.out.println(lines.elementAt(j)[0]);
+    		
+    		System.out.println(lines.elementAt(j)[1]);
+    		
+    	}
+    }
+    
+    
+    public static void calcRequestAveTime(long requestTime){
+        
+    	if(bcalcRequestTime == true){
+    		
+        	//requestCount++;
+        	
+    		long totalReqeustTime = 0;
+    		
+        	lastTenRequestTime.add(requestTime);
+        	
+        	while(lastTenRequestTime.size() >10){
+        		lastTenRequestTime.remove(0);
+        	}
+        	
+        	
+        	if(lastTenRequestTime.size() == 10){
+            	for(int i = 0; i < lastTenRequestTime.size(); i++){
+            		totalReqeustTime += lastTenRequestTime.elementAt(i);
+            	}
+            	avgRequestTime = totalReqeustTime/lastTenRequestTime.size();
+            	
+            	
+            	System.out.printf("[迪斯尼会员]平均请求时间:%d\n", avgRequestTime);
+            	
+            	if(avgRequestTime >= 500){
+            		setisNeedChangeLine(true);
+            	}
+
+        	}
+
+    	}
+
+    		
+    	
+    }
+    
+    public static void setIscalcRequestTime(boolean flag){
+    	bcalcRequestTime = flag;
+    }
+    
+    public static void setisNeedChangeLine(boolean flag){
+    	bneedChangeLine = flag;
+    }
+    
+    public static boolean getIsisNeedChangeLine(){
+    	return bneedChangeLine;
+    }
+    
+    public static void clearAvgRequest(){
+    	
+    	if(lastTenRequestTime.size() >0){
+    		lastTenRequestTime.clear();
+    	}
+    	avgRequestTime = 0;
+
+    }
+    
+    
+    
     public static boolean login() {    	
     	boolean res = false;
 
+    	
+    	setIscalcRequestTime(false);
     		
-    	for(int i = 0; i < 15; i++) {
+    	for(int i = 0; i < 8; i++) {
     		if(loginToDsn()) {
     			res = true;
     			break;
@@ -374,7 +667,7 @@ public class dsnHttp {
         		
         		setLoginAddress(addressArray[k]);
         		
-        		for(int i = 0; i < 10; i++) {
+        		for(int i = 0; i < 8; i++) {
             		if(loginToDsn()) {
             			res = true;
             			
@@ -392,7 +685,7 @@ public class dsnHttp {
     	}
     	
     	
-    	
+    	setIscalcRequestTime(true);
 
     	    	
     	return res;
@@ -403,18 +696,14 @@ public class dsnHttp {
     public static boolean reLogin() {    	
     	boolean res = false;
 
-
-
-    		
-    	String[] addressArray = ConfigReader.getBetAddressArray();
+    	setIscalcRequestTime(false);
     	
     	
-    	
-    	for(int k = 0; k < addressArray.length; k++){
+    	for(int k = 0; k < lines.size(); k++){
     		
 
     		
-    		setLoginAddress(addressArray[k]);
+    		setLoginAddress((String)lines.elementAt(k)[0]);
     		
     		for(int i = 0; i < 10; i++) {
         		if(loginToDsn()) {
@@ -428,7 +717,7 @@ public class dsnHttp {
         	}
     	}
     	
-
+    	setIscalcRequestTime(true);
     	    	
     	return res;
     }
@@ -439,22 +728,17 @@ public class dsnHttp {
     	
     	boolean res = false;
     	
-		
+    	setIscalcRequestTime(false);
     	
     	autoBet.outputGUIMessage("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
 
     	while(res == false){
     		
-    		
-    		
-        	String[] addressArray = ConfigReader.getBetAddressArray();
-        	
-        	
-        	
-        	for(int k = 0; k < addressArray.length; k++){
+
+        	for(int k = 0; k < lines.size(); k++){
 
         		
-        		setLoginAddress(addressArray[k]);
+        		setLoginAddress((String)lines.elementAt(k)[0]);
         		
         		for(int i = 0; i < 10; i++) {
             		if(loginToDsn()) {
@@ -479,6 +763,8 @@ public class dsnHttp {
 
     	}
 		
+    	
+    	setIscalcRequestTime(true);
 
     	autoBet.outputGUIMessage("会员" + ACCOUNT + "重新登录成功\n");
     	
@@ -1087,6 +1373,9 @@ public class dsnHttp {
         	}
         	
         	
+
+        	
+        	
         	result = betRes;
         	    
         	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) { //避免重复计数
@@ -1188,6 +1477,8 @@ public class dsnHttp {
         	}
         	
         	result = betRes;
+        	
+
         	
         	
         	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) { //避免重复计数
@@ -1518,7 +1809,7 @@ public class dsnHttp {
         try {
             uefEntity = new UrlEncodedFormEntity(formparams, charset);
             httppost.setEntity(uefEntity);
-            CloseableHttpResponse response = httpclient.execute(httppost);
+            CloseableHttpResponse response = execute(httppost);
             try {
                 // 打印响应状态    
             	setCookie(response);
@@ -1552,6 +1843,37 @@ public class dsnHttp {
     }
     
     
+
+    
+
+    
+    public static CloseableHttpResponse  execute(HttpUriRequest request) throws IOException, ClientProtocolException{
+    	
+    	long time1 = System.currentTimeMillis();
+    	long time2 = System.currentTimeMillis();
+    	
+    	CloseableHttpResponse response;
+    	
+    	try{
+    		response = httpclient.execute(request);    		
+    		time2 = System.currentTimeMillis();    		
+    		calcRequestAveTime(time2 - time1);
+    		
+    	}catch(Exception e){
+    		
+    		time2 = System.currentTimeMillis();
+    		calcRequestAveTime(time2 - time1);
+    		
+    		throw e;
+    	}
+    	
+
+    	
+    	return response;
+    	
+    }
+    
+    
     public static String doGet(String url, String cookies, String referUrl) {
     	
         try {  
@@ -1578,7 +1900,7 @@ public class dsnHttp {
             System.out.println("executing request " + httpget.getURI()); 
            
             // 执行get请求.    
-            CloseableHttpResponse response = httpclient.execute(httpget); 
+            CloseableHttpResponse response = execute(httpget); 
             
             String statusLine = response.getStatusLine().toString();   
             if(statusLine.indexOf("200 OK") == -1) {
@@ -1649,7 +1971,7 @@ public class dsnHttp {
 
     
     
-    public static String bet(String url,String jsonData, String charset, String cookies) {
+    public static String bet(String url,String jsonData, String charset, String cookies){
 
 
         // 创建httppost    
@@ -1669,7 +1991,7 @@ public class dsnHttp {
            try {
         	   strEntity = new StringEntity(jsonData, charset);
                httppost.setEntity(strEntity);
-               CloseableHttpResponse response = httpclient.execute(httppost);
+               CloseableHttpResponse response = execute(httppost);
                try {
                    // 打印响应状态    
                    System.out.println(response.getStatusLine());
@@ -1688,6 +2010,13 @@ public class dsnHttp {
                }  
            } catch (ClientProtocolException e) {  
                e.printStackTrace(); 
+               
+               String exceptionStr = e.toString();
+               
+               if(exceptionStr.contains("ConnectTimeoutException") == true){
+            	   return "connectTimeout";
+               }
+               
            } catch (UnsupportedEncodingException e1) {  
                e1.printStackTrace(); 
            } catch (IOException e) {  
@@ -1708,7 +2037,7 @@ public class dsnHttp {
        
 	        // 执行get请求.    
         
-	        CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
+	        CloseableHttpResponse response = execute(httpget); 
        	 try {
        		    setCookie(response);
                 // 打印响应状态    

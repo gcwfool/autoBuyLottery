@@ -24,6 +24,11 @@ class GrabThread extends Thread{
 			String[] BJSCTime = {"0", "0", "0"};
 			while(true){
 				if(isNeedLogin) {
+					
+					if(DsnProxyGrab.getIsisNeedChangeLine() == true){
+						DsnProxyGrab.setLinePriority();
+					}
+					
 					if(!DsnProxyGrab.reLogin()) {
 						//todo
 						gwCQSSC.setOnlineStatus(false);
@@ -36,6 +41,10 @@ class GrabThread extends Thread{
 						gwCQSSC.setOnlineStatus(true);
 						gwBJSC.setOnlineStatus(true);
 					}
+					
+					DsnProxyGrab.setisNeedChangeLine(false);
+					DsnProxyGrab.clearAvgRequest();
+					
 					isNeedLogin = false;
 				}
 				long CQSSCremainTime = 0;
@@ -78,6 +87,11 @@ class GrabThread extends Thread{
 							inCQSSCgrabTime = false;
 							break;
 						}
+						
+						if(DsnProxyGrab.getIsisNeedChangeLine() == true){
+							DsnProxyGrab.setLinePriority();
+						}
+						
 						if(!DsnProxyGrab.reLogin()) {
 							//todo
 							gwCQSSC.setOnlineStatus(false);
@@ -90,6 +104,10 @@ class GrabThread extends Thread{
 							gwCQSSC.setOnlineStatus(true);
 							gwBJSC.setOnlineStatus(true);
 						}
+						
+						DsnProxyGrab.setisNeedChangeLine(false);
+						DsnProxyGrab.clearAvgRequest();
+						
 						CQSSCTime = DsnProxyGrab.getCQSSCTime();
 						CQSSCremainTime = Long.parseLong(CQSSCTime[0]);
 					}
@@ -159,6 +177,11 @@ class GrabThread extends Thread{
 							inBJSCgrabTime = false;
 							break;
 						}
+						
+						if(DsnProxyGrab.getIsisNeedChangeLine() == true){
+							DsnProxyGrab.setLinePriority();
+						}
+						
 						if(!DsnProxyGrab.reLogin()) {
 							gwCQSSC.setOnlineStatus(false);
 							gwBJSC.setOnlineStatus(false);
@@ -170,6 +193,10 @@ class GrabThread extends Thread{
 							gwCQSSC.setOnlineStatus(true);
 							gwBJSC.setOnlineStatus(true);
 						}
+						
+						DsnProxyGrab.setisNeedChangeLine(false);
+						DsnProxyGrab.clearAvgRequest();
+						
 						BJSCTime = DsnProxyGrab.getBJSCTime();
 						BJSCremainTime = Long.parseLong(BJSCTime[0]);
 					}

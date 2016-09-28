@@ -39,6 +39,14 @@ class BetThread extends Thread{
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
 					while(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
+						
+						if(dsnHttp.getIsisNeedChangeLine() == true){
+							dsnHttp.setLinePriority();
+							dsnHttp.setisNeedChangeLine(false);
+							dsnHttp.clearAvgRequest();
+						}
+							
+						
 						if(dsnHttp.reLogin() == false) {
 							dsnHttp.connFailLogin();
 						}
@@ -93,6 +101,21 @@ class BetThread extends Thread{
 					getBJSCOddsData = true;
 					
 				}
+				
+				//换线路
+				if((BJSCremainTime >60*1000 || BJSCremainTime <0) && (CQSSCremainTime > 60*1000 || CQSSCremainTime < 0)  ){
+					if(dsnHttp.getIsisNeedChangeLine() == true){
+						dsnHttp.setLinePriority();
+						
+						dsnHttp.reLogin();
+						
+						dsnHttp.setisNeedChangeLine(false);
+						dsnHttp.clearAvgRequest();
+					}
+				}
+				
+				
+				
 				
 				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
 

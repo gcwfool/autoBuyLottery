@@ -116,7 +116,7 @@ public class autoBet{
 	
 	public static int timeOut = 6*1000;
 	
-	public static BetMode betMode = BetMode.MORETIME;
+	public static BetMode betMode = BetMode.LESSTIME;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -159,7 +159,12 @@ public class autoBet{
 	    ConfigReader.read("common.config");		
 		ConfigWriter.open("common.config");
 		
+		
+		dsnHttp.initLines();
+		DsnProxyGrab.initLines();
+		
 		new autoBet().launchFrame();
+
 		
 
 

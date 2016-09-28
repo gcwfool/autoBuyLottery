@@ -18,6 +18,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -27,6 +28,10 @@ import java.io.*;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
+
+import java.util.Vector;
+import java.util.Comparator;
+import java.util.Collections;
 
 public class DsnProxyGrab {
 	static CloseableHttpClient httpclient = null;
@@ -55,6 +60,19 @@ public class DsnProxyGrab {
          requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(15*1000).setConnectionRequestTimeout(15*1000).setSocketTimeout(15*1000).build();//设置超时
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     }
+    
+    
+    //优化线路选择
+    static Vector<Object[]> lines;
+    
+    static Vector<Long> lastTenRequestTime = new Vector<Long>();
+    static long avgRequestTime = 0;    
+    static boolean bcalcRequestTime = true;
+    static boolean bneedChangeLine = false;
+    
+    
+    
+    
 
 	public static String setCookie(CloseableHttpResponse httpResponse) {
 		//System.out.println("----setCookieStore");
@@ -156,13 +174,173 @@ public class DsnProxyGrab {
     	ADDRESS = address;
     }
     
+    
+    public static void initLines(){
+    	String[] addressArray = ConfigReader.getProxyAddressArray();
+    	
+
+    	
+    	lines = new Vector<Object[]>(addressArray.length);
+    	
+    	for(int k = 0; k < addressArray.length; k++){
+    		lines.add(new Object[2]);
+    		lines.elementAt(k)[0] = new String(addressArray[k]);
+    		
+    		lines.elementAt(k)[1] = new Long(10*1000);
+    	}
+    }
+    
+    
+    
+    @SuppressWarnings("unchecked")
+	public static void setLinePriority(){
+    	
+    	boolean res = false;
+
+    	long timeStart;
+    	long timeEnd;
+    	
+    	long averageTime;
+    	
+    	
+    	setIscalcRequestTime(false);
+
+
+    	for(int k = 0; k < lines.size(); k++){
+    		
+
+    		
+    		setLoginAddress((String)lines.elementAt(k)[0]);
+    		
+    		int i =0;
+    		
+    		long timePassing = 0;
+    		
+    		timeStart = System.currentTimeMillis();
+    		
+    		for( i = 0; i < 4; i++) {
+    			
+    			
+    			
+        		if(doLogin()) {
+        			res = true;
+
+        			break;
+        		}
+        		
+        		long time1 = System.currentTimeMillis();
+        		
+        		timePassing += (time1 - timeStart);
+        		
+        		if(timePassing > 10){
+        			break;
+        		}
+        	}
+    		
+    		timeEnd = System.currentTimeMillis();
+    		
+    		long usingTime = timeEnd - timeStart;
+    		
+    		
+    		averageTime = usingTime/(i+1);
+    		lines.elementAt(k)[1] = averageTime;
+    		
+    		
+    		
+    		res = false;
+    		
+    		
+
+    	}
+
+    	
+    	Comparator ct = new MyCompare();
+    	
+    	Collections.sort(lines, ct);
+    	
+    	setIscalcRequestTime(true);
+    	
+
+    	System.out.println("【代理】线路快慢排序:");
+    	
+    	for(int j = 0; j < lines.size(); j++){
+    		
+    		
+    		
+    		System.out.println(lines.elementAt(j)[0]);
+    		
+    		System.out.println(lines.elementAt(j)[1]);
+    		
+    	}
+    }
+    
+    
+    public static void calcRequestAveTime(long requestTime){
+        
+    	if(bcalcRequestTime == true){
+    		
+        	//requestCount++;
+        	
+    		long totalReqeustTime = 0;
+    		
+        	lastTenRequestTime.add(requestTime);
+        	
+        	while(lastTenRequestTime.size() >10){
+        		lastTenRequestTime.remove(0);
+        	}
+        	
+        	
+        	if(lastTenRequestTime.size() == 10){
+            	for(int i = 0; i < lastTenRequestTime.size(); i++){
+            		totalReqeustTime += lastTenRequestTime.elementAt(i);
+            	}
+            	avgRequestTime = totalReqeustTime/lastTenRequestTime.size();
+            	
+            	
+            	System.out.printf("[代理]平均请求时间:%d\n", avgRequestTime);
+            	
+            	if(avgRequestTime >= 400){
+            		setisNeedChangeLine(true);
+            	}
+
+        	}
+
+    	}
+
+    		
+    	
+    }
+    
+    public static void setIscalcRequestTime(boolean flag){
+    	bcalcRequestTime = flag;
+    }
+    
+    public static void setisNeedChangeLine(boolean flag){
+    	bneedChangeLine = flag;
+    }
+    
+    public static boolean getIsisNeedChangeLine(){
+    	return bneedChangeLine;
+    }
+    
+    public static void clearAvgRequest(){
+    	
+    	if(lastTenRequestTime.size() >0){
+    		lastTenRequestTime.clear();
+    	}
+    	avgRequestTime = 0;
+
+    }
+    
+    
     public static boolean login() {  
     	
     	
     	boolean res = false;
 
+    	setIscalcRequestTime(false);
 		
-    	for(int i = 0; i < 15; i++) {
+    	for(int i = 0; i < 8; i++) {
     		if(doLogin()) {
     			res = true;
     			break;
@@ -185,7 +363,7 @@ public class DsnProxyGrab {
         		
         		setLoginAddress(addressArray[k]);
         		
-        		for(int i = 0; i < 10; i++) {
+        		for(int i = 0; i < 8; i++) {
             		if(doLogin()) {
             			res = true;
             			
@@ -204,7 +382,7 @@ public class DsnProxyGrab {
     	}
     	
     	
-    	
+    	setIscalcRequestTime(true);
 
     	    	
     	return res;
@@ -216,16 +394,16 @@ public class DsnProxyGrab {
     	
     	boolean res = false;
 
+    	setIscalcRequestTime(false);
 
-
-    	String[] addressArray = ConfigReader.getProxyAddressArray();
     	
     	
     	
-    	for(int k = 0; k < addressArray.length; k++){
+    	
+    	for(int k = 0; k < lines.size(); k++){
 
     		
-    		setLoginAddress(addressArray[k]);
+    		setLoginAddress((String)lines.elementAt(k)[0]);
     		
     		for(int i = 0; i < 10; i++) {
         		if(doLogin()) {
@@ -242,7 +420,7 @@ public class DsnProxyGrab {
     	}
 
     	
-    	
+    	setIscalcRequestTime(true);
     	
 
     	    	
@@ -259,16 +437,18 @@ public class DsnProxyGrab {
     	
     	
     	boolean res = false;
+    	
+    	setIscalcRequestTime(false);
 
     	while(res == false){
     		
-        	String[] addressArray = ConfigReader.getProxyAddressArray();
         	
         	
         	
-        	for(int k = 0; k < addressArray.length; k++){
+        	
+        	for(int k = 0; k < lines.size(); k++){
 	
-        		setLoginAddress(addressArray[k]);
+        		setLoginAddress((String)lines.elementAt(k)[0]);
         		
         		for(int i = 0; i < 10; i++) {
             		if(doLogin()) {
@@ -293,6 +473,8 @@ public class DsnProxyGrab {
         	
         	
     	}
+    	
+    	setIscalcRequestTime(true);
     	
 
     }
@@ -323,7 +505,7 @@ public class DsnProxyGrab {
         try {
             uefEntity = new UrlEncodedFormEntity(formparams, charset);
             httppost.setEntity(uefEntity);
-            CloseableHttpResponse response = httpclient.execute(httppost);
+            CloseableHttpResponse response = execute(httppost);
             try {
                 // 打印响应状态    
             	setCookie(response);
@@ -352,6 +534,34 @@ public class DsnProxyGrab {
         return "";
     }
     
+    
+    public static CloseableHttpResponse  execute(HttpUriRequest request) throws IOException, ClientProtocolException{
+    	
+    	long time1 = System.currentTimeMillis();
+    	long time2 = System.currentTimeMillis();
+    	
+    	CloseableHttpResponse response;
+    	
+    	try{
+    		response = httpclient.execute(request);    		
+    		time2 = System.currentTimeMillis();    		
+    		calcRequestAveTime(time2 - time1);
+    		
+    	}catch(Exception e){
+    		
+    		time2 = System.currentTimeMillis();
+    		calcRequestAveTime(time2 - time1);
+    		
+    		throw e;
+    	}
+    	
+
+    	
+    	return response;
+    	
+    }
+    
+    
     public static String doGet(String url, String cookies) { 
         try {  
            // 创建httpget.    
@@ -373,7 +583,7 @@ public class DsnProxyGrab {
            System.out.println("executing request " + url); 
           
            // 执行get请求.    
-           CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
+           CloseableHttpResponse response = execute(httpget); 
            //CloseableHttpResponse response = httpclient.execute(httpget); 
            
            try {          	           	   
@@ -428,7 +638,7 @@ public class DsnProxyGrab {
          System.out.println("executing request " + httpget.getURI()); 
         
          // 执行get请求.    
-        	 CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
+        	 CloseableHttpResponse response = execute(httpget); 
         	 try {
         		 setCookie(response);
                  // 打印响应状态    
