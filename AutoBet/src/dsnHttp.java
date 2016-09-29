@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Date;
+import java.util.Stack;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -38,6 +39,10 @@ import org.json.*;
 
 import java.util.Vector;
 import java.util.Comparator;
+
+
+
+
 enum INDEXTYPE{
 	Date,
 	DrawNumber
@@ -60,6 +65,12 @@ public class dsnHttp {
         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
+    
+    
+    //
+    static Vector<String> unKnowStatDraw = new Vector<String>();
+    
+    static Stack<String> drawDetailsData = new Stack<String>();
     
     
     
@@ -98,8 +109,8 @@ public class dsnHttp {
     
     
     static String ADDRESS = "";
-    static String ACCOUNT = "hgg2277";
-    static String PASSWORD = "abcd1234";
+    static String ACCOUNT = "";
+    static String PASSWORD = "";
     
     static String CQSSCoddsData = null;
     static String BJSCoddsData = null;
@@ -161,6 +172,8 @@ public class dsnHttp {
     	if(res == null){
     		System.out.println("获取未结明细出现超时情况！");
     	}
+    	
+    	
     	
 
     	
@@ -1792,7 +1805,10 @@ public class dsnHttp {
     public static String doPost(String url,List<NameValuePair> formparams,String charset, String cookies) {
 
 
-     // 创建httppost    
+     // 创建httppost   
+    	
+    	try {
+    	
         HttpPost httppost = new HttpPost(url); 
         //httppost.addHeader("Cookie", cookies);
         //httppost.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
@@ -1806,7 +1822,7 @@ public class dsnHttp {
 
 
         UrlEncodedFormEntity uefEntity;
-        try {
+        
             uefEntity = new UrlEncodedFormEntity(formparams, charset);
             httppost.setEntity(uefEntity);
             CloseableHttpResponse response = execute(httppost);
@@ -1838,6 +1854,8 @@ public class dsnHttp {
         } catch (IOException e) {  
             e.printStackTrace(); 
      
+        } catch(Exception e){
+     	   e.printStackTrace();
         } 
         return null;
     }
@@ -1936,8 +1954,9 @@ public class dsnHttp {
             e.printStackTrace(); 
         } catch (IOException e) {  
             e.printStackTrace(); 
-
-        } 
+        } catch (Exception e){
+        	e.printStackTrace();
+        }
         
         return null;
     }
@@ -1974,7 +1993,8 @@ public class dsnHttp {
     public static String bet(String url,String jsonData, String charset, String cookies){
 
 
-        // 创建httppost    
+        // 创建httppost  
+    	try {
            HttpPost httppost = new HttpPost(url); 
            //httppost.addHeader("Cookie", cookies);
            httppost.addHeader("Content-Type","application/json");
@@ -1988,7 +2008,7 @@ public class dsnHttp {
 
 
            StringEntity strEntity;
-           try {
+           
         	   strEntity = new StringEntity(jsonData, charset);
                httppost.setEntity(strEntity);
                CloseableHttpResponse response = execute(httppost);
@@ -2010,18 +2030,16 @@ public class dsnHttp {
                }  
            } catch (ClientProtocolException e) {  
                e.printStackTrace(); 
-               
-               String exceptionStr = e.toString();
-               
-               if(exceptionStr.contains("ConnectTimeoutException") == true){
-            	   return "connectTimeout";
-               }
-               
+
            } catch (UnsupportedEncodingException e1) {  
                e1.printStackTrace(); 
            } catch (IOException e) {  
                e.printStackTrace(); 
+           }catch(Exception e){
+        	   e.printStackTrace();
            } 
+           
+           
            return null;
        }
     

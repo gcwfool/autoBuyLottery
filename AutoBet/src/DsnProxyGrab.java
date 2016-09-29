@@ -486,7 +486,9 @@ public class DsnProxyGrab {
     }
 
     public static String doPost(String url,List<NameValuePair> formparams, String cookies, String charset, String referUrl) {  
-        HttpPost httppost = new HttpPost(url); 
+        
+    	try {
+    	HttpPost httppost = new HttpPost(url); 
         httppost.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate");
         httppost.addHeader("Origin","http://a1.dio168.net");
         httppost.addHeader("Connection","keep-alive");
@@ -502,7 +504,7 @@ public class DsnProxyGrab {
 
        
         UrlEncodedFormEntity uefEntity;
-        try {
+        
             uefEntity = new UrlEncodedFormEntity(formparams, charset);
             httppost.setEntity(uefEntity);
             CloseableHttpResponse response = execute(httppost);
@@ -531,6 +533,10 @@ public class DsnProxyGrab {
             	return "timeout";
             }
         } 
+    	catch (Exception e) {  
+            e.printStackTrace();
+        } 
+    	
         return "";
     }
     
@@ -622,7 +628,10 @@ public class DsnProxyGrab {
            if(e.getMessage().indexOf("timed out") > 0) {
         	   return "timeout";
            }
-       } 
+       }
+        catch (Exception e) {  
+            e.printStackTrace();
+        } 
         return "";
     }
     
@@ -693,6 +702,7 @@ public class DsnProxyGrab {
          } catch (Exception e) {
 				e.printStackTrace();
 		 }
+    	
          
     	return "";
     }
