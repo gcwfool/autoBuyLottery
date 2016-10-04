@@ -68,10 +68,7 @@ class StopBetCQSSCListener implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 
-		BetThread.betCQSSC = false;
-		BetThread.betOppositeCQSSC = false;
-		
-		autoBet.outputGUIMessage("停止投注重庆时时彩\n");
+		dsnHttp.showCQSSCDeatilsTable();
 	}	
 
 }

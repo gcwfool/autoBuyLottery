@@ -462,7 +462,7 @@ public class autoBet{
 		btnOppositeBetCQSSC.setSize(90, 25);
 		btnOppositeBetCQSSC.setLocation(DsnMemberX,DsnMemberY + 180);
 		
-		btnStopBetCQSSC = new Button("停止投注");
+		btnStopBetCQSSC = new Button("投注详情");
 		btnStopBetCQSSC.addActionListener(new StopBetCQSSCListener(this));
 		
 		btnStopBetCQSSC.setSize(90, 25);
@@ -494,7 +494,7 @@ public class autoBet{
 		
 
 		
-		btnStopBetBJSC = new Button("停止投注");
+		btnStopBetBJSC = new Button("投注详情");
 		btnStopBetBJSC.addActionListener(new StopBetBJSCListener(this));
 		
 		btnStopBetBJSC.setSize(90, 25);
@@ -622,7 +622,7 @@ public class autoBet{
 		btnOppositeBetWeiCaiCQSSC.setSize(90, 25);
 		btnOppositeBetWeiCaiCQSSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 180);
 		
-		btnStopBetWeiCaiCQSSC = new Button("停止投注");
+		btnStopBetWeiCaiCQSSC = new Button("投注详情");
 		btnStopBetWeiCaiCQSSC.addActionListener(new StopBetWeiCaiCQSSCListener(this));
 		
 		btnStopBetWeiCaiCQSSC.setSize(90, 25);
@@ -654,7 +654,7 @@ public class autoBet{
 		
 
 		
-		btnStopBetWeiCaiBJSC = new Button("停止投注");
+		btnStopBetWeiCaiBJSC = new Button("投注详情");
 		btnStopBetWeiCaiBJSC.addActionListener(new StopBetWeiCaiBJSCListener(this));
 		
 		btnStopBetWeiCaiBJSC.setSize(90, 25);
@@ -807,7 +807,7 @@ public class autoBet{
 		btnOppositeBetTianCaiCQSSC.setSize(90, 25);
 		btnOppositeBetTianCaiCQSSC.setLocation(TianCaiMemberX,TianCaiMemberY + 180);
 		
-		btnStopBetTianCaiCQSSC = new Button("停止投注");
+		btnStopBetTianCaiCQSSC = new Button("投注详情");
 		btnStopBetTianCaiCQSSC.addActionListener(new StopBetTianCaiCQSSCListener(this));
 		
 		btnStopBetTianCaiCQSSC.setSize(90, 25);
@@ -839,7 +839,7 @@ public class autoBet{
 		
 
 		
-		btnStopBetTianCaiBJSC = new Button("停止投注");
+		btnStopBetTianCaiBJSC = new Button("投注详情");
 		btnStopBetTianCaiBJSC.addActionListener(new StopBetTianCaiBJSCListener(this));
 		
 		btnStopBetTianCaiBJSC.setSize(90, 25);
@@ -863,9 +863,9 @@ public class autoBet{
 		labelTianCaiFailBets.setText("失败次数:0");
 		
 		
-		panel.add(labelTianCaiTotalBets);
+/*		panel.add(labelTianCaiTotalBets);
 		panel.add(labelTianCaiSuccessBets);
-		panel.add(labelTianCaiFailBets);
+		panel.add(labelTianCaiFailBets);*/
 		
 		
 		
@@ -983,9 +983,9 @@ public class autoBet{
 		labelFailBets.setText("失败次数:0");
 		
 		
-		panel.add(labelTotalBets);
+/*		panel.add(labelTotalBets);
 		panel.add(labelSuccessBets);
-		panel.add(labelFailBets);
+		panel.add(labelFailBets);*/
 		
 		//!lin end
 		

@@ -1,3 +1,4 @@
+import java.util.Vector;
 class BetThread extends Thread{
     
     
@@ -17,6 +18,10 @@ class BetThread extends Thread{
     static boolean betOppositeCQSSC = false;
     static boolean betBJSC = false;
     static boolean betOppositeBJSC = false;
+    
+    
+    static boolean clearBJSCdetaisData = false;
+    
     
     @Override
     public void run() {
@@ -112,12 +117,86 @@ class BetThread extends Thread{
 						dsnHttp.setisNeedChangeLine(false);
 						dsnHttp.clearAvgRequest();
 					}
+										
+
+					
+					//看未结算
+					if(dsnHttp.getUnCalcProfitBJSCDraw().size() != 0){
+						
+						Vector<String> calcedBJSCDraw = new Vector<String>();
+						
+						Vector<String> data = dsnHttp.getUnCalcProfitBJSCDraw();
+						for(int i = 0; i < data.size(); i++){
+							String drawNumber = data.elementAt(i);
+							
+							
+							
+							String profit = dsnHttp.getBetProfit(drawNumber);
+							if(profit.equals("none") != true){
+								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
+								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profit);
+								calcedBJSCDraw.add(drawNumber);
+							}
+							
+						}
+						
+						if(calcedBJSCDraw.size() != 0){
+							dsnHttp.updateUnCalcBJSCDraw(calcedBJSCDraw);
+						}
+						
+						
+					}
+					
+					
+					
+					if(dsnHttp.getUnCalcProfitCQSSCDraw().size() != 0){
+						
+						Vector<String> calcedCQSSCDraw = new Vector<String>();
+						
+						Vector<String> data = dsnHttp.getUnCalcProfitCQSSCDraw();
+						for(int i = 0; i < data.size(); i++){
+							String drawNumber = data.elementAt(i);
+							
+							
+							
+							String profit = dsnHttp.getBetProfit(drawNumber);
+							if(profit.equals("none") != true){
+								dsnHttp.updateCQSSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
+								dsnHttp.updateCQSSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profit);
+								calcedCQSSCDraw.add(drawNumber);
+							}
+							
+						}
+						
+						if(calcedCQSSCDraw.size() != 0){
+							dsnHttp.updateUnCalcCQSSCDraw(calcedCQSSCDraw);
+						}
+						
+						
+					}
+					
+					
+					//拿余额
+					
+					String balance = dsnHttp.getBalance();
+					
+					dsnHttp.updateBJSCBalance(balance);
+					
+					dsnHttp.updateCQSSCBalance(balance);
+										
+				}
+				
+				
+				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearBJSCdetaisData == false){
+					dsnHttp.clearBJSCdetalsData();
+					clearBJSCdetaisData = true;
 				}
 				
 				
 				
-				
 				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
+					
+					clearBJSCdetaisData = false;
 
 					
 					
@@ -200,7 +279,7 @@ class BetThread extends Thread{
 				
 				
 				//打印封盘数据与下单数据差额
-				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true){
+				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true && dsnHttp.previousBJSCBetNumber.equals(dsnHttp.BJSCdrawNumber)){
 					
 					
 					
@@ -261,9 +340,9 @@ class BetThread extends Thread{
 						System.out.println(betsData[1]);
 						System.out.println(betsData[2]);*/
 
-						dsnHttp.calcBetDataErrorValue(betsData, BetType.BJSC);
+						int res = dsnHttp.calcBetDataErrorValue(betsData, BetType.BJSC);
 
-						
+						dsnHttp.updateBJSCWindowdetailsData(dsnHttp.previousBJSCBetNumber, TYPEINDEX.DVALUE.ordinal(), Integer.toString(res));
 					}
 					
 					printBJSCErrorValue = true;

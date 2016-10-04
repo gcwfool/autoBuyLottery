@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import org.json.*;
 
@@ -67,14 +69,49 @@ public class dsnHttp {
    }
     
     
-    //
-    static Vector<String> unKnowStatDraw = new Vector<String>();
-    
-    static Stack<String> drawDetailsData = new Stack<String>();
-    
-    
-    
+    //北京赛车投注详情窗口
+    static Vector<String> unknowStatBJSCDraw = new Vector<String>();    
+    static Vector<String> unCalcProfitBJSCDraw = new Vector<String>();    
 
+    static DSNDataDetailsWindow BJSCdetalsDataWindow = new DSNDataDetailsWindow();    
+    
+    
+    
+    
+    
+    static int BJSCbishu = 0;    
+    static int BJSConeBetAmount = 0;    
+
+    
+    static int BJSCzongqishu = 0;
+    static int BJSCzongshibai = 0;
+    static int BJSCzongyichang = 0;
+    
+    static int BJSCjinriqishu = 0;
+    static int BJSCjinrishibai = 0;
+    static int BJSCjinriyichang = 0;
+    
+    
+    //重庆时时彩投注详情窗口
+    static Vector<String> unknowStatCQSSCDraw = new Vector<String>();    
+    static Vector<String> unCalcProfitCQSSCDraw = new Vector<String>();    
+
+    static DSNDataDetailsWindow CQSSCdetalsDataWindow = new DSNDataDetailsWindow();    
+    static int CQSSCbishu = 0;    
+    static int CQSSConeBetAmount = 0;    
+
+    
+    static int CQSSCzongqishu = 0;
+    static int CQSSCzongshibai = 0;
+    static int CQSSCzongyichang = 0;
+    
+    static int CQSSCjinriqishu = 0;
+    static int CQSSCjinrishibai = 0;
+    static int CQSSCjinriyichang = 0;    
+
+    
+    
+    //static 
     
     //优化线路选择
     static Vector<Object[]> lines;
@@ -129,10 +166,252 @@ public class dsnHttp {
     static int BJSCBetDataErrorValue = 0;
     static int CQSSCBetDataErrorValue = 0;
     
+    static int totalBJSCBetDataErrorValue = 0;
+    static int totalCQSSCBetDataErrorValue = 0;
+    
     
     //计算封盘与实际下注差值
     static int CQSSCbetTotalAmount = 0;
     static int BJSCbetTotalAmount = 0;
+    
+    
+    public dsnHttp(){
+
+    }
+    
+    
+    public static void clearBJSCdetalsData(){
+    	if(unCalcProfitBJSCDraw.size() != 0){
+    		unCalcProfitBJSCDraw.clear();
+    	}
+    	
+    	if(unknowStatBJSCDraw.size() != 0){
+    		BJSCjinrishibai += unknowStatBJSCDraw.size();
+    		unknowStatBJSCDraw.clear();
+    	}
+
+    	BJSCzongqishu += BJSCjinriqishu;
+    	BJSCzongshibai += BJSCjinrishibai;
+    	
+    	totalBJSCBetDataErrorValue += BJSCBetDataErrorValue;
+    	
+    	BJSCBetDataErrorValue = 0;
+    	
+    	BJSCjinriqishu = 0;
+    	BJSCjinrishibai = 0;
+    	BJSCjinriyichang = 0;
+
+    }
+    
+    
+    public static void clearCQSSCdetalsData(){
+    	if(unCalcProfitCQSSCDraw.size() != 0){
+    		unCalcProfitCQSSCDraw.clear();
+    	}
+    	
+    	if(unknowStatCQSSCDraw.size() != 0){
+    		CQSSCjinrishibai += unknowStatCQSSCDraw.size();
+    		unknowStatCQSSCDraw.clear();
+    	}
+
+    	CQSSCzongqishu += CQSSCjinriqishu;
+    	CQSSCzongshibai += CQSSCjinrishibai;
+    	
+    	totalCQSSCBetDataErrorValue += CQSSCBetDataErrorValue;
+    	
+    	CQSSCBetDataErrorValue = 0;
+    	
+    	CQSSCjinriqishu = 0;
+    	CQSSCjinrishibai = 0;
+    	CQSSCjinriyichang = 0;
+
+    }
+    
+    
+    
+    
+    public static void updateBJSCBalance(String str){
+    	BJSCdetalsDataWindow.updateTextFieldyue(str);
+    }
+    
+    public static void updateCQSSCBalance(String str){
+    	CQSSCdetalsDataWindow.updateTextFieldyue(str);
+    }
+    
+    
+    public static String getBalance(){
+    	String balanceURI = ADDRESS + "/member/index";
+    	
+    	String res = doGet(balanceURI, "", "");
+    	
+    	String balanceStr = "---";
+    	
+    	if(res == null){
+    		res = doGet(balanceURI, "", "");
+    	}
+    	
+    	
+    	if(res != null){
+    		int posStart = res.indexOf("balance");
+    		int posEnd = res.indexOf("<", posStart);
+    		
+    		balanceStr = res.substring(posStart + 9, posEnd);
+    		
+    		
+    		
+    		if(Common.isNum(balanceStr)){    			    			    			
+    			balanceStr = String.format("%.1f", Double.parseDouble(balanceStr));
+    		}
+    	}
+    	
+    	
+    	return balanceStr;
+    	
+    }
+    
+    
+    
+    
+    public static Vector<String> getUnknowStatBJSCDraw(){
+    	return unknowStatBJSCDraw;
+    }
+    
+    public static Vector<String> getUnCalcProfitBJSCDraw(){
+    	return unCalcProfitBJSCDraw;
+    }
+    
+    public static void updateBJSCWindowdetailsData(String drawNumber, int index, String value){
+    	BJSCdetalsDataWindow.updateRowItem(drawNumber, index, value);
+    }
+    
+    public static void updateUnCalcBJSCDraw(Vector<String> calcedDraw){
+    	for(int i =0; i < calcedDraw.size(); i++){
+    		unCalcProfitBJSCDraw.removeElement(calcedDraw.elementAt(i));
+    		unknowStatBJSCDraw.removeElement(calcedDraw.elementAt(i));
+    	}  
+    	
+    	
+    	int currentDraw = Integer.parseInt(BJSCdrawNumber);
+    	
+    	for(int j =0; j < unCalcProfitBJSCDraw.size(); j++){
+    		int idrawNumber = Integer.parseInt(unCalcProfitBJSCDraw.elementAt(j));
+    		if((currentDraw - idrawNumber) >= 4){
+    			unCalcProfitBJSCDraw.removeElement(unCalcProfitBJSCDraw.elementAt(j));
+    		}
+    	}
+    	
+    	
+    	int yichangshu1 = unknowStatBJSCDraw.size();
+    	
+    	for(int j =0; j < unknowStatBJSCDraw.size(); j++){
+    		int idrawNumber = Integer.parseInt(unknowStatBJSCDraw.elementAt(j));
+    		if((currentDraw - idrawNumber) >= 4){
+    			updateBJSCWindowdetailsData(unknowStatBJSCDraw.elementAt(j), TYPEINDEX.STATC.ordinal(), "1");
+    			unknowStatBJSCDraw.removeElement(unknowStatBJSCDraw.elementAt(j));
+    			
+    			
+    		}
+    	}
+    	
+    	int yichangshu2 = unknowStatBJSCDraw.size();
+    	
+    	BJSCjinriyichang = unknowStatBJSCDraw.size();
+    	
+    	BJSCjinrishibai += yichangshu1 - yichangshu2;
+    	
+    	
+    	
+    	
+    	
+    	BJSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(BJSCjinrishibai));
+    	BJSCdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(BJSCjinriyichang));
+    	
+    	
+    	
+    	BJSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(BJSCzongqishu + BJSCjinriqishu));
+    	
+    	BJSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(BJSCzongshibai + BJSCjinrishibai));
+    	
+    	
+    }
+    
+    
+    public static void showBJSCDeatilsTable(){
+    	BJSCdetalsDataWindow.setVisible(true);
+    }
+    
+    
+    
+    
+    public static Vector<String> getUnknowStatCQSSCDraw(){
+    	return unknowStatCQSSCDraw;
+    }
+    
+    public static Vector<String> getUnCalcProfitCQSSCDraw(){
+    	return unCalcProfitCQSSCDraw;
+    }
+    
+    public static void updateCQSSCWindowdetailsData(String drawNumber, int index, String value){
+    	CQSSCdetalsDataWindow.updateRowItem(drawNumber, index, value);
+    }
+    
+    public static void updateUnCalcCQSSCDraw(Vector<String> calcedDraw){
+    	for(int i =0; i < calcedDraw.size(); i++){
+    		unCalcProfitCQSSCDraw.removeElement(calcedDraw.elementAt(i));
+    		unknowStatCQSSCDraw.removeElement(calcedDraw.elementAt(i));
+    	}  
+    	
+    	
+    	long currentDraw = Long.parseLong(CQSSCdrawNumber);
+    	
+    	for(int j =0; j < unCalcProfitCQSSCDraw.size(); j++){
+    		long idrawNumber = Long.parseLong(unCalcProfitCQSSCDraw.elementAt(j));
+    		if((currentDraw - idrawNumber) >= 4){
+    			unCalcProfitCQSSCDraw.removeElement(unCalcProfitCQSSCDraw.elementAt(j));
+    		}
+    	}
+    	
+    	
+    	int yichangshu1 = unknowStatCQSSCDraw.size();
+    	
+    	for(int j =0; j < unknowStatCQSSCDraw.size(); j++){
+    		long idrawNumber = Long.parseLong(unknowStatCQSSCDraw.elementAt(j));
+    		if((currentDraw - idrawNumber) >= 4){
+    			updateCQSSCWindowdetailsData(unknowStatCQSSCDraw.elementAt(j), TYPEINDEX.STATC.ordinal(), "1");
+    			unknowStatCQSSCDraw.removeElement(unknowStatCQSSCDraw.elementAt(j));
+    			
+    			
+    		}
+    	}
+    	
+    	int yichangshu2 = unknowStatCQSSCDraw.size();
+    	
+    	CQSSCjinriyichang = unknowStatCQSSCDraw.size();
+    	
+    	CQSSCjinrishibai += yichangshu1 - yichangshu2;
+    	
+    	
+    	
+    	
+    	
+    	CQSSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(CQSSCjinrishibai));
+    	CQSSCdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(CQSSCjinriyichang));
+    	
+    	
+    	
+    	CQSSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(CQSSCzongqishu + CQSSCjinriqishu));
+    	
+    	CQSSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(CQSSCzongshibai + CQSSCjinrishibai));
+    	
+    	
+    }
+    
+    
+    public static void showCQSSCDeatilsTable(){
+    	CQSSCdetalsDataWindow.setVisible(true);
+    }
+    
+    
     
     
     
@@ -181,7 +460,8 @@ public class dsnHttp {
     }
     
     public static String getBetProfit(String drawNumber){
-    	boolean betSuccessfully = false;
+    	
+    	boolean hasBetprofit = false;
     	
     	String lastBetsURI = ADDRESS + "/member/bets?settled=true";
     	
@@ -245,6 +525,8 @@ public class dsnHttp {
         				if(Common.isNum(profitStr)){
         					totalProfit += Double.parseDouble(profitStr);
         				}
+        				
+        				hasBetprofit = true;
         			}
         			
         			if(!drawNumber.equals(number) && totalProfit != 0){
@@ -255,7 +537,7 @@ public class dsnHttp {
         		}
         		
         		
-        		if(!drawNumber.equals(number) && totalProfit != 0){
+        		if(!drawNumber.equals(number) && hasBetprofit == true){
     				break;
         		}
         		
@@ -279,12 +561,14 @@ public class dsnHttp {
     	
     	
     	
-    	
-    	
+    	if(hasBetprofit == true){
+    		//return Double.toString(totalProfit);
+    		return String.format("%.1f", totalProfit);
+    	}
+    	else{
+    		return "none";
+    	}
 
-
-    	
-    	return Double.toString(totalProfit);
     }
     
     
@@ -292,7 +576,7 @@ public class dsnHttp {
     
     
     
-    public static void calcBetDataErrorValue(String[] closedData, BetType betType){
+    public static int calcBetDataErrorValue(String[] closedData, BetType betType){
     	
     	
     	int totalAmount = 0;
@@ -423,7 +707,13 @@ public class dsnHttp {
     		BJSCBetDataErrorValue += totalAmount;
     		
 			String outputStr  = String.format("北京赛车第%s期,封盘数据与实际下单数据差值为:%d\n总差值为:%d\n\n",BJSCdrawNumber, totalAmount, BJSCBetDataErrorValue);
+			
+			
+			
 			autoBet.outputGUIMessage(outputStr);
+			
+			BJSCdetalsDataWindow.updateTextFieldjinrichazhi(Integer.toString(BJSCBetDataErrorValue));
+			BJSCdetalsDataWindow.updateTextFieldzongchazhi(Integer.toString(BJSCBetDataErrorValue + BJSCBetDataErrorValue));
 			
     		
     	}
@@ -437,10 +727,12 @@ public class dsnHttp {
 			String outputStr  = String.format("重庆时时彩第%s期,封盘数据与实际下单数据差值为:%d\n总差值为:%d\n\n",CQSSCdrawNumber, totalAmount, CQSSCBetDataErrorValue);
 			autoBet.outputGUIMessage(outputStr);
 			
-    		
+			CQSSCdetalsDataWindow.updateTextFieldjinrichazhi(Integer.toString(CQSSCBetDataErrorValue));
+			CQSSCdetalsDataWindow.updateTextFieldzongchazhi(Integer.toString(CQSSCBetDataErrorValue + CQSSCBetDataErrorValue));
+			
     	}
     	
-    	
+    	return totalAmount;
     	
     }
     
@@ -493,6 +785,11 @@ public class dsnHttp {
     
     
     public static void initLines(){
+    	
+    	
+    	BJSCdetalsDataWindow.setTitle("投注北京赛车详情");
+    	CQSSCdetalsDataWindow.setTitle("投注重庆时时彩详情");
+    	
     	String[] addressArray = ConfigReader.getBetAddressArray();
     	
 
@@ -854,6 +1151,26 @@ public class dsnHttp {
     }
     
     
+    public static boolean  isInFreetime(long time){
+        Date date = new Date(time);
+        int currentHour = date.getHours();
+        int currentMinutes = date.getMinutes();
+        int currentSeconds = date.getSeconds();
+        
+        /*if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
+        	return true;
+        }*/
+        
+        //两分钟分钟的缓冲
+        if((currentHour *60 + currentMinutes > 3*60) && (currentHour * 60 + currentMinutes <= 3 * 60 + 5)){
+        	return true;
+        }
+        
+        
+        return false;
+    }
+    
+    
     //开盘时间为9点到24点
     public static boolean  isInBJSCBetTime(long time){
         Date date = new Date(time);
@@ -873,6 +1190,11 @@ public class dsnHttp {
         
         return false;
     }
+    
+    
+
+    
+    
   
     //北京赛车开盘时间为10点到01:55
     public static boolean isInCQSSCBetTime(long time){
@@ -970,11 +1292,35 @@ public class dsnHttp {
 					    e.printStackTrace();
 					}
 					
-					previousCQSSCBetNumber = previousCQSSCdrawNumber;
+					
 					failTimes += dNum;
+					
+					CQSSCjinrishibai += dNum;					
+			        CQSSCjinriqishu += dNum;
+			        
+			        CQSSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(CQSSCjinriqishu));
+			        CQSSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(CQSSCjinrishibai));
+			        
+			        CQSSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(CQSSCzongqishu + CQSSCjinriqishu));
+			        CQSSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(CQSSCzongshibai + CQSSCjinrishibai));
+					
+					
+					
 					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
 					System.out.println("漏投" + dNum + "次, 期数：" + CQSSCdrawNumber + "上次下单期数：" + previousCQSSCBetNumber);
+					
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
+					int missDrawNumber = Integer.parseInt(previousCQSSCBetNumber) + 1;
+					for(int i = 0; i < dNum; i++){
+						String missDrawNmberstr = Integer.toString(missDrawNumber + i);						
+		    			CQSSCdetalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
+					}
+					
+					
+					previousCQSSCBetNumber = previousCQSSCdrawNumber;
+					
+					
 			    }
             }
         }
@@ -1065,11 +1411,35 @@ public class dsnHttp {
 					    e.printStackTrace();
 					}
 					
-					previousBJSCBetNumber = previousBJSCdrawNumber;
+					
 					failTimes += dNum;
+					
+					BJSCjinrishibai += dNum;					
+			        BJSCjinriqishu += dNum;
+			        
+			        BJSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(BJSCjinriqishu));
+			        BJSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(BJSCjinrishibai));
+			        
+			        BJSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(BJSCzongqishu + BJSCjinriqishu));
+			        BJSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(BJSCzongshibai + BJSCjinrishibai));
+			        
+					
 					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
 					System.out.println("漏投" + dNum + "次, 期数：" + BJSCdrawNumber + "上次下单期数：" + previousBJSCBetNumber);
+					
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
+					int missDrawNumber = Integer.parseInt(previousBJSCBetNumber) + 1;
+					for(int i = 0; i < dNum; i++){
+						String missDrawNmberstr = Integer.toString(missDrawNumber + i);						
+		    			BJSCdetalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
+					}
+					
+					
+					previousBJSCBetNumber = previousBJSCdrawNumber;
+					
+					
+					
 			    }
             }
         }
@@ -1113,6 +1483,9 @@ public class dsnHttp {
             		String contentsDS = "";
             		int amountLH = 0;
             		String contentsLH = "";
+            		
+            		BJSCbishu = gamesData.length();
+            		
             		for(int j = 0; j < gamesData.length(); j++){
             			
             			gameData = gamesData.getJSONObject(j);
@@ -1210,6 +1583,9 @@ public class dsnHttp {
             		String contentsDX = "";
             		int amountDS = 0;
             		String contentsDS = "";
+            		
+            		CQSSCbishu = gamesData.length();
+            		
             		for(int j = 0; j < gamesData.length(); j++){
             			gameData = gamesData.getJSONObject(j);
             			String game = gameData.getString("game");
@@ -1321,9 +1697,15 @@ public class dsnHttp {
        	
         String jsonParam = "";
         
-        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber) && previousCQSSCBetResult == true) //之前如果已经下过单并且成功下单就直接返回
+        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber)) 
         	return false;
         
+        
+        CQSSCjinriqishu++;
+        
+        CQSSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(CQSSCjinriqishu));
+        
+        CQSSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(CQSSCzongqishu + CQSSCjinriqishu));
         
         //如果未到封盘时间
         if( CQSSCdrawNumber != null){
@@ -1359,13 +1741,7 @@ public class dsnHttp {
         	long time1 = System.currentTimeMillis();
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
-        	
-        	boolean betRes = isBetSuccess(CQSSCdrawNumber);
-        	
-        	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("内部错误") == true)){
-        		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
-        	}
-        	
+
         	long time2 = System.currentTimeMillis();
         	
         	long timeD = time2 - time1;
@@ -1381,15 +1757,24 @@ public class dsnHttp {
         	
         	boolean result = parseBetResult(response);
         	
-        	if(betRes == false){
-        		betRes = isBetSuccess(CQSSCdrawNumber);
+        	
+        	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
+        	
+        	if(result == false){
+    			CQSSCdetalsDataWindow.addData(df.format(new Date()), CQSSCdrawNumber, 2, Integer.toString(CQSSCbetTotalAmount), Integer.toString(CQSSCbishu));
+
+    			unknowStatCQSSCDraw.add(CQSSCdrawNumber);
+    			
+    			CQSSCdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(unknowStatCQSSCDraw.size()));
+    			
+        	}
+        	else{
+    			CQSSCdetalsDataWindow.addData(df.format(new Date()), CQSSCdrawNumber, 0, Integer.toString(CQSSCbetTotalAmount), Integer.toString(CQSSCbishu));        		
         	}
         	
+        	unCalcProfitCQSSCDraw.add(CQSSCdrawNumber);
         	
 
-        	
-        	
-        	result = betRes;
         	    
         	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) { //避免重复计数
 	        	if(result == true) {
@@ -1425,9 +1810,15 @@ public class dsnHttp {
        	
         String jsonParam = "";
         
-        if(previousBJSCBetNumber.equals(BJSCdrawNumber) && previousBJSCBetResult == true) //之前如果已经下过单并且成功下单就直接返回
+        if(previousBJSCBetNumber.equals(BJSCdrawNumber)) 
         	return false;
         
+        
+        BJSCjinriqishu++;
+        
+        BJSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(BJSCjinriqishu));
+        
+        BJSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(BJSCzongqishu + BJSCjinriqishu));
         
         //如果未到封盘时间
         if( BJSCdrawNumber != null){
@@ -1463,11 +1854,11 @@ public class dsnHttp {
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
-        	boolean betRes = isBetSuccess(BJSCdrawNumber);
+        	//boolean betRes = isBetSuccess(BJSCdrawNumber);
         	
-        	if((betRes == false)&&(response == null || response.contains("balance") == false || response.contains("内部错误") == true)){
+/*        	if((betRes == false)&&(response == null || response.contains("balance") == false || response.contains("内部错误") == true)){
         		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
-        	}
+        	}*/
         	
 
         	long time2 = System.currentTimeMillis();
@@ -1485,14 +1876,24 @@ public class dsnHttp {
         	
         	boolean result = parseBetResult(response);
         	
-        	if(betRes == false){
-        		betRes = isBetSuccess(BJSCdrawNumber);
-        	}
         	
-        	result = betRes;
-        	
+        	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
 
         	
+        	if(result == false){
+    			BJSCdetalsDataWindow.addData(df.format(new Date()), BJSCdrawNumber, 2, Integer.toString(BJSCbetTotalAmount), Integer.toString(BJSCbishu));
+
+    			unknowStatBJSCDraw.add(BJSCdrawNumber);
+    			
+    			BJSCdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(unknowStatBJSCDraw.size()));
+    			
+        	}
+        	else{
+    			BJSCdetalsDataWindow.addData(df.format(new Date()), BJSCdrawNumber, 0, Integer.toString(BJSCbetTotalAmount), Integer.toString(BJSCbishu));        		
+        	}
+        	
+        	unCalcProfitBJSCDraw.add(BJSCdrawNumber);
+
         	
         	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) { //避免重复计数
         	
@@ -1523,6 +1924,12 @@ public class dsnHttp {
     
     
     public static boolean parseBetResult(String str){
+    	
+    	
+
+
+    	
+    	
     	if(str != null) {
     		System.out.println("下单结果：" + str);
     	}
@@ -1534,7 +1941,10 @@ public class dsnHttp {
         		betResult = new JSONObject(str);	
     		}catch(Exception e)
     		{
-    			autoBet.outputGUIMessage("迪斯尼下单失败，内部错误\n\n");
+    			autoBet.outputGUIMessage("迪斯尼下单情况未知\n\n");
+    			
+    			
+    			
     			return false;
     		}
     		int status = betResult.getInt("status");
@@ -1546,23 +1956,33 @@ public class dsnHttp {
     			outputStr  = String.format("迪斯尼下单成功！ 账户余额:%f\n", balance);
     			autoBet.outputGUIMessage(outputStr);
     			//System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
+    			
+    			
     			return true;
     		
 
     		case 2:
     			//System.out.println("下单失败:已封盘！\n");
-    			autoBet.outputGUIMessage("迪斯尼下单失败:已封盘！\n");
+    			autoBet.outputGUIMessage("迪斯尼下单情况未知\n\n\n");
+    			
+    			
+    			
     			return false;
     		case 3:
     			String message = betResult.getString("message");
-    			outputStr  = String.format("迪斯尼下单失败：%s\n",message);
+    			outputStr  = String.format("迪斯尼下单情况未知\n\n：%s\n",message);
     			autoBet.outputGUIMessage(outputStr);
+    			
+    			
+    			
     			return false;
     		
     		}
     	}
     	
-    	autoBet.outputGUIMessage("迪斯尼下单失败！\n\n");
+    	
+    	
+    	autoBet.outputGUIMessage("迪斯尼下单情况未知\n\n！\n\n");
     	
     	return false;
     }

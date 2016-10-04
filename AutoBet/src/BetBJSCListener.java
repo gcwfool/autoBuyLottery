@@ -71,10 +71,8 @@ class StopBetBJSCListener implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 
-		BetThread.betBJSC = false;
-		BetThread.betOppositeBJSC = false;
-		
-		autoBet.outputGUIMessage("停止投注北京赛车\n");
+		dsnHttp.showBJSCDeatilsTable();
+
 	}	
 
 }

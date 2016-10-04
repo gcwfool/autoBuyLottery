@@ -1,0 +1,20 @@
+proxyaddress:http://bff5907f.dsn.ww311.com
+proxyaddress1:http://3f071b45.dsn.ww311.com
+proxyaddress2:http://bff5907f.dsn.ww311.com
+proxyaddress3:http://442f2386.dsn.ww311.com
+proxyaccount:abb100
+proxypassword:aaa2222
+betaddress:http://f140b874.dsn.ww311.com
+betaddress1:http://f140b874.dsn.ww311.com
+betaddress2:http://e16bec03.dsn.ww311.com
+betaddress3:http://835b1195.dsn.ww311.com
+betaccount:hgg2277
+betpassword:abcd1234
+weicaibetaddress:http://52.192.18.67
+weicaibetaccount:wc9999
+weicaibetpassword:9999Aaaa
+tiancaibetaddress:http://yy1888.net
+tiancaibetaccount:gg911
+tiancaibetpassword:asdf1581
+tesspath:C:\Program Files (x86)\Tesseract-OCR
+
