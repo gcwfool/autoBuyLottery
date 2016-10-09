@@ -131,10 +131,13 @@ class BetThread extends Thread{
 							
 							
 							
-							String profit = dsnHttp.getBetProfit(drawNumber);
-							if(profit.equals("none") != true){
+							String[] profitandbishu = dsnHttp.getBetProfit(drawNumber);
+							if(profitandbishu[0].equals("none") != true){
 								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
-								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profit);
+								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profitandbishu[0]);
+								
+								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.COUNT.ordinal(), profitandbishu[1]);
+								
 								calcedBJSCDraw.add(drawNumber);
 							}
 							
@@ -159,10 +162,13 @@ class BetThread extends Thread{
 							
 							
 							
-							String profit = dsnHttp.getBetProfit(drawNumber);
-							if(profit.equals("none") != true){
+							String[] profitandbishu = dsnHttp.getBetProfit(drawNumber);
+							if(profitandbishu[0].equals("none") != true){
 								dsnHttp.updateCQSSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
-								dsnHttp.updateCQSSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profit);
+								dsnHttp.updateCQSSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profitandbishu[0]);
+								
+								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.COUNT.ordinal(), profitandbishu[1]);
+								
 								calcedCQSSCDraw.add(drawNumber);
 							}
 							
@@ -351,7 +357,7 @@ class BetThread extends Thread{
 				
 				
 				
-				if(CQSSCremainTime < -2*1000 && printCQSSCErrorValue == false && dsnHttp.previousCQSSCBetResult == true){
+				if(CQSSCremainTime < -2*1000 && printCQSSCErrorValue == false && dsnHttp.previousCQSSCBetResult == true && dsnHttp.previousCQSSCBetNumber.equals(dsnHttp.CQSSCdrawNumber)){
 					
 					String data = null;
 					
@@ -377,7 +383,9 @@ class BetThread extends Thread{
 
 						String[] betData = {data};
 						
-						dsnHttp.calcBetDataErrorValue(betData, BetType.CQSSC);
+						int res = dsnHttp.calcBetDataErrorValue(betData, BetType.CQSSC);
+						
+						dsnHttp.updateCQSSCWindowdetailsData(dsnHttp.previousCQSSCBetNumber, TYPEINDEX.DVALUE.ordinal(), Integer.toString(res));
 
 						
 					}

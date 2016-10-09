@@ -114,9 +114,9 @@ public class autoBet{
 	
 	static int betTime = 12;
 	
-	public static int timeOut = 6*1000;
+	public static int timeOut = 8*1000;
 	
-	public static BetMode betMode = BetMode.LESSTIME;
+	public static BetMode betMode = BetMode.MIDDLETIME;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -127,7 +127,7 @@ public class autoBet{
 			timeOut = 6*1000;
 			betTime = 5;
 		}else if(betMode == BetMode.MIDDLETIME){
-			timeOut = 6*1000;
+			timeOut = 8*1000;
 			betTime = 12;
 		}
 		else{

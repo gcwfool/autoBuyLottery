@@ -63,13 +63,13 @@ public class dsnHttp {
     
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
-        requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//½ûÖ¹ÖØ¶¨Ïò £¬ ÒÔ±ã»ñÈ¡cookieb18
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//ÉèÖÃ³¬Ê±
+        requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//ç¦æ­¢é‡å®šå‘ ï¼Œ ä»¥ä¾¿è·å–cookieb18
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//è®¾ç½®è¶…æ—¶
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
     
-    //±±¾©Èü³µÍ¶×¢ÏêÇé´°¿Ú
+    //åŒ—äº¬èµ›è½¦æŠ•æ³¨è¯¦æƒ…çª—å£
     static Vector<String> unknowStatBJSCDraw = new Vector<String>();    
     static Vector<String> unCalcProfitBJSCDraw = new Vector<String>();    
 
@@ -92,7 +92,7 @@ public class dsnHttp {
     static int BJSCjinriyichang = 0;
     
     
-    //ÖØÇìÊ±Ê±²ÊÍ¶×¢ÏêÇé´°¿Ú
+    //é‡åº†æ—¶æ—¶å½©æŠ•æ³¨è¯¦æƒ…çª—å£
     static Vector<String> unknowStatCQSSCDraw = new Vector<String>();    
     static Vector<String> unCalcProfitCQSSCDraw = new Vector<String>();    
 
@@ -113,7 +113,7 @@ public class dsnHttp {
     
     //static 
     
-    //ÓÅ»¯ÏßÂ·Ñ¡Ôñ
+    //ä¼˜åŒ–çº¿è·¯é€‰æ‹©
     static Vector<Object[]> lines;
     
     static Vector<Long> lastTenRequestTime = new Vector<Long>();
@@ -122,7 +122,7 @@ public class dsnHttp {
     static boolean bneedChangeLine = false;
     
     
-    //Õâ¸ö±äÁ¿ÓÃÀ´´æ´¢
+    //è¿™ä¸ªå˜é‡ç”¨æ¥å­˜å‚¨
     static String strCookies = "";
     static String cookieCfduid = "";
     static String cookieb18 = "";
@@ -152,12 +152,12 @@ public class dsnHttp {
     static String CQSSCoddsData = null;
     static String BJSCoddsData = null;
     
-    static long timeDValue = 0;  //ÍøÕ¾Ê±¼äºÍµçÄÔÊ±¼äµÄ²îÖµ  ÍøÒ³Ê±¼ä - µ±Ç°Ê±¼ä
-    static long CQSSCcloseTime = 0;    //·âÅÌÊ±¼ä
+    static long timeDValue = 0;  //ç½‘ç«™æ—¶é—´å’Œç”µè„‘æ—¶é—´çš„å·®å€¼  ç½‘é¡µæ—¶é—´ - å½“å‰æ—¶é—´
+    static long CQSSCcloseTime = 0;    //å°ç›˜æ—¶é—´
     static long BJSCcloseTime = 0;
     
-    static int failTimes = 0;    //ÏÂµ¥Ê§°Ü´ÎÊı
-    static int successTimes = 0; //ÏÂµ¥³É¹¦´ÎÊı
+    static int failTimes = 0;    //ä¸‹å•å¤±è´¥æ¬¡æ•°
+    static int successTimes = 0; //ä¸‹å•æˆåŠŸæ¬¡æ•°
     
     
     static String[] BJSCBetData = null;
@@ -170,7 +170,7 @@ public class dsnHttp {
     static int totalCQSSCBetDataErrorValue = 0;
     
     
-    //¼ÆËã·âÅÌÓëÊµ¼ÊÏÂ×¢²îÖµ
+    //è®¡ç®—å°ç›˜ä¸å®é™…ä¸‹æ³¨å·®å€¼
     static int CQSSCbetTotalAmount = 0;
     static int BJSCbetTotalAmount = 0;
     
@@ -255,8 +255,10 @@ public class dsnHttp {
     		int posStart = res.indexOf("balance");
     		int posEnd = res.indexOf("<", posStart);
     		
-    		balanceStr = res.substring(posStart + 9, posEnd);
-    		
+    		if(posEnd > posStart && posStart >=0){
+    			balanceStr = res.substring(posStart + 9, posEnd);
+    		}
+
     		
     		
     		if(Common.isNum(balanceStr)){    			    			    			
@@ -331,6 +333,13 @@ public class dsnHttp {
     	BJSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(BJSCzongqishu + BJSCjinriqishu));
     	
     	BJSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(BJSCzongshibai + BJSCjinrishibai));
+    	
+    	
+    	
+    	for(int j =0; j < unCalcProfitBJSCDraw.size(); j++){
+    		int idrawNumber = Integer.parseInt(unCalcProfitBJSCDraw.elementAt(j));
+    		System.out.printf("æœªè·å¾—ç›ˆåˆ©æœŸæ•°ï¼š%d", idrawNumber);
+    	}
     	
     	
     }
@@ -449,7 +458,7 @@ public class dsnHttp {
     	}
     	
     	if(res == null){
-    		System.out.println("»ñÈ¡Î´½áÃ÷Ï¸³öÏÖ³¬Ê±Çé¿ö£¡");
+    		System.out.println("è·å–æœªç»“æ˜ç»†å‡ºç°è¶…æ—¶æƒ…å†µï¼");
     	}
     	
     	
@@ -459,7 +468,7 @@ public class dsnHttp {
     	return betSuccessfully;
     }
     
-    public static String getBetProfit(String drawNumber){
+    public static String[] getBetProfit(String drawNumber){
     	
     	boolean hasBetprofit = false;
     	
@@ -469,14 +478,18 @@ public class dsnHttp {
     	
     	double totalProfit = 0;
     	
+    	int bishu = 0;
+    	
+    	String[] result = {"none", "0"};
+    	
     	if(res == null){
     		res = doGet(lastBetsURI, "", "");
     	}
     	
     	if(res != null){
     		
-    		if(res.contains("ÔİÎŞÊı¾İ")){
-    			return "none";
+    		if(res.contains("æš‚æ— æ•°æ®")){
+    			return result;
     		}
     		
     		
@@ -495,7 +508,7 @@ public class dsnHttp {
     			pageCount = Integer.parseInt(pageCountstr);
     		}
     		
-    		pageCount = pageCount >10?10:pageCount;//Ö»²é¿´Ç°Ê®Ò³
+    		pageCount = pageCount >10?10:pageCount;//åªæŸ¥çœ‹å‰åé¡µ
     		
     		String number = "";
     		
@@ -523,6 +536,7 @@ public class dsnHttp {
         				String profitStr = res.substring(posStart + 14, posEnd);
         				
         				if(Common.isNum(profitStr)){
+        					bishu++;
         					totalProfit += Double.parseDouble(profitStr);
         				}
         				
@@ -563,11 +577,11 @@ public class dsnHttp {
     	
     	if(hasBetprofit == true){
     		//return Double.toString(totalProfit);
-    		return String.format("%.1f", totalProfit);
+    		result[0] = String.format("%.1f", totalProfit);
+    		result[1] = Integer.toString(bishu);
     	}
-    	else{
-    		return "none";
-    	}
+    	
+    	return result;
 
     }
     
@@ -646,10 +660,10 @@ public class dsnHttp {
 	    			
 	    			double odds = oddsGrabData.getDouble(oddsKey);
 	    			
-	    			if(odds > 2.0)//Ö»¼ÆËãÍ¶×¢µÄ²îÖµ
+	    			if(odds > 2.0)//åªè®¡ç®—æŠ•æ³¨çš„å·®å€¼
 	    				continue;
 	    			
-	    			//ÌŞ³ı±±¾©Èü³µ¹ÚÑÇ¾ü ºÍ Á½Ãæ
+	    			//å‰”é™¤åŒ—äº¬èµ›è½¦å† äºšå†› å’Œ ä¸¤é¢
 	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
 	    				continue;
 	    			
@@ -706,14 +720,14 @@ public class dsnHttp {
     		
     		BJSCBetDataErrorValue += totalAmount;
     		
-			String outputStr  = String.format("±±¾©Èü³µµÚ%sÆÚ,·âÅÌÊı¾İÓëÊµ¼ÊÏÂµ¥Êı¾İ²îÖµÎª:%d\n×Ü²îÖµÎª:%d\n\n",BJSCdrawNumber, totalAmount, BJSCBetDataErrorValue);
+			String outputStr  = String.format("åŒ—äº¬èµ›è½¦ç¬¬%sæœŸ,å°ç›˜æ•°æ®ä¸å®é™…ä¸‹å•æ•°æ®å·®å€¼ä¸º:%d\næ€»å·®å€¼ä¸º:%d\n\n",BJSCdrawNumber, totalAmount, BJSCBetDataErrorValue);
 			
 			
 			
 			autoBet.outputGUIMessage(outputStr);
 			
 			BJSCdetalsDataWindow.updateTextFieldjinrichazhi(Integer.toString(BJSCBetDataErrorValue));
-			BJSCdetalsDataWindow.updateTextFieldzongchazhi(Integer.toString(BJSCBetDataErrorValue + BJSCBetDataErrorValue));
+			BJSCdetalsDataWindow.updateTextFieldzongchazhi(Integer.toString(totalBJSCBetDataErrorValue + BJSCBetDataErrorValue));
 			
     		
     	}
@@ -724,11 +738,11 @@ public class dsnHttp {
     		
     		CQSSCBetDataErrorValue += totalAmount;
     		
-			String outputStr  = String.format("ÖØÇìÊ±Ê±²ÊµÚ%sÆÚ,·âÅÌÊı¾İÓëÊµ¼ÊÏÂµ¥Êı¾İ²îÖµÎª:%d\n×Ü²îÖµÎª:%d\n\n",CQSSCdrawNumber, totalAmount, CQSSCBetDataErrorValue);
+			String outputStr  = String.format("é‡åº†æ—¶æ—¶å½©ç¬¬%sæœŸ,å°ç›˜æ•°æ®ä¸å®é™…ä¸‹å•æ•°æ®å·®å€¼ä¸º:%d\næ€»å·®å€¼ä¸º:%d\n\n",CQSSCdrawNumber, totalAmount, CQSSCBetDataErrorValue);
 			autoBet.outputGUIMessage(outputStr);
 			
 			CQSSCdetalsDataWindow.updateTextFieldjinrichazhi(Integer.toString(CQSSCBetDataErrorValue));
-			CQSSCdetalsDataWindow.updateTextFieldzongchazhi(Integer.toString(CQSSCBetDataErrorValue + CQSSCBetDataErrorValue));
+			CQSSCdetalsDataWindow.updateTextFieldzongchazhi(Integer.toString(totalCQSSCBetDataErrorValue + CQSSCBetDataErrorValue));
 			
     	}
     	
@@ -787,8 +801,8 @@ public class dsnHttp {
     public static void initLines(){
     	
     	
-    	BJSCdetalsDataWindow.setTitle("Í¶×¢±±¾©Èü³µÏêÇé");
-    	CQSSCdetalsDataWindow.setTitle("Í¶×¢ÖØÇìÊ±Ê±²ÊÏêÇé");
+    	BJSCdetalsDataWindow.setTitle("æŠ•æ³¨åŒ—äº¬èµ›è½¦è¯¦æƒ…");
+    	CQSSCdetalsDataWindow.setTitle("æŠ•æ³¨é‡åº†æ—¶æ—¶å½©è¯¦æƒ…");
     	
     	String[] addressArray = ConfigReader.getBetAddressArray();
     	
@@ -875,7 +889,7 @@ public class dsnHttp {
     	setIscalcRequestTime(true);
     	
 
-    	System.out.println("¡¾µÏË¹Äá»áÔ±¡¿ÏßÂ·¿ìÂıÅÅĞò:");
+    	System.out.println("ã€è¿ªæ–¯å°¼ä¼šå‘˜ã€‘çº¿è·¯å¿«æ…¢æ’åº:");
     	
     	for(int j = 0; j < lines.size(); j++){
     		
@@ -911,7 +925,7 @@ public class dsnHttp {
             	avgRequestTime = totalReqeustTime/lastTenRequestTime.size();
             	
             	
-            	System.out.printf("[µÏË¹Äá»áÔ±]Æ½¾ùÇëÇóÊ±¼ä:%d\n", avgRequestTime);
+            	System.out.printf("[è¿ªæ–¯å°¼ä¼šå‘˜]å¹³å‡è¯·æ±‚æ—¶é—´:%d\n", avgRequestTime);
             	
             	if(avgRequestTime >= 500){
             		setisNeedChangeLine(true);
@@ -981,7 +995,7 @@ public class dsnHttp {
             		if(loginToDsn()) {
             			res = true;
             			
-            			ConfigWriter.updateDSNMemberAddress(ADDRESS);//¸üĞÂµ½ÏÖÔÚµÇµÃÉÏµÄÍøÖ·
+            			ConfigWriter.updateDSNMemberAddress(ADDRESS);//æ›´æ–°åˆ°ç°åœ¨ç™»å¾—ä¸Šçš„ç½‘å€
             			ConfigWriter.saveTofile("common.config");
             			
             			break;
@@ -1040,7 +1054,7 @@ public class dsnHttp {
     	
     	setIscalcRequestTime(false);
     	
-    	autoBet.outputGUIMessage("»áÔ±" + ACCOUNT + "Á¬½ÓÊ§°Ü,ÕıÔÚÖØĞÂµÇÂ¼....\n");
+    	autoBet.outputGUIMessage("ä¼šå‘˜" + ACCOUNT + "è¿æ¥å¤±è´¥,æ­£åœ¨é‡æ–°ç™»å½•....\n");
 
     	while(res == false){
     		
@@ -1076,7 +1090,7 @@ public class dsnHttp {
     	
     	setIscalcRequestTime(true);
 
-    	autoBet.outputGUIMessage("»áÔ±" + ACCOUNT + "ÖØĞÂµÇÂ¼³É¹¦\n");
+    	autoBet.outputGUIMessage("ä¼šå‘˜" + ACCOUNT + "é‡æ–°ç™»å½•æˆåŠŸ\n");
     	
     	return res;
     	
@@ -1102,15 +1116,15 @@ public class dsnHttp {
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
-        		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get ÑéÖ¤Âë
+        		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get éªŒè¯ç 
         		
         		/*for(int k = 0; k < 10; k++){
         			if(Common.isNum(rmNum))
         				break;
-        			rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get ÑéÖ¤Âë
+        			rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get éªŒè¯ç 
         		}*/
         		
-        		System.out.println("ÑéÖ¤Âë");
+        		System.out.println("éªŒè¯ç ");
         		System.out.println(rmNum);
         		if(!Common.isNum(rmNum)) {
         			return false;
@@ -1161,7 +1175,7 @@ public class dsnHttp {
         	return true;
         }*/
         
-        //Á½·ÖÖÓ·ÖÖÓµÄ»º³å
+        //ä¸¤åˆ†é’Ÿåˆ†é’Ÿçš„ç¼“å†²
         if((currentHour *60 + currentMinutes > 3*60) && (currentHour * 60 + currentMinutes <= 3 * 60 + 5)){
         	return true;
         }
@@ -1171,7 +1185,7 @@ public class dsnHttp {
     }
     
     
-    //¿ªÅÌÊ±¼äÎª9µãµ½24µã
+    //å¼€ç›˜æ—¶é—´ä¸º9ç‚¹åˆ°24ç‚¹
     public static boolean  isInBJSCBetTime(long time){
         Date date = new Date(time);
         int currentHour = date.getHours();
@@ -1182,7 +1196,7 @@ public class dsnHttp {
         	return true;
         }*/
         
-        //Á½·ÖÖÓ·ÖÖÓµÄ»º³å
+        //ä¸¤åˆ†é’Ÿåˆ†é’Ÿçš„ç¼“å†²
         if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
         	return true;
         }
@@ -1196,14 +1210,14 @@ public class dsnHttp {
     
     
   
-    //±±¾©Èü³µ¿ªÅÌÊ±¼äÎª10µãµ½01:55
+    //åŒ—äº¬èµ›è½¦å¼€ç›˜æ—¶é—´ä¸º10ç‚¹åˆ°01:55
     public static boolean isInCQSSCBetTime(long time){
         Date date = new Date(time);
         int currentHour = date.getHours();
         int currentMinutes = date.getMinutes();
         int currentSeconds = date.getSeconds();
 
-        //Á½·ÖÖÓ»º³å
+        //ä¸¤åˆ†é’Ÿç¼“å†²
         if( (currentHour*60 + currentMinutes < 10*60 +1) && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
            return false;
         
@@ -1224,7 +1238,7 @@ public class dsnHttp {
         
         response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         
-        if(response == null){//ÔÙÄÃÒ»´Î
+        if(response == null){//å†æ‹¿ä¸€æ¬¡
         	startTime = System.currentTimeMillis();
         	response = doGet(getTimeUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         }
@@ -1275,10 +1289,10 @@ public class dsnHttp {
         try{
             JSONObject periodJson = new JSONObject(response);
             CQSSCcloseTime = periodJson.getLong("closeTime");
-            if(!CQSSCdrawNumber.equals(periodJson.getString("drawNumber"))) {//ĞÂµÄÒ»ÆÚ
+            if(!CQSSCdrawNumber.equals(periodJson.getString("drawNumber"))) {//æ–°çš„ä¸€æœŸ
             	previousCQSSCdrawNumber = CQSSCdrawNumber;
             	CQSSCdrawNumber = periodJson.getString("drawNumber");
-            	if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//ÅĞ¶ÏÉÏÒ»ÆÚÓĞÃ»ÓĞÂ©Í¶
+            	if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//åˆ¤æ–­ä¸Šä¸€æœŸæœ‰æ²¡æœ‰æ¼æŠ•
 					long dNum = 0;
 					try {
 					    long drawNum = Long.parseLong(CQSSCdrawNumber)%1000;
@@ -1306,11 +1320,11 @@ public class dsnHttp {
 					
 					
 					
-					autoBet.labelFailBets.setText("Ê§°Ü´ÎÊı:" + failTimes);
-					autoBet.labelTotalBets.setText("ÏÂµ¥´ÎÊı:" + (successTimes + failTimes));
-					System.out.println("Â©Í¶" + dNum + "´Î, ÆÚÊı£º" + CQSSCdrawNumber + "ÉÏ´ÎÏÂµ¥ÆÚÊı£º" + previousCQSSCBetNumber);
+					autoBet.labelFailBets.setText("å¤±è´¥æ¬¡æ•°:" + failTimes);
+					autoBet.labelTotalBets.setText("ä¸‹å•æ¬¡æ•°:" + (successTimes + failTimes));
+					System.out.println("æ¼æŠ•" + dNum + "æ¬¡, æœŸæ•°ï¼š" + CQSSCdrawNumber + "ä¸Šæ¬¡ä¸‹å•æœŸæ•°ï¼š" + previousCQSSCBetNumber);
 					
-					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//ÉèÖÃÈÕÆÚ¸ñÊ½
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//è®¾ç½®æ—¥æœŸæ ¼å¼
 					int missDrawNumber = Integer.parseInt(previousCQSSCBetNumber) + 1;
 					for(int i = 0; i < dNum; i++){
 						String missDrawNmberstr = Integer.toString(missDrawNumber + i);						
@@ -1325,13 +1339,13 @@ public class dsnHttp {
             }
         }
         catch(Exception e){
-        	autoBet.outputGUIMessage("»ñÈ¡µÏË¹ÄáÊ±¼ä´íÎó£¡");
-        	System.out.println("getCQSSCRemainTime()»ñÈ¡Ê±¼äÒì³£" + response);
+        	autoBet.outputGUIMessage("è·å–è¿ªæ–¯å°¼æ—¶é—´é”™è¯¯ï¼");
+        	System.out.println("getCQSSCRemainTime()è·å–æ—¶é—´å¼‚å¸¸" + response);
         	return System.currentTimeMillis();
         }
        
         
-        long remainTime = CQSSCcloseTime - (System.currentTimeMillis() + timeDValue); //ÓÃ²îÖµ¼ÆËã  ·ÀÖ¹Á½´ÎÇëÇóÆÚ¼ä¼ä¸ô¹ı³¤
+        long remainTime = CQSSCcloseTime - (System.currentTimeMillis() + timeDValue); //ç”¨å·®å€¼è®¡ç®—  é˜²æ­¢ä¸¤æ¬¡è¯·æ±‚æœŸé—´é—´éš”è¿‡é•¿
         
     	return remainTime;
     }
@@ -1400,10 +1414,10 @@ public class dsnHttp {
         try{
             JSONObject periodJson = new JSONObject(response);
             BJSCcloseTime = periodJson.getLong("closeTime");
-            if(!BJSCdrawNumber.equals(periodJson.getString("drawNumber"))) {//ĞÂµÄÒ»ÆÚ
+            if(!BJSCdrawNumber.equals(periodJson.getString("drawNumber"))) {//æ–°çš„ä¸€æœŸ
             	previousBJSCdrawNumber = BJSCdrawNumber;
             	BJSCdrawNumber = periodJson.getString("drawNumber");
-            	if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//ÅĞ¶ÏÉÏÒ»ÆÚÓĞÃ»ÓĞÂ©Í¶
+            	if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//åˆ¤æ–­ä¸Šä¸€æœŸæœ‰æ²¡æœ‰æ¼æŠ•
 					int dNum = 0;
 					try {
 					    dNum = Integer.parseInt(BJSCdrawNumber) - Integer.parseInt(previousBJSCBetNumber) -1;
@@ -1424,11 +1438,11 @@ public class dsnHttp {
 			        BJSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(BJSCzongshibai + BJSCjinrishibai));
 			        
 					
-					autoBet.labelFailBets.setText("Ê§°Ü´ÎÊı:" + failTimes);
-					autoBet.labelTotalBets.setText("ÏÂµ¥´ÎÊı:" + (successTimes + failTimes));
-					System.out.println("Â©Í¶" + dNum + "´Î, ÆÚÊı£º" + BJSCdrawNumber + "ÉÏ´ÎÏÂµ¥ÆÚÊı£º" + previousBJSCBetNumber);
+					autoBet.labelFailBets.setText("å¤±è´¥æ¬¡æ•°:" + failTimes);
+					autoBet.labelTotalBets.setText("ä¸‹å•æ¬¡æ•°:" + (successTimes + failTimes));
+					System.out.println("æ¼æŠ•" + dNum + "æ¬¡, æœŸæ•°ï¼š" + BJSCdrawNumber + "ä¸Šæ¬¡ä¸‹å•æœŸæ•°ï¼š" + previousBJSCBetNumber);
 					
-					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//ÉèÖÃÈÕÆÚ¸ñÊ½
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//è®¾ç½®æ—¥æœŸæ ¼å¼
 					int missDrawNumber = Integer.parseInt(previousBJSCBetNumber) + 1;
 					for(int i = 0; i < dNum; i++){
 						String missDrawNmberstr = Integer.toString(missDrawNumber + i);						
@@ -1444,8 +1458,8 @@ public class dsnHttp {
             }
         }
         catch(Exception e){
-        	autoBet.outputGUIMessage("»ñÈ¡µÏË¹ÄáÊ±¼ä´íÎó£¡");
-        	System.out.println("getBJSCRemainTime()»ñÈ¡Ê±¼äÒì³£" + response);
+        	autoBet.outputGUIMessage("è·å–è¿ªæ–¯å°¼æ—¶é—´é”™è¯¯ï¼");
+        	System.out.println("getBJSCRemainTime()è·å–æ—¶é—´å¼‚å¸¸" + response);
         	return System.currentTimeMillis();
         }
  
@@ -1464,7 +1478,7 @@ public class dsnHttp {
     
     public static void outputBetsDetails(String jsonData, BetType betType){
     	
-    	autoBet.outputGUIMessage("ÏÂ×¢ÏêÇé£º\n");
+    	autoBet.outputGUIMessage("ä¸‹æ³¨è¯¦æƒ…ï¼š\n");
     	try{
         	if(betType == BetType.BJSC){
             	
@@ -1494,17 +1508,17 @@ public class dsnHttp {
             			if(game.equals(gameDX)){
             				amountDX = gameData.getInt("amount");
             				contentsDX = gameData.getString("contents");
-            				contentsDX = contentsDX.equals("D")?"´ó":"Ğ¡";
+            				contentsDX = contentsDX.equals("D")?"å¤§":"å°";
             			}
             			if(game.equals(gameDS)){
             				amountDS = gameData.getInt("amount");  
             				contentsDS = gameData.getString("contents");
-            				contentsDS = contentsDS.equals("D")?"µ¥":"Ë«";
+            				contentsDS = contentsDS.equals("D")?"å•":"åŒ";
             			}
     					if(game.equals(gameLH)){
     						amountLH = gameData.getInt("amount");
     						contentsLH = gameData.getString("contents");
-    						contentsLH = contentsLH.equals("L")?"Áú":"»¢";
+    						contentsLH = contentsLH.equals("L")?"é¾™":"è™";
     					}
 
     					
@@ -1514,15 +1528,15 @@ public class dsnHttp {
     				String outputStr = "";
     				if(amountDX != 0 ){
     					if(i == 1){
-    						outputStr  = String.format("¹Ú¾ü%s: %d,", contentsDX, amountDX);
+    						outputStr  = String.format("å† å†›%s: %d,", contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
-    						outputStr  = String.format("ÑÇ¾ü%s: %d,", contentsDX, amountDX);
+    						outputStr  = String.format("äºšå†›%s: %d,", contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
-    						outputStr  = String.format("µÚ%sÃû%s: %d,", Integer.toString(i), contentsDX, amountDX);
+    						outputStr  = String.format("ç¬¬%så%s: %d,", Integer.toString(i), contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					
@@ -1531,15 +1545,15 @@ public class dsnHttp {
     				
     				if(amountDS != 0 ){
     					if(i == 1){
-    						outputStr  = String.format("¹Ú¾ü%s: %d,", contentsDS, amountDS);
+    						outputStr  = String.format("å† å†›%s: %d,", contentsDS, amountDS);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
-    						outputStr  = String.format("ÑÇ¾ü%s: %d,", contentsDS, amountDS);
+    						outputStr  = String.format("äºšå†›%s: %d,", contentsDS, amountDS);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
-    						outputStr  = String.format("µÚ%sÃû%s: %d,", Integer.toString(i), contentsDS, amountDS);
+    						outputStr  = String.format("ç¬¬%så%s: %d,", Integer.toString(i), contentsDS, amountDS);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					totalAmout += amountDS;
@@ -1547,15 +1561,15 @@ public class dsnHttp {
     				
     				if(amountLH != 0 ){
     					if(i == 1){
-    						outputStr  = String.format("¹Ú¾ü%s: %d,", contentsLH, amountLH);
+    						outputStr  = String.format("å† å†›%s: %d,", contentsLH, amountLH);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
-    						outputStr  = String.format("ÑÇ¾ü%s: %d,", contentsLH, amountLH);
+    						outputStr  = String.format("äºšå†›%s: %d,", contentsLH, amountLH);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
-    						outputStr  = String.format("µÚ%sÃû%s: %d,", Integer.toString(i), contentsLH, amountLH);
+    						outputStr  = String.format("ç¬¬%så%s: %d,", Integer.toString(i), contentsLH, amountLH);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					totalAmout += amountLH;
@@ -1564,7 +1578,7 @@ public class dsnHttp {
             		
     				autoBet.outputGUIMessage("\n");
             	}
-            	autoBet.outputGUIMessage("ÏÂµ¥×Ü½ğ¶î:" + totalAmout + "\n");
+            	autoBet.outputGUIMessage("ä¸‹å•æ€»é‡‘é¢:" + totalAmout + "\n");
             	BJSCbetTotalAmount = totalAmout;
         	}
         	
@@ -1592,12 +1606,12 @@ public class dsnHttp {
             			if(game.equals(gameDX)){
             				amountDX = gameData.getInt("amount");
             				contentsDX = gameData.getString("contents");
-            				contentsDX = contentsDX.equals("D")?"´ó":"Ğ¡";
+            				contentsDX = contentsDX.equals("D")?"å¤§":"å°";
             			}
             			if(game.equals(gameDS)){
             				amountDS = gameData.getInt("amount");  
             				contentsDS = gameData.getString("contents");
-            				contentsDS = contentsDS.equals("D")?"µ¥":"Ë«";
+            				contentsDS = contentsDS.equals("D")?"å•":"åŒ";
             			}
             			
 
@@ -1607,13 +1621,13 @@ public class dsnHttp {
         			String outputStr = "";
         			
     				if(amountDX != 0 ){
-    						outputStr  = String.format("µÚ%sÇò%s: %d,", Integer.toString(i), contentsDX, amountDX);
+    						outputStr  = String.format("ç¬¬%sçƒ%s: %d,", Integer.toString(i), contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     						totalAmount += amountDX;
     				}
     				
     				if(amountDS != 0 ){
-    					outputStr  = String.format("µÚ%sÇò%s: %d,", Integer.toString(i), contentsDS, amountDS);
+    					outputStr  = String.format("ç¬¬%sçƒ%s: %d,", Integer.toString(i), contentsDS, amountDS);
     					autoBet.outputGUIMessage(outputStr);
     					totalAmount += amountDS;
     				}
@@ -1643,30 +1657,30 @@ public class dsnHttp {
         			if(game.equals(gameZDX)){
         				amountZDX = gameData.getInt("amount");
         				contentsZDX = gameData.getString("contents");
-        				contentsZDX = contentsZDX.equals("D")?"´ó":"Ğ¡";
+        				contentsZDX = contentsZDX.equals("D")?"å¤§":"å°";
         			}
         			if(game.equals(gameZDS)){
         				amountZDS = gameData.getInt("amount");  
         				contentsZDS = gameData.getString("contents");
-        				contentsZDS = contentsZDS.equals("D")?"µ¥":"Ë«";
+        				contentsZDS = contentsZDS.equals("D")?"å•":"åŒ";
         			}
     				if(game.equals(gameLH)){
     					amountLH = gameData.getInt("amount");
     					contentsLH = gameData.getString("contents");
-    					contentsLH = contentsLH.equals("L")?"Áú":"»¢";
+    					contentsLH = contentsLH.equals("L")?"é¾™":"è™";
     				}
     	
         		}
         		
     			String outputStr = "";
     			if(amountZDX != 0){
-    				outputStr  = String.format("×Ü%s: %d,",  contentsZDX, amountZDX);
+    				outputStr  = String.format("æ€»%s: %d,",  contentsZDX, amountZDX);
     				autoBet.outputGUIMessage(outputStr);
     				totalAmount += amountZDX;
     			}
     			
     			if(amountZDS != 0){
-    				outputStr  = String.format("×Ü%s: %d,",  contentsZDS, amountZDS);
+    				outputStr  = String.format("æ€»%s: %d,",  contentsZDS, amountZDS);
     				autoBet.outputGUIMessage(outputStr);
     				totalAmount += amountZDS;
     			}
@@ -1678,7 +1692,7 @@ public class dsnHttp {
     			}
     			
     			autoBet.outputGUIMessage("\n");
-    			autoBet.outputGUIMessage("ÏÂµ¥×Ü½ğ¶î:" + totalAmount +"\n");
+    			autoBet.outputGUIMessage("ä¸‹å•æ€»é‡‘é¢:" + totalAmount +"\n");
     			
     			CQSSCbetTotalAmount = totalAmount;
     			
@@ -1707,15 +1721,15 @@ public class dsnHttp {
         
         CQSSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(CQSSCzongqishu + CQSSCjinriqishu));
         
-        //Èç¹ûÎ´µ½·âÅÌÊ±¼ä
+        //å¦‚æœæœªåˆ°å°ç›˜æ—¶é—´
         if( CQSSCdrawNumber != null){
         	
-        	//System.out.printf("ÏÂ×¢ÖØÇìÊ±Ê±²ÊµÚ%sÆÚ\n",CQSSCdrawNumber);
-        	String outputStr = "ÏÂ×¢ÖØÇìÊ±Ê±²ÊµÚ" + CQSSCdrawNumber + "ÆÚ\n" + "×îĞÂÊı¾İÊ±¼ä¾àÊÕÅÌ" + remainTime + "Ãë\n";
+        	//System.out.printf("ä¸‹æ³¨é‡åº†æ—¶æ—¶å½©ç¬¬%sæœŸ\n",CQSSCdrawNumber);
+        	String outputStr = "ä¸‹æ³¨é‡åº†æ—¶æ—¶å½©ç¬¬" + CQSSCdrawNumber + "æœŸ\n" + "æœ€æ–°æ•°æ®æ—¶é—´è·æ”¶ç›˜" + remainTime + "ç§’\n";
         	autoBet.outputGUIMessage(outputStr);
         	
         	if(isEmptyData(betData, BetType.CQSSC)) {
-        		outputStr = "´úÀíÎŞÈËÍ¶×¢\n\n";
+        		outputStr = "ä»£ç†æ— äººæŠ•æ³¨\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
@@ -1723,7 +1737,7 @@ public class dsnHttp {
         	jsonParam = constructBetsData(betData, percent, BetType.CQSSC, opposite);
         	
         	if(jsonParam == "") {
-        		outputStr = "´úÀíÎŞÈËÍ¶×¢\n\n";
+        		outputStr = "ä»£ç†æ— äººæŠ•æ³¨\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
@@ -1741,6 +1755,14 @@ public class dsnHttp {
         	long time1 = System.currentTimeMillis();
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
+        	
+        	
+        	boolean betRes = isBetSuccess(CQSSCdrawNumber);
+        	
+        	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½") == true)){
+        		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
+        	}
+        	
 
         	long time2 = System.currentTimeMillis();
         	
@@ -1750,7 +1772,7 @@ public class dsnHttp {
         	
         	usingTime = usingTime/1000;
         	
-        	String strUsingTime  = String.format("ÏÂµ¥ÓÃÊ±£¡ :%f Ãë\n", usingTime);
+        	String strUsingTime  = String.format("ä¸‹å•ç”¨æ—¶ï¼ :%f ç§’\n", usingTime);
         	
         	autoBet.outputGUIMessage(strUsingTime);
 
@@ -1758,7 +1780,7 @@ public class dsnHttp {
         	boolean result = parseBetResult(response);
         	
         	
-        	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//ÉèÖÃÈÕÆÚ¸ñÊ½
+        	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//è®¾ç½®æ—¥æœŸæ ¼å¼
         	
         	if(result == false){
     			CQSSCdetalsDataWindow.addData(df.format(new Date()), CQSSCdrawNumber, 2, Integer.toString(CQSSCbetTotalAmount), Integer.toString(CQSSCbishu));
@@ -1776,21 +1798,21 @@ public class dsnHttp {
         	
 
         	    
-        	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) { //±ÜÃâÖØ¸´¼ÆÊı
+        	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) { //é¿å…é‡å¤è®¡æ•°
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelSuccessBets.setText("³É¹¦´ÎÊı:" + successTimes);
+					autoBet.labelSuccessBets.setText("æˆåŠŸæ¬¡æ•°:" + successTimes);
 				} else {
 					failTimes++;
-					autoBet.labelFailBets.setText("Ê§°Ü´ÎÊı:" + failTimes);
+					autoBet.labelFailBets.setText("å¤±è´¥æ¬¡æ•°:" + failTimes);
 				}
 				
-				autoBet.labelTotalBets.setText("ÏÂµ¥´ÎÊı:" + (successTimes + failTimes));
+				autoBet.labelTotalBets.setText("ä¸‹å•æ¬¡æ•°:" + (successTimes + failTimes));
         	} else if(result) {
         		successTimes++;
-    			autoBet.labelSuccessBets.setText("³É¹¦´ÎÊı:" + successTimes);
+    			autoBet.labelSuccessBets.setText("æˆåŠŸæ¬¡æ•°:" + successTimes);
     			failTimes--;
-				autoBet.labelFailBets.setText("Ê§°Ü´ÎÊı:" + failTimes);
+				autoBet.labelFailBets.setText("å¤±è´¥æ¬¡æ•°:" + failTimes);
         	}
 			
 			previousCQSSCBetNumber = CQSSCdrawNumber;
@@ -1820,14 +1842,14 @@ public class dsnHttp {
         
         BJSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(BJSCzongqishu + BJSCjinriqishu));
         
-        //Èç¹ûÎ´µ½·âÅÌÊ±¼ä
+        //å¦‚æœæœªåˆ°å°ç›˜æ—¶é—´
         if( BJSCdrawNumber != null){
         	
-        	//System.out.printf("ÏÂ×¢±±¾©Èü³µµÚ%sÆÚ\n",BJSCdrawNumber);
-        	String outputStr = "ÏÂ×¢±±¾©Èü³µµÚ" + BJSCdrawNumber + "ÆÚ\n"  + "×îĞÂÊı¾İÊ±¼ä¾àÊÕÅÌ" + remainTime + "Ãë\n";
+        	//System.out.printf("ä¸‹æ³¨åŒ—äº¬èµ›è½¦ç¬¬%sæœŸ\n",BJSCdrawNumber);
+        	String outputStr = "ä¸‹æ³¨åŒ—äº¬èµ›è½¦ç¬¬" + BJSCdrawNumber + "æœŸ\n"  + "æœ€æ–°æ•°æ®æ—¶é—´è·æ”¶ç›˜" + remainTime + "ç§’\n";
         	autoBet.outputGUIMessage(outputStr);
         	if(isEmptyData(betData, BetType.BJSC)) {
-        		outputStr = "´úÀíÎŞÈËÍ¶×¢\n\n";
+        		outputStr = "ä»£ç†æ— äººæŠ•æ³¨\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
@@ -1835,7 +1857,7 @@ public class dsnHttp {
         	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
         	
         	if(jsonParam == "") {
-        		outputStr = "´úÀíÎŞÈËÍ¶×¢\n\n";
+        		outputStr = "ä»£ç†æ— äººæŠ•æ³¨\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
@@ -1854,11 +1876,11 @@ public class dsnHttp {
         	
         	response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
-        	//boolean betRes = isBetSuccess(BJSCdrawNumber);
+        	boolean betRes = isBetSuccess(BJSCdrawNumber);
         	
-/*        	if((betRes == false)&&(response == null || response.contains("balance") == false || response.contains("ÄÚ²¿´íÎó") == true)){
+        	if((betRes == false)&&(response == null || response.contains("balance") == false || response.contains("å†…éƒ¨é”™è¯¯") == true)){
         		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
-        	}*/
+        	}
         	
 
         	long time2 = System.currentTimeMillis();
@@ -1869,7 +1891,7 @@ public class dsnHttp {
         	
         	usingTime = usingTime/1000;
         	
-        	String strUsingTime  = String.format("ÏÂµ¥ÓÃÊ±£¡ :%f Ãë\n", usingTime);
+        	String strUsingTime  = String.format("ä¸‹å•ç”¨æ—¶ï¼ :%f ç§’\n", usingTime);
         	
         	autoBet.outputGUIMessage(strUsingTime);
 
@@ -1877,7 +1899,7 @@ public class dsnHttp {
         	boolean result = parseBetResult(response);
         	
         	
-        	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//ÉèÖÃÈÕÆÚ¸ñÊ½
+        	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//è®¾ç½®æ—¥æœŸæ ¼å¼
 
         	
         	if(result == false){
@@ -1895,22 +1917,22 @@ public class dsnHttp {
         	unCalcProfitBJSCDraw.add(BJSCdrawNumber);
 
         	
-        	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) { //±ÜÃâÖØ¸´¼ÆÊı
+        	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) { //é¿å…é‡å¤è®¡æ•°
         	
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelSuccessBets.setText("³É¹¦´ÎÊı:" + successTimes);
+					autoBet.labelSuccessBets.setText("æˆåŠŸæ¬¡æ•°:" + successTimes);
 				} else {
 					failTimes++;
-					autoBet.labelFailBets.setText("Ê§°Ü´ÎÊı:" + failTimes);
+					autoBet.labelFailBets.setText("å¤±è´¥æ¬¡æ•°:" + failTimes);
 				}
 				
-				autoBet.labelTotalBets.setText("ÏÂµ¥´ÎÊı:" + (successTimes + failTimes));
-        	} else if(result) { //µÚ¶ş´Î½øÈëÏÂµ¥³É¹¦ µÄ»°¸ü¸ÄÊ§°ÜÎª³É¹¦
+				autoBet.labelTotalBets.setText("ä¸‹å•æ¬¡æ•°:" + (successTimes + failTimes));
+        	} else if(result) { //ç¬¬äºŒæ¬¡è¿›å…¥ä¸‹å•æˆåŠŸ çš„è¯æ›´æ”¹å¤±è´¥ä¸ºæˆåŠŸ
         			successTimes++;
-        			autoBet.labelSuccessBets.setText("³É¹¦´ÎÊı:" + successTimes);
+        			autoBet.labelSuccessBets.setText("æˆåŠŸæ¬¡æ•°:" + successTimes);
         			failTimes--;
-					autoBet.labelFailBets.setText("Ê§°Ü´ÎÊı:" + failTimes);
+					autoBet.labelFailBets.setText("å¤±è´¥æ¬¡æ•°:" + failTimes);
         	}
 			
 			previousBJSCBetNumber = BJSCdrawNumber;
@@ -1931,7 +1953,7 @@ public class dsnHttp {
     	
     	
     	if(str != null) {
-    		System.out.println("ÏÂµ¥½á¹û£º" + str);
+    		System.out.println("ä¸‹å•ç»“æœï¼š" + str);
     	}
     	
     	if(str != null && str.length()>0){
@@ -1941,7 +1963,7 @@ public class dsnHttp {
         		betResult = new JSONObject(str);	
     		}catch(Exception e)
     		{
-    			autoBet.outputGUIMessage("µÏË¹ÄáÏÂµ¥Çé¿öÎ´Öª\n\n");
+    			autoBet.outputGUIMessage("è¿ªæ–¯å°¼ä¸‹å•æƒ…å†µæœªçŸ¥\n\n");
     			
     			
     			
@@ -1953,24 +1975,24 @@ public class dsnHttp {
     			JSONObject account = betResult.getJSONObject("account");
     			double balance = account.getDouble("balance");
     			//int betting = account.getInt("betting");
-    			outputStr  = String.format("µÏË¹ÄáÏÂµ¥³É¹¦£¡ ÕË»§Óà¶î:%f\n", balance);
+    			outputStr  = String.format("è¿ªæ–¯å°¼ä¸‹å•æˆåŠŸï¼ è´¦æˆ·ä½™é¢:%f\n", balance);
     			autoBet.outputGUIMessage(outputStr);
-    			//System.out.printf("ÏÂµ¥³É¹¦£¡ ÏÂµ¥½ğ¶î£º%d, ÕË»§Óà¶î:%f\n", betting, balance);
+    			//System.out.printf("ä¸‹å•æˆåŠŸï¼ ä¸‹å•é‡‘é¢ï¼š%d, è´¦æˆ·ä½™é¢:%f\n", betting, balance);
     			
     			
     			return true;
     		
 
     		case 2:
-    			//System.out.println("ÏÂµ¥Ê§°Ü:ÒÑ·âÅÌ£¡\n");
-    			autoBet.outputGUIMessage("µÏË¹ÄáÏÂµ¥Çé¿öÎ´Öª\n\n\n");
+    			//System.out.println("ä¸‹å•å¤±è´¥:å·²å°ç›˜ï¼\n");
+    			autoBet.outputGUIMessage("è¿ªæ–¯å°¼ä¸‹å•æƒ…å†µæœªçŸ¥\n\n\n");
     			
     			
     			
     			return false;
     		case 3:
     			String message = betResult.getString("message");
-    			outputStr  = String.format("µÏË¹ÄáÏÂµ¥Çé¿öÎ´Öª\n\n£º%s\n",message);
+    			outputStr  = String.format("è¿ªæ–¯å°¼ä¸‹å•æƒ…å†µæœªçŸ¥\n\nï¼š%s\n",message);
     			autoBet.outputGUIMessage(outputStr);
     			
     			
@@ -1982,7 +2004,7 @@ public class dsnHttp {
     	
     	
     	
-    	autoBet.outputGUIMessage("µÏË¹ÄáÏÂµ¥Çé¿öÎ´Öª\n\n£¡\n\n");
+    	autoBet.outputGUIMessage("è¿ªæ–¯å°¼ä¸‹å•æƒ…å†µæœªçŸ¥\n\nï¼\n\n");
     	
     	return false;
     }
@@ -2044,14 +2066,14 @@ public class dsnHttp {
 	    			
 	    			double odds = oddsGrabData.getDouble(oddsKey);
 	    			
-	    			//ÌŞ³ı±±¾©Èü³µ¹ÚÑÇ¾ü ºÍ Á½Ãæ
+	    			//å‰”é™¤åŒ—äº¬èµ›è½¦å† äºšå†› å’Œ ä¸¤é¢
 	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
 	    				continue;
 	    			
 	    			if(parsedGames.contains(game) == true)
 	    				continue;
 	    			
-	    			//¼ÆËã²îÖµ
+	    			//è®¡ç®—å·®å€¼
 	        		for(int k = j +1 ; k < gamesGrabData.length(); k++){
 	        			JSONObject oppositeGameGrabData = gamesGrabData.getJSONObject(k);
 	        			String oppositeGame = oppositeGameGrabData.getString("k");
@@ -2072,7 +2094,7 @@ public class dsnHttp {
 	        		
 	        		parsedGames.add(game);    			
 	    			
-	    			//Ö»ÏÂÅâÂÊ¶şÒÔÏÂµÄ
+	    			//åªä¸‹èµ”ç‡äºŒä»¥ä¸‹çš„
 	        		if(odds < 2.5 && amount >0){
 	        			amount = (int)(amount*percent);  
 	        			if(amount == 0)
@@ -2082,9 +2104,9 @@ public class dsnHttp {
 	        			JSONObject gameObj = new JSONObject();
 	        			gameObj.put("game", game);
 	        			
-	        			//´¦Àí·´Í¶: ´ó±äĞ¡£¬Ğ¡±ä´ó£¬µ¥±äË«£¬Ë«±ä´ó£¬Áú±ä»¢£¬»¢±äÂ¡
+	        			//å¤„ç†åæŠ•: å¤§å˜å°ï¼Œå°å˜å¤§ï¼Œå•å˜åŒï¼ŒåŒå˜å¤§ï¼Œé¾™å˜è™ï¼Œè™å˜éš†
 	        			if(opposite){
-	        				if(game.indexOf("DX") != -1){//·´´óĞ¡
+	        				if(game.indexOf("DX") != -1){//åå¤§å°
 	        					if(contents.indexOf("D") != -1){
 	        						contents = "X";        						
 	        					}
@@ -2096,7 +2118,7 @@ public class dsnHttp {
 	        				}
 	        				
 	        				
-	        				if(game.indexOf("DS") != -1){//·´µ¥Ë«
+	        				if(game.indexOf("DS") != -1){//åå•åŒ
 	        					if(contents.indexOf("D") != -1){
 	        						contents = "S";        						
 	        					}
@@ -2107,7 +2129,7 @@ public class dsnHttp {
 	        					odds = oddsGrabData.getDouble(oddsKey);
 	        				}
 	        				
-	        				if(game.indexOf("LH") != -1){//·´Áú»¢
+	        				if(game.indexOf("LH") != -1){//åé¾™è™
 	        					if(contents.indexOf("L") != -1){
 	        						contents = "H";        						
 	        					}
@@ -2121,7 +2143,7 @@ public class dsnHttp {
 	
 	        				
 	        			}
-	        			//·´Í¶´¦Àí½áÊø
+	        			//åæŠ•å¤„ç†ç»“æŸ
 	        				        			
 	        				        			
 	        			gameObj.put("contents", contents);
@@ -2129,7 +2151,7 @@ public class dsnHttp {
 	        			gameObj.put("odds", odds);
 	        			
 	        			
-	        			//Êä³öÏÔÊ¾
+	        			//è¾“å‡ºæ˜¾ç¤º
 	        	    	if(betType == BetType.CQSSC){
 	        	        	
 	        	    	}
@@ -2170,7 +2192,7 @@ public class dsnHttp {
 	    	res = betsObj.toString();
     	
     	}catch(Exception e){
-    		autoBet.outputGUIMessage("¹¹ÔìÏÂµ¥Êı¾İ´íÎó£¡\n");
+    		autoBet.outputGUIMessage("æ„é€ ä¸‹å•æ•°æ®é”™è¯¯ï¼\n");
     		return "";
     	}
    	
@@ -2217,7 +2239,7 @@ public class dsnHttp {
 
 
 
-    /**ÒÔutf-8ĞÎÊ½¶ÁÈ¡*/
+    /**ä»¥utf-8å½¢å¼è¯»å–*/
     public static String doPost(String url,List<NameValuePair> formparams, String cookies) {
         return doPost(url, formparams,"UTF-8", cookies);
     }
@@ -2225,7 +2247,7 @@ public class dsnHttp {
     public static String doPost(String url,List<NameValuePair> formparams,String charset, String cookies) {
 
 
-     // ´´½¨httppost   
+     // åˆ›å»ºhttppost   
     	
     	try {
     	
@@ -2247,9 +2269,9 @@ public class dsnHttp {
             httppost.setEntity(uefEntity);
             CloseableHttpResponse response = execute(httppost);
             try {
-                // ´òÓ¡ÏìÓ¦×´Ì¬    
+                // æ‰“å°å“åº”çŠ¶æ€    
             	setCookie(response);
-            	//System.out.println("ÉèÖÃcookie:" + strCookies);
+            	//System.out.println("è®¾ç½®cookie:" + strCookies);
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
             		String location = response.getFirstHeader("Location").getValue();
             		System.out.println(response.getStatusLine());
@@ -2315,7 +2337,7 @@ public class dsnHttp {
     public static String doGet(String url, String cookies, String referUrl) {
     	
         try {  
-            // ´´½¨httpget.    
+            // åˆ›å»ºhttpget.    
             HttpGet httpget = new HttpGet(url);
             
             if(cookies != "") {
@@ -2337,7 +2359,7 @@ public class dsnHttp {
             httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
             System.out.println("executing request " + httpget.getURI()); 
            
-            // Ö´ĞĞgetÇëÇó.    
+            // æ‰§è¡Œgetè¯·æ±‚.    
             CloseableHttpResponse response = execute(httpget); 
             
             String statusLine = response.getStatusLine().toString();   
@@ -2347,7 +2369,7 @@ public class dsnHttp {
             
             try{
             	setCookie(response);  	
-            	//System.out.println("ÉèÖÃcookie:" + strCookies);
+            	//System.out.println("è®¾ç½®cookie:" + strCookies);
             	
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
              	   return response.getFirstHeader("Location").getValue();
@@ -2403,7 +2425,7 @@ public class dsnHttp {
 	    		return true;
 	    	}
 	    } catch(Exception e){
-	    	autoBet.outputGUIMessage("isEmptyData()¹¹ÔìÏÂµ¥Êı¾İ´íÎó£¡\n");
+	    	autoBet.outputGUIMessage("isEmptyData()æ„é€ ä¸‹å•æ•°æ®é”™è¯¯ï¼\n");
 	    	return true;
 	    }
     }
@@ -2413,7 +2435,7 @@ public class dsnHttp {
     public static String bet(String url,String jsonData, String charset, String cookies){
 
 
-        // ´´½¨httppost  
+        // åˆ›å»ºhttppost  
     	try {
            HttpPost httppost = new HttpPost(url); 
            //httppost.addHeader("Cookie", cookies);
@@ -2433,7 +2455,7 @@ public class dsnHttp {
                httppost.setEntity(strEntity);
                CloseableHttpResponse response = execute(httppost);
                try {
-                   // ´òÓ¡ÏìÓ¦×´Ì¬    
+                   // æ‰“å°å“åº”çŠ¶æ€    
                    System.out.println(response.getStatusLine());
                     HttpEntity entity = response.getEntity(); 
                     
@@ -2473,17 +2495,17 @@ public class dsnHttp {
 	        					+ "(KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
 	        System.out.println("executing request " + httpget.getURI()); 
        
-	        // Ö´ĞĞgetÇëÇó.    
+	        // æ‰§è¡Œgetè¯·æ±‚.    
         
 	        CloseableHttpResponse response = execute(httpget); 
        	 try {
        		    setCookie(response);
-                // ´òÓ¡ÏìÓ¦×´Ì¬    
+                // æ‰“å°å“åº”çŠ¶æ€    
                 System.out.println(response.getStatusLine()); 
                 System.out.println("------------------------------------");
-                File storeFile = new File("hyyzm.png");   //Í¼Æ¬±£´æµ½µ±Ç°Î»ÖÃ
+                File storeFile = new File("hyyzm.png");   //å›¾ç‰‡ä¿å­˜åˆ°å½“å‰ä½ç½®
                 FileOutputStream output = new FileOutputStream(storeFile);  
-                //µÃµ½ÍøÂç×ÊÔ´µÄ×Ö½ÚÊı×é,²¢Ğ´ÈëÎÄ¼ş  
+                //å¾—åˆ°ç½‘ç»œèµ„æºçš„å­—èŠ‚æ•°ç»„,å¹¶å†™å…¥æ–‡ä»¶  
                 byte [] a = EntityUtils.toByteArray(response.getEntity());
                 output.write(a);  
                 output.close();  
@@ -2492,7 +2514,7 @@ public class dsnHttp {
         		 String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "hyyzm.png", "result", "-l", "eng"};
 
         		 Process process = Runtime.getRuntime().exec(cmd);
-        		 // cmd µÄĞÅÏ¢
+        		 // cmd çš„ä¿¡æ¯
         		 ins = process.getInputStream();
         		 BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 
@@ -2502,12 +2524,12 @@ public class dsnHttp {
         		 }
         			
         		 int exitValue = process.waitFor();
-        		 System.out.println("·µ»ØÖµ£º" + exitValue);
+        		 System.out.println("è¿”å›å€¼ï¼š" + exitValue);
         		 process.getOutputStream().close();
         		 File file = new File("result.txt");
         		 reader.close();
                 reader = new BufferedReader(new FileReader(file));
-                 // Ò»´Î¶ÁÈëÒ»ĞĞ£¬Ö±µ½¶ÁÈënullÎªÎÄ¼ş½áÊø
+                 // ä¸€æ¬¡è¯»å…¥ä¸€è¡Œï¼Œç›´åˆ°è¯»å…¥nullä¸ºæ–‡ä»¶ç»“æŸ
                 String rmNum;
                 rmNum = reader.readLine();
                 reader.close();

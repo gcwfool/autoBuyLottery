@@ -284,6 +284,16 @@ public class DSNDataDetailsWindow extends JFrame
 						detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
 						detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = " ß∞‹";
 					}
+				}else if(index == TYPEINDEX.COUNT.ordinal()){
+					int count = Integer.parseInt((String)detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()]);
+					int actualCount = Integer.parseInt(value);
+					
+					if(count != actualCount){
+						detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
+						detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "∂‡Õ∂";
+						detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()] = value;
+					}
+					
 				}
 				else{
 					detailsData.elementAt(i)[index] = value;
@@ -296,6 +306,11 @@ public class DSNDataDetailsWindow extends JFrame
 		
 		tableMode.updateTable();
 	}
+	
+	
+
+	
+	
 	
   
     /** 
@@ -363,7 +378,7 @@ public class DSNDataDetailsWindow extends JFrame
         
         container.add(scroll, BorderLayout.CENTER);  
 
-        setVisible(true);  
+        setVisible(false);  
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
         
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);  
