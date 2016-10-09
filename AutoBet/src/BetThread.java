@@ -22,6 +22,12 @@ class BetThread extends Thread{
     
     static boolean clearBJSCdetaisData = false;
     
+    Client client;
+    
+    public BetThread(Client client){
+    	this.client = client;
+    }
+    
     
     @Override
     public void run() {
@@ -209,7 +215,7 @@ class BetThread extends Thread{
 					String[] betCQSSCData = null;
 					
 					for(int i = 0; i < 4; i++) {
-						if((betCQSSCData = DsnProxyGrab.getCQSSCdata()) == null){
+						if((betCQSSCData = client.getCQSSCdata()) == null){
 							Thread.currentThread().sleep(1*1000);
 						}
 						else {
@@ -249,7 +255,7 @@ class BetThread extends Thread{
 					String[] betBJSCData = null;
 					
 					for(int i = 0; i < 4; i++) {
-						if((betBJSCData = DsnProxyGrab.getBJSCdata()) == null) {
+						if((betBJSCData = client.getBJSCdata()) == null) {
 							Thread.currentThread().sleep(1*1000);
 						}else {
 							break;
@@ -285,7 +291,7 @@ class BetThread extends Thread{
 				
 				
 				//打印封盘数据与下单数据差额
-				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true && dsnHttp.previousBJSCBetNumber.equals(dsnHttp.BJSCdrawNumber)){
+				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true && dsnHttp.previousBJSCBetNumber.equals(dsnHttp.BJSCdrawNumber)){/*
 					
 					
 					
@@ -295,7 +301,7 @@ class BetThread extends Thread{
 					
 					for(int i = 0; i < 4; i++) {
 						
-						dataGY = DsnProxyGrab.grabBJSCdata("GY", "XZ", "");
+						dataGY = client.grabBJSCdata("GY", "XZ", "");
 
 
 						if(dataGY == null || dataGY.equals("timeout")) {
@@ -309,7 +315,7 @@ class BetThread extends Thread{
 					
 					for(int i = 0; i < 4; i++) {
 						
-						dataSSWL = DsnProxyGrab.grabBJSCdata("SSWL", "XZ", "");
+						dataSSWL = client.grabBJSCdata("SSWL", "XZ", "");
 
 
 						if(dataSSWL == null || dataSSWL.equals("timeout")) {
@@ -323,7 +329,7 @@ class BetThread extends Thread{
 					
 					for(int i = 0; i < 4; i++) {
 						
-						dataQBJS = DsnProxyGrab.grabBJSCdata("QBJS", "XZ", "");
+						dataQBJS = client.grabBJSCdata("QBJS", "XZ", "");
 
 
 						if(dataQBJS == null || dataQBJS.equals("timeout")) {
@@ -341,17 +347,17 @@ class BetThread extends Thread{
 					}else{
 						String[] betsData = {dataGY, dataSSWL, dataQBJS};
 						
-						/*System.out.println("北京赛车封盘数据：");
+						System.out.println("北京赛车封盘数据：");
 						System.out.println(betsData[0]);
 						System.out.println(betsData[1]);
-						System.out.println(betsData[2]);*/
+						System.out.println(betsData[2]);
 
 						int res = dsnHttp.calcBetDataErrorValue(betsData, BetType.BJSC);
 
 						dsnHttp.updateBJSCWindowdetailsData(dsnHttp.previousBJSCBetNumber, TYPEINDEX.DVALUE.ordinal(), Integer.toString(res));
 					}
 					
-					printBJSCErrorValue = true;
+					printBJSCErrorValue = true;*/
 					
 				}
 				
@@ -359,11 +365,11 @@ class BetThread extends Thread{
 				
 				if(CQSSCremainTime < -2*1000 && printCQSSCErrorValue == false && dsnHttp.previousCQSSCBetResult == true && dsnHttp.previousCQSSCBetNumber.equals(dsnHttp.CQSSCdrawNumber)){
 					
-					String data = null;
+				/*	String data = null;
 					
 					for(int i = 0; i < 4; i++) {
 						
-						data = DsnProxyGrab.grabCQSSCdata("LM", "XZ", "");
+						data = client.grabCQSSCdata("LM", "XZ", "");
 						
 						if( data == null || data.equals("timeout")) {
 							data = null;
@@ -378,8 +384,8 @@ class BetThread extends Thread{
 						System.out.println("[迪斯尼会员]未获取到封盘数据");
 					}else{
 		
-/*						System.out.println("重庆时时彩封盘数据：");
-						System.out.println(data);*/
+						System.out.println("重庆时时彩封盘数据：");
+						System.out.println(data);
 
 						String[] betData = {data};
 						
@@ -390,7 +396,7 @@ class BetThread extends Thread{
 						
 					}
 					
-					printCQSSCErrorValue = true;
+					printCQSSCErrorValue = true;*/
 					
 				}
 				

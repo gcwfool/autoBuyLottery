@@ -8,6 +8,9 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+
+
+
 enum BetType{
 	CQSSC,
 	BJSC
@@ -19,6 +22,9 @@ enum BetMode{
 	MIDDLETIME,
 	MORETIME
 }
+
+
+
 
 public class autoBet{
 	
@@ -163,7 +169,14 @@ public class autoBet{
 		dsnHttp.initLines();
 		DsnProxyGrab.initLines();
 		
-		new autoBet().launchFrame();
+		
+		Client client = new Client();
+		
+		
+		client.start();
+		
+		
+		new autoBet().launchFrame(client);
 
 		
 
@@ -230,7 +243,7 @@ public class autoBet{
 	}
 	
 	
-	public  void launchFrame()
+	public  void launchFrame(Client client)
 	{
 
 	    Frame mainFrame =new Frame("自动下单器");
@@ -429,7 +442,7 @@ public class autoBet{
 				
 				ConfigWriter.saveTofile("common.config");
 
-				if(loginToDSNMemberSuccess&& loginToProxySuccess)
+				if(loginToDSNMemberSuccess)
 					enableDSNMemberBet(true);
 				
 				outputGUIMessage("登录迪士尼会员成功!\n");
@@ -441,7 +454,7 @@ public class autoBet{
 		
 
 		btnBetCQSSC = new Button("正投重庆时时彩");
-		btnBetCQSSC.addActionListener(new BetCQSSCListener(this));
+		btnBetCQSSC.addActionListener(new BetCQSSCListener(this, client));
 		
 		btnBetCQSSC.setSize(90, 25);
 		btnBetCQSSC.setLocation(DsnMemberX,DsnMemberY + 150);
@@ -457,7 +470,7 @@ public class autoBet{
 		
 
 		btnOppositeBetCQSSC = new Button("反投重庆时时彩");
-		btnOppositeBetCQSSC.addActionListener(new BetOppositeCQSSCListener(this));
+		btnOppositeBetCQSSC.addActionListener(new BetOppositeCQSSCListener(this, client));
 		
 		btnOppositeBetCQSSC.setSize(90, 25);
 		btnOppositeBetCQSSC.setLocation(DsnMemberX,DsnMemberY + 180);
@@ -472,7 +485,7 @@ public class autoBet{
 		
 		
 		btnBetBJSC = new Button("正投北京赛车");
-		btnBetBJSC.addActionListener(new BetBJSCListener(this));
+		btnBetBJSC.addActionListener(new BetBJSCListener(this, client));
 		
 		btnBetBJSC.setSize(75, 25);
 		btnBetBJSC.setLocation(DsnMemberX,DsnMemberY + 210);
@@ -487,7 +500,7 @@ public class autoBet{
 
 		
 		btnOppositeBJSC = new Button("反投北京赛车");
-		btnOppositeBJSC.addActionListener(new BetOppositeBJSCListener(this));
+		btnOppositeBJSC.addActionListener(new BetOppositeBJSCListener(this, client));
 		
 		btnOppositeBJSC.setSize(75, 25);
 		btnOppositeBJSC.setLocation(DsnMemberX,DsnMemberY + 240);
@@ -817,7 +830,7 @@ public class autoBet{
 		
 		
 		btnBetTianCaiBJSC = new Button("正投北京赛车");
-		btnBetTianCaiBJSC.addActionListener(new BetBJSCListener(this));
+		btnBetTianCaiBJSC.addActionListener(new BetBJSCListener(this, client));
 		
 		btnBetTianCaiBJSC.setSize(75, 25);
 		btnBetTianCaiBJSC.setLocation(TianCaiMemberX,TianCaiMemberY + 210);

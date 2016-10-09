@@ -5,11 +5,12 @@ import java.awt.event.*;
 public class BetBJSCListener implements ActionListener
 {
 	private autoBet ab;
+	private Client client;
 	
 	
-	
-	public BetBJSCListener(autoBet ab) {
+	public BetBJSCListener(autoBet ab, Client client) {
 		this.ab = ab;
+		this.client = client;
 	}
 	
 	public void actionPerformed(ActionEvent e)
@@ -45,7 +46,7 @@ public class BetBJSCListener implements ActionListener
 		
 
 		
-		BetThread betThread = new BetThread();
+		BetThread betThread = new BetThread(client);
 								
 		betThread.start();
 		

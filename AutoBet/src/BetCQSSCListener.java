@@ -6,10 +6,11 @@ public class BetCQSSCListener implements ActionListener
 {
 	private autoBet ab;
 	
+	private Client client;
 	
-	
-	public BetCQSSCListener(autoBet ab) {
+	public BetCQSSCListener(autoBet ab, Client client) {
 		this.ab = ab;
+		this.client = client;
 	}
 	
 	public void actionPerformed(ActionEvent e)
@@ -18,7 +19,7 @@ public class BetCQSSCListener implements ActionListener
 			return;
 		}
 		
-		ab.grabThread.startGrabCQSSC();
+		//ab.grabThread.startGrabCQSSC();
 		
 		String s = ab.textFieldCQSSCBetPercent.getText();
 		
@@ -44,7 +45,7 @@ public class BetCQSSCListener implements ActionListener
 			return;
 		}
 		
-		BetThread betThread = new BetThread();
+		BetThread betThread = new BetThread(client);
 								
 		betThread.start();
 		

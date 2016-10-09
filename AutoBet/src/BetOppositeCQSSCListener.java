@@ -5,11 +5,13 @@ import java.awt.event.*;
 public class BetOppositeCQSSCListener implements ActionListener
 {
 	private autoBet ab;
+	private Client client;
 	
 	
 	
-	public BetOppositeCQSSCListener(autoBet ab) {
+	public BetOppositeCQSSCListener(autoBet ab, Client client) {
 		this.ab = ab;
+		this.client = client;
 	}
 	
 	public void actionPerformed(ActionEvent e)
@@ -18,7 +20,7 @@ public class BetOppositeCQSSCListener implements ActionListener
 			return;
 		}
 		
-		ab.grabThread.startGrabCQSSC();
+		//ab.grabThread.startGrabCQSSC();
 		
 		String s = ab.textFieldCQSSCBetPercent.getText();
 		
@@ -39,11 +41,11 @@ public class BetOppositeCQSSCListener implements ActionListener
 		
 		autoBet.outputGUIMessage(outputStr);
 		
-		if(ab.inBet == true){					
+		if(ab.inBet == true){
 			return;
 		}
 		
-		BetThread betThread = new BetThread();
+		BetThread betThread = new BetThread(client);
 								
 		betThread.start();
 		

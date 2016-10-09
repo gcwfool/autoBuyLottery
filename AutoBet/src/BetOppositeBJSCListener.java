@@ -5,11 +5,12 @@ import java.awt.event.*;
 public class BetOppositeBJSCListener implements ActionListener
 {
 	private autoBet ab;
+	private Client client;
 	
 	
-	
-	public BetOppositeBJSCListener(autoBet ab) {
+	public BetOppositeBJSCListener(autoBet ab, Client client) {
 		this.ab = ab;
+		this.client = client;
 	}
 	
 	public void actionPerformed(ActionEvent e)
@@ -18,7 +19,7 @@ public class BetOppositeBJSCListener implements ActionListener
 			return;
 		}
 		
-		ab.grabThread.startGrabBJSC();
+		//ab.grabThread.startGrabBJSC();
 		
 		String s = ab.textFieldBJSCBetPercent.getText();
 		
@@ -45,7 +46,7 @@ public class BetOppositeBJSCListener implements ActionListener
 		
 
 		
-		BetThread betThread = new BetThread();
+		BetThread betThread = new BetThread(client);
 								
 		betThread.start();
 		
