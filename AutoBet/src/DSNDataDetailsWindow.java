@@ -347,7 +347,7 @@ public class DSNDataDetailsWindow extends JFrame
 						int count = Integer.parseInt((String)detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()]);
 						int actualCount = Integer.parseInt(value);
 						
-						if(count != actualCount){
+						if(actualCount > count){
 							detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
 							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "∂‡Õ∂";
 							detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()] = value;
