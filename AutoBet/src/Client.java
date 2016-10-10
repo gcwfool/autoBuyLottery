@@ -69,14 +69,14 @@ public class Client extends Thread{
     			        }
     			
     			    client.socket().setSoTimeout(2000);
-    			    //·¢ËÍ×¢²áÐÅÏ¢
+    			    //ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Ï¢
     			    boolean reg = false;
 		            {
 		            	Map<String, String> map = new HashMap<String, String>();  
 		                map.put("request", "register");
 		                map.put("account", "account");
 		                map.put("website", "dsn");
-		                //½«json×ª»¯ÎªStringÀàÐÍ    
+		                //ï¿½ï¿½json×ªï¿½ï¿½ÎªStringï¿½ï¿½ï¿½ï¿½    
 		                JSONObject json = new JSONObject(map);  
 		                String request = json.toString();
 			            ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -84,52 +84,53 @@ public class Client extends Thread{
 			            buffer.put(request.getBytes());
 			            buffer.flip();
 				        client.write(buffer);
-				        //System.out.println("·¢ËÍÊý¾Ý: " + new String(buffer.array()));
+				        //System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " + new String(buffer.array()));
 				        String content = "";
 				        if(client.read(buffer1) == -1) {
 				        	continue;
 				        }
 				        content += new String(buffer1.array());
-				        //System.out.println("½ÓÊÕÊý¾Ý: " + buffer1.position());
+				        //System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " + buffer1.position());
 				        buffer1.clear();
 				           
 				        try {
 				            json = new JSONObject(content);
 				            
 				            if(json.getString("result").equals("true")) {
-				            	System.out.println("×¢²á³É¹¦");
+				            	System.out.println("×¢ï¿½ï¿½É¹ï¿½");
 				            	reg = true;
 				            } else {
-				            	System.out.println("×¢²áÊ§°Ü");
+				            	System.out.println("×¢ï¿½ï¿½Ê§ï¿½ï¿½");
 				            }
 				            	
 				        } catch (JSONException e) {
-				    		System.out.println("×¢²áÊý¾Ý°ü´íÎó");
+				    		System.out.println("×¢ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½");
 				    	}
 				        if(!reg) {
 				        	continue;
 				        }
 	            	}
 		            while(true) {
+		            	boolean brokenBag = false;
 		            	if(grabBJSC){
 			            	Map<String, String> map = new HashMap<String, String>();  
 			                map.put("request", "data");
 			                map.put("lottery", "BJSC");
-			                //½«json×ª»¯ÎªStringÀàÐÍ    
+			                //ï¿½ï¿½json×ªï¿½ï¿½ÎªStringï¿½ï¿½ï¿½ï¿½    
 			                JSONObject json = new JSONObject(map);  
 			                String request = json.toString();
 				            ByteBuffer buffer = ByteBuffer.allocate(1024);
-				            ByteBuffer buffer1 = ByteBuffer.allocate(20480);
+				            ByteBuffer buffer1 = ByteBuffer.allocate(30960);
 				            buffer.put(request.getBytes());
 				            buffer.flip();
 					        client.write(buffer);
-					       // System.out.println("·¢ËÍÊý¾Ý: " + new String(buffer.array()));
+					       // System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " + new String(buffer.array()));
 					        String content = "";
 					        if(client.read(buffer1) == -1) {
 					        	break;
 					        }
 					        content += new String(buffer1.array());
-					        //System.out.println("½ÓÊÕÊý¾Ý: " + buffer1.position());
+					        //System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " + buffer1.position());
 					        buffer1.clear();
 					       
 					           
@@ -155,11 +156,18 @@ public class Client extends Thread{
 					            	//System.out.println("remainTime:" + dataBJSC[4]);
 					            	
 					            } else {
-					            	System.out.println("»ñÈ¡Êý¾ÝÊ§°Ü");
+					            	System.out.println("ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ê§ï¿½ï¿½");
 					            }
 					            	
 					        } catch (JSONException e) {
-					    		System.out.println("Êý¾Ý°ü´íÎó");
+					    		System.out.println("ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½");
+					    		e.printStackTrace();
+					    		try {
+					    			client.read(buffer1);
+					    		} catch(IOException io) {
+					    			io.printStackTrace();
+					    		}
+					    		brokenBag = true;
 					    	}
 		            	}
 		            	
@@ -167,21 +175,21 @@ public class Client extends Thread{
 			            	Map<String, String> map = new HashMap<String, String>();  
 			                map.put("request", "data");
 			                map.put("lottery", "CQSSC");
-			                //½«json×ª»¯ÎªStringÀàÐÍ    
+			                //ï¿½ï¿½json×ªï¿½ï¿½ÎªStringï¿½ï¿½ï¿½ï¿½    
 			                JSONObject json = new JSONObject(map);  
 			                String request = json.toString();
 				            ByteBuffer buffer = ByteBuffer.allocate(1024);
-				            ByteBuffer buffer1 = ByteBuffer.allocate(20480);
+				            ByteBuffer buffer1 = ByteBuffer.allocate(30960);
 				            buffer.put(request.getBytes());
 				            buffer.flip();
 					        client.write(buffer);
-					        //System.out.println("·¢ËÍÊý¾Ý: " + new String(buffer.array()));
+					        //System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " + new String(buffer.array()));
 					        String content = "";
 					        if(client.read(buffer1) == -1) {
 					        	break;
 					        }
 					        content += new String(buffer1.array());
-					        //System.out.println("½ÓÊÕÊý¾Ý: " + buffer1.position());
+					        //System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " + buffer1.position());
 					        buffer1.clear();
 					           
 					        try {
@@ -200,25 +208,37 @@ public class Client extends Thread{
 					            	//System.out.println("drawNumber:" + dataCQSSC[0]);
 					            	//System.out.println("remainTime:" + dataCQSSC[2]);
 					            } else {
-					            	System.out.println("»ñÈ¡Êý¾ÝÊ§°Ü");
+					            	System.out.println("ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ê§ï¿½ï¿½");
 					            }
 					            	
 					        } catch (JSONException e) {
-					    		System.out.println("Êý¾Ý°ü´íÎó");
+					    		System.out.println("ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½");
+					    		e.printStackTrace();
+					    		try {
+					    			client.read(buffer1);
+					    		} catch(IOException io) {
+					    			io.printStackTrace();
+					    		}
+					    		brokenBag = true;
 					    	}
 		            	}
 
 			            
 			            //System.out.println("sleep");
 			            
-			            Thread.sleep(2000);
+		            	if(!brokenBag) {
+			            	Thread.sleep(2000);
+		            	}
+			            else {
+			            	Thread.sleep(800);
+			            }
 						
 			            //System.out.println("end sleep");
 				            
 		            
 		            }//while
     			} catch(IOException e) {
-    				//System.out.println("ÖØÐÂ½¨Á¢Á¬½Ó");
+    				//System.out.println("ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     			}
     		}//while
     	}catch (InterruptedException e) {
