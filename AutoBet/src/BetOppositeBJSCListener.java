@@ -40,6 +40,8 @@ public class BetOppositeBJSCListener implements ActionListener
 		
 		autoBet.outputGUIMessage(outputStr);
 		
+		dsnHttp.showBJSCDeatilsTable();
+		
 		if(ab.inBet == true){					
 			return;
 		}
@@ -51,6 +53,8 @@ public class BetOppositeBJSCListener implements ActionListener
 		betThread.start();
 		
 		ab.inBet = true;
+		
+		
 		
 	}	
 

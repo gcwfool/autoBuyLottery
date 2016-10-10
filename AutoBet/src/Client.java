@@ -17,13 +17,54 @@ public class Client extends Thread{
     boolean grabCQSSC = true;
     ReadWriteLock lock = new ReentrantReadWriteLock();
     
+    String address = "";
+    int port;
+    
+    SocketChannel client = null;
+    
+    
+    public boolean connectToSever(String taddress, String tport){
+    	boolean res = false;
+    	
+    	address = taddress;
+    	
+    	if(Common.isNum(tport)){
+    		port = Integer.parseInt(tport);
+    	}
+    	
+    	
+    	
+    	for(int i = 0; i < 5; i++){
+    		try{
+        		client = SocketChannel.open();
+                if(client.connect(new InetSocketAddress(address, port))){
+                	res = true;
+                	
+                	client.close();
+                	
+                    break;
+                }
+
+        		
+        	}catch(Exception e){
+        		
+        	}
+    	}
+    	
+    	
+    	
+    	
+    	return res;
+    }
+    
     public void run() {
     	try {
     		while(true) {
+    			
     			SocketChannel client = null;
     			try {   
     			        client = SocketChannel.open();
-    			        if(!client.connect(new InetSocketAddress("123.207.90.66",12321))){
+    			        if(!client.connect(new InetSocketAddress(address, port))){
     			            continue;
     			        }
     			
@@ -43,13 +84,13 @@ public class Client extends Thread{
 			            buffer.put(request.getBytes());
 			            buffer.flip();
 				        client.write(buffer);
-				        System.out.println("发送数据: " + new String(buffer.array()));
+				        //System.out.println("发送数据: " + new String(buffer.array()));
 				        String content = "";
 				        if(client.read(buffer1) == -1) {
 				        	continue;
 				        }
 				        content += new String(buffer1.array());
-				        System.out.println("接收数据: " + buffer1.position());
+				        //System.out.println("接收数据: " + buffer1.position());
 				        buffer1.clear();
 				           
 				        try {
@@ -82,13 +123,13 @@ public class Client extends Thread{
 				            buffer.put(request.getBytes());
 				            buffer.flip();
 					        client.write(buffer);
-					        System.out.println("发送数据: " + new String(buffer.array()));
+					       // System.out.println("发送数据: " + new String(buffer.array()));
 					        String content = "";
 					        if(client.read(buffer1) == -1) {
 					        	break;
 					        }
 					        content += new String(buffer1.array());
-					        System.out.println("接收数据: " + buffer1.position());
+					        //System.out.println("接收数据: " + buffer1.position());
 					        buffer1.clear();
 					       
 					           
@@ -96,15 +137,22 @@ public class Client extends Thread{
 					            json = new JSONObject(content);
 					            
 					            if(json.getString("result").equals("true")) {
+					            	
+					            	String str1 = json.getString("drawNumber");
+					            	String str2 = json.getString("remainTime");
+					            	String str3 = json.getString("dataGY");
+					            	String str4 = json.getString("dataSSWL");
+					            	String str5 = json.getString("dataQBJS");
+					            	
 					            	lock.writeLock().lock();
-					            	dataBJSC[0] = json.getString("drawNumber");
-					            	dataBJSC[4] = json.getString("remainTime");
-					            	dataBJSC[1] = json.getString("dataGY");
-					            	dataBJSC[2] = json.getString("dataSSWL");
-					            	dataBJSC[3] = json.getString("dataQBJS");
+					            	dataBJSC[0] = str1;
+					            	dataBJSC[4] = str2;
+					            	dataBJSC[1] = str3;
+					            	dataBJSC[2] = str4;
+					            	dataBJSC[3] = str5;
 					            	lock.writeLock().unlock();
-					            	System.out.println("drawNumber:" + dataBJSC[0]);
-					            	System.out.println("remainTime:" + dataBJSC[4]);
+					            	//System.out.println("drawNumber:" + dataBJSC[0]);
+					            	//System.out.println("remainTime:" + dataBJSC[4]);
 					            	
 					            } else {
 					            	System.out.println("获取数据失败");
@@ -127,25 +175,30 @@ public class Client extends Thread{
 				            buffer.put(request.getBytes());
 				            buffer.flip();
 					        client.write(buffer);
-					        System.out.println("发送数据: " + new String(buffer.array()));
+					        //System.out.println("发送数据: " + new String(buffer.array()));
 					        String content = "";
 					        if(client.read(buffer1) == -1) {
 					        	break;
 					        }
 					        content += new String(buffer1.array());
-					        System.out.println("接收数据: " + buffer1.position());
+					        //System.out.println("接收数据: " + buffer1.position());
 					        buffer1.clear();
 					           
 					        try {
 					            json = new JSONObject(content);
 					            if(json.getString("result").equals("true")) {
+					            	
+					            	String str1 = json.getString("drawNumber");
+					            	String str2 = json.getString("remainTime");
+					            	String str3 = json.getString("data");
+					            	
 					            	lock.writeLock().lock();
-					            	dataCQSSC[0] = json.getString("drawNumber");
-					            	dataCQSSC[2] = json.getString("remainTime");
-					            	dataCQSSC[1] = json.getString("data");
+					            	dataCQSSC[0] = str1;
+					            	dataCQSSC[2] = str2;
+					            	dataCQSSC[1] = str3;
 					            	lock.writeLock().unlock();
-					            	System.out.println("drawNumber:" + dataCQSSC[0]);
-					            	System.out.println("remainTime:" + dataCQSSC[2]);
+					            	//System.out.println("drawNumber:" + dataCQSSC[0]);
+					            	//System.out.println("remainTime:" + dataCQSSC[2]);
 					            } else {
 					            	System.out.println("获取数据失败");
 					            }
@@ -156,21 +209,21 @@ public class Client extends Thread{
 		            	}
 
 			            
-			            System.out.println("sleep");
+			            //System.out.println("sleep");
 			            
 			            Thread.sleep(2000);
 						
-			            System.out.println("end sleep");
+			            //System.out.println("end sleep");
 				            
 		            
 		            }//while
     			} catch(IOException e) {
-    				System.out.println("重新建立连接");
+    				//System.out.println("重新建立连接");
     			}
     		}//while
     	}catch (InterruptedException e) {
 	        // TODO: handle exception
-			System.out.println("end sleep1");
+			//System.out.println("end sleep1");
 	    }
     }
     

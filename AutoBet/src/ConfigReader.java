@@ -9,6 +9,10 @@ import org.w3c.dom.NodeList;
 
 public class ConfigReader {
 	
+	static String serverAddress = "";
+	static String serverPort = "";
+	
+	
 	static String proxyAddress = "";
 	static String proxyAccount = "";
 	static String proxyPassword = "";
@@ -31,6 +35,7 @@ public class ConfigReader {
 	static String betAddress1 = "";
 	static String betAddress2 = "";
 	static String betAddress3 = "";
+	static String betAddress4 = "";
 	
 	
 	public static boolean read(String filename) {
@@ -39,9 +44,22 @@ public class ConfigReader {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 	        Document document = db.parse(new File(filename));  
 	         
-	        //read proxy login msg
-	        NodeList list = document.getElementsByTagName("PROXYLOGIN");        
+	        
+	        
+	        NodeList list = document.getElementsByTagName("SERVER");        
 	        Element element = (Element)list.item(0);  
+	        
+	        serverAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("serverAddress:" + serverAddress);  
+	        
+	        serverPort = element.getElementsByTagName("PORT").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("serverPort:" + serverPort);  
+	        
+	        
+	        
+	        //read proxy login msg
+	        list = document.getElementsByTagName("PROXYLOGIN");        
+	        element = (Element)list.item(0);  
             
 	        proxyAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
 	        System.out.println("proxyaddress:" + proxyAddress);  
@@ -78,6 +96,10 @@ public class ConfigReader {
 	        
 	        betAddress3 = element.getElementsByTagName("ADDRESS3").item(0).getFirstChild().getNodeValue();               
 	        System.out.println("betaddress3:" + betAddress3);  
+	        
+	        
+	        betAddress4 = element.getElementsByTagName("ADDRESS4").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("betaddress4:" + betAddress4);  
 	        
 	              
 	        betAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
@@ -128,6 +150,16 @@ public class ConfigReader {
 			  
         return false;	
 	}
+	
+	
+	public static String getServerAddress() {
+		return serverAddress;
+	}
+	
+	public static String getServerPort() {
+		return serverPort;
+	}
+	
 	
 	public static String getProxyAddress() {
 		return proxyAddress;
@@ -193,7 +225,7 @@ public class ConfigReader {
 	
 	public static String[] getBetAddressArray(){
 		
-		String[] addressArray = {betAddress1, betAddress2, betAddress3};
+		String[] addressArray = {betAddress1, betAddress2, betAddress3, betAddress4};
 		
 		return addressArray;
 	}

@@ -57,6 +57,40 @@ public class ConfigWriter {
         return false;	
 	}
 	
+	
+	public static boolean updateServerAddress(String address){
+		
+		try{
+	        NodeList list = document.getElementsByTagName("SERVER");        
+	        Element element = (Element)list.item(0);  
+	        
+	        element.getElementsByTagName("ADDRESS").item(0).getFirstChild().setNodeValue(address);     
+	        return true;
+		}catch(Exception e) {   
+			e.printStackTrace();	   
+		}
+
+		return false;
+	}
+	
+	
+	public static boolean updateServerPort(String address){
+		
+		try{
+	        NodeList list = document.getElementsByTagName("SERVER");        
+	        Element element = (Element)list.item(0);  
+	        
+	        element.getElementsByTagName("PORT").item(0).getFirstChild().setNodeValue(address);     
+	        return true;
+		}catch(Exception e) {   
+			e.printStackTrace();	   
+		}
+
+		return false;
+	}
+	
+	
+	
 	public static boolean updateProxyAddress(String address){
 		
 		try{

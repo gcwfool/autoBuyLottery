@@ -206,6 +206,13 @@ class BetThread extends Thread{
 				
 				
 				
+				//todo remove  测试client。get
+				System.out.println("测试client。get函数，开始");
+				client.getCQSSCdata();
+				client.getBJSCdata();
+				System.out.println("测试client。get函数，结束");
+				
+				
 				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
 					
 					clearBJSCdetaisData = false;
@@ -291,21 +298,20 @@ class BetThread extends Thread{
 				
 				
 				//打印封盘数据与下单数据差额
-				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true && dsnHttp.previousBJSCBetNumber.equals(dsnHttp.BJSCdrawNumber)){/*
+				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true && dsnHttp.previousBJSCBetNumber.equals(dsnHttp.BJSCdrawNumber)){
 					
 					
 					
-					String dataGY = null;
-					String dataSSWL = null;
-					String dataQBJS = null;
+					String data[] = null;
+
 					
 					for(int i = 0; i < 4; i++) {
 						
-						dataGY = client.grabBJSCdata("GY", "XZ", "");
+						data = client.getBJSCdata();
 
 
-						if(dataGY == null || dataGY.equals("timeout")) {
-							dataGY = null;
+						if(data == null) {
+							data = null;
 							Thread.currentThread().sleep(1*1000);
 						}else {
 							break;
@@ -313,39 +319,14 @@ class BetThread extends Thread{
 					}
 					
 					
-					for(int i = 0; i < 4; i++) {
-						
-						dataSSWL = client.grabBJSCdata("SSWL", "XZ", "");
 
-
-						if(dataSSWL == null || dataSSWL.equals("timeout")) {
-							dataSSWL = null;
-							Thread.currentThread().sleep(1*1000);
-						}else {
-							break;
-						}
-					}
-					
-					
-					for(int i = 0; i < 4; i++) {
-						
-						dataQBJS = client.grabBJSCdata("QBJS", "XZ", "");
-
-
-						if(dataQBJS == null || dataQBJS.equals("timeout")) {
-							dataQBJS = null;
-							Thread.currentThread().sleep(1*1000);
-						}else {
-							break;
-						}
-					}
 					
 					
 					
-					if(dataGY == null || dataSSWL == null || dataQBJS == null) {
+					if(data[1] == null || data[2] == null || data[3] == null) {
 						System.out.println("[迪斯尼会员]未获取到封盘数据");
 					}else{
-						String[] betsData = {dataGY, dataSSWL, dataQBJS};
+						String[] betsData = {data[1], data[2], data[3]};
 						
 						System.out.println("北京赛车封盘数据：");
 						System.out.println(betsData[0]);
@@ -357,7 +338,7 @@ class BetThread extends Thread{
 						dsnHttp.updateBJSCWindowdetailsData(dsnHttp.previousBJSCBetNumber, TYPEINDEX.DVALUE.ordinal(), Integer.toString(res));
 					}
 					
-					printBJSCErrorValue = true;*/
+					printBJSCErrorValue = true;
 					
 				}
 				
@@ -365,13 +346,17 @@ class BetThread extends Thread{
 				
 				if(CQSSCremainTime < -2*1000 && printCQSSCErrorValue == false && dsnHttp.previousCQSSCBetResult == true && dsnHttp.previousCQSSCBetNumber.equals(dsnHttp.CQSSCdrawNumber)){
 					
-				/*	String data = null;
+					String data[] = null;
 					
 					for(int i = 0; i < 4; i++) {
 						
-						data = client.grabCQSSCdata("LM", "XZ", "");
+						System.out.println("测试client。get函数，开始");
 						
-						if( data == null || data.equals("timeout")) {
+						data = client.getCQSSCdata();
+						
+						System.out.println("测试client。get函数，结束");
+						
+						if( data == null) {
 							data = null;
 							Thread.currentThread().sleep(1*1000);
 						}else {
@@ -387,7 +372,7 @@ class BetThread extends Thread{
 						System.out.println("重庆时时彩封盘数据：");
 						System.out.println(data);
 
-						String[] betData = {data};
+						String[] betData = {data[1]};
 						
 						int res = dsnHttp.calcBetDataErrorValue(betData, BetType.CQSSC);
 						
@@ -396,7 +381,7 @@ class BetThread extends Thread{
 						
 					}
 					
-					printCQSSCErrorValue = true;*/
+					printCQSSCErrorValue = true;
 					
 				}
 				

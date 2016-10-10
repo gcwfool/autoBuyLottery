@@ -105,8 +105,10 @@ public class autoBet{
 	
 	
 	
+	public static Button btnLogin;
 	
 	
+	public static Client client;
 	
 	
 	public static TextArea outputMessage;
@@ -120,7 +122,7 @@ public class autoBet{
 	
 	static int betTime = 12;
 	
-	public static int timeOut = 8*1000;
+	public static int betTimeOut = 8*1000;
 	
 	public static BetMode betMode = BetMode.MIDDLETIME;
 	
@@ -130,14 +132,14 @@ public class autoBet{
 		
 		
 		if(betMode == BetMode.LESSTIME){
-			timeOut = 6*1000;
+			betTimeOut = 15*1000;
 			betTime = 5;
 		}else if(betMode == BetMode.MIDDLETIME){
-			timeOut = 8*1000;
+			betTimeOut = 15*1000;
 			betTime = 12;
 		}
 		else{
-			timeOut = 10*1000;
+			betTimeOut = 20*1000;
 			betTime = 24;
 		}
 		
@@ -170,13 +172,13 @@ public class autoBet{
 		DsnProxyGrab.initLines();
 		
 		
-		Client client = new Client();
+		client = new Client();
 		
 		
-		client.start();
+		//client.start();
 		
 		
-		new autoBet().launchFrame(client);
+		new autoBet().launchFrame();
 
 		
 
@@ -243,7 +245,7 @@ public class autoBet{
 	}
 	
 	
-	public  void launchFrame(Client client)
+	public  void launchFrame()
 	{
 
 	    Frame mainFrame =new Frame("自动下单器");
@@ -268,7 +270,7 @@ public class autoBet{
 	    
 
 	    
-		Label labelDsnProxyLogin = new Label("迪斯尼代理登录:");
+		Label labelDsnProxyLogin = new Label("连接服务器:");
 		labelDsnProxyLogin.setSize(100, 25);
 		labelDsnProxyLogin.setLocation(DsnProxyX, DsnProxyY);
 		
@@ -280,17 +282,17 @@ public class autoBet{
 		textFieldProxyAddress = new TextField();
 		textFieldProxyAddress.setSize(300,25);
 		textFieldProxyAddress.setLocation(DsnProxyX + 50, DsnProxyY +30);
-		textFieldProxyAddress.setText(ConfigReader.getProxyAddress());
+		textFieldProxyAddress.setText(ConfigReader.getServerAddress());
 		
 		
-		Label labelDsnProxyAccount = new Label("账户:");
+		Label labelDsnProxyAccount = new Label("端口:");
 		labelDsnProxyAccount.setSize(50, 25);
 		labelDsnProxyAccount.setLocation(DsnProxyX, DsnProxyY +60);
 		
 		textFieldProxyAccount = new TextField();
 		textFieldProxyAccount.setSize(300,25);
 		textFieldProxyAccount.setLocation(DsnProxyX + 50, DsnProxyY +60);
-		textFieldProxyAccount.setText(ConfigReader.getProxyAccount());
+		textFieldProxyAccount.setText(ConfigReader.getServerPort());
 
 		Label labelDsnProxyPassword = new Label("密码:");
 		labelDsnProxyPassword.setSize(50, 25);
@@ -306,26 +308,32 @@ public class autoBet{
 		
 		
 		
-		Button btnLogin = new Button("登录");
+		btnLogin = new Button("连接");
 		btnLogin.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(loginToProxySuccess == true)
 					return;
 				
 				String address = textFieldProxyAddress.getText();
-				String account = textFieldProxyAccount.getText();
-				String password = textFieldProxyPassword.getText();
+				String port = textFieldProxyAccount.getText();
+				//String password = textFieldProxyPassword.getText();
 				
-				DsnProxyGrab.setLoginParams(address, account, password);
+				//DsnProxyGrab.setLoginParams(address, account, password);
 				
-				if(!DsnProxyGrab.login()) {
-					outputGUIMessage("登录迪士尼代理失败!\n");
+				if(!client.connectToSever(address, port)) {
+					outputGUIMessage("连接服务器失败!\n");
 					return;
 				}
 				
 				loginToProxySuccess = true;
 				
-				ConfigWriter.updateProxyAddress(address);
+				ConfigWriter.updateServerAddress(address);
+				ConfigWriter.updateServerPort(port);
+				
+				ConfigWriter.saveTofile("common.config");
+				
+				
+/*				ConfigWriter.updateProxyAddress(address);
 				ConfigWriter.updateProxyAccount(account);
 				ConfigWriter.updateProxyPassword(password);
 				
@@ -337,7 +345,7 @@ public class autoBet{
 				XYNCthread = new GrabXYNCthread();
 				XYNCthread.start();
 				
-				enableGrabBtn(true);
+				enableGrabBtn(true);*/
 				
 				if(loginToDSNMemberSuccess&& loginToProxySuccess)
 					enableDSNMemberBet(true);
@@ -348,7 +356,12 @@ public class autoBet{
 				if(loginToTianCaiMemberSuccess&& loginToProxySuccess)
 					enableTianCaiMemberBet(true);
 				
-				outputGUIMessage("登录迪士尼代理成功!\n");
+				client.start();
+				
+				outputGUIMessage("连接服务器成功!\n");
+				
+				btnLogin.setEnabled(false);
+				//btnLogin.setText("已连接");
 			}
 		});
 		
@@ -371,8 +384,8 @@ public class autoBet{
 		panel.add(textFieldProxyAddress);
 		panel.add(labelDsnProxyAccount);
 		panel.add(textFieldProxyAccount);
-		panel.add(labelDsnProxyPassword);
-		panel.add(textFieldProxyPassword);		
+		//panel.add(labelDsnProxyPassword);
+		//panel.add(textFieldProxyPassword);		
 		panel.add(btnLogin);		
 		panel.add(textFieldBetTime);		
 		panel.add(labelBetTime);
@@ -442,7 +455,7 @@ public class autoBet{
 				
 				ConfigWriter.saveTofile("common.config");
 
-				if(loginToDSNMemberSuccess)
+				if(loginToDSNMemberSuccess&&loginToProxySuccess)
 					enableDSNMemberBet(true);
 				
 				outputGUIMessage("登录迪士尼会员成功!\n");
@@ -538,187 +551,7 @@ public class autoBet{
 
 		
 
-		//微彩会员界面
-		/*int WeiCaiMemberX = 1000;
-		int WeiCaiMemberY = 50;		
-		
-		
-		Label labelWeiCaiMemberLogin = new Label("微彩会员登录:");
-		labelWeiCaiMemberLogin.setSize(100, 25);
-		labelWeiCaiMemberLogin.setLocation(WeiCaiMemberX, WeiCaiMemberY);
-		
-		Label labelWeiCaiMemberAddress = new Label("网址:");
-		labelWeiCaiMemberAddress.setSize(50, 25);
-		labelWeiCaiMemberAddress.setLocation(WeiCaiMemberX, WeiCaiMemberY +30);
-		
-		
-		textFieldWeiCaiMemberAddress = new TextField();
-		textFieldWeiCaiMemberAddress.setSize(300,25);
-		textFieldWeiCaiMemberAddress.setLocation(WeiCaiMemberX + 50, WeiCaiMemberY +30);
-		textFieldWeiCaiMemberAddress.setText(ConfigReader.getweicaiBetAddress());
-		
-		Label labelWeiCaiMemberAccount = new Label("账户:");
-		labelWeiCaiMemberAccount.setSize(50, 25);
-		labelWeiCaiMemberAccount.setLocation(WeiCaiMemberX, WeiCaiMemberY +60);
-		
-		textFieldWeiCaiMemberAccount = new TextField();
-		textFieldWeiCaiMemberAccount.setSize(300,25);
-		textFieldWeiCaiMemberAccount.setLocation(WeiCaiMemberX + 50, WeiCaiMemberY +60);
-		textFieldWeiCaiMemberAccount.setText(ConfigReader.getweicaiBetAccount());	
-		
-		Label labelWeiCaiMemberPassword = new Label("密码:");
-		labelWeiCaiMemberPassword.setSize(50, 25);
-		labelWeiCaiMemberPassword.setLocation(WeiCaiMemberX, WeiCaiMemberY +90);
-		
-		textFieldWeiCaiMemberPassword = new TextField();
-		textFieldWeiCaiMemberPassword.setSize(300,25);
-		textFieldWeiCaiMemberPassword.setLocation(WeiCaiMemberX + 50, WeiCaiMemberY +90);
-		textFieldWeiCaiMemberPassword.setText(ConfigReader.getweicaiBetPassword());	
-		textFieldWeiCaiMemberPassword.setEchoChar('*');
-		
-		
-		Button btnWeiCaiMemberLogin = new Button("登录");
-		btnWeiCaiMemberLogin.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if(loginToWeiCaiMemberSuccess == true)
-					return;
-				
-				String address = textFieldWeiCaiMemberAddress.getText();
-				String account = textFieldWeiCaiMemberAccount.getText();
-				String password = textFieldWeiCaiMemberPassword.getText();
-				
-				WeiCaiHttp.setLoginParams(address, account, password);
 
-				if(!WeiCaiHttp.login()) {
-					outputGUIMessage("登录微彩会员失败!\n");
-					return;
-				}
-				
-				loginToWeiCaiMemberSuccess = true;
-				
-				ConfigWriter.updateWeiCaiMemberAddress(address);
-				ConfigWriter.updateWeiCaiMemberAccount(account);
-				ConfigWriter.updateWeiCaiMemberPassword(password);
-				
-				ConfigWriter.saveTofile("common.config");
-
-				if(loginToWeiCaiMemberSuccess&& loginToProxySuccess)
-					enableWeiCaiMemberBet(true);
-				
-				outputGUIMessage("登录微彩会员成功!\n");
-			}
-		});
-		
-		btnWeiCaiMemberLogin.setSize(50, 25);
-		btnWeiCaiMemberLogin.setLocation(WeiCaiMemberX, WeiCaiMemberY + 120);
-		
-
-		btnBetWeiCaiCQSSC = new Button("正投重庆时时彩");
-		btnBetWeiCaiCQSSC.addActionListener(new BetWeiCaiOppositeCQSSCListener(this));
-		
-		btnBetWeiCaiCQSSC.setSize(90, 25);
-		btnBetWeiCaiCQSSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 150);
-		
-
-		Label labelWeiCaiPercent = new Label("投注比例:");
-		labelWeiCaiPercent.setSize(60, 25);
-		labelWeiCaiPercent.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 150);
-		
-		textFieldCQSSCBetWeiCaiPercent = new TextField();
-		textFieldCQSSCBetWeiCaiPercent.setSize(60, 25);
-		textFieldCQSSCBetWeiCaiPercent.setLocation(WeiCaiMemberX + 160, WeiCaiMemberY + 150);
-		
-
-		btnOppositeBetWeiCaiCQSSC = new Button("反投重庆时时彩");
-		btnOppositeBetWeiCaiCQSSC.addActionListener(new BetWeiCaiOppositeCQSSCListener(this));
-		
-		btnOppositeBetWeiCaiCQSSC.setSize(90, 25);
-		btnOppositeBetWeiCaiCQSSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 180);
-		
-		btnStopBetWeiCaiCQSSC = new Button("投注详情");
-		btnStopBetWeiCaiCQSSC.addActionListener(new StopBetWeiCaiCQSSCListener(this));
-		
-		btnStopBetWeiCaiCQSSC.setSize(90, 25);
-		btnStopBetWeiCaiCQSSC.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 180);
-		
-		
-		
-		
-		btnBetWeiCaiBJSC = new Button("正投北京赛车");
-		btnBetWeiCaiBJSC.addActionListener(new BetBJSCListener(this));
-		
-		btnBetWeiCaiBJSC.setSize(75, 25);
-		btnBetWeiCaiBJSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 210);
-
-		Label BJSClabelWeiCaiPercent = new Label("投注比例:");
-		BJSClabelWeiCaiPercent.setSize(60, 25);
-		BJSClabelWeiCaiPercent.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 210);
-		
-		textFieldBJSCBetWeiCaiPercent = new TextField();
-		textFieldBJSCBetWeiCaiPercent.setSize(60, 25);
-		textFieldBJSCBetWeiCaiPercent.setLocation(WeiCaiMemberX + 160, WeiCaiMemberY + 210);
-
-		
-		btnOppositeWeiCaiBJSC = new Button("反投北京赛车");
-		btnOppositeWeiCaiBJSC.addActionListener(new BetWeiCaiOppositeBJSCListener(this));
-		
-		btnOppositeWeiCaiBJSC.setSize(75, 25);
-		btnOppositeWeiCaiBJSC.setLocation(WeiCaiMemberX,WeiCaiMemberY + 240);
-		
-
-		
-		btnStopBetWeiCaiBJSC = new Button("投注详情");
-		btnStopBetWeiCaiBJSC.addActionListener(new StopBetWeiCaiBJSCListener(this));
-		
-		btnStopBetWeiCaiBJSC.setSize(90, 25);
-		btnStopBetWeiCaiBJSC.setLocation(WeiCaiMemberX + 100, WeiCaiMemberY + 240);
-		
-		
-		
-		labelWeiCaiTotalBets = new Label();
-		labelWeiCaiTotalBets.setSize(300,25);
-		labelWeiCaiTotalBets.setLocation(WeiCaiMemberX, 400);
-		labelWeiCaiTotalBets.setText("下单次数:0");
-		
-		labelWeiCaiSuccessBets = new Label();
-		labelWeiCaiSuccessBets.setSize(300,25);
-		labelWeiCaiSuccessBets.setLocation(WeiCaiMemberX, 430);
-		labelWeiCaiSuccessBets.setText("成功次数:0");
-		
-		labelWeiCaiFailBets = new Label();
-		labelWeiCaiFailBets.setSize(300,25);
-		labelWeiCaiFailBets.setLocation(WeiCaiMemberX, 460);
-		labelWeiCaiFailBets.setText("失败次数:0");
-		
-		
-		panel.add(labelWeiCaiTotalBets);
-		panel.add(labelWeiCaiSuccessBets);
-		panel.add(labelWeiCaiFailBets);
-		
-		
-		
-		panel.add(labelWeiCaiMemberLogin);
-		panel.add(labelWeiCaiMemberAddress);
-		panel.add(textFieldWeiCaiMemberAddress);
-		panel.add(labelWeiCaiMemberAccount);
-		panel.add(textFieldWeiCaiMemberAccount);
-		panel.add(labelWeiCaiMemberPassword);
-		panel.add(textFieldWeiCaiMemberPassword);		
-		panel.add(btnWeiCaiMemberLogin);
-		
-		panel.add(btnBetWeiCaiCQSSC);
-		panel.add(labelWeiCaiPercent);
-		panel.add(btnOppositeBetWeiCaiCQSSC);
-		panel.add(btnBetWeiCaiBJSC);
-		panel.add(btnOppositeWeiCaiBJSC);
-		panel.add(BJSClabelWeiCaiPercent);
-		panel.add(textFieldCQSSCBetWeiCaiPercent);
-		panel.add(textFieldBJSCBetWeiCaiPercent);
-		panel.add(btnStopBetWeiCaiCQSSC);
-		panel.add(btnStopBetWeiCaiBJSC);
-		
-		
-		enableWeiCaiMemberBet(false);*/
 		
 		//添彩会员界面
 		int TianCaiMemberX = 1000;
@@ -910,7 +743,7 @@ public class autoBet{
 		
 		
 		//!lin 抓取界面使用测试
-		btnStartGrabCQSSC = new Button("开抓重庆时彩");
+/*		btnStartGrabCQSSC = new Button("开抓重庆时彩");
 		btnStartGrabCQSSC.setSize(75, 25);
 		btnStartGrabCQSSC.setLocation(50, 230);
 		btnStopGrabCQSSC = new Button("停抓重庆时彩");
@@ -993,7 +826,7 @@ public class autoBet{
 		labelFailBets = new Label();
 		labelFailBets.setSize(300,25);
 		labelFailBets.setLocation(50, 460);
-		labelFailBets.setText("失败次数:0");
+		labelFailBets.setText("失败次数:0");*/
 		
 		
 /*		panel.add(labelTotalBets);
@@ -1029,5 +862,8 @@ public class autoBet{
 	}
 			
 }
+
+
+
 
 

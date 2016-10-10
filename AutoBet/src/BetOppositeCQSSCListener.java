@@ -51,6 +51,8 @@ public class BetOppositeCQSSCListener implements ActionListener
 		
 		ab.inBet = true;
 		
+		dsnHttp.showCQSSCDeatilsTable();
+		
 	}	
 
 }

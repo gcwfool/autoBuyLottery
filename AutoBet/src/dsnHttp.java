@@ -64,7 +64,7 @@ public class dsnHttp {
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
         requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//设置超时
+        //requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(autoBet.timeOut).setConnectionRequestTimeout(autoBet.timeOut).setSocketTimeout(autoBet.timeOut).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
@@ -76,7 +76,7 @@ public class dsnHttp {
     static DSNDataDetailsWindow BJSCdetalsDataWindow = new DSNDataDetailsWindow();    
     
     
-    
+    static int defaultTimeout = 3000;
     
     
     static int BJSCbishu = 0;    
@@ -120,6 +120,9 @@ public class dsnHttp {
     static long avgRequestTime = 0;    
     static boolean bcalcRequestTime = true;
     static boolean bneedChangeLine = false;
+    
+    
+    static long lastChangeLineTime = 0;
     
     
     //这个变量用来存储
@@ -927,8 +930,14 @@ public class dsnHttp {
             	
             	System.out.printf("[迪斯尼会员]平均请求时间:%d\n", avgRequestTime);
             	
-            	if(avgRequestTime >= 500){
+            	
+            	long currentTime = System.currentTimeMillis();
+            	
+            	long passTime = currentTime - lastChangeLineTime;
+            	
+            	if(avgRequestTime >= 150 && passTime >= 90*1000){
             		setisNeedChangeLine(true);
+            		lastChangeLineTime = currentTime;
             	}
 
         	}
@@ -1320,14 +1329,14 @@ public class dsnHttp {
 					
 					
 					
-					autoBet.labelFailBets.setText("失败次数:" + failTimes);
-					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+/*					autoBet.labelFailBets.setText("失败次数:" + failTimes);
+					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));*/
 					System.out.println("漏投" + dNum + "次, 期数：" + CQSSCdrawNumber + "上次下单期数：" + previousCQSSCBetNumber);
 					
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
-					int missDrawNumber = Integer.parseInt(previousCQSSCBetNumber) + 1;
+					long missDrawNumber = Long.parseLong(previousCQSSCBetNumber) + 1;
 					for(int i = 0; i < dNum; i++){
-						String missDrawNmberstr = Integer.toString(missDrawNumber + i);						
+						String missDrawNmberstr = Long.toString(missDrawNumber + i);						
 		    			CQSSCdetalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
 					}
 					
@@ -1438,8 +1447,8 @@ public class dsnHttp {
 			        BJSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(BJSCzongshibai + BJSCjinrishibai));
 			        
 					
-					autoBet.labelFailBets.setText("失败次数:" + failTimes);
-					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+/*					autoBet.labelFailBets.setText("失败次数:" + failTimes);
+					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));*/
 					System.out.println("漏投" + dNum + "次, 期数：" + BJSCdrawNumber + "上次下单期数：" + previousBJSCBetNumber);
 					
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
@@ -1799,7 +1808,7 @@ public class dsnHttp {
 
         	    
         	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) { //避免重复计数
-	        	if(result == true) {
+/*        		if(result == true) {
 					successTimes++;
 					autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
 				} else {
@@ -1807,12 +1816,12 @@ public class dsnHttp {
 					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 				}
 				
-				autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+				autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));*/
         	} else if(result) {
-        		successTimes++;
+/*        		successTimes++;
     			autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
     			failTimes--;
-				autoBet.labelFailBets.setText("失败次数:" + failTimes);
+				autoBet.labelFailBets.setText("失败次数:" + failTimes);*/
         	}
 			
 			previousCQSSCBetNumber = CQSSCdrawNumber;
@@ -1919,7 +1928,7 @@ public class dsnHttp {
         	
         	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) { //避免重复计数
         	
-	        	if(result == true) {
+/*	        	if(result == true) {
 					successTimes++;
 					autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
 				} else {
@@ -1927,12 +1936,12 @@ public class dsnHttp {
 					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 				}
 				
-				autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+				autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));*/
         	} else if(result) { //第二次进入下单成功 的话更改失败为成功
-        			successTimes++;
+/*        			successTimes++;
         			autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
         			failTimes--;
-					autoBet.labelFailBets.setText("失败次数:" + failTimes);
+					autoBet.labelFailBets.setText("失败次数:" + failTimes);*/
         	}
 			
 			previousBJSCBetNumber = BJSCdrawNumber;
@@ -2267,6 +2276,10 @@ public class dsnHttp {
         
             uefEntity = new UrlEncodedFormEntity(formparams, charset);
             httppost.setEntity(uefEntity);
+            
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(defaultTimeout).setConnectTimeout(defaultTimeout).build();
+            httppost.setConfig(requestConfig);
+            
             CloseableHttpResponse response = execute(httppost);
             try {
                 // 打印响应状态    
@@ -2359,6 +2372,10 @@ public class dsnHttp {
             httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
             System.out.println("executing request " + httpget.getURI()); 
            
+            //设置超时
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(defaultTimeout).setConnectTimeout(defaultTimeout).build();
+            httpget.setConfig(requestConfig);
+            
             // 执行get请求.    
             CloseableHttpResponse response = execute(httpget); 
             
@@ -2453,6 +2470,11 @@ public class dsnHttp {
            
         	   strEntity = new StringEntity(jsonData, charset);
                httppost.setEntity(strEntity);
+               
+               RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(autoBet.betTimeOut).setConnectTimeout(autoBet.betTimeOut).build();
+               httppost.setConfig(requestConfig);
+               
+               
                CloseableHttpResponse response = execute(httppost);
                try {
                    // 打印响应状态    
@@ -2496,6 +2518,10 @@ public class dsnHttp {
 	        System.out.println("executing request " + httpget.getURI()); 
        
 	        // 执行get请求.    
+	        
+	        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(defaultTimeout).setConnectTimeout(defaultTimeout).build();
+            httpget.setConfig(requestConfig);
+	        
         
 	        CloseableHttpResponse response = execute(httpget); 
        	 try {

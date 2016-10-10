@@ -156,7 +156,50 @@ public class DSNDataDetailsWindow extends JFrame
     private JTextField textFieldjinrichazhi = new JTextField(15);  
     
     
+/*    private JLabel labeltime = new JLabel("æ‡∑‚≈Ã:");
+    private JTextField textFieldtime = new JTextField(15);  
+    
+    private AtomicLong remainTime = new AtomicLong(0);*/
+    
+    
     MyTableModel tableMode = new MyTableModel();
+    
+    
+    
+/*    private void setTimer(JTextField time) {   
+        final JTextField varTime = time;   
+        Timer timeAction = new Timer(1000, new ActionListener() {          
+            public void actionPerformed(ActionEvent e) {       
+                SimpleDateFormat df = new SimpleDateFormat("mm:ss");   
+                if(remainTime.get() < 0) {
+                	remainTime.set(0);
+                }
+                varTime.setText(df.format(new Date(remainTime.get())));
+                remainTime.set(remainTime.get() - 1000);
+            }      
+        });            
+        timeAction.start();        
+    } 
+    
+    public void setRemainTime(long time) {
+    	remainTime.set(time);
+    }
+    
+    public long getRemainTime() {
+    	return remainTime.get();
+    }
+    
+    public void setCloseText(boolean close) {
+    	if(close) {
+    		labeltime.setText("“—∑‚≈Ã£¨æ‡ø™Ω±:");
+    	}
+    	else {
+    		labeltime.setText("æ‡∑‚≈Ã:");
+    	}
+    }*/
+    
+    
+    
 	
 
 	public DSNDataDetailsWindow()  
@@ -323,7 +366,7 @@ public class DSNDataDetailsWindow extends JFrame
 		
 		container.setLayout(new BorderLayout());
 		
-		JPanel panelNorth = new JPanel(new GridLayout(4, 4));
+		JPanel panelNorth = new JPanel(new GridLayout(5, 4));
 
         container.add(panelNorth, BorderLayout.NORTH);  
         
@@ -361,6 +404,11 @@ public class DSNDataDetailsWindow extends JFrame
         panelNorth.add(labeljinrichazhi);
         panelNorth.add(textFieldjinrichazhi);
         textFieldjinrichazhi.setEditable(false);
+        
+        
+/*        panelNorth.add(labeltime);
+        panelNorth.add(textFieldtime);
+        textFieldjinrichazhi.setEditable(false);*/
 
 
 	    
