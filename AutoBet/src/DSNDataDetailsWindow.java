@@ -258,96 +258,118 @@ public class DSNDataDetailsWindow extends JFrame
 	
 	public void addData(String data, String drawNumber, int stat, String betAmount, String count){
 		
-		for(int i = 0; i<detailsData.size(); i++){ //todo 优化
-			if(((String)detailsData.elementAt(i)[1]).equals(drawNumber)){
-				return;
+		try{
+			for(int i = 0; i<detailsData.size(); i++){ //todo 优化
+				if(((String)detailsData.elementAt(i)[1]).equals(drawNumber)){
+					return;
+				}
 			}
+			
+			Object[] newData = new Object[8];
+			newData[TYPEINDEX.DATA.ordinal()] = data;
+			newData[TYPEINDEX.DN.ordinal()] = drawNumber;
+			if(stat == 0){
+				newData[TYPEINDEX.STATC.ordinal()] = new Color(100, 255, 100);
+				newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
+				newData[TYPEINDEX.PROFIT.ordinal()] = "0";
+				newData[TYPEINDEX.STATS.ordinal()] = "成功";
+				newData[TYPEINDEX.COUNT.ordinal()] = count;
+				newData[TYPEINDEX.DVALUE.ordinal()] = "0";
+			}else if(stat == 1){
+				newData[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
+				newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
+				newData[TYPEINDEX.PROFIT.ordinal()] = "---";
+				newData[TYPEINDEX.STATS.ordinal()] = "失败";
+				newData[TYPEINDEX.COUNT.ordinal()] = count;
+				newData[TYPEINDEX.DVALUE.ordinal()] = "---";
+			}
+			else if(stat == 2){
+				newData[TYPEINDEX.STATC.ordinal()] = new Color(100, 100, 255);
+				newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
+				newData[TYPEINDEX.PROFIT.ordinal()] = "---";
+				newData[TYPEINDEX.STATS.ordinal()] = "未知";
+				newData[TYPEINDEX.COUNT.ordinal()] = count;
+				newData[TYPEINDEX.DVALUE.ordinal()] = "---";
+			}
+			else{//漏投
+				newData[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
+				newData[TYPEINDEX.BETAMOUNT.ordinal()] = "---";
+				newData[TYPEINDEX.PROFIT.ordinal()] = "---";
+				newData[TYPEINDEX.STATS.ordinal()] = "漏投";
+				newData[TYPEINDEX.COUNT.ordinal()] = "---";
+				newData[TYPEINDEX.DVALUE.ordinal()] = "---";
+			}
+			
+			addData(newData);
+			
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		
-		Object[] newData = new Object[8];
-		newData[TYPEINDEX.DATA.ordinal()] = data;
-		newData[TYPEINDEX.DN.ordinal()] = drawNumber;
-		if(stat == 0){
-			newData[TYPEINDEX.STATC.ordinal()] = new Color(100, 255, 100);
-			newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
-			newData[TYPEINDEX.PROFIT.ordinal()] = "0";
-			newData[TYPEINDEX.STATS.ordinal()] = "成功";
-			newData[TYPEINDEX.COUNT.ordinal()] = count;
-			newData[TYPEINDEX.DVALUE.ordinal()] = "0";
-		}else if(stat == 1){
-			newData[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
-			newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
-			newData[TYPEINDEX.PROFIT.ordinal()] = "---";
-			newData[TYPEINDEX.STATS.ordinal()] = "失败";
-			newData[TYPEINDEX.COUNT.ordinal()] = count;
-			newData[TYPEINDEX.DVALUE.ordinal()] = "---";
-		}
-		else if(stat == 2){
-			newData[TYPEINDEX.STATC.ordinal()] = new Color(100, 100, 255);
-			newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
-			newData[TYPEINDEX.PROFIT.ordinal()] = "---";
-			newData[TYPEINDEX.STATS.ordinal()] = "未知";
-			newData[TYPEINDEX.COUNT.ordinal()] = count;
-			newData[TYPEINDEX.DVALUE.ordinal()] = "---";
-		}
-		else{//漏投
-			newData[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
-			newData[TYPEINDEX.BETAMOUNT.ordinal()] = "---";
-			newData[TYPEINDEX.PROFIT.ordinal()] = "---";
-			newData[TYPEINDEX.STATS.ordinal()] = "漏投";
-			newData[TYPEINDEX.COUNT.ordinal()] = "---";
-			newData[TYPEINDEX.DVALUE.ordinal()] = "---";
-		}
-		
-		addData(newData);
+
 		
 	}
 	
 	public  void addData(Object[] a){
-		detailsData.push(a);
 		
-    	Comparator ct = new CompareStr();
-    	
-    	Collections.sort(detailsData, ct);
+		try{
+			detailsData.push(a);
+			
+	    	Comparator ct = new CompareStr();
+	    	
+	    	Collections.sort(detailsData, ct);
+			
+			tableMode.updateTable();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
-		tableMode.updateTable();
+
 	}
 	
 	
 	public void updateRowItem(String drawNumber, int index, String value){
 		
-		for(int i = 0; i < detailsData.size(); i++){
-			if(detailsData.elementAt(i)[TYPEINDEX.DN.ordinal()].equals(drawNumber)){
-				if(index == TYPEINDEX.STATC.ordinal()){
-					int stat = Integer.parseInt(value);
-					if(stat == 0){
-						detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(100, 255, 100);
-						detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "成功";
-					}else if(stat == 1){
-						detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
-						detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "失败";
+		
+		try{
+			for(int i = 0; i < detailsData.size(); i++){
+				if(detailsData.elementAt(i)[TYPEINDEX.DN.ordinal()].equals(drawNumber)){
+					if(index == TYPEINDEX.STATC.ordinal()){
+						int stat = Integer.parseInt(value);
+						if(stat == 0){
+							detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(100, 255, 100);
+							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "成功";
+						}else if(stat == 1){
+							detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
+							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "失败";
+						}
+					}else if(index == TYPEINDEX.COUNT.ordinal()){
+						int count = Integer.parseInt((String)detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()]);
+						int actualCount = Integer.parseInt(value);
+						
+						if(count != actualCount){
+							detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
+							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "多投";
+							detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()] = value;
+						}
+						
 					}
-				}else if(index == TYPEINDEX.COUNT.ordinal()){
-					int count = Integer.parseInt((String)detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()]);
-					int actualCount = Integer.parseInt(value);
+					else{
+						detailsData.elementAt(i)[index] = value;
+					}
 					
-					if(count != actualCount){
-						detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
-						detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "多投";
-						detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()] = value;
-					}
+					
 					
 				}
-				else{
-					detailsData.elementAt(i)[index] = value;
-				}
-				
-				
-				
 			}
+			
+			tableMode.updateTable();
+			
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		
-		tableMode.updateTable();
+
 	}
 	
 	

@@ -243,31 +243,41 @@ public class dsnHttp {
     
     
     public static String getBalance(){
-    	String balanceURI = ADDRESS + "/member/index";
-    	
-    	String res = doGet(balanceURI, "", "");
     	
     	String balanceStr = "---";
     	
-    	if(res == null){
-    		res = doGet(balanceURI, "", "");
-    	}
-    	
-    	
-    	if(res != null){
-    		int posStart = res.indexOf("balance");
-    		int posEnd = res.indexOf("<", posStart);
-    		
-    		if(posEnd > posStart && posStart >=0){
-    			balanceStr = res.substring(posStart + 9, posEnd);
-    		}
+    	try{
+        	String balanceURI = ADDRESS + "/member/index";
+        	
+        	String res = doGet(balanceURI, "", "");
+        	
+        	
+        	
+        	if(res == null){
+        		res = doGet(balanceURI, "", "");
+        	}
+        	
+        	
+        	if(res != null){
+        		int posStart = res.indexOf("balance");
+        		int posEnd = res.indexOf("<", posStart);
+        		
+        		if(posEnd > posStart && posStart >=0){
+        			balanceStr = res.substring(posStart + 9, posEnd);
+        		}
 
+        		
+        		
+        		if(Common.isNum(balanceStr)){    			    			    			
+        			balanceStr = String.format("%.1f", Double.parseDouble(balanceStr));
+        		}
+        	}
     		
-    		
-    		if(Common.isNum(balanceStr)){    			    			    			
-    			balanceStr = String.format("%.1f", Double.parseDouble(balanceStr));
-    		}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return balanceStr;
     	}
+
     	
     	
     	return balanceStr;
@@ -473,116 +483,129 @@ public class dsnHttp {
     
     public static String[] getBetProfit(String drawNumber){
     	
-    	boolean hasBetprofit = false;
-    	
-    	String lastBetsURI = ADDRESS + "/member/bets?settled=true";
-    	
-    	String res = doGet(lastBetsURI, "", "");
-    	
-    	double totalProfit = 0;
-    	
-    	int bishu = 0;
     	
     	String[] result = {"none", "0"};
     	
-    	if(res == null){
-    		res = doGet(lastBetsURI, "", "");
-    	}
-    	
-    	if(res != null){
-    		
-    		if(res.contains("暂无数据")){
-    			return result;
-    		}
-    		
-    		
-    		int posStart = res.indexOf("page_count"); 
-    		
-    		posStart = res.indexOf(" ", posStart); 
-    		
-    		int posEnd = res.indexOf(" ", posStart + 1);
-    		
-    		String pageCountstr = res.substring(posStart + 1, posEnd);
-    		
-    		int pageCount = 1;
-    		
-    		if(Common.isNum(pageCountstr)){
-    			
-    			pageCount = Integer.parseInt(pageCountstr);
-    		}
-    		
-    		pageCount = pageCount >10?10:pageCount;//只查看前十页
-    		
-    		String number = "";
-    		
-    		for(int i = 0; i< pageCount; i++){
-    			
-    			if(res == null)
-    				continue;
-    			
-    			posStart = res.indexOf("draw_number");
+    	try{
+        	boolean hasBetprofit = false;
+        	
+        	String lastBetsURI = ADDRESS + "/member/bets?settled=true";
+        	
+        	String res = doGet(lastBetsURI, "", "");
+        	
+        	double totalProfit = 0;
+        	
+        	int bishu = 0;
+        	
+        	
+        	
+        	if(res == null){
+        		res = doGet(lastBetsURI, "", "");
+        	}
+        	
+        	if(res != null){
         		
-        		while(posStart != -1){
+        		if(res.contains("暂无数据")){
+        			return result;
+        		}
+        		
+        		
+        		int posStart = res.indexOf("page_count"); 
+        		
+        		posStart = res.indexOf(" ", posStart); 
+        		
+        		int posEnd = res.indexOf(" ", posStart + 1);
+        		
+        		String pageCountstr = res.substring(posStart + 1, posEnd);
+        		
+        		int pageCount = 1;
+        		
+        		if(Common.isNum(pageCountstr)){
         			
+        			pageCount = Integer.parseInt(pageCountstr);
+        		}
+        		
+        		pageCount = pageCount >10?10:pageCount;//只查看前十页
+        		
+        		String number = "";
+        		
+        		for(int i = 0; i< pageCount; i++){
         			
+        			if(res == null)
+        				continue;
         			
-        			posStart = res.indexOf(" ", posStart);
-        			posEnd = res.indexOf(" ", posStart+1);
-        			
-        			number = res.substring(posStart + 1, posEnd);
-        			
-        			if(drawNumber.equals(number)){
-        				
-        				posStart = res.indexOf("result color\">", posEnd);
-        				posEnd = res.indexOf("<", posStart);
-        				
-        				String profitStr = res.substring(posStart + 14, posEnd);
-        				
-        				if(Common.isNum(profitStr)){
-        					bishu++;
-        					totalProfit += Double.parseDouble(profitStr);
-        				}
-        				
-        				hasBetprofit = true;
-        			}
-        			
-        			if(!drawNumber.equals(number) && totalProfit != 0){
+        			posStart = res.indexOf("draw_number");
+            		
+            		while(posStart != -1){
+            			
+            			
+            			
+            			posStart = res.indexOf(" ", posStart);
+            			posEnd = res.indexOf(" ", posStart+1);
+            			
+            			number = res.substring(posStart + 1, posEnd);
+            			
+            			if(drawNumber.equals(number)){
+            				
+            				posStart = res.indexOf("result color\">", posEnd);
+            				posEnd = res.indexOf("<", posStart);
+            				
+            				String profitStr = res.substring(posStart + 14, posEnd);
+            				
+            				if(Common.isNum(profitStr)){
+            					bishu++;
+            					totalProfit += Double.parseDouble(profitStr);
+            				}
+            				
+            				hasBetprofit = true;
+            			}
+            			
+            			if(!drawNumber.equals(number) && totalProfit != 0){
+            				break;
+            			}
+            			
+            			posStart = res.indexOf("draw_number", posEnd);
+            		}
+            		
+            		
+            		if(!drawNumber.equals(number) && hasBetprofit == true){
         				break;
-        			}
-        			
-        			posStart = res.indexOf("draw_number", posEnd);
+            		}
+            		
+            		
+            		lastBetsURI = ADDRESS + "/member/bets?settled=true";
+            		
+            		lastBetsURI += "&page=" + Integer.toString(i+2);
+                	
+                	res = doGet(lastBetsURI, "", "");
+                	
+                	
+                	if(res == null){
+                		res = doGet(lastBetsURI, "", "");
+                	}
+            		
+            		
         		}
         		
-        		
-        		if(!drawNumber.equals(number) && hasBetprofit == true){
-    				break;
-        		}
-        		
-        		
-        		lastBetsURI = ADDRESS + "/member/bets?settled=true";
-        		
-        		lastBetsURI += "&page=" + Integer.toString(i+2);
-            	
-            	res = doGet(lastBetsURI, "", "");
-            	
-            	
-            	if(res == null){
-            		res = doGet(lastBetsURI, "", "");
-            	}
-        		
-        		
-    		}
-    		
 
+        	}
+        	
+        	
+        	
+        	if(hasBetprofit == true){
+        		//return Double.toString(totalProfit);
+        		result[0] = String.format("%.1f", totalProfit);
+        		result[1] = Integer.toString(bishu);
+        	}
+    		
+    		
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return result;
     	}
     	
     	
-    	
-    	if(hasBetprofit == true){
-    		//return Double.toString(totalProfit);
-    		result[0] = String.format("%.1f", totalProfit);
-    		result[1] = Integer.toString(bishu);
-    	}
+
     	
     	return result;
 
