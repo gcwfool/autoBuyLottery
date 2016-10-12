@@ -69,14 +69,14 @@ public class Client extends Thread{
     			        }
     			
     			    client.socket().setSoTimeout(2000);
-    			    //����ע����Ϣ
+    			    
     			    boolean reg = false;
 		            {
 		            	Map<String, String> map = new HashMap<String, String>();  
 		                map.put("request", "register");
 		                map.put("account", "account");
 		                map.put("website", "dsn");
-		                //��jsonת��ΪString����    
+		                
 		                JSONObject json = new JSONObject(map);  
 		                String request = json.toString();
 			            ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -84,27 +84,25 @@ public class Client extends Thread{
 			            buffer.put(request.getBytes());
 			            buffer.flip();
 				        client.write(buffer);
-				        //System.out.println("�������: " + new String(buffer.array()));
 				        String content = "";
 				        if(client.read(buffer1) == -1) {
 				        	continue;
 				        }
 				        content += new String(buffer1.array());
-				        //System.out.println("�������: " + buffer1.position());
 				        buffer1.clear();
 				           
 				        try {
 				            json = new JSONObject(content);
 				            
 				            if(json.getString("result").equals("true")) {
-				            	System.out.println("ע��ɹ�");
+				            	System.out.println("【client】注册成功");
 				            	reg = true;
 				            } else {
-				            	System.out.println("ע��ʧ��");
+				            	System.out.println("【client】注册失败");
 				            }
 				            	
 				        } catch (JSONException e) {
-				    		System.out.println("ע����ݰ����");
+				    		System.out.println("【client】注册数据包错误");
 				    	}
 				        if(!reg) {
 				        	continue;
@@ -115,8 +113,7 @@ public class Client extends Thread{
 		            	if(grabBJSC){
 			            	Map<String, String> map = new HashMap<String, String>();  
 			                map.put("request", "data");
-			                map.put("lottery", "BJSC");
-			                //��jsonת��ΪString����    
+			                map.put("lottery", "BJSC");   
 			                JSONObject json = new JSONObject(map);  
 			                String request = json.toString();
 				            ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -124,13 +121,11 @@ public class Client extends Thread{
 				            buffer.put(request.getBytes());
 				            buffer.flip();
 					        client.write(buffer);
-					       // System.out.println("�������: " + new String(buffer.array()));
 					        String content = "";
 					        if(client.read(buffer1) == -1) {
 					        	break;
 					        }
 					        content += new String(buffer1.array());
-					        //System.out.println("�������: " + buffer1.position());
 					        buffer1.clear();
 					       
 					           
@@ -156,11 +151,11 @@ public class Client extends Thread{
 					            	//System.out.println("remainTime:" + dataBJSC[4]);
 					            	
 					            } else {
-					            	System.out.println("��ȡ���ʧ��");
+					            	System.out.println("【client】获取数据失败");
 					            }
 					            	
 					        } catch (JSONException e) {
-					    		System.out.println("��ݰ����");
+					    		System.out.println("【client】数据包错误");
 					    		e.printStackTrace();
 					    		try {
 					    			client.read(buffer1);
@@ -174,8 +169,7 @@ public class Client extends Thread{
 		            	if(grabCQSSC){
 			            	Map<String, String> map = new HashMap<String, String>();  
 			                map.put("request", "data");
-			                map.put("lottery", "CQSSC");
-			                //��jsonת��ΪString����    
+			                map.put("lottery", "CQSSC");  
 			                JSONObject json = new JSONObject(map);  
 			                String request = json.toString();
 				            ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -183,13 +177,11 @@ public class Client extends Thread{
 				            buffer.put(request.getBytes());
 				            buffer.flip();
 					        client.write(buffer);
-					        //System.out.println("�������: " + new String(buffer.array()));
 					        String content = "";
 					        if(client.read(buffer1) == -1) {
 					        	break;
 					        }
 					        content += new String(buffer1.array());
-					        //System.out.println("�������: " + buffer1.position());
 					        buffer1.clear();
 					           
 					        try {
@@ -208,11 +200,11 @@ public class Client extends Thread{
 					            	//System.out.println("drawNumber:" + dataCQSSC[0]);
 					            	//System.out.println("remainTime:" + dataCQSSC[2]);
 					            } else {
-					            	System.out.println("��ȡ���ʧ��");
+					            	System.out.println("【client】获取数据失败");
 					            }
 					            	
 					        } catch (JSONException e) {
-					    		System.out.println("��ݰ����");
+					    		System.out.println("【client】数据包错误");
 					    		e.printStackTrace();
 					    		try {
 					    			client.read(buffer1);
@@ -238,7 +230,7 @@ public class Client extends Thread{
 		            
 		            }//while
     			} catch(IOException e) {
-    				//System.out.println("���½�������");
+    				System.out.println("【client】重新建立连接");
     			}
     		}//while
     	}catch (InterruptedException e) {
