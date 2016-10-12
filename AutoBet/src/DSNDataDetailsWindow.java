@@ -265,6 +265,17 @@ public class DSNDataDetailsWindow extends JFrame
 				}
 			}
 			
+			
+			if(detailsData.size() >= 500){
+				while(detailsData.size() > 300){
+					detailsData.remove(detailsData.size()-1);
+				}
+			}
+			
+			
+			
+			
+			
 			Object[] newData = new Object[8];
 			newData[TYPEINDEX.DATA.ordinal()] = data;
 			newData[TYPEINDEX.DN.ordinal()] = drawNumber;

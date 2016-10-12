@@ -958,7 +958,7 @@ public class dsnHttp {
             	
             	long passTime = currentTime - lastChangeLineTime;
             	
-            	if(avgRequestTime >= 150 && passTime >= 90*1000){
+            	if(avgRequestTime >= 500 && passTime >= 90*1000){
             		setisNeedChangeLine(true);
             		lastChangeLineTime = currentTime;
             	}
