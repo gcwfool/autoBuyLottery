@@ -52,17 +52,17 @@ public class DsnProxyGrab {
     private static String ADDRESS = "";
     private static String ACCOUNT = "";
     private static String PASSWORD = "";
-    private static long timeDValue = 0;  //ÍøÕ¾Ê±¼äºÍµçÄÔÊ±¼äµÄ²îÖµ  ÍøÒ³Ê±¼ä - µ±Ç°Ê±¼ä
+    private static long timeDValue = 0;  //ï¿½ï¿½Õ¾Ê±ï¿½ï¿½Íµï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ä²ï¿½Öµ  ï¿½ï¿½Ò³Ê±ï¿½ï¿½ - ï¿½ï¿½Ç°Ê±ï¿½ï¿½
     
     static {
          requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
-         requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//½ûÖ¹ÖØ¶¨Ïò £¬ ÒÔ±ã»ñÈ¡cookiedae
-         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(15*1000).setConnectionRequestTimeout(15*1000).setSocketTimeout(15*1000).build();//ÉèÖÃ³¬Ê±
+         requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//ï¿½ï¿½Ö¹ï¿½Ø¶ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô±ï¿½ï¿½È¡cookiedae
+         requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(15*1000).setConnectionRequestTimeout(15*1000).setSocketTimeout(15*1000).build();//ï¿½ï¿½ï¿½Ã³ï¿½Ê±
          httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     }
     
     
-    //ÓÅ»¯ÏßÂ·Ñ¡Ôñ
+    //ï¿½Å»ï¿½ï¿½ï¿½Â·Ñ¡ï¿½ï¿½
     static Vector<Object[]> lines;
     
     static Vector<Long> lastTenRequestTime = new Vector<Long>();
@@ -123,20 +123,20 @@ public class DsnProxyGrab {
 
     public static boolean doLogin() { 	
         loginInit();
-        String loginPage = doGet(ADDRESS + "/login", ""); //get µÇÂ¼Ò³Ãæ
+        String loginPage = doGet(ADDRESS + "/login", ""); //get ï¿½ï¿½Â¼Ò³ï¿½ï¿½
         
         if(loginPage != "" && loginPage != "timeout") {
         	cookieuid = strCookies;
         	int posStart = loginPage.indexOf("img src=") + 9;
         	if(posStart >= 0) {
         		int posEnd = loginPage.indexOf('"', posStart);
-        		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get ÑéÖ¤Âë
+        		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get ï¿½ï¿½Ö¤ï¿½ï¿½
         		System.out.println("yzm: " + rmNum); 
         		if(!Common.isNum(rmNum)) {
         			return false;
         		}
         	
-        		//·¢ËÍpost
+        		//ï¿½ï¿½ï¿½ï¿½post
         		List<NameValuePair> params = new ArrayList<NameValuePair>();
         		params.add(new BasicNameValuePair("type", "2"));
         		params.add(new BasicNameValuePair("account", ACCOUNT));
@@ -149,10 +149,20 @@ public class DsnProxyGrab {
             
         		if(location.indexOf("index?") > 0) {
         			strCookies = "";
-        			location = doGet(location, cookieuid);//get cookiedaeºÍÖØ¶¨Ïòurl
+        			if(location.indexOf("http:") > 0) {
+        				location = doGet(location, cookieuid);
+        			}
+        			else {
+        				location = doGet(ADDRESS + location, cookieuid);
+        			}
         			cookiedae = strCookies;
         			strCookies = "";
-        			location = doGet(location, cookieuid + cookiedae);
+        			if(location.indexOf("index?") > 0) {
+        				location = doGet(location, cookieuid + cookiedae);
+        			}
+        			else {
+        				location = doGet(ADDRESS + location, cookieuid + cookiedae);
+        			}
         			if(location != "" && location != "timeout"){
         				return true;
         			}
@@ -261,7 +271,7 @@ public class DsnProxyGrab {
     	setIscalcRequestTime(true);
     	
 
-    	System.out.println("¡¾´úÀí¡¿ÏßÂ·¿ìÂýÅÅÐò:");
+    	System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:");
     	
     	for(int j = 0; j < lines.size(); j++){
     		
@@ -297,7 +307,7 @@ public class DsnProxyGrab {
             	avgRequestTime = totalReqeustTime/lastTenRequestTime.size();
             	
             	
-            	System.out.printf("[´úÀí]Æ½¾ùÇëÇóÊ±¼ä:%d\n", avgRequestTime);
+            	System.out.printf("[ï¿½ï¿½ï¿½ï¿½]Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½:%d\n", avgRequestTime);
             	
             	if(avgRequestTime >= 400){
             		setisNeedChangeLine(true);
@@ -367,7 +377,7 @@ public class DsnProxyGrab {
             		if(doLogin()) {
             			res = true;
             			
-            			ConfigWriter.updateProxyAddress(ADDRESS);//¸üÐÂµ½ÏÖÔÚµÇµÃÉÏµÄÍøÖ·
+            			ConfigWriter.updateProxyAddress(ADDRESS);//ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ÚµÇµï¿½ï¿½Ïµï¿½ï¿½ï¿½Ö·
             			
             			ConfigWriter.saveTofile("common.config");
             			
@@ -480,7 +490,7 @@ public class DsnProxyGrab {
     }
 
 
-    /**ÒÔutf-8ÐÎÊ½¶ÁÈ¡*/
+    /**ï¿½ï¿½utf-8ï¿½ï¿½Ê½ï¿½ï¿½È¡*/
     public static String doPost(String url, List<NameValuePair> formparams, String cookies, String referUrl) {
         return doPost(url, formparams, cookies, "UTF-8", referUrl);
     }
@@ -509,7 +519,7 @@ public class DsnProxyGrab {
             httppost.setEntity(uefEntity);
             CloseableHttpResponse response = execute(httppost);
             try {
-                // ´òÓ¡ÏìÓ¦×´Ì¬    
+                // ï¿½ï¿½Ó¡ï¿½ï¿½Ó¦×´Ì¬    
             	setCookie(response);
             	System.out.println(response.getStatusLine());
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
@@ -570,7 +580,7 @@ public class DsnProxyGrab {
     
     public static String doGet(String url, String cookies) { 
         try {  
-           // ´´½¨httpget.    
+           // ï¿½ï¿½ï¿½ï¿½httpget.    
            //System.out.println(cookies); 
            HttpGet httpget = new HttpGet(url);
            
@@ -588,12 +598,12 @@ public class DsnProxyGrab {
            
            System.out.println("executing request " + url); 
           
-           // Ö´ÐÐgetÇëÇó.    
+           // Ö´ï¿½ï¿½getï¿½ï¿½ï¿½ï¿½.    
            CloseableHttpResponse response = execute(httpget); 
            //CloseableHttpResponse response = httpclient.execute(httpget); 
            
            try {          	           	   
-               // »ñÈ¡ÏìÓ¦ÊµÌå    
+               // ï¿½ï¿½È¡ï¿½ï¿½Ó¦Êµï¿½ï¿½    
         	   setCookie(response);
                HttpEntity entity = response.getEntity(); 
                //System.out.println("--------------------------------------"); 
@@ -646,19 +656,19 @@ public class DsnProxyGrab {
          					+ "(KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
          System.out.println("executing request " + httpget.getURI()); 
         
-         // Ö´ÐÐgetÇëÇó.    
+         // Ö´ï¿½ï¿½getï¿½ï¿½ï¿½ï¿½.    
         	 CloseableHttpResponse response = execute(httpget); 
         	 try {
         		 setCookie(response);
-                 // ´òÓ¡ÏìÓ¦×´Ì¬    
+                 // ï¿½ï¿½Ó¡ï¿½ï¿½Ó¦×´Ì¬    
                  System.out.println(response.getStatusLine()); 
                  //System.out.println("------------------------------------");
                  if(response.getStatusLine().toString().indexOf("200 OK") < 0) {
                 	 return "";
                  }
-                 File storeFile = new File("yzm.png");   //Í¼Æ¬±£´æµ½µ±Ç°Î»ÖÃ
+                 File storeFile = new File("yzm.png");   //Í¼Æ¬ï¿½ï¿½ï¿½æµ½ï¿½ï¿½Ç°Î»ï¿½ï¿½
                  FileOutputStream output = new FileOutputStream(storeFile);  
-                 //µÃµ½ÍøÂç×ÊÔ´µÄ×Ö½ÚÊý×é,²¢Ð´ÈëÎÄ¼þ  
+                 //ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ä¼ï¿½  
                  byte [] a = EntityUtils.toByteArray(response.getEntity());
                  output.write(a);  
                  output.close();  
@@ -668,7 +678,7 @@ public class DsnProxyGrab {
          		 String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "yzm.png", "result", "-l", "eng"};
 
          		 Process process = Runtime.getRuntime().exec(cmd);
-         		 // cmd µÄÐÅÏ¢
+         		 // cmd ï¿½ï¿½ï¿½ï¿½Ï¢
          		 ins = process.getInputStream();
          		 BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 
@@ -678,12 +688,12 @@ public class DsnProxyGrab {
          		 }
          			
          		 int exitValue = process.waitFor();
-         		 System.out.println("·µ»ØÖµ£º" + exitValue);
+         		 System.out.println("ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½" + exitValue);
          		 process.getOutputStream().close();
          		 File file = new File("result.txt");
          		 reader.close();
                  reader = new BufferedReader(new FileReader(file));
-                  // Ò»´Î¶ÁÈëÒ»ÐÐ£¬Ö±µ½¶ÁÈënullÎªÎÄ¼þ½áÊø
+                  // Ò»ï¿½Î¶ï¿½ï¿½ï¿½Ò»ï¿½Ð£ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½nullÎªï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
                  String rmNum;
                  rmNum = reader.readLine();
                  reader.close();
@@ -707,11 +717,11 @@ public class DsnProxyGrab {
     	return "";
     }
     
-  //! @brief ×¥È¡cqsscÏÂµ¥Êý¾Ý
-  //! @param game       Á½Ãæ:"LM", µ¥ºÅ:"DH", Ç°ÖÐºóÈý:"QZHS"
-  //! @param all        Ðé×¢:"XZ" ÊµÕ¼:"SZ" ²¹»õ:"BH"
-  //! @param range      È«²¿:"", AÅÌ:"A", BÅÌ:"B", CÅÌ:"C", DÅÌ:"D",
-  //! @return           ³É¹¦:String Á¬½ÓÊ§°Ü:null ³¬Ê±:"timeout" 
+  //! @brief ×¥È¡cqsscï¿½Âµï¿½ï¿½ï¿½ï¿½
+  //! @param game       ï¿½ï¿½ï¿½ï¿½:"LM", ï¿½ï¿½ï¿½ï¿½:"DH", Ç°ï¿½Ðºï¿½ï¿½ï¿½:"QZHS"
+  //! @param all        ï¿½ï¿½×¢:"XZ" ÊµÕ¼:"SZ" ï¿½ï¿½ï¿½ï¿½:"BH"
+  //! @param range      È«ï¿½ï¿½:"", Aï¿½ï¿½:"A", Bï¿½ï¿½:"B", Cï¿½ï¿½:"C", Dï¿½ï¿½:"D",
+  //! @return           ï¿½É¹ï¿½:String ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½:null ï¿½ï¿½Ê±:"timeout" 
     public static String grabCQSSCdata(String game, String all, String range){
     	if((game == "LM" || game == "DH" || game == "QZHS") && (range == "" || range == "A" ||
     			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
@@ -739,11 +749,11 @@ public class DsnProxyGrab {
     }
     
     
-    //! @brief ×¥È¡cqsscÏÂµ¥Êý¾Ý
-    //! @param game       ¹ÚÑÇ:"GY", ÈýËÄÎåÁù:"SSWL", Æß°Ë¾ÅÊ®:"QBJS"
-    //! @param all        Ðé×¢:"XZ" ÊµÕ¼:"SZ" ²¹»õ:"BH"
-    //! @param range      È«²¿:"", AÅÌ:"A", BÅÌ:"B", CÅÌ:"C", DÅÌ:"D",
-    //! @return           ³É¹¦:String Á¬½ÓÊ§°Ü:null ³¬Ê±:"timeout" 
+    //! @brief ×¥È¡cqsscï¿½Âµï¿½ï¿½ï¿½ï¿½
+    //! @param game       ï¿½ï¿½ï¿½ï¿½:"GY", ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:"SSWL", ï¿½ß°Ë¾ï¿½Ê®:"QBJS"
+    //! @param all        ï¿½ï¿½×¢:"XZ" ÊµÕ¼:"SZ" ï¿½ï¿½ï¿½ï¿½:"BH"
+    //! @param range      È«ï¿½ï¿½:"", Aï¿½ï¿½:"A", Bï¿½ï¿½:"B", Cï¿½ï¿½:"C", Dï¿½ï¿½:"D",
+    //! @return           ï¿½É¹ï¿½:String ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½:null ï¿½ï¿½Ê±:"timeout" 
       public static String grabBJSCdata(String game, String all, String range){
       	if((game == "GY" || game == "SSWL" || game == "QBJS") && (range == "" || range == "A" ||
       			range == "B" || range == "C" || range == "D") && (all == "XZ" || all == "SZ" || all == "BH")) {
@@ -909,10 +919,10 @@ public class DsnProxyGrab {
     	  }
     	  
     	  time =  System.currentTimeMillis();
-    	  System.out.println("×¥È¡ÓÃÊ± :"  + (time - timeStart));
+    	  System.out.println("×¥È¡ï¿½ï¿½Ê± :"  + (time - timeStart));
     	  
 //    	  for(int i = 1; i < 10; i++) {
-//    		  System.out.println("Å©³¡Êý¾Ý:"  + dataXYNC[i]);
+//    		  System.out.println("Å©ï¿½ï¿½ï¿½ï¿½ï¿½:"  + dataXYNC[i]);
 //    	  }
     	  
     	  dataXYNC[1] = data1;
@@ -960,8 +970,8 @@ public class DsnProxyGrab {
       }
       
       
-      //! @brief    ¶ÁÈ¡cqsscÏÂµ¥Êý¾Ý
-      //! @return   Êý¾Ý¿ÉÓÃ(String[0]:ÆÚÊý£¬ String[1]:data, String[2]:Êý¾ÝÊ±¼ä);  Êý¾Ý²»¿ÉÓÃ(null)
+      //! @brief    ï¿½ï¿½È¡cqsscï¿½Âµï¿½ï¿½ï¿½ï¿½
+      //! @return   ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½(String[0]:ï¿½ï¿½ï¿½ï¿½ String[1]:data, String[2]:ï¿½ï¿½ï¿½Ê±ï¿½ï¿½);  ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ï¿½(null)
       public static String[] getCQSSCdata() {
 	    	  synchronized(DsnProxyGrab.class) {
 		    	  if(isCQSSCdataOk) {
@@ -971,8 +981,8 @@ public class DsnProxyGrab {
 	    	  }
       }
       
-      //! @brief     ¶ÁÈ¡È¡BJSCÏÂµ¥Êý¾Ý
-      //! @return    Êý¾Ý¿ÉÓÃ(String[0]:ÆÚÊý, String[1]:¹ÚÑÇ, String[2]:ÈýËÄÎåÁù, String[3]:Æß°Ë¾ÅÊ®, String[4]:Êý¾ÝÊ±¼ä); Êý¾Ý²»¿ÉÓÃ(null)
+      //! @brief     ï¿½ï¿½È¡È¡BJSCï¿½Âµï¿½ï¿½ï¿½ï¿½
+      //! @return    ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½(String[0]:ï¿½ï¿½ï¿½ï¿½, String[1]:ï¿½ï¿½ï¿½ï¿½, String[2]:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, String[3]:ï¿½ß°Ë¾ï¿½Ê®, String[4]:ï¿½ï¿½ï¿½Ê±ï¿½ï¿½); ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ï¿½(null)
       public static String[] getBJSCdata() {
     	  synchronized(DsnProxyGrab.class) {
 	    	  if(isBJSCdataOk) {
@@ -982,8 +992,8 @@ public class DsnProxyGrab {
     	  }
       }
       
-      //! @brief     ¶ÁÈ¡È¡XYNCÏÂµ¥Êý¾Ý
-      //! @return    Êý¾Ý¿ÉÓÃ(String[0]:ÆÚÊý, String[1~9]:ÏÂµ¥Êý¾Ý, String[10]:Êý¾ÝÊ±¼ä); Êý¾Ý²»¿ÉÓÃ(null)
+      //! @brief     ï¿½ï¿½È¡È¡XYNCï¿½Âµï¿½ï¿½ï¿½ï¿½
+      //! @return    ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½(String[0]:ï¿½ï¿½ï¿½ï¿½, String[1~9]:ï¿½Âµï¿½ï¿½ï¿½ï¿½, String[10]:ï¿½ï¿½ï¿½Ê±ï¿½ï¿½); ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ï¿½(null)
       public static String[] getXYNCdata() {
     	  synchronized(DsnProxyGrab.class) {
 	    	  if(isXYNCdataOk) {
@@ -1081,7 +1091,7 @@ public class DsnProxyGrab {
               drawTime = periodJson.getLong("drawTime");
           }
           catch(Exception e){
-        	  System.out.println("»ñÈ¡Ê±¼äÒì³£");
+        	  System.out.println("ï¿½ï¿½È¡Ê±ï¿½ï¿½ï¿½ì³£");
         	  time[0] = Long.toString(System.currentTimeMillis());
     		  return time;
           }
@@ -1156,7 +1166,7 @@ public class DsnProxyGrab {
               drawTime = periodJson.getLong("drawTime");
           }
           catch(Exception e){
-        	  System.out.println("»ñÈ¡Ê±¼äÒì³£");
+        	  System.out.println("ï¿½ï¿½È¡Ê±ï¿½ï¿½ï¿½ì³£");
         	  time[0] = Long.toString(System.currentTimeMillis());
       		  return time;
           }
@@ -1218,7 +1228,7 @@ public class DsnProxyGrab {
               drawTime = periodJson.getLong("drawTime");
           }
           catch(Exception e){
-        	  System.out.println("»ñÈ¡Ê±¼äÒì³£");
+        	  System.out.println("ï¿½ï¿½È¡Ê±ï¿½ï¿½ï¿½ì³£");
         	  time[0] = Long.toString(System.currentTimeMillis());
     		  return time;
           }
