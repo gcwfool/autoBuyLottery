@@ -149,10 +149,20 @@ public class DsnProxyGrab {
             
         		if(location.indexOf("index?") > 0) {
         			strCookies = "";
-        			location = doGet(location, cookieuid);//get cookiedae和重定向url
+        			if(location.indexOf("http:") > 0) {
+        				location = doGet(location, cookieuid);//get cookiedae和重定向url
+        			}
+        			else {
+        				location = doGet(ADDRESS + location, cookieuid);
+        			}
         			cookiedae = strCookies;
         			strCookies = "";
-        			location = doGet(location, cookieuid + cookiedae);
+        			if(location.indexOf("index?") > 0) {
+        				location = doGet(location, cookieuid + cookiedae);
+        			}
+        			else {
+        				location = doGet(ADDRESS + location, cookieuid + cookiedae);
+        			}
         			if(location != "" && location != "timeout"){
         				return true;
         			}
