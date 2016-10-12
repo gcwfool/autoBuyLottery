@@ -1180,7 +1180,13 @@ public class dsnHttp {
 		        System.out.println("location: " + location); 
 		        
 				if(location != null && location.indexOf("agreement?_") > 0) {
-		
+					
+					
+        			if(location.indexOf("http:") < 0) {
+        				location = ADDRESS + "/" + location;
+        			}
+        			
+
 					if(doGet(location, cookieCfduid, "") != null){
 						if(strCookies.indexOf("b1845c0da5f1") != -1) {
 							cookieb18 = strCookies; 
