@@ -1,0 +1,35 @@
+serverAddress:123.207.90.66
+serverPort:12321
+proxyaddress:http://bff5907f.dsn.qq168.ws
+proxyaddress1:http://3f071b45.dsn.qq168.ws
+proxyaddress2:http://bff5907f.dsn.qq168.ws
+proxyaddress3:http://442f2386.dsn.qq168.ws
+proxyaccount:abb100
+proxypassword:aaa2222
+betaddress:http://f140b874.dsn.qq168.ws
+betaddress1:http://f140b874.dsn.qq168.ws
+betaddress2:http://e16bec03.dsn.qq168.ws
+betaddress3:http://835b1195.dsn.qq168.ws
+betaddress4:http://1f223a41.dsn.qq168.ws
+betaccount:hgg2277
+betpassword:abcd1234
+weicaibetaddress:http://52.192.18.67
+weicaibetaccount:wc9999
+weicaibetpassword:9999Aaaa
+tiancaibetaddress:http://yy1888.net
+tiancaibetaccount:gg911
+tiancaibetpassword:asdf1581
+tesspath:C:\Program Files (x86)\Tesseract-OCR
+executing request http://f140b874.dsn.qq168.ws/login?dcwpf0dc4=1476252098168
+executing request http://f140b874.dsn.qq168.ws/code?_=1476252102516
+HTTP/1.1 200 OK
+------------------------------------
+Tesseract Open Source OCR Engine v3.01 with Leptonica
+返回值：0
+验证码
+1431
+HTTP/1.1 302 Found
+location: http://f140b874.dsn.qq168.ws/member/agreement?_OLID_=2c9eb5fbdd4d81a8fb972a53d9beb261d034cd61
+executing request http://f140b874.dsn.qq168.ws/member/agreement?_OLID_=2c9eb5fbdd4d81a8fb972a53d9beb261d034cd61
+��¼��ʿ���Ա�ɹ�!
+
