@@ -201,6 +201,7 @@ class BetThread extends Thread{
 				
 				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearBJSCdetaisData == false){
 					dsnHttp.clearBJSCdetalsData();
+					dsnHttp.clearCQSSCdetalsData();
 					clearBJSCdetaisData = true;
 				}
 				

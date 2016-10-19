@@ -556,10 +556,7 @@ public class DSNDataDetailsWindow extends JFrame
         @Override  
         public boolean isCellEditable(int rowIndex, int columnIndex)  
         {  
-            if (columnIndex < 2)  
-                return false;  
-            else  
-                return true;  
+            return false;
         }  
           
         /** 

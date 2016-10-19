@@ -136,7 +136,7 @@ public class autoBet{
 			betTime = 5;
 		}else if(betMode == BetMode.MIDDLETIME){
 			betTimeOut = 15*1000;
-			betTime = 12;
+			betTime = 10;
 		}
 		else{
 			betTimeOut = 20*1000;
@@ -488,7 +488,7 @@ public class autoBet{
 		btnOppositeBetCQSSC.setSize(90, 25);
 		btnOppositeBetCQSSC.setLocation(DsnMemberX,DsnMemberY + 180);
 		
-		btnStopBetCQSSC = new Button("投注详情");
+		btnStopBetCQSSC = new Button("投注金额");
 		btnStopBetCQSSC.addActionListener(new StopBetCQSSCListener(this));
 		
 		btnStopBetCQSSC.setSize(90, 25);
@@ -520,7 +520,7 @@ public class autoBet{
 		
 
 		
-		btnStopBetBJSC = new Button("投注详情");
+		btnStopBetBJSC = new Button("投注金额");
 		btnStopBetBJSC.addActionListener(new StopBetBJSCListener(this));
 		
 		btnStopBetBJSC.setSize(90, 25);

@@ -75,6 +75,8 @@ public class dsnHttp {
 
     static DSNDataDetailsWindow BJSCdetalsDataWindow = new DSNDataDetailsWindow();    
     
+    static DSNBetAmountWindow BJSCBetAmountWindow = new DSNBetAmountWindow();    
+    
     
     static int defaultTimeout = 3000;
     
@@ -97,6 +99,8 @@ public class dsnHttp {
     static Vector<String> unCalcProfitCQSSCDraw = new Vector<String>();    
 
     static DSNDataDetailsWindow CQSSCdetalsDataWindow = new DSNDataDetailsWindow();    
+    static DSNBetAmountWindow CQSSCBetAmountWindow = new DSNBetAmountWindow();   
+    
     static int CQSSCbishu = 0;    
     static int CQSSConeBetAmount = 0;    
 
@@ -360,6 +364,17 @@ public class dsnHttp {
     
     public static void showBJSCDeatilsTable(){
     	BJSCdetalsDataWindow.setVisible(true);
+    }
+    
+    
+    
+    public static void showBJSCBetAmountTable(){
+    	BJSCBetAmountWindow.setVisible(true);
+    }
+    
+    
+    public static void showCQSSCBetAmountTable(){
+    	CQSSCBetAmountWindow.setVisible(true);
     }
     
     
@@ -829,6 +844,9 @@ public class dsnHttp {
     	
     	BJSCdetalsDataWindow.setTitle("投注北京赛车详情");
     	CQSSCdetalsDataWindow.setTitle("投注重庆时时彩详情");
+    	
+    	BJSCBetAmountWindow.setTitle("北京赛车下注金额");
+    	CQSSCBetAmountWindow.setTitle("重庆时时彩下注金额");
     	
     	String[] addressArray = ConfigReader.getBetAddressArray();
     	
@@ -1514,6 +1532,248 @@ public class dsnHttp {
     	return BJSCcloseTime - (System.currentTimeMillis() + timeDValue);
     }
     
+    
+public static void addToBetAmountWindow(String jsonData, BetType betType){
+	
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
+    	
+    	
+    	try{
+        	if(betType == BetType.BJSC){
+            	
+            	JSONObject betsData = new JSONObject(jsonData);
+            	JSONArray gamesData = betsData.getJSONArray("bets");
+            	int totalAmout = 0;
+            	
+            	for(int i = 1; i <= 10 ; i++){
+            		String gameDX = "DX" + Integer.toString(i);
+            		String gameDS = "DS" + Integer.toString(i);
+            		String gameLH = "LH" + Integer.toString(i);
+            		JSONObject gameData;
+            		int amountDX = 0;
+            		String contentsDX = "";
+            		int amountDS = 0;
+            		String contentsDS = "";
+            		int amountLH = 0;
+            		String contentsLH = "";
+            		
+            		BJSCbishu = gamesData.length();
+            		
+            		for(int j = 0; j < gamesData.length(); j++){
+            			
+            			gameData = gamesData.getJSONObject(j);
+            			
+            			String game = gameData.getString("game");
+            			if(game.equals(gameDX)){
+            				amountDX = gameData.getInt("amount");
+            				contentsDX = gameData.getString("contents");
+            				contentsDX = contentsDX.equals("D")?"大":"小";
+            			}
+            			if(game.equals(gameDS)){
+            				amountDS = gameData.getInt("amount");  
+            				contentsDS = gameData.getString("contents");
+            				contentsDS = contentsDS.equals("D")?"单":"双";
+            			}
+    					if(game.equals(gameLH)){
+    						amountLH = gameData.getInt("amount");
+    						contentsLH = gameData.getString("contents");
+    						contentsLH = contentsLH.equals("L")?"龙":"虎";
+    					}
+
+    					
+
+            		}
+            		
+    				String outputStr = "";
+    				if(amountDX != 0 ){
+    					if(i == 1){
+    						outputStr  = String.format("冠军  %s,", contentsDX);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountDX));
+    					}
+    					else if(i == 2){
+    						outputStr  = String.format("亚军  %s", contentsDX);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountDX));
+    					}
+    					else{
+    						outputStr  = String.format("第%s名  %s", Integer.toString(i), contentsDX);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountDX));
+    					}
+    					
+    				}
+    				
+    				if(amountDS != 0 ){
+    					if(i == 1){
+    						outputStr  = String.format("冠军  %s", contentsDS);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountDS));
+    					}
+    					else if(i == 2){
+    						outputStr  = String.format("亚军  %s", contentsDS);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountDS));
+    					}
+    					else{
+    						outputStr  = String.format("第%s名  %s", Integer.toString(i), contentsDS);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountDS));
+    					}
+    				}
+    				
+    				if(amountLH != 0 ){
+    					if(i == 1){
+    						outputStr  = String.format("冠军  %s", contentsLH);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountLH));
+    					}
+    					else if(i == 2){
+    						outputStr  = String.format("亚军  %s", contentsLH);
+
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountLH));
+    					}
+    					else{
+    						outputStr  = String.format("第%s名  %s", Integer.toString(i), contentsLH);
+
+    						
+    						BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amountLH));
+    						
+    					}
+    					
+    				}
+            		
+            	}
+
+        	}
+        	
+        	
+        	if(betType == BetType.CQSSC){
+            	
+            	JSONObject betsData = new JSONObject(jsonData);
+            	JSONArray gamesData = betsData.getJSONArray("bets");
+            	int totalAmount = 0;
+            	
+            	for(int i = 1; i <= 5 ; i++){
+            		String gameDX = "DX" + Integer.toString(i);
+            		String gameDS = "DS" + Integer.toString(i);        		
+            		JSONObject gameData;
+            		int amountDX = 0;
+            		String contentsDX = "";
+            		int amountDS = 0;
+            		String contentsDS = "";
+            		
+            		CQSSCbishu = gamesData.length();
+            		
+            		for(int j = 0; j < gamesData.length(); j++){
+            			gameData = gamesData.getJSONObject(j);
+            			String game = gameData.getString("game");
+            			if(game.equals(gameDX)){
+            				amountDX = gameData.getInt("amount");
+            				contentsDX = gameData.getString("contents");
+            				contentsDX = contentsDX.equals("D")?"大":"小";
+            			}
+            			if(game.equals(gameDS)){
+            				amountDS = gameData.getInt("amount");  
+            				contentsDS = gameData.getString("contents");
+            				contentsDS = contentsDS.equals("D")?"单":"双";
+            			}
+            			
+
+            		}
+            		
+            		
+        			String outputStr = "";
+        			
+    				if(amountDX != 0 ){
+    						outputStr  = String.format("第%s球  %s", Integer.toString(i), contentsDX);
+    						
+    						CQSSCBetAmountWindow.addData(df.format(new Date()), CQSSCdrawNumber, outputStr, Integer.toString(amountDX));
+
+    				}
+    				
+    				if(amountDS != 0 ){
+    					outputStr  = String.format("第%s球  %s", Integer.toString(i), contentsDS);
+    					
+    					CQSSCBetAmountWindow.addData(df.format(new Date()), CQSSCdrawNumber, outputStr, Integer.toString(amountDS));
+    					
+    				}
+    				
+    				
+            		
+            	}
+            	
+            	
+            	String gameZDX = "ZDX";
+            	String gameZDS = "ZDS";
+            	String gameLH = "LH";
+            	
+            	int amountZDX = 0;
+            	int amountZDS = 0;
+            	int amountLH = 0;
+            	
+            	String contentsZDX = "";
+            	String contentsZDS = "";
+            	String contentsLH = "";
+            	
+        		for(int j = 0; j < gamesData.length(); j++){
+        			JSONObject gameData;
+        			gameData = gamesData.getJSONObject(j);
+        			String game = gameData.getString("game");
+        			
+        			if(game.equals(gameZDX)){
+        				amountZDX = gameData.getInt("amount");
+        				contentsZDX = gameData.getString("contents");
+        				contentsZDX = contentsZDX.equals("D")?"大":"小";
+        			}
+        			if(game.equals(gameZDS)){
+        				amountZDS = gameData.getInt("amount");  
+        				contentsZDS = gameData.getString("contents");
+        				contentsZDS = contentsZDS.equals("D")?"单":"双";
+        			}
+    				if(game.equals(gameLH)){
+    					amountLH = gameData.getInt("amount");
+    					contentsLH = gameData.getString("contents");
+    					contentsLH = contentsLH.equals("L")?"龙":"虎";
+    				}
+    	
+        		}
+        		
+    			String outputStr = "";
+    			if(amountZDX != 0){
+    				outputStr  = String.format("总%s",  contentsZDX);
+    				
+    				
+    				CQSSCBetAmountWindow.addData(df.format(new Date()), CQSSCdrawNumber, outputStr, Integer.toString(amountZDX));
+    				
+    				
+    			}
+    			
+    			if(amountZDS != 0){
+    				outputStr  = String.format("总%s",  contentsZDS);
+    				CQSSCBetAmountWindow.addData(df.format(new Date()), CQSSCdrawNumber, outputStr, Integer.toString(amountZDS));
+    				
+    			}
+    			
+    			if(amountLH != 0){
+    				outputStr  = String.format("%s",  contentsLH);
+    				CQSSCBetAmountWindow.addData(df.format(new Date()), CQSSCdrawNumber, outputStr, Integer.toString(amountLH));
+    				
+    			}
+
+
+    			
+        	}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+
+    	
+    }
+    
+    
+    
+    
     public static void outputBetsDetails(String jsonData, BetType betType){
     	
     	autoBet.outputGUIMessage("下注详情：\n");
@@ -1774,6 +2034,12 @@ public class dsnHttp {
         	
         	jsonParam = constructBetsData(betData, percent, BetType.CQSSC, opposite);
         	
+        	//在投注金额窗口显示,只显示百分之一
+        	String jsonStr = constructBetsData(betData, 0.01, BetType.CQSSC, opposite);
+        	
+        	addToBetAmountWindow(jsonStr, BetType.CQSSC);
+        	
+        	
         	if(jsonParam == "") {
         		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
@@ -1893,6 +2159,11 @@ public class dsnHttp {
         	}
         	
         	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
+        	
+        	//显示百分之一投注数据
+        	String jsonStr = constructBetsData(betData, 0.01, BetType.BJSC, opposite);
+        	
+        	addToBetAmountWindow(jsonStr, BetType.BJSC);
         	
         	if(jsonParam == "") {
         		outputStr = "代理无人投注\n\n";

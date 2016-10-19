@@ -69,7 +69,7 @@ class StopBetCQSSCListener implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 
-		dsnHttp.showCQSSCDeatilsTable();
+		dsnHttp.showCQSSCBetAmountTable();
 	}	
 
 }

@@ -72,7 +72,7 @@ class StopBetBJSCListener implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 
-		dsnHttp.showBJSCDeatilsTable();
+		dsnHttp.showBJSCBetAmountTable();
 
 	}	
 
