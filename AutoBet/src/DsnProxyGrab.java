@@ -149,7 +149,7 @@ public class DsnProxyGrab {
             
         		if(location.indexOf("index?") > 0) {
         			strCookies = "";
-        			if(location.indexOf("http:") > 0) {
+        			if(location.indexOf("http") >= 0) {
         				location = doGet(location, cookieuid);//get cookiedae和重定向url
         			}
         			else {
@@ -157,7 +157,7 @@ public class DsnProxyGrab {
         			}
         			cookiedae = strCookies;
         			strCookies = "";
-        			if(location.indexOf("index?") > 0) {
+        			if(location.indexOf("http") >= 0) {
         				location = doGet(location, cookieuid + cookiedae);
         			}
         			else {
