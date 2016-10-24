@@ -1164,7 +1164,7 @@ public class dsnHttp {
         		cookieCfduid = strCookies;
         	}
         	int posStart = loginPage.indexOf("img src=") + 9;
-        	if(posStart >= 0) {
+        	if(posStart >= 9) {
         		int posEnd = loginPage.indexOf('"', posStart);
         		String rmNum = getPicNum(ADDRESS + "/" + loginPage.substring(posStart, posEnd));//get 验证码
         		
@@ -1274,7 +1274,7 @@ public class dsnHttp {
         int currentSeconds = date.getSeconds();
 
         //两分钟缓冲
-        if( (currentHour*60 + currentMinutes < 10*60 +1) && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
+        if( (currentHour*60 + currentMinutes < 10*60 - 5) && (currentHour * 60 + currentMinutes > 1 * 60 + 55))
            return false;
         
         return true;
