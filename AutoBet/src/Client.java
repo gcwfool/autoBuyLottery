@@ -13,8 +13,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Client extends Thread{
 	String [] dataCQSSC = {"", "", ""};
     String [] dataBJSC = {"", "", "", "", ""};
+    String [] dataXYNC = {"", "", "", "", "","", "", "", "", "", ""};
     boolean grabBJSC = true;
     boolean grabCQSSC = true;
+    boolean grabXYNC = true;
     ReadWriteLock lock = new ReentrantReadWriteLock();
     
     String address = "";
@@ -214,6 +216,72 @@ public class Client extends Thread{
 					    		brokenBag = true;
 					    	}
 		            	}
+		            	
+		            	if(grabXYNC){
+			            	Map<String, String> map = new HashMap<String, String>();  
+			                map.put("request", "data");
+			                map.put("lottery", "XYNC");  
+			                JSONObject json = new JSONObject(map);  
+			                String request = json.toString();
+				            ByteBuffer buffer = ByteBuffer.allocate(1024);
+				            ByteBuffer buffer1 = ByteBuffer.allocate(30960);
+				            buffer.put(request.getBytes());
+				            buffer.flip();
+					        client.write(buffer);
+					        String content = "";
+					        if(client.read(buffer1) == -1) {
+					        	break;
+					        }
+					        content += new String(buffer1.array());
+					        buffer1.clear();
+					           
+					        try {
+					            json = new JSONObject(content);
+					            if(json.getString("result").equals("true")) {
+					            	
+					            	String drawNumber = json.getString("drawNumber");
+					            	String remainTime = json.getString("remainTime");
+					            	String data1 = json.getString("data1");
+					            	String data2 = json.getString("data2");
+					            	String data3 = json.getString("data3");
+					            	String data4 = json.getString("data4");
+					            	String data5 = json.getString("data5");
+					            	String data6 = json.getString("data6");
+					            	String data7 = json.getString("data7");
+					            	String data8 = json.getString("data8");
+					            	String data9 = json.getString("data9");
+					            	
+					            	
+					            	lock.writeLock().lock();
+					            	dataXYNC[0] = drawNumber;
+					            	dataXYNC[10] = remainTime;
+					            	dataXYNC[1] = data1;
+					            	dataXYNC[2] = data2;
+					            	dataXYNC[3] = data3;
+					            	dataXYNC[4] = data4;
+					            	dataXYNC[5] = data5;
+					            	dataXYNC[6] = data6;
+					            	dataXYNC[7] = data7;
+					            	dataXYNC[8] = data8;
+					            	dataXYNC[9] = data9;
+					            	lock.writeLock().unlock();
+					            	//System.out.println("drawNumber:" + dataXYNC[0]);
+					            	//System.out.println("remainTime:" + dataXYNC[2]);
+					            } else {
+					            	System.out.println("【client】获取数据失败");
+					            }
+					            	
+					        } catch (JSONException e) {
+					    		System.out.println("【client】数据包错误");
+					    		e.printStackTrace();
+					    		try {
+					    			client.read(buffer1);
+					    		} catch(IOException io) {
+					    			io.printStackTrace();
+					    		}
+					    		brokenBag = true;
+					    	}
+		            	}
 
 			            
 			            //System.out.println("sleep");
@@ -249,6 +317,13 @@ public class Client extends Thread{
     public String [] getBJSCdata() {
     	lock.readLock().lock();
     	String [] data = (String [])dataBJSC.clone();
+    	lock.readLock().unlock();
+    	return data;
+    }
+    
+    public String [] getXYNCdata() {
+    	lock.readLock().lock();
+    	String [] data = (String [])dataXYNC.clone();
     	lock.readLock().unlock();
     	return data;
     }
