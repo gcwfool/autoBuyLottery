@@ -14,7 +14,9 @@ import javax.swing.JOptionPane;
 enum BetType{
 	CQSSC,
 	BJSC,
-	XYNC
+	XYNC,
+	GXKLSF,
+	GDKLSF
 }
 
 
@@ -35,6 +37,9 @@ public class autoBet{
 	public boolean loginToTianCaiMemberSuccess = false;
 	public boolean inBet = false;
 	public boolean inBetXYNC = false;
+	public boolean inBetGXKLSF = false;
+	public boolean inBetGDKLSF = false;
+	
 	
 	public boolean inBetWeiCai = false;
 	public boolean inBetTianCai = false;
@@ -52,6 +57,8 @@ public class autoBet{
 	public Button btnStartGrabXYNC;
 	public Button btnStopGrabXYNC;
 	public Button btnBetAmountWindowXYNC;
+	public Button btnBetAmountWindowGXKLSF;
+	public Button btnBetAmountWindowGDKLSF;
 	
 	//迪斯尼会员界面
 	public TextField textFieldMemberAddress;
@@ -59,6 +66,8 @@ public class autoBet{
 	public TextField textFieldMemberPassword;
 	public TextField textFieldCQSSCBetPercent;
 	public TextField textFieldBJSCBetPercent;
+	public TextField textFieldGXKLSFBetPercent;
+	public TextField textFieldGDKLSFBetPercent;
 	public TextField textFieldBetTime;
 	
 	public Button btnBetCQSSC;
@@ -70,8 +79,10 @@ public class autoBet{
 	
 	public Button btnBetOppositeXYNC;
 	public TextField textFieldXYNCBetPercent;
-	public Button btnBetXYNCamount;
+
 	
+	public Button btnBetOppositeGXKLSF;
+	public Button btnBetOppositeGDKLSF;
 	
 	//微彩会员界面
 	public TextField textFieldWeiCaiMemberAddress;
@@ -233,7 +244,11 @@ public class autoBet{
 		btnOppositeBJSC.setEnabled(flag);
 		btnStopBetBJSC.setEnabled(flag);
 		btnBetOppositeXYNC.setEnabled(flag);
+		btnBetOppositeGXKLSF.setEnabled(flag);
+		btnBetOppositeGDKLSF.setEnabled(flag);
 		btnBetAmountWindowXYNC.setEnabled(flag);
+		btnBetAmountWindowGXKLSF.setEnabled(flag);
+		btnBetAmountWindowGDKLSF.setEnabled(flag);
 	}
 	
 	public void enableWeiCaiMemberBet(boolean flag){
@@ -563,6 +578,53 @@ public class autoBet{
 		
 		
 		
+		//GXKLSF
+		btnBetOppositeGXKLSF = new Button("反投广西快乐十分");
+		btnBetOppositeGXKLSF.addActionListener(new BetGXKLSFListener(this, client));
+		
+		btnBetOppositeGXKLSF.setSize(75, 25);
+		btnBetOppositeGXKLSF.setLocation(DsnMemberX,DsnMemberY + 240);
+
+		Label GXKLSFlabelPercent = new Label("投注比例:");
+		GXKLSFlabelPercent.setSize(60, 25);
+		GXKLSFlabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 240);
+		
+		textFieldGXKLSFBetPercent = new TextField();
+		textFieldGXKLSFBetPercent.setSize(60, 25);
+		textFieldGXKLSFBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 240);
+		
+		
+		btnBetAmountWindowGXKLSF = new Button("投注金额");
+		btnBetAmountWindowGXKLSF.addActionListener(new BetAmountDetailGXKLSFListener(this));
+		
+		btnBetAmountWindowGXKLSF.setSize(90, 25);
+		btnBetAmountWindowGXKLSF.setLocation(DsnMemberX + 220, DsnMemberY + 240);
+		
+		
+		//GDKLSF
+	
+		btnBetOppositeGDKLSF = new Button("反投广东快乐十分");
+		btnBetOppositeGDKLSF.addActionListener(new BetGXKLSFListener(this, client));
+		
+		btnBetOppositeGDKLSF.setSize(75, 25);
+		btnBetOppositeGDKLSF.setLocation(DsnMemberX,DsnMemberY + 270);
+
+		Label GDKLSFlabelPercent = new Label("投注比例:");
+		GDKLSFlabelPercent.setSize(60, 25);
+		GDKLSFlabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 270);
+		
+		textFieldGDKLSFBetPercent = new TextField();
+		textFieldGDKLSFBetPercent.setSize(60, 25);
+		textFieldGDKLSFBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 270);
+		
+		
+		btnBetAmountWindowGDKLSF = new Button("投注金额");
+		btnBetAmountWindowGDKLSF.addActionListener(new BetAmountDetailGXKLSFListener(this));
+		
+		btnBetAmountWindowGDKLSF.setSize(90, 25);
+		btnBetAmountWindowGDKLSF.setLocation(DsnMemberX + 220, DsnMemberY + 270);
+		
+		
 		
 		panel.add(labelDsnMemberLogin);
 		panel.add(labelDsnMemberAddress);
@@ -584,11 +646,24 @@ public class autoBet{
 		panel.add(btnStopBetCQSSC);
 		panel.add(btnStopBetBJSC);
 		
-		
+		//XYNC
 		panel.add(btnBetOppositeXYNC);
 		panel.add(XYNClabelPercent);
 		panel.add(textFieldXYNCBetPercent);
 		panel.add(btnBetAmountWindowXYNC);
+		
+		//GXKLSF
+		panel.add(btnBetOppositeGXKLSF);
+		panel.add(GXKLSFlabelPercent);
+		panel.add(textFieldGXKLSFBetPercent);
+		panel.add(btnBetAmountWindowGXKLSF);
+		
+		
+		//GDKLSF
+		panel.add(btnBetOppositeGDKLSF);
+		panel.add(GDKLSFlabelPercent);
+		panel.add(textFieldGDKLSFBetPercent);
+		panel.add(btnBetAmountWindowGDKLSF);
 		
 		
 		enableDSNMemberBet(false);
