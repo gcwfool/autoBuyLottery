@@ -77,6 +77,10 @@ public class dsnHttp {
     
     static DSNBetAmountWindow BJSCBetAmountWindow = new DSNBetAmountWindow();    
     
+    static int requestFailTimes = 0;
+    static long lastFailtime = 0;
+    
+    static boolean isNeedRelogin = false;
     
     static int defaultTimeout = 3000;
     
@@ -181,6 +185,11 @@ public class dsnHttp {
     static int CQSSCbetTotalAmount = 0;
     static int BJSCbetTotalAmount = 0;
     
+    static int SingleNumberBetAmount = 0;
+    
+    static long CQSSCremainTime = -1;
+    static long BJSCremainTime = -1;
+    
     
     public dsnHttp(){
 
@@ -207,6 +216,9 @@ public class dsnHttp {
     	BJSCjinriqishu = 0;
     	BJSCjinrishibai = 0;
     	BJSCjinriyichang = 0;
+    	
+    	
+    	BJSCremainTime = -1;
 
     }
     
@@ -231,6 +243,8 @@ public class dsnHttp {
     	CQSSCjinriqishu = 0;
     	CQSSCjinrishibai = 0;
     	CQSSCjinriyichang = 0;
+    	
+    	CQSSCremainTime = -1;
 
     }
     
@@ -496,10 +510,22 @@ public class dsnHttp {
     	return betSuccessfully;
     }
     
-    public static String[] getBetProfit(String drawNumber){
+    public static String[] getBetProfit(String drawNumber, BetType bettype){
     	
     	
     	String[] result = {"none", "0"};
+    	
+    	String targetlottery = "";
+    	
+    	if(bettype == BetType.BJSC){
+    		targetlottery = "北京赛车(PK10)";
+    	}else if(bettype == BetType.CQSSC){
+    		targetlottery = "重庆时时彩";
+    	}else if(bettype == BetType.XYNC) {
+    		targetlottery = "重庆幸运农场";
+    	}
+    	
+    	String lottery = "";
     	
     	try{
         	boolean hasBetprofit = false;
@@ -520,6 +546,8 @@ public class dsnHttp {
         	
         	if(res != null){
         		
+
+        		
         		if(res.contains("暂无数据")){
         			return result;
         		}
@@ -527,80 +555,108 @@ public class dsnHttp {
         		
         		int posStart = res.indexOf("page_count"); 
         		
-        		posStart = res.indexOf(" ", posStart); 
-        		
-        		int posEnd = res.indexOf(" ", posStart + 1);
-        		
-        		String pageCountstr = res.substring(posStart + 1, posEnd);
-        		
-        		int pageCount = 1;
-        		
-        		if(Common.isNum(pageCountstr)){
-        			
-        			pageCount = Integer.parseInt(pageCountstr);
-        		}
-        		
-        		pageCount = pageCount >10?10:pageCount;//只查看前十页
-        		
-        		String number = "";
-        		
-        		for(int i = 0; i< pageCount; i++){
-        			
-        			if(res == null)
-        				continue;
-        			
-        			posStart = res.indexOf("draw_number");
+        		if(posStart != -1){
+            		posStart = res.indexOf(" ", posStart); 
             		
-            		while(posStart != -1){
+            		int posEnd = res.indexOf(" ", posStart + 1);
+            		
+            		String pageCountstr = res.substring(posStart + 1, posEnd);
+            		
+            		int pageCount = 1;
+            		
+            		if(Common.isNum(pageCountstr)){
+            			
+            			pageCount = Integer.parseInt(pageCountstr);
+            		}
+            		
+            		pageCount = pageCount >15?15:pageCount;//只查看前十五页
+            		
+            		String number = "";
+            		
+            		
+            		
+            		
+            		
+            		
+            		
+            		for(int i = 0; i< pageCount; i++){
+            			
+            			if(res == null)
+            				continue;
+            			
+            			posStart = res.indexOf("lottery\">");
+            			posEnd = res.indexOf("<", posStart);
+            			
+            			lottery = res.substring(posStart + 9, posEnd);
             			
             			
             			
-            			posStart = res.indexOf(" ", posStart);
-            			posEnd = res.indexOf(" ", posStart+1);
-            			
-            			number = res.substring(posStart + 1, posEnd);
-            			
-            			if(drawNumber.equals(number)){
-            				
-            				posStart = res.indexOf("result color\">", posEnd);
-            				posEnd = res.indexOf("<", posStart);
-            				
-            				String profitStr = res.substring(posStart + 14, posEnd);
-            				
-            				if(Common.isNum(profitStr)){
-            					bishu++;
-            					totalProfit += Double.parseDouble(profitStr);
-            				}
-            				
-            				hasBetprofit = true;
-            			}
-            			
-            			if(!drawNumber.equals(number) && totalProfit != 0){
+            			posStart = res.indexOf("draw_number");
+                		
+                		while(posStart != -1){
+                			
+                			
+                			
+                			posStart = res.indexOf(" ", posStart);
+                			posEnd = res.indexOf(" ", posStart+1);
+                			
+                			number = res.substring(posStart + 1, posEnd);
+                			
+                			if(lottery.equals(targetlottery) && drawNumber.equals(number)){
+                				
+                				posStart = res.indexOf("result color\">", posEnd);
+                				posEnd = res.indexOf("<", posStart);
+                				
+                				String profitStr = res.substring(posStart + 14, posEnd);
+                				
+                				if(Common.isNum(profitStr)){
+                					bishu++;
+                					totalProfit += Double.parseDouble(profitStr);
+                				}
+                				
+                				hasBetprofit = true;
+                			}
+                			
+                			if(!drawNumber.equals(number) && totalProfit != 0){
+                				break;
+                			}
+                			
+                			posStart = res.indexOf("lottery\">", posEnd);
+                			
+                			if(posStart != -1){
+                				posEnd = res.indexOf("<", posStart);
+                				lottery = res.substring(posStart + 9, posEnd);
+                				
+                				posStart = res.indexOf("draw_number", posEnd);
+                			}
+                			
+                			
+                		}
+                		
+                		
+                		if(!drawNumber.equals(number) && hasBetprofit == true){
             				break;
-            			}
-            			
-            			posStart = res.indexOf("draw_number", posEnd);
+                		}
+                		
+                		
+                		lastBetsURI = ADDRESS + "/member/bets?settled=true";
+                		
+                		lastBetsURI += "&page=" + Integer.toString(i+2);
+                    	
+                    	res = doGet(lastBetsURI, "", "");
+                    	
+                    	
+                    	if(res == null){
+                    		res = doGet(lastBetsURI, "", "");
+                    	}
+                		
+                		
             		}
-            		
-            		
-            		if(!drawNumber.equals(number) && hasBetprofit == true){
-        				break;
-            		}
-            		
-            		
-            		lastBetsURI = ADDRESS + "/member/bets?settled=true";
-            		
-            		lastBetsURI += "&page=" + Integer.toString(i+2);
-                	
-                	res = doGet(lastBetsURI, "", "");
-                	
-                	
-                	if(res == null){
-                		res = doGet(lastBetsURI, "", "");
-                	}
-            		
-            		
         		}
+        		else{
+        			addFailsTimes();
+        		}
+
         		
 
         	}
@@ -807,7 +863,7 @@ public class dsnHttp {
     }
     
     public static String getBJSCoddsData(){
-    	String url = ADDRESS + "/member/odds?lottery=BJPK10&games=DX1%2CDX2%2CDX3%2CDX4%2CDX5%2CDX6%2CDX7%2CDX8%2CDX9%2CDX10%2CDS1%2CDS2%2CDS3%2CDS4%2CDS5%2CDS6%2CDS7%2CDS8%2CDS9%2CDS10%2CGDX%2CGDS%2CLH1%2CLH2%2CLH3%2CLH4%2CLH5&_=";    	
+    	String url = ADDRESS + "/member/odds?lottery=BJPK10&games=DX1%2CDX2%2CDX3%2CDX4%2CDX5%2CDX6%2CDX7%2CDX8%2CDX9%2CDX10%2CDS1%2CDS2%2CDS3%2CDS4%2CDS5%2CDS6%2CDS7%2CDS8%2CDS9%2CDS10%2CGDX%2CGDS%2CLH1%2CLH2%2CLH3%2CLH4%2CLH5%2CB1%2CB2%2CB3%2CB4%2CB5%2CB6%2CB7%2CB8%2CB9%2CB10&_=";    	
     	url += Long.toString(System.currentTimeMillis());
     	
     	BJSCoddsData = doGet(url, "", "");
@@ -847,6 +903,10 @@ public class dsnHttp {
     	
     	BJSCBetAmountWindow.setTitle("北京赛车下注金额");
     	CQSSCBetAmountWindow.setTitle("重庆时时彩下注金额");
+    	
+    	BetXYNCManager.XYNCdetalsDataWindow.setTitle("投注重庆幸运农场详情");
+    	
+    	BetXYNCManager.XYNCBetAmountWindow.setTitle("重庆幸运农场下注金额");
     	
     	String[] addressArray = ConfigReader.getBetAddressArray();
     	
@@ -1327,6 +1387,7 @@ public class dsnHttp {
         response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         
         if(response == null){
+        	addFailsTimes();
         	response = doGet(getPeriodUrl, "", ADDRESS + "/member/load?lottery=CQSSC&page=lm");
         }
         
@@ -1334,6 +1395,7 @@ public class dsnHttp {
         {
         	
         	System.out.println("get period failed");
+        	addFailsTimes();
         	return System.currentTimeMillis();
         }
         
@@ -1544,6 +1606,52 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
             	JSONObject betsData = new JSONObject(jsonData);
             	JSONArray gamesData = betsData.getJSONArray("bets");
             	int totalAmout = 0;
+            	
+            	
+            	
+            	for(int i = 1; i <= 10 ; i++){
+            		String gameSingle = "B" + Integer.toString(i);
+            		
+            		JSONObject gameData;
+            		int amount = 0;
+            		
+            		String contents = "";
+            		
+            		for(int icontent = 1; icontent<= 10; icontent++ ){
+            			
+                		for(int j = 0; j < gamesData.length(); j++){
+                			
+                			gameData = gamesData.getJSONObject(j);
+                			
+                			String game = gameData.getString("game");
+                			if(game.equals(gameSingle)){
+                				amount = gameData.getInt("amount");
+                				contents = gameData.getString("contents");
+                				
+                				if(contents.equals(Integer.toString(icontent))){
+                					String outputStr  = String.format("第%s名  %s", Integer.toString(i), contents, amount);
+                					
+                					BJSCBetAmountWindow.addData(df.format(new Date()), BJSCdrawNumber, outputStr, Integer.toString(amount));
+                					
+                					totalAmout += amount;
+                				}
+                				
+                				
+                			}
+
+
+        					
+
+                		}
+            			
+            		}
+
+
+            	}
+            	
+            	
+            	
+            	
             	
             	for(int i = 1; i <= 10 ; i++){
             		String gameDX = "DX" + Integer.toString(i);
@@ -1783,6 +1891,56 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
             	JSONObject betsData = new JSONObject(jsonData);
             	JSONArray gamesData = betsData.getJSONArray("bets");
             	int totalAmout = 0;
+            	
+            	SingleNumberBetAmount = 0;
+            	
+            	for(int i = 1; i <= 10 ; i++){
+            		String gameSingle = "B" + Integer.toString(i);
+            		
+            		JSONObject gameData;
+            		int amount = 0;
+            		
+            		String contents = "";
+            		
+            		for(int icontent = 1; icontent<= 10; icontent++ ){
+            			
+                		for(int j = 0; j < gamesData.length(); j++){
+                			
+                			gameData = gamesData.getJSONObject(j);
+                			
+                			String game = gameData.getString("game");
+                			if(game.equals(gameSingle)){
+                				amount = gameData.getInt("amount");
+                				contents = gameData.getString("contents");
+                				
+                				if(contents.equals(Integer.toString(icontent))){
+                					String outputStr  = String.format("第%s名  %s:%d,   ", Integer.toString(i), contents, amount);
+            						autoBet.outputGUIMessage(outputStr);
+            						SingleNumberBetAmount += amount;
+                				}
+                				
+                				
+                			}
+
+
+        					
+
+                		}
+            			
+            		}
+            		
+            		autoBet.outputGUIMessage("\n");
+            		
+
+            		
+
+            	}
+            	
+            	
+            	
+            	
+            	
+            	
             	
             	for(int i = 1; i <= 10 ; i++){
             		String gameDX = "DX" + Integer.toString(i);
@@ -2212,7 +2370,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
 
         	
         	if(result == false){
-    			BJSCdetalsDataWindow.addData(df.format(new Date()), BJSCdrawNumber, 2, Integer.toString(BJSCbetTotalAmount), Integer.toString(BJSCbishu));
+    			BJSCdetalsDataWindow.addData(df.format(new Date()), BJSCdrawNumber, 2, Integer.toString(BJSCbetTotalAmount + SingleNumberBetAmount), Integer.toString(BJSCbishu));
 
     			unknowStatBJSCDraw.add(BJSCdrawNumber);
     			
@@ -2220,7 +2378,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     			
         	}
         	else{
-    			BJSCdetalsDataWindow.addData(df.format(new Date()), BJSCdrawNumber, 0, Integer.toString(BJSCbetTotalAmount), Integer.toString(BJSCbishu));        		
+    			BJSCdetalsDataWindow.addData(df.format(new Date()), BJSCdrawNumber, 0, Integer.toString(BJSCbetTotalAmount + SingleNumberBetAmount), Integer.toString(BJSCbishu));        		
         	}
         	
         	unCalcProfitBJSCDraw.add(BJSCdrawNumber);
@@ -2343,6 +2501,10 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
 	    		}
 	    		
 	    		oddsData = BJSCoddsData;
+	    		
+
+	    		
+	    		
 	    	}
 	    	else if(betType == BetType.CQSSC){
 	    		
@@ -2460,13 +2622,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
 	        			gameObj.put("odds", odds);
 	        			
 	        			
-	        			//输出显示
-	        	    	if(betType == BetType.CQSSC){
-	        	        	
-	        	    	}
-	        	    	else if(betType == BetType.BJSC){
-	        	
-	        	    	}
+
 	        			
 	        			gamesArray.put(gameObj);
 	        		}
@@ -2474,7 +2630,145 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
 	        	}
 	    	}
 	    	
-	
+	    	//反投单号1~10
+	    	if(betType == BetType.BJSC){
+	    		
+	    		double odds = 0;
+	    		
+		    	
+	    		for(int k = 1; k <=10; k++){
+	    			
+	    			String gameFind = "B" + Integer.toString(k);
+	    			
+	    			Vector<Object[]> singleNumberGames = new Vector<Object[]>();
+	    			
+		    		for(int i = 0; i < data.length; i++){
+			    		
+			    		
+		            	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
+		            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+
+		        	
+			        	for(int j = 0; j < gamesGrabData.length(); j++){
+			        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
+			        		
+			    			String game = gameGrabData.getString("k");
+			    			String contents = gameGrabData.getString("i");
+			    			int amount = gameGrabData.getInt("a");
+			    			String oddsKey = game + "_" + contents;
+			    			
+			    			
+			    			if(oddsData.contains(oddsKey) == false)
+			    				continue;
+			    			
+			    			odds = oddsGrabData.getDouble(oddsKey);
+			    			
+			    			
+			    			if(gameFind.equals(game)){
+			    				Object[] games = new Object[2];
+			    				games[0] = contents;
+			    				games[1] = new Integer(amount);
+			    				
+			    				singleNumberGames.add(games);
+			    			}
+			    			
+			        	}
+	    			
+
+	    		}
+		    		
+	    		if(singleNumberGames.size() != 0){
+	    			
+			    	Comparator ct = new CompareBetAmount();
+			    	
+			    	Collections.sort(singleNumberGames, ct);
+	    			
+	    			int bigAmount = (int)singleNumberGames.elementAt(0)[1];
+	    			
+	    			if(bigAmount == 0)
+	    				continue;
+	    			
+	    			int number = Integer.parseInt((String)(singleNumberGames.elementAt(0)[0]));
+	    			
+			    	for(int a = 1; a <= 10; a++){
+			    		
+			    		if(a == number)
+			    			continue;
+			    		
+			    		String oddsKeys = gameFind + "_" + Integer.toString(a);
+			    		
+		    			if(oddsData.contains(oddsKeys) == false)
+		    				continue;
+			    		
+			    		
+			    		odds = oddsGrabData.getDouble(oddsKeys);
+			    		
+			    		boolean hasBet = false;
+			    		
+	        			JSONObject gameObj = new JSONObject();
+	        			gameObj.put("game", gameFind);
+			    		
+			    		for(int b = 0; b <singleNumberGames.size(); b++){
+			    			
+
+			    			
+			    			int contents = Integer.parseInt((String)(singleNumberGames.elementAt(b)[0]));
+			    			
+			    			if(contents == a){
+			    				
+			    				
+			    				hasBet = true;
+			    				
+			    				int OldAmount = (int)singleNumberGames.elementAt(b)[1];
+			    				
+			    				int currentAmount = bigAmount - OldAmount;
+			    				
+			    				currentAmount = (int)(currentAmount * percent);
+			    				
+			    				if(currentAmount == 0)
+			    					currentAmount = 1;
+			        			gameObj.put("contents", Integer.toString(a));
+			        			gameObj.put("amount", currentAmount);
+			        			gameObj.put("odds", odds);
+			        			
+			        			
+
+			        			//gamesArray.put(gameObj);
+			        			
+			    				
+			    				
+			    				
+			    				break;
+			    			}
+			    			
+			    			
+			    			
+			    		}
+			    		
+			    		
+			    		if(hasBet == false){
+			    			
+			    			int amount = (int)(bigAmount*percent);
+			    			if(amount == 0)
+			    				amount = 1;
+		        			gameObj.put("contents", Integer.toString(a));
+		        			gameObj.put("amount", amount);
+		        			gameObj.put("odds", odds);
+		        			
+		        			//gamesArray.put(gameObj);
+			    		}
+			    		
+			    	}
+	    		}
+		    		
+
+			    	
+			    	
+
+
+	    	}
+	    	
+	    	}
 	    	
 	    	if(gamesArray.length() == 0) {
 	    		return "";
@@ -2501,6 +2795,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
 	    	res = betsObj.toString();
     	
     	}catch(Exception e){
+    		e.printStackTrace();
     		autoBet.outputGUIMessage("构造下单数据错误！\n");
     		return "";
     	}
@@ -2879,6 +3174,65 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
    	return null;
    }
     
+    
+    public static boolean isCQSSCidle(){
+    	boolean isIdle = false;
+    	if(CQSSCremainTime < 0 || CQSSCremainTime > 40*1000 ){
+    		isIdle = true;
+    	}
+    	
+    	return isIdle;
+    }
+    
+    public static boolean isBJSCidle(){
+    	boolean isIdle = false;
+    	if(BJSCremainTime < 0 || BJSCremainTime > 40*1000 ){
+    		isIdle = true;
+    	}
+    	
+    	return isIdle;
+    }
+    
+    
+    public static boolean isAllLotteryIdle(){
+    	boolean isIdle = false;
+    	
+    	if(isBJSCidle() && isCQSSCidle() && BetXYNCManager.isXYNCidle()){
+    		isIdle = true;
+    	}
+    	
+    	return isIdle;
+    }
+    
+    
+    public static void addFailsTimes(){
+    	long currentTime = System.currentTimeMillis();
+    	
+    	if(((currentTime - lastFailtime) < 20*1000) || (lastFailtime == 0)){
+    		requestFailTimes++;
+    		
+    		lastFailtime = currentTime;
+    		
+    		if(requestFailTimes >= 4){
+    			setIsNeedRelogin(true);
+    			requestFailTimes = 0;
+    		}
+    		
+    	}
+    	else{
+    		requestFailTimes = 1;
+    		lastFailtime = currentTime;
+    	}
+    }
+    
+    
+    public static void setIsNeedRelogin(boolean flag){
+    	isNeedRelogin = flag;
+    }
+    
+    public static boolean getIsNeedRelogin(){
+    	return isNeedRelogin;
+    }
 }
 
 

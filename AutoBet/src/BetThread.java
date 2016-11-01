@@ -49,20 +49,12 @@ class BetThread extends Thread{
 				if(requestTime) {
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
-					while(CQSSCremainTime > 10*60*1000 || BJSCremainTime > 10*60*1000){//获取时间失败
-						
-						if(dsnHttp.getIsisNeedChangeLine() == true){
-							dsnHttp.setLinePriority();
-							dsnHttp.setisNeedChangeLine(false);
-							dsnHttp.clearAvgRequest();
-						}
-							
-						
-						if(dsnHttp.reLogin() == false) {
-							dsnHttp.connFailLogin();
-						}
-						CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
-						BJSCremainTime = dsnHttp.getBJSCRemainTime();
+					if(CQSSCremainTime > 10*60*1000){//获取时间失败					
+						CQSSCremainTime = dsnHttp.getCQSSClocalRemainTime();
+					}
+					
+					if(BJSCremainTime > 10*60*1000){//获取时间失败
+						BJSCremainTime = dsnHttp.getBJSClocalRemainTime();
 					}
 					
 					System.out.println("[迪斯尼会员]距离重庆时时彩封盘时间为:");
@@ -113,8 +105,19 @@ class BetThread extends Thread{
 					
 				}
 				
+				
+				//重新登录
+				if(dsnHttp.getIsNeedRelogin()){
+					
+					System.out.println("重新登录");
+					
+					dsnHttp.reLogin();
+					dsnHttp.setIsNeedRelogin(false);
+				}
+				
+				
 				//换线路
-				if((BJSCremainTime >60*1000 || BJSCremainTime <0) && (CQSSCremainTime > 60*1000 || CQSSCremainTime < 0)  ){
+				if(dsnHttp.isAllLotteryIdle()){
 					if(dsnHttp.getIsisNeedChangeLine() == true){
 						dsnHttp.setLinePriority();
 						
@@ -137,7 +140,7 @@ class BetThread extends Thread{
 							
 							
 							
-							String[] profitandbishu = dsnHttp.getBetProfit(drawNumber);
+							String[] profitandbishu = dsnHttp.getBetProfit(drawNumber, BetType.BJSC);
 							if(profitandbishu[0].equals("none") != true){
 								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
 								dsnHttp.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profitandbishu[0]);
@@ -168,7 +171,7 @@ class BetThread extends Thread{
 							
 							
 							
-							String[] profitandbishu = dsnHttp.getBetProfit(drawNumber);
+							String[] profitandbishu = dsnHttp.getBetProfit(drawNumber, BetType.CQSSC);
 							if(profitandbishu[0].equals("none") != true){
 								dsnHttp.updateCQSSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
 								dsnHttp.updateCQSSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profitandbishu[0]);

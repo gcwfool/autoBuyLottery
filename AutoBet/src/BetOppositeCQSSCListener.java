@@ -41,6 +41,8 @@ public class BetOppositeCQSSCListener implements ActionListener
 		
 		autoBet.outputGUIMessage(outputStr);
 		
+		dsnHttp.showCQSSCDeatilsTable();
+		
 		if(ab.inBet == true){
 			return;
 		}
@@ -51,7 +53,7 @@ public class BetOppositeCQSSCListener implements ActionListener
 		
 		ab.inBet = true;
 		
-		dsnHttp.showCQSSCDeatilsTable();
+		
 		
 	}	
 
