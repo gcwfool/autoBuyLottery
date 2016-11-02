@@ -125,7 +125,7 @@ public class BetXYNCManager {
 					    if(drawNum - preBetNum > 0) {
 					    	dNum = drawNum - preBetNum - 1;
 					    }else if(drawNum - preBetNum  < 0){
-					    	dNum = drawNum + 120 - preBetNum - 1;
+					    	dNum = drawNum + 97 - preBetNum - 1;
 					    }
 					} catch (NumberFormatException e) {
 					    e.printStackTrace();

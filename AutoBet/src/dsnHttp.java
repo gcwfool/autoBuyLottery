@@ -908,6 +908,19 @@ public class dsnHttp {
     	
     	BetXYNCManager.XYNCBetAmountWindow.setTitle("重庆幸运农场下注金额");
     	
+    	BetGXKLSFManager.GXKLSFdetalsDataWindow.setTitle("投注广西快乐十分详情");
+    	
+    	BetGXKLSFManager.GXKLSFBetAmountWindow.setTitle("广西快乐十分下注金额");
+    	
+    	BetGDKLSFManager.GDKLSFdetalsDataWindow.setTitle("投注广东快乐十分详情");
+    	
+    	BetGDKLSFManager.GDKLSFBetAmountWindow.setTitle("广东快乐十分下注金额");
+    	
+    	BetGD11X5Manager.GD11X5detalsDataWindow.setTitle("投注广东11选5详情");
+    	
+    	BetGD11X5Manager.GD11X5BetAmountWindow.setTitle("广东11选5下注金额");
+    	
+    	
     	String[] addressArray = ConfigReader.getBetAddressArray();
     	
 

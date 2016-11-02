@@ -8,48 +8,48 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class BetGXKLSFManager {
+public class BetGD11X5Manager {
 	
-	static long GXKLSFloseTime = 0;    //封盘时间
+	static long GD11X5loseTime = 0;    //封盘时间
 	
-	static String GXKLSFoddsData = null;
+	static String GD11X5oddsData = null;
 	
 	
-	static String previousGXKLSFdrawNumber = "";
+	static String previousGD11X5drawNumber = "";
 	
-    static String GXKLSFdrawNumber = "";
-    static String previousGXKLSFBetNumber = "";
+    static String GD11X5drawNumber = "";
+    static String previousGD11X5BetNumber = "";
     
-    static boolean previousGXKLSFBetResult = false;
+    static boolean previousGD11X5BetResult = false;
     
-    static Vector<String> unCalcProfitGXKLSFDraw = new Vector<String>();    
-    
-    
-    static int GXKLSFbetTotalAmount = 0;
-    
-    static DSNDataDetailsWindow GXKLSFdetalsDataWindow = new DSNDataDetailsWindow();   
-    
-    static Vector<String> unknowStatGXKLSFDraw = new Vector<String>();    
-    
-    static DSNBetAmountWindow GXKLSFBetAmountWindow = new DSNBetAmountWindow();    
-    
-    static int GXKLSFbishu = 0;    
-    static int GXKLSFoneBetAmount = 0;    
-    
-    static int GXKLSFzongqishu = 0;
-    static int GXKLSFzongshibai = 0;
-    static int GXKLSFzongyichang = 0;
-    
-    static int GXKLSFjinriqishu = 0;
-    static int GXKLSFjinrishibai = 0;
-    static int GXKLSFjinriyichang = 0;    
+    static Vector<String> unCalcProfitGD11X5Draw = new Vector<String>();    
     
     
+    static int GD11X5betTotalAmount = 0;
     
-    static long GXKLSFremainTime = -1;
+    static DSNDataDetailsWindow GD11X5detalsDataWindow = new DSNDataDetailsWindow();   
+    
+    static Vector<String> unknowStatGD11X5Draw = new Vector<String>();    
+    
+    static DSNBetAmountWindow GD11X5BetAmountWindow = new DSNBetAmountWindow();    
+    
+    static int GD11X5bishu = 0;    
+    static int GD11X5oneBetAmount = 0;    
+    
+    static int GD11X5zongqishu = 0;
+    static int GD11X5zongshibai = 0;
+    static int GD11X5zongyichang = 0;
+    
+    static int GD11X5jinriqishu = 0;
+    static int GD11X5jinrishibai = 0;
+    static int GD11X5jinriyichang = 0;    
+    
+    
+    
+    static long GD11X5remainTime = -1;
 
 	
-	public static long getGXKLSFremainTime(){
+	public static long getGD11X5remainTime(){
         //get period
     	String response = "";
     	String host = dsnHttp.ADDRESS;
@@ -59,11 +59,11 @@ public class BetGXKLSFManager {
         
         long startTime = System.currentTimeMillis();
         
-        response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GXKLSF&page=lm");
+        response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GD11X5&page=lm");
         
         if(response == null){//再拿一次
         	startTime = System.currentTimeMillis();
-        	response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GXKLSF&page=lm");
+        	response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GD11X5&page=lm");
         }
         
         long endTime = System.currentTimeMillis();
@@ -82,20 +82,20 @@ public class BetGXKLSFManager {
         	dsnHttp.time = System.currentTimeMillis();
         }
     	
-        if(!isInGXKLSFBetTime(dsnHttp.time)){
+        if(!isInGD11X5BetTime(dsnHttp.time)){
         	return -1;
         }
         
         
-        String getPeriodUrl = host + "/member/period?lottery=GXKLSF&_=";
+        String getPeriodUrl = host + "/member/period?lottery=GD11X5&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
-        //System.out.println(cookieb18 + "defaultLT=GXKLSF;" + cookieCfduid);
-        response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GXKLSF&page=lm");
+        //System.out.println(cookieb18 + "defaultLT=GD11X5;" + cookieCfduid);
+        response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GD11X5&page=lm");
         
         if(response == null){
         	dsnHttp.addFailsTimes();
-        	response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GXKLSF&page=lm");
+        	response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=GD11X5&page=lm");
         }
         
         if(response == null)
@@ -113,15 +113,15 @@ public class BetGXKLSFManager {
         
         try{
             JSONObject periodJson = new JSONObject(response);
-            GXKLSFloseTime = periodJson.getLong("closeTime");
-            if(!GXKLSFdrawNumber.equals(periodJson.getString("drawNumber"))) {//新的一期
-            	previousGXKLSFdrawNumber = GXKLSFdrawNumber;
-            	GXKLSFdrawNumber = periodJson.getString("drawNumber");
-            	if(previousGXKLSFBetNumber != previousGXKLSFdrawNumber && previousGXKLSFBetNumber != GXKLSFdrawNumber && previousGXKLSFBetNumber != "") {//判断上一期有没有漏投
+            GD11X5loseTime = periodJson.getLong("closeTime");
+            if(!GD11X5drawNumber.equals(periodJson.getString("drawNumber"))) {//新的一期
+            	previousGD11X5drawNumber = GD11X5drawNumber;
+            	GD11X5drawNumber = periodJson.getString("drawNumber");
+            	if(previousGD11X5BetNumber != previousGD11X5drawNumber && previousGD11X5BetNumber != GD11X5drawNumber && previousGD11X5BetNumber != "") {//判断上一期有没有漏投
 					long dNum = 0;
 					try {
-					    long drawNum = Long.parseLong(GXKLSFdrawNumber)%1000;
-					    long preBetNum =  Long.parseLong(previousGXKLSFBetNumber)%1000;
+					    long drawNum = Long.parseLong(GD11X5drawNumber)%1000;
+					    long preBetNum =  Long.parseLong(previousGD11X5BetNumber)%1000;
 					    if(drawNum - preBetNum > 0) {
 					    	dNum = drawNum - preBetNum - 1;
 					    }else if(drawNum - preBetNum  < 0){
@@ -134,30 +134,30 @@ public class BetGXKLSFManager {
 					
 					//failTimes += dNum;
 					
-					GXKLSFjinrishibai += dNum;					
-			        GXKLSFjinriqishu += dNum;
+					GD11X5jinrishibai += dNum;					
+			        GD11X5jinriqishu += dNum;
 			        
-			        GXKLSFdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(GXKLSFjinriqishu));
-			        GXKLSFdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(GXKLSFjinrishibai));
+			        GD11X5detalsDataWindow.updateTextFieldjinriqishu(Integer.toString(GD11X5jinriqishu));
+			        GD11X5detalsDataWindow.updateTextFieldjinrishibai(Integer.toString(GD11X5jinrishibai));
 			        
-			        GXKLSFdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(GXKLSFzongqishu + GXKLSFjinriqishu));
-			        GXKLSFdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(GXKLSFzongshibai + GXKLSFjinrishibai));
+			        GD11X5detalsDataWindow.updateTextFieldzongqishu(Integer.toString(GD11X5zongqishu + GD11X5jinriqishu));
+			        GD11X5detalsDataWindow.updateTextFieldzongshibai(Integer.toString(GD11X5zongshibai + GD11X5jinrishibai));
 					
 					
 					
 /*					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));*/
-					System.out.println("漏投" + dNum + "次, 期数：" + GXKLSFdrawNumber + "上次下单期数：" + previousGXKLSFBetNumber);
+					System.out.println("漏投" + dNum + "次, 期数：" + GD11X5drawNumber + "上次下单期数：" + previousGD11X5BetNumber);
 					
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
-					long missDrawNumber = Long.parseLong(previousGXKLSFBetNumber) + 1;
+					long missDrawNumber = Long.parseLong(previousGD11X5BetNumber) + 1;
 					for(int i = 0; i < dNum; i++){
 						String missDrawNmberstr = Long.toString(missDrawNumber + i);						
-		    			GXKLSFdetalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
+		    			GD11X5detalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
 					}
 					
 					
-					previousGXKLSFBetNumber = previousGXKLSFdrawNumber;
+					previousGD11X5BetNumber = previousGD11X5drawNumber;
 					
 					
 			    }
@@ -165,7 +165,7 @@ public class BetGXKLSFManager {
         }
         catch(Exception e){
         	autoBet.outputGUIMessage("获取迪斯尼时间错误！");
-        	System.out.println("getGXKLSFRemainTime()获取时间异常" + response);
+        	System.out.println("getGD11X5RemainTime()获取时间异常" + response);
         	return System.currentTimeMillis();
         }
         
@@ -173,9 +173,9 @@ public class BetGXKLSFManager {
 
        
         
-        long remainTime = GXKLSFloseTime - (System.currentTimeMillis() + dsnHttp.timeDValue); //用差值计算  防止两次请求期间间隔过长
+        long remainTime = GD11X5loseTime - (System.currentTimeMillis() + dsnHttp.timeDValue); //用差值计算  防止两次请求期间间隔过长
         
-        GXKLSFremainTime = remainTime;
+        GD11X5remainTime = remainTime;
         
     	return remainTime;
 	}
@@ -183,7 +183,7 @@ public class BetGXKLSFManager {
 	
 	
 	
-    public static boolean  isInGXKLSFBetTime(long time){
+    public static boolean  isInGD11X5BetTime(long time){
         Date date = new Date(time);
         int currentHour = date.getHours();
         int currentMinutes = date.getMinutes();
@@ -194,7 +194,7 @@ public class BetGXKLSFManager {
         }*/
         
         //两分钟分钟的缓冲
-        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 21 * 60 + 30)){
+        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 10 * 60)){
         	return true;
         }
         
@@ -203,68 +203,68 @@ public class BetGXKLSFManager {
     }
     
     
-    public static long getGXKLSFlocalRemainTime() {
-    	GXKLSFremainTime = GXKLSFloseTime - (System.currentTimeMillis() + dsnHttp.timeDValue);
-    	return GXKLSFremainTime;
+    public static long getGD11X5localRemainTime() {
+    	GD11X5remainTime = GD11X5loseTime - (System.currentTimeMillis() + dsnHttp.timeDValue);
+    	return GD11X5remainTime;
     }
     
     
-    public static String getGXKLSFoddsData(){
-    	String url = dsnHttp.ADDRESS + "/member/odds?lottery=GXKLSF&games=ZDS%2CZDX%2CZWDX%2CYDX1%2CYDX2%2CYDX3%2CYDX4%2CYDX5%2CYDS1%2CYDS2%2CYDS3%2CYDS4%2CYDS5%2CYWDX1%2CYWDX2%2CYWDX3%2CYWDX4%2CYWDX5%2CYHDS1%2CYHDS2%2CYHDS3%2CYHDS4%2CYHDS5%2CLH15&_=";
+    public static String getGD11X5oddsData(){
+    	String url = dsnHttp.ADDRESS + "/member/odds?lottery=GD11X5&games=DX1%2CDX2%2CDX3%2CDX4%2CDX5%2CZDX%2CZWDX%2CZDS%2CDS1%2CDS2%2CDS3%2CDS4%2CDS5%2CLH&_=";
     	url += Long.toString(System.currentTimeMillis());
     	
-    	GXKLSFoddsData = dsnHttp.doGet(url, "", "");
+    	GD11X5oddsData = dsnHttp.doGet(url, "", "");
     	
-    	if(GXKLSFoddsData == null){
-    		GXKLSFoddsData = dsnHttp.doGet(url, "", "");
+    	if(GD11X5oddsData == null){
+    		GD11X5oddsData = dsnHttp.doGet(url, "", "");
     	}
     	
-    	return  GXKLSFoddsData;
+    	return  GD11X5oddsData;
    	
     }
     
     
-    public static boolean doBetGXKLSF(String[] betData, double percent, boolean opposite, String remainTime)
+    public static boolean doBetGD11X5(String[] betData, double percent, boolean opposite, String remainTime)
     {
 
     	String host = dsnHttp.ADDRESS;
        	
         String jsonParam = "";
         
-        if(previousGXKLSFBetNumber.equals(GXKLSFdrawNumber)) 
+        if(previousGD11X5BetNumber.equals(GD11X5drawNumber)) 
         	return false;
         
         
-        GXKLSFjinriqishu++;
+        GD11X5jinriqishu++;
         
-        GXKLSFdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(GXKLSFjinriqishu));
+        GD11X5detalsDataWindow.updateTextFieldjinriqishu(Integer.toString(GD11X5jinriqishu));
         
-        GXKLSFdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(GXKLSFzongqishu + GXKLSFjinriqishu));
+        GD11X5detalsDataWindow.updateTextFieldzongqishu(Integer.toString(GD11X5zongqishu + GD11X5jinriqishu));
         
         //如果未到封盘时间
-        if( GXKLSFdrawNumber != null){
+        if( GD11X5drawNumber != null){
         	
-        	//System.out.printf("下注重庆时时彩第%s期\n",GXKLSFdrawNumber);
-        	String outputStr = "下注重庆幸运农场第" + GXKLSFdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
+        	//System.out.printf("下注重庆时时彩第%s期\n",GD11X5drawNumber);
+        	String outputStr = "下注重庆幸运农场第" + GD11X5drawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
-/*        	if(isEmptyData(betData, BetType.GXKLSF)) {
+/*        	if(isEmptyData(betData, BetType.GD11X5)) {
         		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}*/
         	
-        	jsonParam = constructBetsData(betData, percent, BetType.GXKLSF, opposite);
+        	jsonParam = constructBetsData(betData, percent, BetType.GD11X5, opposite);
         	
         	//在投注金额窗口显示,只显示百分之一
-        	String jsonStr = constructBetsData(betData, 0.01, BetType.GXKLSF, opposite);
+        	String jsonStr = constructBetsData(betData, 0.01, BetType.GD11X5, opposite);
         	
-        	addToBetAmountWindow(jsonStr, BetType.GXKLSF);
+        	addToBetAmountWindow(jsonStr, BetType.GD11X5);
         	
         	
         	if(jsonParam == "") {
         		
-        		previousGXKLSFBetNumber = GXKLSFdrawNumber;
+        		previousGD11X5BetNumber = GD11X5drawNumber;
         		
         		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
@@ -290,7 +290,7 @@ public class BetGXKLSFManager {
         	response = dsnHttp.bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
         	
-        	boolean betRes = isBetSuccess(GXKLSFdrawNumber);
+        	boolean betRes = isBetSuccess(GD11X5drawNumber);
         	
         	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("�ڲ�����") == true)){
         		response = dsnHttp.bet(host + "/member/bet", jsonParam, "UTF-8", "");
@@ -316,22 +316,22 @@ public class BetGXKLSFManager {
         	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
         	
         	if(result == false){
-    			GXKLSFdetalsDataWindow.addData(df.format(new Date()), GXKLSFdrawNumber, 2, Integer.toString(GXKLSFbetTotalAmount), Integer.toString(GXKLSFbishu));
+    			GD11X5detalsDataWindow.addData(df.format(new Date()), GD11X5drawNumber, 2, Integer.toString(GD11X5betTotalAmount), Integer.toString(GD11X5bishu));
 
-    			unknowStatGXKLSFDraw.add(GXKLSFdrawNumber);
+    			unknowStatGD11X5Draw.add(GD11X5drawNumber);
     			
-    			GXKLSFdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(unknowStatGXKLSFDraw.size()));
+    			GD11X5detalsDataWindow.updateTextFieldjinriyichang(Integer.toString(unknowStatGD11X5Draw.size()));
     			
         	}
         	else{
-    			GXKLSFdetalsDataWindow.addData(df.format(new Date()), GXKLSFdrawNumber, 0, Integer.toString(GXKLSFbetTotalAmount), Integer.toString(GXKLSFbishu));        		
+    			GD11X5detalsDataWindow.addData(df.format(new Date()), GD11X5drawNumber, 0, Integer.toString(GD11X5betTotalAmount), Integer.toString(GD11X5bishu));        		
         	}
         	
-        	unCalcProfitGXKLSFDraw.add(GXKLSFdrawNumber);
+        	unCalcProfitGD11X5Draw.add(GD11X5drawNumber);
         	
 
         	    
-        	if(!previousGXKLSFBetNumber.equals(GXKLSFdrawNumber)) { //避免重复计数
+        	if(!previousGD11X5BetNumber.equals(GD11X5drawNumber)) { //避免重复计数
 /*        		if(result == true) {
 					successTimes++;
 					autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
@@ -348,8 +348,8 @@ public class BetGXKLSFManager {
 				autoBet.labelFailBets.setText("失败次数:" + failTimes);*/
         	}
 			
-			previousGXKLSFBetNumber = GXKLSFdrawNumber;
-        	previousGXKLSFBetResult = result;
+			previousGD11X5BetNumber = GD11X5drawNumber;
+        	previousGD11X5BetResult = result;
         	
         	return result;
         
@@ -380,11 +380,11 @@ public class BetGXKLSFManager {
 
 
 	    		
-    		if(GXKLSFoddsData == null){
-    			getGXKLSFoddsData();
+    		if(GD11X5oddsData == null){
+    			getGD11X5oddsData();
     		}
 	    		
-	    	oddsData = GXKLSFoddsData;
+	    	oddsData = GD11X5oddsData;
 	    	
 	    	
 	    	oddsGrabData = new JSONObject(oddsData);
@@ -392,8 +392,8 @@ public class BetGXKLSFManager {
 	    	for(int i = 0; i < data.length; i++){
     		
     		
-            	JSONArray GXKLSFLMGrabData = new JSONArray(data[i]);        	
-            	JSONArray gamesGrabData = GXKLSFLMGrabData.getJSONArray(0);
+            	JSONArray GD11X5LMGrabData = new JSONArray(data[i]);        	
+            	JSONArray gamesGrabData = GD11X5LMGrabData.getJSONArray(0);
 
         	
 	        	for(int j = 0; j < gamesGrabData.length(); j++){
@@ -515,9 +515,9 @@ public class BetGXKLSFManager {
 	    	betsObj.put("bets", gamesArray);
 	    	
 
-        	betsObj.put("drawNumber",GXKLSFdrawNumber);
+        	betsObj.put("drawNumber",GD11X5drawNumber);
         	
-        	betsObj.put("lottery", "GXKLSF");
+        	betsObj.put("lottery", "GD11X5");
 
 	    	
 	    	res = betsObj.toString();
@@ -536,12 +536,12 @@ public class BetGXKLSFManager {
     	return true;
     }
     
-    public static void showGXKLSFDeatilsTable(){
-    	GXKLSFdetalsDataWindow.setVisible(true);
+    public static void showGD11X5DeatilsTable(){
+    	GD11X5detalsDataWindow.setVisible(true);
     }
     
-    public static String getGXKLSFdrawNumber(){
-    	return GXKLSFdrawNumber;
+    public static String getGD11X5drawNumber(){
+    	return GD11X5drawNumber;
     }
     
     
@@ -555,7 +555,7 @@ public class BetGXKLSFManager {
         	JSONArray gamesData = betsData.getJSONArray("bets");
         	int totalAmount = 0;
         	
-        	GXKLSFbishu = gamesData.length();
+        	GD11X5bishu = gamesData.length();
         	
         	for(int i = 1; i <= 8 ; i++){
         		String gameDX = "DX" + Integer.toString(i);
@@ -713,7 +713,7 @@ public class BetGXKLSFManager {
 			autoBet.outputGUIMessage("\n");
 			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
 			
-			GXKLSFbetTotalAmount = totalAmount;
+			GD11X5betTotalAmount = totalAmount;
     			
         	
     	}catch(Exception e){
@@ -737,7 +737,7 @@ public class BetGXKLSFManager {
         	JSONArray gamesData = betsData.getJSONArray("bets");
         	int totalAmount = 0;
         	
-        	GXKLSFbishu = gamesData.length();
+        	GD11X5bishu = gamesData.length();
         	
         	for(int i = 1; i <= 8 ; i++){
         		String gameDX = "DX" + Integer.toString(i);
@@ -806,27 +806,27 @@ public class BetGXKLSFManager {
 				if(amountDX != 0 ){
 						outputStr  = String.format("第%s球   %s", Integer.toString(i), contentsDX);
 
-						GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountDX));
+						GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountDX));
 				}
 				
 				if(amountDS != 0 ){
 					outputStr  = String.format("第%s球   %s", Integer.toString(i), contentsDS);
-					GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountDS));
+					GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountDS));
 				}
 				
 				if(amountWDX != 0 ){
 					outputStr  = String.format("第%s球   %s", Integer.toString(i), contentsWDX);
-					GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountWDX));
+					GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountWDX));
 				}
 				
 				if(amountHDS != 0 ){
 					outputStr  = String.format("第%s球   %s", Integer.toString(i), contentsHDS);
-					GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountHDS));
+					GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountHDS));
 				}
 				
 				if(amountLH != 0 ){
 					outputStr  = String.format("第%s球   %s", Integer.toString(i), contentsLH);
-					GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountLH));
+					GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountLH));
 				}
 				
 				
@@ -872,23 +872,23 @@ public class BetGXKLSFManager {
 			String outputStr = "";
 			if(amountZDX != 0){
 				outputStr  = String.format("总%s",  contentsZDX);
-				GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountZDX));
+				GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountZDX));
 			}
 			
 			if(amountZDS != 0){
 				outputStr  = String.format("总%s",  contentsZDS);
-				GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountZDS));
+				GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountZDS));
 			}
 			
 			if(amountZWDX != 0){
 				outputStr  = String.format("总%s",  contentsZWDX);
-				GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountZWDX));
+				GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountZWDX));
 			}
 			
 			autoBet.outputGUIMessage("\n");
 			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
 			
-			GXKLSFbetTotalAmount = totalAmount;
+			GD11X5betTotalAmount = totalAmount;
 
     			
         	
@@ -901,75 +901,75 @@ public class BetGXKLSFManager {
     
     
     public static Vector<String> getUnCalcProfitBJSCDraw(){
-    	return unCalcProfitGXKLSFDraw;
+    	return unCalcProfitGD11X5Draw;
     }
     
-    public static void updateUnCalcGXKLSFDraw(Vector<String> calcedDraw){
+    public static void updateUnCalcGD11X5Draw(Vector<String> calcedDraw){
     	for(int i =0; i < calcedDraw.size(); i++){
-    		unCalcProfitGXKLSFDraw.removeElement(calcedDraw.elementAt(i));
-    		unknowStatGXKLSFDraw.removeElement(calcedDraw.elementAt(i));
+    		unCalcProfitGD11X5Draw.removeElement(calcedDraw.elementAt(i));
+    		unknowStatGD11X5Draw.removeElement(calcedDraw.elementAt(i));
     	}  
     	
     	
-    	long currentDraw = Long.parseLong(GXKLSFdrawNumber);
+    	long currentDraw = Long.parseLong(GD11X5drawNumber);
     	
-    	for(int j =0; j < unCalcProfitGXKLSFDraw.size(); j++){
-    		long idrawNumber = Long.parseLong(unCalcProfitGXKLSFDraw.elementAt(j));
+    	for(int j =0; j < unCalcProfitGD11X5Draw.size(); j++){
+    		long idrawNumber = Long.parseLong(unCalcProfitGD11X5Draw.elementAt(j));
     		if((currentDraw - idrawNumber) >= 4){
-    			unCalcProfitGXKLSFDraw.removeElement(unCalcProfitGXKLSFDraw.elementAt(j));
+    			unCalcProfitGD11X5Draw.removeElement(unCalcProfitGD11X5Draw.elementAt(j));
     		}
     	}
     	
     	
-    	int yichangshu1 = unknowStatGXKLSFDraw.size();
+    	int yichangshu1 = unknowStatGD11X5Draw.size();
     	
-    	for(int j =0; j < unknowStatGXKLSFDraw.size(); j++){
-    		long idrawNumber = Long.parseLong(unknowStatGXKLSFDraw.elementAt(j));
+    	for(int j =0; j < unknowStatGD11X5Draw.size(); j++){
+    		long idrawNumber = Long.parseLong(unknowStatGD11X5Draw.elementAt(j));
     		if((currentDraw - idrawNumber) >= 4){
-    			updateGXKLSFWindowdetailsData(unknowStatGXKLSFDraw.elementAt(j), TYPEINDEX.STATC.ordinal(), "1");
-    			unknowStatGXKLSFDraw.removeElement(unknowStatGXKLSFDraw.elementAt(j));
+    			updateGD11X5WindowdetailsData(unknowStatGD11X5Draw.elementAt(j), TYPEINDEX.STATC.ordinal(), "1");
+    			unknowStatGD11X5Draw.removeElement(unknowStatGD11X5Draw.elementAt(j));
 
     		}
     	}
     	
-    	int yichangshu2 = unknowStatGXKLSFDraw.size();
+    	int yichangshu2 = unknowStatGD11X5Draw.size();
     	
-    	GXKLSFjinriyichang = unknowStatGXKLSFDraw.size();
+    	GD11X5jinriyichang = unknowStatGD11X5Draw.size();
     	
-    	GXKLSFjinrishibai += yichangshu1 - yichangshu2;
-    	
-    	
+    	GD11X5jinrishibai += yichangshu1 - yichangshu2;
     	
     	
     	
-    	GXKLSFdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(GXKLSFjinrishibai));
-    	GXKLSFdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(GXKLSFjinriyichang));
+    	
+    	
+    	GD11X5detalsDataWindow.updateTextFieldjinrishibai(Integer.toString(GD11X5jinrishibai));
+    	GD11X5detalsDataWindow.updateTextFieldjinriyichang(Integer.toString(GD11X5jinriyichang));
     	
     	
     	
-    	GXKLSFdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(GXKLSFzongqishu + GXKLSFjinriqishu));
+    	GD11X5detalsDataWindow.updateTextFieldzongqishu(Integer.toString(GD11X5zongqishu + GD11X5jinriqishu));
     	
-    	GXKLSFdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(GXKLSFzongshibai + GXKLSFjinrishibai));
+    	GD11X5detalsDataWindow.updateTextFieldzongshibai(Integer.toString(GD11X5zongshibai + GD11X5jinrishibai));
     	
     	
     }
     
-    public static void updateGXKLSFWindowdetailsData(String drawNumber, int index, String value){
-    	GXKLSFdetalsDataWindow.updateRowItem(drawNumber, index, value);
+    public static void updateGD11X5WindowdetailsData(String drawNumber, int index, String value){
+    	GD11X5detalsDataWindow.updateRowItem(drawNumber, index, value);
     }
     
-    public static void showGXKLSFBetAmountTable(){
-    	GXKLSFBetAmountWindow.setVisible(true);
+    public static void showGD11X5BetAmountTable(){
+    	GD11X5BetAmountWindow.setVisible(true);
     }
     
-    public static void updateGXKLSFBalance(String str){
-    	GXKLSFdetalsDataWindow.updateTextFieldyue(str);
+    public static void updateGD11X5Balance(String str){
+    	GD11X5detalsDataWindow.updateTextFieldyue(str);
     }
     
     
-    public static boolean isGXKLSFidle(){
+    public static boolean isGD11X5idle(){
     	boolean isIdle = false;
-    	if(GXKLSFremainTime < 0 || GXKLSFremainTime > 40*1000 ){
+    	if(GD11X5remainTime < 0 || GD11X5remainTime > 40*1000 ){
     		isIdle = true;
     	}
     	
@@ -977,26 +977,26 @@ public class BetGXKLSFManager {
     }
     
     
-    public static void clearGXKLSFdetalsData(){
-    	if(unCalcProfitGXKLSFDraw.size() != 0){
-    		unCalcProfitGXKLSFDraw.clear();
+    public static void clearGD11X5detalsData(){
+    	if(unCalcProfitGD11X5Draw.size() != 0){
+    		unCalcProfitGD11X5Draw.clear();
     	}
     	
-    	if(unknowStatGXKLSFDraw.size() != 0){
-    		GXKLSFjinrishibai += unknowStatGXKLSFDraw.size();
-    		unknowStatGXKLSFDraw.clear();
+    	if(unknowStatGD11X5Draw.size() != 0){
+    		GD11X5jinrishibai += unknowStatGD11X5Draw.size();
+    		unknowStatGD11X5Draw.clear();
     	}
 
-    	GXKLSFzongqishu += GXKLSFjinriqishu;
-    	GXKLSFzongshibai += GXKLSFjinrishibai;
+    	GD11X5zongqishu += GD11X5jinriqishu;
+    	GD11X5zongshibai += GD11X5jinrishibai;
     	
 
     	
-    	GXKLSFjinriqishu = 0;
-    	GXKLSFjinrishibai = 0;
-    	GXKLSFjinriyichang = 0;
+    	GD11X5jinriqishu = 0;
+    	GD11X5jinrishibai = 0;
+    	GD11X5jinriyichang = 0;
     	
-    	GXKLSFremainTime = -1;
+    	GD11X5remainTime = -1;
 
     }
     

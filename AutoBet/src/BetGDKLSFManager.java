@@ -188,12 +188,18 @@ public class BetGDKLSFManager {
         int currentHour = date.getHours();
         int currentMinutes = date.getMinutes();
         int currentSeconds = date.getSeconds();
-
-        //两分钟缓冲
-        if( (currentHour*60 + currentMinutes < 10*60 - 5) && (currentHour * 60 + currentMinutes > 1 * 60 + 59))
-           return false;
         
-        return true;
+        /*if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
+        	return true;
+        }*/
+        
+        //两分钟分钟的缓冲
+        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 23 * 60)){
+        	return true;
+        }
+        
+        
+        return false;
     }
     
     
@@ -204,7 +210,7 @@ public class BetGDKLSFManager {
     
     
     public static String getGDKLSFoddsData(){
-    	String url = dsnHttp.ADDRESS + "/member/odds?lottery=GDKLSF&games=ZDS%2CZDX%2CZWDX%2CYDX1%2CYDX2%2CYDX3%2CYDX4%2CYDX5%2CYDS1%2CYDS2%2CYDS3%2CYDS4%2CYDS5%2CYWDX1%2CYWDX2%2CYWDX3%2CYWDX4%2CYWDX5%2CYHDS1%2CYHDS2%2CYHDS3%2CYHDS4%2CYHDS5%2CLH15&_=";
+    	String url = dsnHttp.ADDRESS + "/member/odds?lottery=GDKLSF&games=DX1%2CDX2%2CDX3%2CDX4%2CDX5%2CDX6%2CDX7%2CDX8%2CWDX1%2CWDX2%2CWDX3%2CWDX4%2CWDX5%2CWDX6%2CWDX7%2CWDX8%2CDS1%2CDS2%2CDS3%2CDS4%2CDS5%2CDS6%2CDS7%2CDS8%2CHDS1%2CHDS2%2CHDS3%2CHDS4%2CHDS5%2CHDS6%2CHDS7%2CHDS8%2CZDX%2CZDS%2CZWDX%2CLH1%2CLH2%2CLH3%2CLH4&_=";
     	url += Long.toString(System.currentTimeMillis());
     	
     	GDKLSFoddsData = dsnHttp.doGet(url, "", "");

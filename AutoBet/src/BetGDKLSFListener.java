@@ -36,7 +36,7 @@ public class BetGDKLSFListener implements ActionListener
 	
 		BetGDKLSFThread.betOppositeGDKLSF = true;
 		
-		String outputStr = "开始反投幸运农场,投注比例：" + BetGDKLSFThread.betGDKLSFPercent + "\n";
+		String outputStr = "开始反投广东快乐十分,投注比例：" + BetGDKLSFThread.betGDKLSFPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		

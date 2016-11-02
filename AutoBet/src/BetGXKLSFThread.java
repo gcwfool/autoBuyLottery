@@ -51,7 +51,7 @@ class BetGXKLSFThread extends Thread{
 						GXKLSFremainTime = BetGXKLSFManager.getGXKLSFlocalRemainTime();
 					}
 					
-					System.out.println("[迪斯尼会员]距离幸运农场封盘时间为:");
+					System.out.println("[迪斯尼会员]距离广西快乐十分封盘时间为:");
 					System.out.println(GXKLSFremainTime/1000);			
 					
 					if((GXKLSFremainTime > 0 && GXKLSFremainTime <= 40*1000)) {//如果将近封盘不发请求，获取本地时间
@@ -62,7 +62,7 @@ class BetGXKLSFThread extends Thread{
 					GXKLSFremainTime = BetGXKLSFManager.getGXKLSFlocalRemainTime();
 					
 					
-					System.out.println("[迪斯尼会员]距离幸运农场封盘时间为[local]:");
+					System.out.println("[迪斯尼会员]距离广西快乐十分封盘时间为[local]:");
 					System.out.println(GXKLSFremainTime/1000);					
 
 					
@@ -99,7 +99,7 @@ class BetGXKLSFThread extends Thread{
 
 				
 				
-				if((betGXKLSF || betOppositeGXKLSF)&&timeTobetGXKLSF){//最后十五秒秒去下注
+				if((betGXKLSF || betOppositeGXKLSF)&&timeTobetGXKLSF&&false){//最后十五秒秒去下注
 					
 					clearGXKLSFdetaisData = false;
 					
