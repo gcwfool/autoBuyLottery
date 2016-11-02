@@ -245,7 +245,7 @@ public class BetGDKLSFManager {
         if( GDKLSFdrawNumber != null){
         	
         	//System.out.printf("下注重庆时时彩第%s期\n",GDKLSFdrawNumber);
-        	String outputStr = "下注重庆幸运农场第" + GDKLSFdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
+        	String outputStr = "下注广东快乐十分第" + GDKLSFdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
 /*        	if(isEmptyData(betData, BetType.GDKLSF)) {
@@ -885,10 +885,7 @@ public class BetGDKLSFManager {
 				GDKLSFBetAmountWindow.addData(df.format(new Date()), GDKLSFdrawNumber, outputStr, Integer.toString(amountZWDX));
 			}
 			
-			autoBet.outputGUIMessage("\n");
-			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
-			
-			GDKLSFbetTotalAmount = totalAmount;
+
 
     			
         	

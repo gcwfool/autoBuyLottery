@@ -523,6 +523,10 @@ public class dsnHttp {
     		targetlottery = "重庆时时彩";
     	}else if(bettype == BetType.XYNC) {
     		targetlottery = "重庆幸运农场";
+    	}else if(bettype == BetType.GXKLSF){
+    		targetlottery = "广西快乐十分";
+    	}else if(bettype == BetType.GDKLSF){
+    		targetlottery = "广东快乐十分";
     	}
     	
     	String lottery = "";

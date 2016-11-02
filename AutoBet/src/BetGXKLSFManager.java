@@ -245,7 +245,7 @@ public class BetGXKLSFManager {
         if( GXKLSFdrawNumber != null){
         	
         	//System.out.printf("下注重庆时时彩第%s期\n",GXKLSFdrawNumber);
-        	String outputStr = "下注重庆幸运农场第" + GXKLSFdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
+        	String outputStr = "下注广西快乐十分第" + GXKLSFdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
 /*        	if(isEmptyData(betData, BetType.GXKLSF)) {
@@ -268,9 +268,7 @@ public class BetGXKLSFManager {
         		
         		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
-        		
-        		
-        		
+
         		return false;
         	}
         
@@ -557,14 +555,14 @@ public class BetGXKLSFManager {
         	
         	GXKLSFbishu = gamesData.length();
         	
-        	for(int i = 1; i <= 8 ; i++){
-        		String gameDX = "DX" + Integer.toString(i);
-        		String gameDS = "DS" + Integer.toString(i);
+        	for(int i = 1; i <= 5 ; i++){
+        		String gameDX = "YDX" + Integer.toString(i);
+        		String gameDS = "YDS" + Integer.toString(i);
         		
-        		String gameWDX = "WDX" + Integer.toString(i);
-        		String gameHDS = "HDS" + Integer.toString(i);
+        		String gameWDX = "YWDX" + Integer.toString(i);
+        		String gameHDS = "YHDS" + Integer.toString(i);
         		
-        		String gameLH = "LH" + Integer.toString(i);
+        		//String gameLH = "LH" + Integer.toString(i);
         		
         		JSONObject gameData;
         		
@@ -580,8 +578,8 @@ public class BetGXKLSFManager {
         		int amountHDS = 0;
         		String contentsHDS = "";
         		
-        		int amountLH = 0;
-        		String contentsLH = "";
+/*        		int amountLH = 0;
+        		String contentsLH = "";*/
         		
         		
         		for(int j = 0; j < gamesData.length(); j++){
@@ -610,11 +608,11 @@ public class BetGXKLSFManager {
         				contentsHDS = contentsHDS.equals("D")?"合单":"合双";
         			}
         			
-        			if(game.equals(gameLH)){
+/*        			if(game.equals(gameLH)){
         				amountLH = gameData.getInt("amount");
         				contentsLH = gameData.getString("contents");
         				contentsLH = contentsLH.equals("D")?"龙":"虎";
-        			}
+        			}*/
 
         		}
         		
@@ -645,11 +643,11 @@ public class BetGXKLSFManager {
 					totalAmount += amountHDS;
 				}
 				
-				if(amountLH != 0 ){
+/*				if(amountLH != 0 ){
 					outputStr  = String.format("第%s球   %s: %d,", Integer.toString(i), contentsLH, amountLH);
 					autoBet.outputGUIMessage(outputStr);
 					totalAmount += amountLH;
-				}
+				}*/
 				
 				autoBet.outputGUIMessage("\n");
         		
@@ -658,15 +656,17 @@ public class BetGXKLSFManager {
         	String gameZDX = "ZDX";
         	String gameZDS = "ZDS";
         	String gameZWDX = "ZWDX";
-        	
+        	String gameLH15 = "LH15";
         	
         	int amountZDX = 0;
         	int amountZDS = 0;
         	int amountZWDX = 0;
+        	int amountLH15 = 0;
         	
         	String contentsZDX = "";
         	String contentsZDS = "";
         	String contentsZWDX = "";
+        	String contentsLH15 = "";
         	
     		for(int j = 0; j < gamesData.length(); j++){
     			JSONObject gameData;
@@ -687,6 +687,12 @@ public class BetGXKLSFManager {
     				amountZWDX = gameData.getInt("amount");  
     				contentsZWDX = gameData.getString("contents");
     				contentsZWDX = contentsZWDX.equals("D")?"尾大":"尾小";
+    			}
+    			
+    			if(game.equals(gameLH15)){
+    				amountLH15 = gameData.getInt("amount");  
+    				contentsLH15 = gameData.getString("contents");
+    				contentsLH15 = contentsLH15.equals("L")?"龙":"虎";
     			}
 	
     		}
@@ -709,6 +715,13 @@ public class BetGXKLSFManager {
 				autoBet.outputGUIMessage(outputStr);
 				totalAmount += amountZWDX;
 			}
+			
+			if(amountLH15 != 0){
+				outputStr  = String.format("龙%s: %d,",  contentsLH15, amountLH15);
+				autoBet.outputGUIMessage(outputStr);
+				totalAmount += amountLH15;
+			}
+			
 			
 			autoBet.outputGUIMessage("\n");
 			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
@@ -739,14 +752,13 @@ public class BetGXKLSFManager {
         	
         	GXKLSFbishu = gamesData.length();
         	
-        	for(int i = 1; i <= 8 ; i++){
-        		String gameDX = "DX" + Integer.toString(i);
-        		String gameDS = "DS" + Integer.toString(i);
+        	for(int i = 1; i <= 5 ; i++){
+        		String gameDX = "YDX" + Integer.toString(i);
+        		String gameDS = "YDS" + Integer.toString(i);
         		
-        		String gameWDX = "WDX" + Integer.toString(i);
-        		String gameHDS = "HDS" + Integer.toString(i);
+        		String gameWDX = "YWDX" + Integer.toString(i);
+        		String gameHDS = "YHDS" + Integer.toString(i);
         		
-        		String gameLH = "LH" + Integer.toString(i);
         		
         		JSONObject gameData;
         		
@@ -762,8 +774,7 @@ public class BetGXKLSFManager {
         		int amountHDS = 0;
         		String contentsHDS = "";
         		
-        		int amountLH = 0;
-        		String contentsLH = "";
+
         		
         		
         		for(int j = 0; j < gamesData.length(); j++){
@@ -792,11 +803,7 @@ public class BetGXKLSFManager {
         				contentsHDS = contentsHDS.equals("D")?"合单":"合双";
         			}
         			
-        			if(game.equals(gameLH)){
-        				amountLH = gameData.getInt("amount");
-        				contentsLH = gameData.getString("contents");
-        				contentsLH = contentsLH.equals("D")?"龙":"虎";
-        			}
+
 
         		}
         		
@@ -824,10 +831,7 @@ public class BetGXKLSFManager {
 					GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountHDS));
 				}
 				
-				if(amountLH != 0 ){
-					outputStr  = String.format("第%s球   %s", Integer.toString(i), contentsLH);
-					GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountLH));
-				}
+
 				
 				
         		
@@ -836,15 +840,17 @@ public class BetGXKLSFManager {
         	String gameZDX = "ZDX";
         	String gameZDS = "ZDS";
         	String gameZWDX = "ZWDX";
-        	
+        	String gameLH15 = "LH15";
         	
         	int amountZDX = 0;
         	int amountZDS = 0;
         	int amountZWDX = 0;
+        	int amountLH15 = 0;
         	
         	String contentsZDX = "";
         	String contentsZDS = "";
         	String contentsZWDX = "";
+        	String contentsLH15 = "";
         	
     		for(int j = 0; j < gamesData.length(); j++){
     			JSONObject gameData;
@@ -866,6 +872,12 @@ public class BetGXKLSFManager {
     				contentsZWDX = gameData.getString("contents");
     				contentsZWDX = contentsZWDX.equals("D")?"尾大":"尾小";
     			}
+    			
+    			if(game.equals(gameLH15)){
+    				amountLH15 = gameData.getInt("amount");  
+    				contentsLH15 = gameData.getString("contents");
+    				contentsLH15 = contentsLH15.equals("L")?"龙":"虎";
+    			}
 	
     		}
     		
@@ -885,8 +897,13 @@ public class BetGXKLSFManager {
 				GXKLSFBetAmountWindow.addData(df.format(new Date()), GXKLSFdrawNumber, outputStr, Integer.toString(amountZWDX));
 			}
 			
-			autoBet.outputGUIMessage("\n");
-			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
+			if(amountLH15 != 0){
+				outputStr  = String.format("龙%s: %d,",  contentsLH15, amountLH15);
+				autoBet.outputGUIMessage(outputStr);
+				totalAmount += amountLH15;
+			}
+			
+
 			
 			GXKLSFbetTotalAmount = totalAmount;
 

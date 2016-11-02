@@ -99,7 +99,7 @@ class BetGXKLSFThread extends Thread{
 
 				
 				
-				if((betGXKLSF || betOppositeGXKLSF)&&timeTobetGXKLSF&&false){//最后十五秒秒去下注
+				if((betGXKLSF || betOppositeGXKLSF)&&timeTobetGXKLSF){//最后十五秒秒去下注
 					
 					clearGXKLSFdetaisData = false;
 					
@@ -108,7 +108,7 @@ class BetGXKLSFThread extends Thread{
 					
 					for(int i = 0; i < 4; i++) {
 						//todo
-						if((betGXKLSFData = client.getXYNCdata()) == null){
+						if((betGXKLSFData = client.getGXKLdata()) == null){
 							Thread.currentThread().sleep(1*1000);
 						}
 						else {
@@ -120,14 +120,14 @@ class BetGXKLSFThread extends Thread{
 						System.out.println("[迪斯尼会员]下单失败,未获取到下单数据");
 					} else if(betGXKLSFData != null &&betGXKLSFData[0].equals(BetGXKLSFManager.getGXKLSFdrawNumber())) {
 						
-						String[] betsData = {betGXKLSFData[1], betGXKLSFData[2],betGXKLSFData[3],betGXKLSFData[4],betGXKLSFData[5],betGXKLSFData[6],betGXKLSFData[7],betGXKLSFData[8],betGXKLSFData[9]};
+						String[] betsData = {betGXKLSFData[1]};
 						
 /*						System.out.println("[迪斯尼会员]下单数据：");
 						System.out.println(betGXKLSFData[1]);*/
 						
 						
 						
-						autoBetSuccess = BetGXKLSFManager.doBetGXKLSF(betsData, betGXKLSFPercent, betOppositeGXKLSF, betGXKLSFData[10]);
+						autoBetSuccess = BetGXKLSFManager.doBetGXKLSF(betsData, betGXKLSFPercent, betOppositeGXKLSF, betGXKLSFData[2]);
 						
 						if(autoBetSuccess == true){
 							//dsnHttp.setCQSSCBetData(betsData);

@@ -99,7 +99,7 @@ class BetGDKLSFThread extends Thread{
 
 				
 				
-				if((betGDKLSF || betOppositeGDKLSF)&&timeTobetGDKLSF&&false){//最后十五秒秒去下注
+				if((betGDKLSF || betOppositeGDKLSF)&&timeTobetGDKLSF){//最后十五秒秒去下注
 					
 					clearGDKLSFdetaisData = false;
 					
@@ -108,7 +108,7 @@ class BetGDKLSFThread extends Thread{
 					
 					for(int i = 0; i < 4; i++) {
 						//todo
-						if((betGDKLSFData = client.getXYNCdata()) == null){
+						if((betGDKLSFData = client.getGDKLdata()) == null){
 							Thread.currentThread().sleep(1*1000);
 						}
 						else {

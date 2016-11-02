@@ -215,6 +215,9 @@ public class autoBet{
 		if(Common.isNum(betTime)){
 			int timeSeconds = Integer.parseInt(betTime);
 			BetThread.betRemainTime = timeSeconds*1000;
+			BetXYNCThread.betRemainTime =  timeSeconds*1000;
+			BetGDKLSFThread.betRemainTime =  timeSeconds*1000;
+			BetGXKLSFThread.betRemainTime =  timeSeconds*1000;
 			BetTianCaiThread.betRemainTime = timeSeconds;
 		}
 		else{
