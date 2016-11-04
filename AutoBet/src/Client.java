@@ -16,11 +16,15 @@ public class Client extends Thread{
     String [] dataXYNC = {"", "", "", "", "","", "", "", "", "", ""};
     String [] dataGDKL = {"", "", "", "", "","", "", "", "", "", ""};
     String [] dataGXKL = {"", "", ""};
+    String [] dataXJSSC = {"", "", ""};
+    String [] dataTJSSC = {"", "", ""};
     boolean grabBJSC = true;
     boolean grabCQSSC = true;
     boolean grabXYNC = true;
     boolean grabGDKL = true;
     boolean grabGXKL = true;
+    boolean grabXJSSC = true;
+    boolean grabTJSSC = true;
     ReadWriteLock lock = new ReentrantReadWriteLock();
     
     String address = "";
@@ -386,6 +390,100 @@ public class Client extends Thread{
 					            	lock.writeLock().unlock();
 					            	//System.out.println("drawNumber:" + dataGXKL[0]);
 					            	//System.out.println("remainTime:" + dataGXKL[2]);
+					            } else {
+					            	System.out.println("【client】获取数据失败");
+					            }
+					            	
+					        } catch (JSONException e) {
+					    		System.out.println("【client】数据包错误");
+					    		e.printStackTrace();
+					    		try {
+					    			client.read(buffer1);
+					    		} catch(IOException io) {
+					    			io.printStackTrace();
+					    		}
+					    		brokenBag = true;
+					    	}
+		            	}
+		            	
+		            	if(grabXJSSC){
+			            	Map<String, String> map = new HashMap<String, String>();  
+			                map.put("request", "data");
+			                map.put("lottery", "XJSSC");  
+			                JSONObject json = new JSONObject(map);  
+			                String request = json.toString();
+				            ByteBuffer buffer = ByteBuffer.allocate(1024);
+				            ByteBuffer buffer1 = ByteBuffer.allocate(30960);
+				            buffer.put(request.getBytes());
+				            buffer.flip();
+					        client.write(buffer);
+					        String content = "";
+					        if(client.read(buffer1) == -1) {
+					        	break;
+					        }
+					        content += new String(buffer1.array());
+					        buffer1.clear();
+					           
+					        try {
+					            json = new JSONObject(content);
+					            if(json.getString("result").equals("true")) {
+					            	
+					            	String str1 = json.getString("drawNumber");
+					            	String str2 = json.getString("remainTime");
+					            	String str3 = json.getString("data");
+					            	
+					            	lock.writeLock().lock();
+					            	dataXJSSC[0] = str1;
+					            	dataXJSSC[2] = str2;
+					            	dataXJSSC[1] = str3;
+					            	lock.writeLock().unlock();
+					            } else {
+					            	System.out.println("【client】获取数据失败");
+					            }
+					            	
+					        } catch (JSONException e) {
+					    		System.out.println("【client】数据包错误");
+					    		e.printStackTrace();
+					    		try {
+					    			client.read(buffer1);
+					    		} catch(IOException io) {
+					    			io.printStackTrace();
+					    		}
+					    		brokenBag = true;
+					    	}
+		            	}
+		            	
+		            	if(grabTJSSC){
+			            	Map<String, String> map = new HashMap<String, String>();  
+			                map.put("request", "data");
+			                map.put("lottery", "TJSSC");  
+			                JSONObject json = new JSONObject(map);  
+			                String request = json.toString();
+				            ByteBuffer buffer = ByteBuffer.allocate(1024);
+				            ByteBuffer buffer1 = ByteBuffer.allocate(30960);
+				            buffer.put(request.getBytes());
+				            buffer.flip();
+					        client.write(buffer);
+					        String content = "";
+					        if(client.read(buffer1) == -1) {
+					        	break;
+					        }
+					        content += new String(buffer1.array());
+					        buffer1.clear();
+					           
+					        try {
+					            json = new JSONObject(content);
+					            if(json.getString("result").equals("true")) {
+					            	
+					            	String str1 = json.getString("drawNumber");
+					            	String str2 = json.getString("remainTime");
+					            	String str3 = json.getString("data");
+					            	
+					            	lock.writeLock().lock();
+					            	dataTJSSC[0] = str1;
+					            	dataTJSSC[2] = str2;
+					            	dataTJSSC[1] = str3;
+					            	lock.writeLock().unlock();
 					            } else {
 					            	System.out.println("【client】获取数据失败");
 					            }
