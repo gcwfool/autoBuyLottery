@@ -61,9 +61,11 @@ class BetGD11X5Thread extends Thread{
 				} else {		
 					GD11X5remainTime = BetGD11X5Manager.getGD11X5localRemainTime();
 					
-					
-					System.out.println("[迪斯尼会员]距离广东11选5封盘为[local]:");
-					System.out.println(GD11X5remainTime/1000);					
+					if(autoBetSuccess == false){
+						System.out.println("[迪斯尼会员]距离广东11选5封盘为[local]:");
+						System.out.println(GD11X5remainTime/1000);		
+					}
+			
 
 					
 					if((GD11X5remainTime <= 0 || GD11X5remainTime > 40*1000) ) {
@@ -73,6 +75,7 @@ class BetGD11X5Thread extends Thread{
 				
 				if(GD11X5remainTime < 0) {
 					getGD11X5OddsData = false;
+					autoBetSuccess = false;
 				}
 				
 				
@@ -83,8 +86,9 @@ class BetGD11X5Thread extends Thread{
 
 				//每盘拿一次赔率数据
 				if(!timeTobetGD11X5 && (GD11X5remainTime <= 90*1000) && GD11X5remainTime > 0 && getGD11X5OddsData == false){
-					BetGD11X5Manager.getGD11X5oddsData();
-					getGD11X5OddsData = true;
+					String res = BetGD11X5Manager.getGD11X5oddsData();
+					if(res != null)
+						getGD11X5OddsData = true;
 					
 				}
 				
@@ -118,12 +122,12 @@ class BetGD11X5Thread extends Thread{
 					
 					if(betGD11X5Data == null) {
 						System.out.println("[迪斯尼会员]下单失败,未获取到下单数据");
-					} else if(betGD11X5Data != null &&betGD11X5Data[0].equals(BetGD11X5Manager.getGD11X5drawNumber())) {
+					} else if(betGD11X5Data != null &&betGD11X5Data[0].equals(BetGD11X5Manager.getGD11X5drawNumber())&&autoBetSuccess == false) {
 						
 						String[] betsData = {betGD11X5Data[1], betGD11X5Data[2],betGD11X5Data[3],betGD11X5Data[4],betGD11X5Data[5],betGD11X5Data[6],betGD11X5Data[7],betGD11X5Data[8],betGD11X5Data[9]};
 						
-/*						System.out.println("[迪斯尼会员]下单数据：");
-						System.out.println(betGD11X5Data[1]);*/
+						System.out.println("[迪斯尼会员]广东11选5下单数据：");
+						System.out.println(betGD11X5Data[1]);
 						
 						
 						

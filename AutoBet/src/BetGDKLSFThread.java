@@ -61,9 +61,11 @@ class BetGDKLSFThread extends Thread{
 				} else {		
 					GDKLSFremainTime = BetGDKLSFManager.getGDKLSFlocalRemainTime();
 					
-					
-					System.out.println("[迪斯尼会员]距离广东快乐十分封盘为[local]:");
-					System.out.println(GDKLSFremainTime/1000);					
+					if(autoBetSuccess == false){
+						System.out.println("[迪斯尼会员]距离广东快乐十分封盘为[local]:");
+						System.out.println(GDKLSFremainTime/1000);	
+					}
+									
 
 					
 					if((GDKLSFremainTime <= 0 || GDKLSFremainTime > 40*1000) ) {
@@ -73,6 +75,8 @@ class BetGDKLSFThread extends Thread{
 				
 				if(GDKLSFremainTime < 0) {
 					getGDKLSFOddsData = false;
+					
+					autoBetSuccess = false;
 				}
 				
 				
@@ -83,8 +87,9 @@ class BetGDKLSFThread extends Thread{
 
 				//每盘拿一次赔率数据
 				if(!timeTobetGDKLSF && (GDKLSFremainTime <= 90*1000) && GDKLSFremainTime > 0 && getGDKLSFOddsData == false){
-					BetGDKLSFManager.getGDKLSFoddsData();
-					getGDKLSFOddsData = true;
+					String res = BetGDKLSFManager.getGDKLSFoddsData();
+					if(res != null)
+						getGDKLSFOddsData = true;
 					
 				}
 				
@@ -118,12 +123,12 @@ class BetGDKLSFThread extends Thread{
 					
 					if(betGDKLSFData == null) {
 						System.out.println("[迪斯尼会员]下单失败,未获取到下单数据");
-					} else if(betGDKLSFData != null &&betGDKLSFData[0].equals(BetGDKLSFManager.getGDKLSFdrawNumber())) {
+					} else if(betGDKLSFData != null && betGDKLSFData[0].equals(BetGDKLSFManager.getGDKLSFdrawNumber()) && autoBetSuccess == false) {
 						
 						String[] betsData = {betGDKLSFData[1], betGDKLSFData[2],betGDKLSFData[3],betGDKLSFData[4],betGDKLSFData[5],betGDKLSFData[6],betGDKLSFData[7],betGDKLSFData[8],betGDKLSFData[9]};
 						
-/*						System.out.println("[迪斯尼会员]下单数据：");
-						System.out.println(betGDKLSFData[1]);*/
+						System.out.println("[迪斯尼会员]广东快乐十分下单数据：");
+						System.out.println(betGDKLSFData[1]);
 						
 						
 						
