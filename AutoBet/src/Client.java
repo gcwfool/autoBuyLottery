@@ -19,6 +19,7 @@ public class Client extends Thread{
     String [] dataXJSSC = {"", "", ""};
     String [] dataTJSSC = {"", "", ""};
     String [] dataGD115 = {"", "", ""};
+    String [] dataBJKL8 = {"", "", ""};
     boolean grabBJSC = true;
     boolean grabCQSSC = true;
     boolean grabXYNC = true;
@@ -27,6 +28,7 @@ public class Client extends Thread{
     boolean grabXJSSC = true;
     boolean grabTJSSC = true;
     boolean grabGD115 = true;
+    boolean grabBJKL8 = true;
     ReadWriteLock lock = new ReentrantReadWriteLock();
     
     String address = "";
@@ -548,6 +550,53 @@ public class Client extends Thread{
 					    		brokenBag = true;
 					    	}
 		            	}
+		            	
+		            	if(grabBJKL8){
+			            	Map<String, String> map = new HashMap<String, String>();  
+			                map.put("request", "data");
+			                map.put("lottery", "BJKL8");  
+			                JSONObject json = new JSONObject(map);  
+			                String request = json.toString();
+				            ByteBuffer buffer = ByteBuffer.allocate(1024);
+				            ByteBuffer buffer1 = ByteBuffer.allocate(30960);
+				            buffer.put(request.getBytes());
+				            buffer.flip();
+					        client.write(buffer);
+					        String content = "";
+					        if(client.read(buffer1) == -1) {
+					        	break;
+					        }
+					        content += new String(buffer1.array());
+					        buffer1.clear();
+					           
+					        try {
+					            json = new JSONObject(content);
+					            if(json.getString("result").equals("true")) {
+					            	
+					            	String str1 = json.getString("drawNumber");
+					            	String str2 = json.getString("remainTime");
+					            	String str3 = json.getString("data");
+					            	
+					            	lock.writeLock().lock();
+					            	dataBJKL8[0] = str1;
+					            	dataBJKL8[2] = str2;
+					            	dataBJKL8[1] = str3;
+					            	lock.writeLock().unlock();
+					            } else {
+					            	System.out.println("【client】获取数据失败");
+					            }
+					            	
+					        } catch (JSONException e) {
+					    		System.out.println("【client】数据包错误");
+					    		e.printStackTrace();
+					    		try {
+					    			client.read(buffer1);
+					    		} catch(IOException io) {
+					    			io.printStackTrace();
+					    		}
+					    		brokenBag = true;
+					    	}
+		            	}
 
 			            
 			            //System.out.println("sleep");
@@ -604,6 +653,20 @@ public class Client extends Thread{
     public String [] getGDKLdata() {
     	lock.readLock().lock();
     	String [] data = (String [])dataGDKL.clone();
+    	lock.readLock().unlock();
+    	return data;
+    }
+    
+    public String [] getGD115data() {
+    	lock.readLock().lock();
+    	String [] data = (String [])dataGD115.clone();
+    	lock.readLock().unlock();
+    	return data;
+    }
+    
+    public String [] getBJKL8data() {
+    	lock.readLock().lock();
+    	String [] data = (String [])dataBJKL8.clone();
     	lock.readLock().unlock();
     	return data;
     }
