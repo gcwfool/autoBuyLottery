@@ -671,4 +671,90 @@ public class Client extends Thread{
     	return data;
     }
     
+    public String [] getXJSSCdata() {
+    	lock.readLock().lock();
+    	String [] data = (String [])dataXJSSC.clone();
+    	lock.readLock().unlock();
+    	return data;
+    }
+    
+    public String [] getTJSSCdata() {
+    	lock.readLock().lock();
+    	String [] data = (String [])dataTJSSC.clone();
+    	lock.readLock().unlock();
+    	return data;
+    }
+    
+    public void setRequestCQSSC(boolean req) {
+    	if(req) {
+    		grabCQSSC = true;
+    	} else {
+    		grabCQSSC = false;
+    	}
+    }
+    
+    public void setRequestBJSC(boolean req) {
+    	if(req) {
+    		grabBJSC = true;
+    	} else {
+    		grabBJSC = false;
+    	}
+    }
+    
+    public void setRequestXYNC(boolean req) {
+    	if(req) {
+    		grabXYNC = true;
+    	} else {
+    		grabXYNC = false;
+    	}
+    }
+    
+    public void setRequestGXKL(boolean req) {
+    	if(req) {
+    		grabGXKL = true;
+    	} else {
+    		grabGXKL = false;
+    	}
+    }
+    
+    public void setRequestGDKL(boolean req) {
+    	if(req) {
+    		grabGDKL = true;
+    	} else {
+    		grabGDKL = false;
+    	}
+    }
+    
+    public void setRequestTJSSC(boolean req) {
+    	if(req) {
+    		grabTJSSC = true;
+    	} else {
+    		grabTJSSC = false;
+    	}
+    }
+    
+    public void setRequestXJSSC(boolean req) {
+    	if(req) {
+    		grabXJSSC = true;
+    	} else {
+    		grabXJSSC = false;
+    	}
+    }
+    
+    public void setRequestGD115(boolean req) {
+    	if(req) {
+    		grabGD115 = true;
+    	} else {
+    		grabGD115 = false;
+    	}
+    }
+    
+    public void setRequestBJKL8(boolean req) {
+    	if(req) {
+    		grabBJKL8 = true;
+    	} else {
+    		grabBJKL8 = false;
+    	}
+    }
+    
 }
