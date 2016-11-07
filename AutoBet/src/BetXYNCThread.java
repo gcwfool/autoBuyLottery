@@ -61,9 +61,11 @@ class BetXYNCThread extends Thread{
 				} else {		
 					XYNCremainTime = BetXYNCManager.getXYNClocalRemainTime();
 					
-					
-					System.out.println("[迪斯尼会员]距离幸运农场封盘时间为[local]:");
-					System.out.println(XYNCremainTime/1000);					
+					if(autoBetSuccess == false){
+						System.out.println("[迪斯尼会员]距离幸运农场封盘时间为[local]:");
+						System.out.println(XYNCremainTime/1000);	
+					}
+				
 
 					
 					if((XYNCremainTime <= 0 || XYNCremainTime > 40*1000) ) {
@@ -73,6 +75,7 @@ class BetXYNCThread extends Thread{
 				
 				if(XYNCremainTime < 0) {
 					getXYNCOddsData = false;
+					autoBetSuccess = false;
 				}
 				
 				
@@ -83,8 +86,9 @@ class BetXYNCThread extends Thread{
 
 				//每盘拿一次赔率数据
 				if(!timeTobetXYNC && (XYNCremainTime <= 90*1000) && XYNCremainTime > 0 && getXYNCOddsData == false){
-					BetXYNCManager.getXYNCoddsData();
-					getXYNCOddsData = true;
+					String res = BetXYNCManager.getXYNCoddsData();
+					if(res != null)
+						getXYNCOddsData = true;
 					
 				}
 				
@@ -117,12 +121,12 @@ class BetXYNCThread extends Thread{
 					
 					if(betXYNCData == null) {
 						System.out.println("[迪斯尼会员]下单失败,未获取到下单数据");
-					} else if(betXYNCData != null &&betXYNCData[0].equals(BetXYNCManager.getXYNCdrawNumber())) {
+					} else if(betXYNCData != null &&betXYNCData[0].equals(BetXYNCManager.getXYNCdrawNumber()) && autoBetSuccess == false) {
 						
 						String[] betsData = {betXYNCData[1], betXYNCData[2],betXYNCData[3],betXYNCData[4],betXYNCData[5],betXYNCData[6],betXYNCData[7],betXYNCData[8],betXYNCData[9]};
 						
-/*						System.out.println("[迪斯尼会员]下单数据：");
-						System.out.println(betXYNCData[1]);*/
+						System.out.println("[迪斯尼会员]幸运农场下单数据：");
+						System.out.println(betXYNCData[1]);
 						
 						
 						

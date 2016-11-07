@@ -97,6 +97,8 @@ public class dsnHttp {
     static int BJSCjinrishibai = 0;
     static int BJSCjinriyichang = 0;
     
+    static public boolean isInRelogin = false;
+    
     
     //重庆时时彩投注详情窗口
     static Vector<String> unknowStatCQSSCDraw = new Vector<String>();    
@@ -589,6 +591,11 @@ public class dsnHttp {
             				continue;
             			
             			posStart = res.indexOf("lottery\">");
+            			
+            			if(posStart == -1){
+            				break;
+            			}
+            			
             			posEnd = res.indexOf("<", posStart);
             			
             			lottery = res.substring(posStart + 9, posEnd);
@@ -1024,7 +1031,7 @@ public class dsnHttp {
     }
     
     
-    public static void calcRequestAveTime(long requestTime){
+    public synchronized static void calcRequestAveTime(long requestTime){
         
     	if(bcalcRequestTime == true){
     		
@@ -1046,7 +1053,7 @@ public class dsnHttp {
             	avgRequestTime = totalReqeustTime/lastTenRequestTime.size();
             	
             	
-            	System.out.printf("[迪斯尼会员]平均请求时间:%d\n", avgRequestTime);
+            	//System.out.printf("[迪斯尼会员]平均请求时间:%d\n", avgRequestTime);
             	
             	
             	long currentTime = System.currentTimeMillis();
@@ -1285,7 +1292,7 @@ public class dsnHttp {
 					if(doGet(location, cookieCfduid, "") != null){
 						if(strCookies.indexOf("b1845c0da5f1") != -1) {
 							cookieb18 = strCookies; 
-							System.out.println("cookies: " + cookieCfduid + cookieb18);
+							//System.out.println("cookies: " + cookieCfduid + cookieb18);
 			        	}
 						return true;
 					}
@@ -3194,7 +3201,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     
     public static boolean isCQSSCidle(){
     	boolean isIdle = false;
-    	if(CQSSCremainTime < 0 || CQSSCremainTime > 40*1000 ){
+    	if(CQSSCremainTime < 0 || CQSSCremainTime > 25*1000 ){
     		isIdle = true;
     	}
     	
@@ -3203,7 +3210,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     
     public static boolean isBJSCidle(){
     	boolean isIdle = false;
-    	if(BJSCremainTime < 0 || BJSCremainTime > 40*1000 ){
+    	if(BJSCremainTime < 0 || BJSCremainTime > 25*1000 ){
     		isIdle = true;
     	}
     	
@@ -3214,7 +3221,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     public static boolean isAllLotteryIdle(){
     	boolean isIdle = false;
     	
-    	if(isBJSCidle() && isCQSSCidle() && BetXYNCManager.isXYNCidle()){
+    	if(isBJSCidle() && isCQSSCidle() && BetXYNCManager.isXYNCidle() && BetXYNCManager.isXYNCidle() &&  BetGDKLSFManager.isGDKLSFidle() &&BetGXKLSFManager.isGXKLSFidle() &&BetGD11X5Manager.isGD11X5idle()){
     		isIdle = true;
     	}
     	
@@ -3222,7 +3229,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     }
     
     
-    public static void addFailsTimes(){
+    public synchronized static void addFailsTimes(){
     	long currentTime = System.currentTimeMillis();
     	
     	if(((currentTime - lastFailtime) < 20*1000) || (lastFailtime == 0)){
@@ -3243,11 +3250,11 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     }
     
     
-    public static void setIsNeedRelogin(boolean flag){
+    public synchronized static void setIsNeedRelogin(boolean flag){
     	isNeedRelogin = flag;
     }
     
-    public static boolean getIsNeedRelogin(){
+    public synchronized static boolean getIsNeedRelogin(){
     	return isNeedRelogin;
     }
 }

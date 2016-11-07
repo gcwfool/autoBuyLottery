@@ -253,7 +253,7 @@ public class BetXYNCManager {
         	//在投注金额窗口显示,只显示百分之一
         	String jsonStr = constructBetsData(betData, 0.01, BetType.XYNC, opposite);
         	
-        	addToBetAmountWindow(jsonStr, BetType.XYNC);
+        	
         	
         	
         	if(jsonParam == "") {
@@ -268,6 +268,7 @@ public class BetXYNCManager {
         		return false;
         	}
         
+        	addToBetAmountWindow(jsonStr, BetType.XYNC);
         	
         	outputBetsDetails(jsonParam);	
         	
@@ -963,7 +964,7 @@ public class BetXYNCManager {
     
     public static boolean isXYNCidle(){
     	boolean isIdle = false;
-    	if(XYNCremainTime < 0 || XYNCremainTime > 40*1000 ){
+    	if(XYNCremainTime < 0 || XYNCremainTime > 25*1000 ){
     		isIdle = true;
     	}
     	

@@ -259,7 +259,7 @@ public class BetGXKLSFManager {
         	//在投注金额窗口显示,只显示百分之一
         	String jsonStr = constructBetsData(betData, 0.01, BetType.GXKLSF, opposite);
         	
-        	addToBetAmountWindow(jsonStr, BetType.GXKLSF);
+        	
         	
         	
         	if(jsonParam == "") {
@@ -272,6 +272,7 @@ public class BetGXKLSFManager {
         		return false;
         	}
         
+        	addToBetAmountWindow(jsonStr, BetType.GXKLSF);
         	
         	outputBetsDetails(jsonParam);	
         	
@@ -986,7 +987,7 @@ public class BetGXKLSFManager {
     
     public static boolean isGXKLSFidle(){
     	boolean isIdle = false;
-    	if(GXKLSFremainTime < 0 || GXKLSFremainTime > 40*1000 ){
+    	if(GXKLSFremainTime < 0 || GXKLSFremainTime > 25*1000 ){
     		isIdle = true;
     	}
     	

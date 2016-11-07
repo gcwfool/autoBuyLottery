@@ -17,7 +17,9 @@ enum BetType{
 	XYNC,
 	GXKLSF,
 	GDKLSF,
-	GD11X5
+	GD11X5,
+	XJSSC,
+	TJSSC
 }
 
 
@@ -41,6 +43,8 @@ public class autoBet{
 	public boolean inBetGXKLSF = false;
 	public boolean inBetGDKLSF = false;
 	public boolean inBetGD11X5 = false;
+	public boolean inBetXJSSC = false;
+	public boolean inBetTJSSC = false;
 	
 	
 	public boolean inBetWeiCai = false;
@@ -62,6 +66,8 @@ public class autoBet{
 	public Button btnBetAmountWindowGXKLSF;
 	public Button btnBetAmountWindowGDKLSF;
 	public Button btnBetAmountWindowGD11X5;
+	public Button btnBetAmountWindowXJSSC;
+	public Button btnBetAmountWindowTJSSC;
 	
 	//迪斯尼会员界面
 	public TextField textFieldMemberAddress;
@@ -72,6 +78,8 @@ public class autoBet{
 	public TextField textFieldGXKLSFBetPercent;
 	public TextField textFieldGDKLSFBetPercent;
 	public TextField textFieldGD11X5BetPercent;
+	public TextField textFieldXJSSCBetPercent;
+	public TextField textFieldTJSSCBetPercent;
 	public TextField textFieldBetTime;
 	
 	public Button btnBetCQSSC;
@@ -88,6 +96,8 @@ public class autoBet{
 	public Button btnBetOppositeGXKLSF;
 	public Button btnBetOppositeGDKLSF;
 	public Button btnBetOppositeGD11X5;
+	public Button btnBetOppositeXJSSC;
+	public Button btnBetOppositeTJSSC;
 	
 	//微彩会员界面
 	public TextField textFieldWeiCaiMemberAddress;
@@ -140,6 +150,7 @@ public class autoBet{
 	public static Label labelSuccessBets;
 	public static Label labelFailBets;
 	public GrabThread grabThread;
+	public ReloginThread reloginThread;
 	public GrabXYNCthread XYNCthread;
 	TianCaiHttp tianCaiHttp = null;
 	
@@ -202,6 +213,8 @@ public class autoBet{
 		//client.start();
 		
 		
+
+		
 		new autoBet().launchFrame();
 
 		
@@ -218,6 +231,9 @@ public class autoBet{
 			BetXYNCThread.betRemainTime =  timeSeconds*1000;
 			BetGDKLSFThread.betRemainTime =  timeSeconds*1000;
 			BetGXKLSFThread.betRemainTime =  timeSeconds*1000;
+			BetGD11X5Thread.betRemainTime =  timeSeconds*1000;
+			BetXJSSCThread.betRemainTime =  timeSeconds*1000;
+			BetTJSSCThread.betRemainTime =  timeSeconds*1000;
 			BetTianCaiThread.betRemainTime = timeSeconds;
 		}
 		else{
@@ -255,10 +271,14 @@ public class autoBet{
 		btnBetOppositeGXKLSF.setEnabled(flag);
 		btnBetOppositeGDKLSF.setEnabled(flag);
 		btnBetOppositeGD11X5.setEnabled(flag);
+		btnBetOppositeXJSSC.setEnabled(flag);
+		btnBetOppositeTJSSC.setEnabled(flag);
 		btnBetAmountWindowXYNC.setEnabled(flag);
 		btnBetAmountWindowGXKLSF.setEnabled(flag);
 		btnBetAmountWindowGDKLSF.setEnabled(flag);
 		btnBetAmountWindowGD11X5.setEnabled(flag);
+		btnBetAmountWindowXJSSC.setEnabled(flag);
+		btnBetAmountWindowTJSSC.setEnabled(flag);
 	}
 	
 	public void enableWeiCaiMemberBet(boolean flag){
@@ -482,6 +502,13 @@ public class autoBet{
 					return;
 				}
 				
+				
+				
+				reloginThread = new ReloginThread();
+				
+				reloginThread.start();
+				
+				
 				loginToDSNMemberSuccess = true;
 				
 				ConfigWriter.updateDSNMemberAddress(address);
@@ -662,6 +689,55 @@ public class autoBet{
 		
 		
 		
+		//XJSSC
+		
+		btnBetOppositeXJSSC = new Button("反投新疆时时彩");
+		btnBetOppositeXJSSC.addActionListener(new BetXJSSCListener(this, client));
+		
+		btnBetOppositeXJSSC.setSize(75, 25);
+		btnBetOppositeXJSSC.setLocation(DsnMemberX,DsnMemberY + 330);
+
+		Label XJSSClabelPercent = new Label("投注比例:");
+		XJSSClabelPercent.setSize(60, 25);
+		XJSSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 330);
+		
+		textFieldXJSSCBetPercent = new TextField();
+		textFieldXJSSCBetPercent.setSize(60, 25);
+		textFieldXJSSCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 330);
+		
+		
+		btnBetAmountWindowXJSSC = new Button("投注金额");
+		btnBetAmountWindowXJSSC.addActionListener(new BetAmountDetailGXKLSFListener(this));
+		
+		btnBetAmountWindowXJSSC.setSize(90, 25);
+		btnBetAmountWindowXJSSC.setLocation(DsnMemberX + 220, DsnMemberY + 330);
+		
+		
+		
+		
+		//TJSSC
+		btnBetOppositeTJSSC = new Button("反投天津时时彩");
+		btnBetOppositeTJSSC.addActionListener(new BetTJSSCListener(this, client));
+		
+		btnBetOppositeTJSSC.setSize(75, 25);
+		btnBetOppositeTJSSC.setLocation(DsnMemberX,DsnMemberY + 360);
+
+		Label TJSSClabelPercent = new Label("投注比例:");
+		TJSSClabelPercent.setSize(60, 25);
+		TJSSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 360);
+		
+		textFieldTJSSCBetPercent = new TextField();
+		textFieldTJSSCBetPercent.setSize(60, 25);
+		textFieldTJSSCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 360);
+		
+		
+		btnBetAmountWindowTJSSC = new Button("投注金额");
+		btnBetAmountWindowTJSSC.addActionListener(new BetAmountDetailGXKLSFListener(this));
+		
+		btnBetAmountWindowTJSSC.setSize(90, 25);
+		btnBetAmountWindowTJSSC.setLocation(DsnMemberX + 220, DsnMemberY + 360);
+		
+		
 		panel.add(labelDsnMemberLogin);
 		panel.add(labelDsnMemberAddress);
 		panel.add(textFieldMemberAddress);
@@ -707,6 +783,19 @@ public class autoBet{
 		panel.add(GD11X5labelPercent);
 		panel.add(textFieldGD11X5BetPercent);
 		panel.add(btnBetAmountWindowGD11X5);
+		
+		//XJSSC
+		panel.add(btnBetOppositeXJSSC);
+		panel.add(XJSSClabelPercent);
+		panel.add(textFieldXJSSCBetPercent);
+		panel.add(btnBetAmountWindowXJSSC);
+		
+		
+		//TJSSC
+		panel.add(btnBetOppositeTJSSC);
+		panel.add(TJSSClabelPercent);
+		panel.add(textFieldTJSSCBetPercent);
+		panel.add(btnBetAmountWindowTJSSC);
 		
 		
 		enableDSNMemberBet(false);

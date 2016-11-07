@@ -2,11 +2,11 @@ import java.util.Vector;
 class BetThread extends Thread{
     
     
-	//long betRemainTime = 15*1000;  //Àë¶àÉÙÃë·âÅÌÊ±½øĞĞÏÂ×¢
+	//long betRemainTime = 15*1000;  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢
 	
-	long almostTime = 25*1000;  //½øĞĞ×îºóÒ»´Îsleep¼ÆËãµÄÊ±¼ä
+	long almostTime = 25*1000;  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½sleepï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	
-	long sleepTime = 10*1000;	//Æ½Ê±Ë®íµÊ±¼ä
+	long sleepTime = 10*1000;	//Æ½Ê±Ë®ï¿½Ê±ï¿½ï¿½
 	boolean requestTime = true;
 	
     static double betCQSSCPercent = 1.0;
@@ -38,7 +38,7 @@ class BetThread extends Thread{
 			boolean getBJSCOddsData = false;
 			
 			
-			//ÓÃÀ´¿ØÖÆ´òÓ¡·âÅÌÊı¾İÊı¾İÓëÏÂµ¥Êı¾İ²îÖµµÄ±äÁ¿
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½İ²ï¿½Öµï¿½Ä±ï¿½ï¿½ï¿½
 			boolean printBJSCErrorValue = false;
 			boolean printCQSSCErrorValue = false;
 
@@ -49,20 +49,20 @@ class BetThread extends Thread{
 				if(requestTime) {
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
-					if(CQSSCremainTime > 10*60*1000){//»ñÈ¡Ê±¼äÊ§°Ü					
+					if(CQSSCremainTime > 10*60*1000){//ï¿½ï¿½È¡Ê±ï¿½ï¿½Ê§ï¿½ï¿½					
 						CQSSCremainTime = dsnHttp.getCQSSClocalRemainTime();
 					}
 					
-					if(BJSCremainTime > 10*60*1000){//»ñÈ¡Ê±¼äÊ§°Ü
+					if(BJSCremainTime > 10*60*1000){//ï¿½ï¿½È¡Ê±ï¿½ï¿½Ê§ï¿½ï¿½
 						BJSCremainTime = dsnHttp.getBJSClocalRemainTime();
 					}
 					
-					System.out.println("[µÏË¹Äá»áÔ±]¾àÀëÖØÇìÊ±Ê±²Ê·âÅÌÊ±¼äÎª:");
+					System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»é‡åº†æ—¶æ—¶å½©å°ç›˜æ—¶é—´ä¸º:");
 					System.out.println(CQSSCremainTime/1000);			
-					System.out.println("[µÏË¹Äá»áÔ±]¾àÀë±±¾©Èü³µ·âÅÌÊ±¼äÎª:");
+					System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»åŒ—äº¬èµ›è½¦å°ç›˜æ—¶é—´ä¸º:");
 					System.out.println(BJSCremainTime/1000);
 					
-					if((CQSSCremainTime > 0 && CQSSCremainTime <= 40*1000) || (BJSCremainTime > 0 && BJSCremainTime <= 40*1000)) {//Èç¹û½«½ü·âÅÌ²»·¢ÇëÇó£¬»ñÈ¡±¾µØÊ±¼ä
+					if((CQSSCremainTime > 0 && CQSSCremainTime <= 40*1000) || (BJSCremainTime > 0 && BJSCremainTime <= 40*1000)) {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬»ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 						requestTime = false;
 					}
 					
@@ -70,9 +70,9 @@ class BetThread extends Thread{
 					CQSSCremainTime = dsnHttp.getCQSSClocalRemainTime();
 					BJSCremainTime = dsnHttp.getBJSClocalRemainTime();
 					
-					System.out.println("[µÏË¹Äá»áÔ±]¾àÀëÖØÇìÊ±Ê±²Ê·âÅÌÊ±¼äÎª[local]:");
+					System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»é‡åº†æ—¶æ—¶å½©å°ç›˜æ—¶é—´ä¸º:[local]:");
 					System.out.println(CQSSCremainTime/1000);					
-					System.out.println("[µÏË¹Äá»áÔ±]¾àÀë±±¾©Èü³µ·âÅÌÊ±¼äÎª[local]:");
+					System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»åŒ—äº¬èµ›è½¦å°ç›˜æ—¶é—´ä¸º::");
 					System.out.println(BJSCremainTime/1000);
 					
 					if((CQSSCremainTime <= 0 || CQSSCremainTime > 40*1000) && (BJSCremainTime <= 0 || BJSCremainTime > 40*1000)) {
@@ -92,44 +92,29 @@ class BetThread extends Thread{
 				boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime > 1;
 
 
-				//Ã¿ÅÌÄÃÒ»´ÎÅâÂÊÊı¾İ
+				//Ã¿ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if(!timeTobetCQSSC && !timeTobetBJSC && (CQSSCremainTime <= 90*1000) && CQSSCremainTime > 0 && getCQSSCOddsData == false){
-					dsnHttp.getCQSSCoddsData();
-					getCQSSCOddsData = true;
+					String res = dsnHttp.getCQSSCoddsData();
+					if(res != null)
+						getCQSSCOddsData = true;
 					
 				}
 				
 				if(!timeTobetCQSSC && !timeTobetBJSC && (BJSCremainTime <= 90*1000) && BJSCremainTime > 0 && getBJSCOddsData == false){
-					dsnHttp.getBJSCoddsData();
-					getBJSCOddsData = true;
+					String res = dsnHttp.getBJSCoddsData();
+					if(res != null)
+						getBJSCOddsData = true;
 					
 				}
 				
 				
-				//ÖØĞÂµÇÂ¼
-				if(dsnHttp.getIsNeedRelogin()){
-					
-					System.out.println("ÖØĞÂµÇÂ¼");
-					
-					dsnHttp.reLogin();
-					dsnHttp.setIsNeedRelogin(false);
-				}
-				
-				
-				//»»ÏßÂ·
-				if(dsnHttp.isAllLotteryIdle()){
-					if(dsnHttp.getIsisNeedChangeLine() == true){
-						dsnHttp.setLinePriority();
-						
-						dsnHttp.reLogin();
-						
-						dsnHttp.setisNeedChangeLine(false);
-						dsnHttp.clearAvgRequest();
-					}
-										
+				//ï¿½ï¿½ï¿½Âµï¿½Â¼
 
-					
-					//¿´Î´½áËã
+				
+				
+				//ï¿½ï¿½ï¿½ï¿½Â·
+				if(dsnHttp.isAllLotteryIdle()){
+
 					if(dsnHttp.getUnCalcProfitBJSCDraw().size() != 0){
 						
 						Vector<String> calcedBJSCDraw = new Vector<String>();
@@ -191,7 +176,7 @@ class BetThread extends Thread{
 					}
 					
 					
-					//ÄÃÓà¶î
+					//ï¿½ï¿½ï¿½ï¿½ï¿½
 					
 					String balance = dsnHttp.getBalance();
 					
@@ -210,14 +195,10 @@ class BetThread extends Thread{
 				
 				
 				
-				//todo remove  ²âÊÔclient¡£get
-				System.out.println("²âÊÔclient¡£getº¯Êı£¬¿ªÊ¼");
-				client.getCQSSCdata();
-				client.getBJSCdata();
-				System.out.println("²âÊÔclient¡£getº¯Êı£¬½áÊø");
+
 				
 				
-				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//×îºóÊ®ÎåÃëÃëÈ¥ÏÂ×¢
+				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½×¢
 					
 					clearBJSCdetaisData = false;
 
@@ -235,12 +216,12 @@ class BetThread extends Thread{
 					}
 					
 					if(betCQSSCData == null) {
-						System.out.println("[µÏË¹Äá»áÔ±]ÏÂµ¥Ê§°Ü,Î´»ñÈ¡µ½ÏÂµ¥Êı¾İ");
+						System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·å–é‡åº†æ—¶æ—¶å½©ä¸‹å•æ•°æ®å¤±è´¥");
 					} else if(betCQSSCData != null &&betCQSSCData[0].equals(dsnHttp.getCQSSCdrawNumber())) {
 						
 						String[] betsData = {betCQSSCData[1]};
 						
-						System.out.println("[µÏË¹Äá»áÔ±]ÏÂµ¥Êı¾İ£º");
+						System.out.println("é‡åº†æ—¶æ—¶å½©ä¸‹å•æ•°æ®ï¼š");
 						System.out.println(betCQSSCData[1]);
 						
 						
@@ -274,11 +255,11 @@ class BetThread extends Thread{
 					}
 					
 					if(betBJSCData == null) {
-						System.out.println("[µÏË¹Äá»áÔ±]Î´»ñÈ¡µ½ÏÂµ¥Êı¾İ");
+						System.out.println("è·å–åŒ—äº¬èµ›è½¦ä¸‹å•æ•°æ®å¤±è´¥");
 					} else if(betBJSCData[0].equals(dsnHttp.getBJSCdrawNumber())){
 						String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
 						
-						System.out.println("[µÏË¹Äá»áÔ±]ÏÂµ¥Êı¾İ£º");
+						System.out.println("åŒ—äº¬èµ›è½¦ä¸‹å•æ•°æ®");
 						System.out.println(betBJSCData[1]);
 						System.out.println(betBJSCData[2]);
 						System.out.println(betBJSCData[3]);
@@ -301,7 +282,7 @@ class BetThread extends Thread{
 				sleepTime = 10*1000;
 				
 				
-				//´òÓ¡·âÅÌÊı¾İÓëÏÂµ¥Êı¾İ²î¶î
+				//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½İ²ï¿½ï¿½
 				if(BJSCremainTime < -2*1000 && printBJSCErrorValue == false && dsnHttp.previousBJSCBetResult == true && dsnHttp.previousBJSCBetNumber.equals(dsnHttp.BJSCdrawNumber)){
 					
 					
@@ -328,11 +309,11 @@ class BetThread extends Thread{
 					
 					
 					if(data[1] == null || data[2] == null || data[3] == null) {
-						System.out.println("[µÏË¹Äá»áÔ±]Î´»ñÈ¡µ½·âÅÌÊı¾İ");
+						System.out.println("[ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½Ô±]Î´ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 					}else{
 						String[] betsData = {data[1], data[2], data[3]};
 						
-						System.out.println("±±¾©Èü³µ·âÅÌÊı¾İ£º");
+						System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½");
 						System.out.println(betsData[0]);
 						System.out.println(betsData[1]);
 						System.out.println(betsData[2]);
@@ -354,11 +335,11 @@ class BetThread extends Thread{
 					
 					for(int i = 0; i < 4; i++) {
 						
-						System.out.println("²âÊÔclient¡£getº¯Êı£¬¿ªÊ¼");
+						System.out.println("ï¿½ï¿½ï¿½ï¿½clientï¿½ï¿½getï¿½ï¿½ï¿½ï¿½Ê¼");
 						
 						data = client.getCQSSCdata();
 						
-						System.out.println("²âÊÔclient¡£getº¯Êı£¬½áÊø");
+						System.out.println("ï¿½ï¿½ï¿½ï¿½clientï¿½ï¿½getï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 						
 						if( data == null) {
 							data = null;
@@ -370,10 +351,10 @@ class BetThread extends Thread{
 					}
 					
 					if(data == null) {
-						System.out.println("[µÏË¹Äá»áÔ±]Î´»ñÈ¡µ½·âÅÌÊı¾İ");
+						System.out.println("[ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½Ô±]Î´ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 					}else{
 		
-						System.out.println("ÖØÇìÊ±Ê±²Ê·âÅÌÊı¾İ£º");
+						System.out.println("ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½Ê·ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½");
 						System.out.println(data);
 
 						String[] betData = {data[1]};
