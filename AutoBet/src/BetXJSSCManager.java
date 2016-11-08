@@ -245,7 +245,7 @@ public class BetXJSSCManager {
         if( XJSSCdrawNumber != null){
         	
         	//System.out.printf("下注重庆时时彩第%s期\n",XJSSCdrawNumber);
-        	String outputStr = "下注广西快乐十分第" + XJSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
+        	String outputStr = "下注新疆时时彩第" + XJSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
 /*        	if(isEmptyData(betData, BetType.XJSSC)) {

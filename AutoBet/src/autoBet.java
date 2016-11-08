@@ -1,4 +1,4 @@
-import java.awt.*;
+ï»¿import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;  
 import java.io.PrintStream;
@@ -19,7 +19,8 @@ enum BetType{
 	GDKLSF,
 	GD11X5,
 	XJSSC,
-	TJSSC
+	TJSSC,
+	KL8
 }
 
 
@@ -45,13 +46,14 @@ public class autoBet{
 	public boolean inBetGD11X5 = false;
 	public boolean inBetXJSSC = false;
 	public boolean inBetTJSSC = false;
+	public boolean inBetKL8 = false;
 	
 	
 	public boolean inBetWeiCai = false;
 	public boolean inBetTianCai = false;
 
 	
-	//´úÀíµÇÂ¼½çÃæ
+	//ä»£ç†ç™»å½•ç•Œé¢
 	public TextField textFieldProxyAddress;
 	public TextField textFieldProxyAccount;
 	public TextField textFieldProxyPassword;
@@ -68,8 +70,9 @@ public class autoBet{
 	public Button btnBetAmountWindowGD11X5;
 	public Button btnBetAmountWindowXJSSC;
 	public Button btnBetAmountWindowTJSSC;
+	public Button btnBetAmountWindowKL8;
 	
-	//µÏË¹Äá»áÔ±½çÃæ
+	//è¿ªæ–¯å°¼ä¼šå‘˜ç•Œé¢
 	public TextField textFieldMemberAddress;
 	public TextField textFieldMemberAccount;
 	public TextField textFieldMemberPassword;
@@ -80,6 +83,7 @@ public class autoBet{
 	public TextField textFieldGD11X5BetPercent;
 	public TextField textFieldXJSSCBetPercent;
 	public TextField textFieldTJSSCBetPercent;
+	public TextField textFieldKL8BetPercent;
 	public TextField textFieldBetTime;
 	
 	public Button btnBetCQSSC;
@@ -98,8 +102,9 @@ public class autoBet{
 	public Button btnBetOppositeGD11X5;
 	public Button btnBetOppositeXJSSC;
 	public Button btnBetOppositeTJSSC;
+	public Button btnBetOppositeKL8;
 	
-	//Î¢²Ê»áÔ±½çÃæ
+	//å¾®å½©ä¼šå‘˜ç•Œé¢
 	public TextField textFieldWeiCaiMemberAddress;
 	public TextField textFieldWeiCaiMemberAccount;
 	public TextField textFieldWeiCaiMemberPassword;
@@ -118,7 +123,7 @@ public class autoBet{
 	public static Label labelWeiCaiSuccessBets;
 	public static Label labelWeiCaiFailBets;
 	
-	//Ìí²Ê»áÔ±½çÃæ
+	//æ·»å½©ä¼šå‘˜ç•Œé¢
 	public TextField textFieldTianCaiMemberAddress;
 	public TextField textFieldTianCaiMemberAccount;
 	public TextField textFieldTianCaiMemberPassword;
@@ -182,7 +187,7 @@ public class autoBet{
 		
 		
 	    try {  
-	    	//Éú³ÉÂ·¾¶  
+	    	//ç”Ÿæˆè·¯å¾„  
 	    	File dir = new File("log");  
 	        if (dir.exists()) {   
 	        } 
@@ -190,8 +195,8 @@ public class autoBet{
 	        	dir.mkdirs();
 	        }
 	         
-	        //°ÑÊä³öÖØ¶¨Ïòµ½ÎÄ¼ş
-	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//ÉèÖÃÈÕÆÚ¸ñÊ½
+	        //æŠŠè¾“å‡ºé‡å®šå‘åˆ°æ–‡ä»¶
+	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//è®¾ç½®æ—¥æœŸæ ¼å¼
 	    	PrintStream ps=new PrintStream("log/" + df.format(new Date()) + ".txt");  
 	    	System.setOut(ps);
 	    	System.setErr(ps);
@@ -237,7 +242,7 @@ public class autoBet{
 			BetTianCaiThread.betRemainTime = timeSeconds;
 		}
 		else{
-			//TODO µ¯³ö¶Ô»°¿ò£¬ÌáÊ¾ÊäÈë´íÎó
+			//TODO å¼¹å‡ºå¯¹è¯æ¡†ï¼Œæç¤ºè¾“å…¥é”™è¯¯
 		}
 	}
 	
@@ -273,12 +278,14 @@ public class autoBet{
 		btnBetOppositeGD11X5.setEnabled(flag);
 		btnBetOppositeXJSSC.setEnabled(flag);
 		btnBetOppositeTJSSC.setEnabled(flag);
+		btnBetOppositeKL8.setEnabled(flag);
 		btnBetAmountWindowXYNC.setEnabled(flag);
 		btnBetAmountWindowGXKLSF.setEnabled(flag);
 		btnBetAmountWindowGDKLSF.setEnabled(flag);
 		btnBetAmountWindowGD11X5.setEnabled(flag);
 		btnBetAmountWindowXJSSC.setEnabled(flag);
 		btnBetAmountWindowTJSSC.setEnabled(flag);
+		btnBetAmountWindowKL8.setEnabled(flag);
 	}
 	
 	public void enableWeiCaiMemberBet(boolean flag){
@@ -303,7 +310,7 @@ public class autoBet{
 	public  void launchFrame()
 	{
 
-	    Frame mainFrame =new Frame("×Ô¶¯ÏÂµ¥Æ÷");
+	    Frame mainFrame =new Frame("è‡ªåŠ¨ä¸‹å•å™¨");
 
 		
 		Panel panel=new Panel();
@@ -319,17 +326,17 @@ public class autoBet{
 	       
 		
 		
-	    //dsn´úÀí½çÃæ
+	    //dsnä»£ç†ç•Œé¢
 	    int DsnProxyX = 50;
 	    int DsnProxyY = 50; 
 	    
 
 	    
-		Label labelDsnProxyLogin = new Label("Á¬½Ó·şÎñÆ÷:");
+		Label labelDsnProxyLogin = new Label("è¿æ¥æœåŠ¡å™¨:");
 		labelDsnProxyLogin.setSize(100, 25);
 		labelDsnProxyLogin.setLocation(DsnProxyX, DsnProxyY);
 		
-		Label labelDsnProxyAddress = new Label("ÍøÖ·:");
+		Label labelDsnProxyAddress = new Label("ç½‘å€:");
 		labelDsnProxyAddress.setSize(50, 25);
 		labelDsnProxyAddress.setLocation(DsnProxyX, DsnProxyY +30);
 		
@@ -340,7 +347,7 @@ public class autoBet{
 		textFieldProxyAddress.setText(ConfigReader.getServerAddress());
 		
 		
-		Label labelDsnProxyAccount = new Label("¶Ë¿Ú:");
+		Label labelDsnProxyAccount = new Label("ç«¯å£:");
 		labelDsnProxyAccount.setSize(50, 25);
 		labelDsnProxyAccount.setLocation(DsnProxyX, DsnProxyY +60);
 		
@@ -349,7 +356,7 @@ public class autoBet{
 		textFieldProxyAccount.setLocation(DsnProxyX + 50, DsnProxyY +60);
 		textFieldProxyAccount.setText(ConfigReader.getServerPort());
 
-		Label labelDsnProxyPassword = new Label("ÃÜÂë:");
+		Label labelDsnProxyPassword = new Label("å¯†ç :");
 		labelDsnProxyPassword.setSize(50, 25);
 		labelDsnProxyPassword.setLocation(DsnProxyX, DsnProxyY +90);
 		
@@ -363,7 +370,7 @@ public class autoBet{
 		
 		
 		
-		btnLogin = new Button("Á¬½Ó");
+		btnLogin = new Button("è¿æ¥");
 		btnLogin.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(loginToProxySuccess == true)
@@ -376,7 +383,7 @@ public class autoBet{
 				//DsnProxyGrab.setLoginParams(address, account, password);
 				
 				if(!client.connectToSever(address, port)) {
-					outputGUIMessage("Á¬½Ó·şÎñÆ÷Ê§°Ü!\n");
+					outputGUIMessage("è¿æ¥æœåŠ¡å™¨å¤±è´¥!\n");
 					return;
 				}
 				
@@ -394,7 +401,7 @@ public class autoBet{
 				
 				ConfigWriter.saveTofile("common.config");
 				
-				grabThread = new GrabThread(new GrabCQSSCwindow(), new GrabBJSCwindow());//Æô¶¯×¥°üÏß³Ì
+				grabThread = new GrabThread(new GrabCQSSCwindow(), new GrabBJSCwindow());//å¯åŠ¨æŠ“åŒ…çº¿ç¨‹
 				grabThread.start();	
 				
 				XYNCthread = new GrabXYNCthread();
@@ -413,17 +420,17 @@ public class autoBet{
 				
 				client.start();
 				
-				outputGUIMessage("Á¬½Ó·şÎñÆ÷³É¹¦!\n");
+				outputGUIMessage("è¿æ¥æœåŠ¡å™¨æˆåŠŸ!\n");
 				
 				btnLogin.setEnabled(false);
-				//btnLogin.setText("ÒÑÁ¬½Ó");
+				//btnLogin.setText("å·²è¿æ¥");
 			}
 		});
 		
 		btnLogin.setSize(50, 25);
 		btnLogin.setLocation(DsnProxyX, DsnProxyY + 120);
 		
-		Label labelBetTime = new Label("¾à·âÅÌ»¹ÓĞ           ÃëÊ±½øĞĞÍ¶×¢");
+		Label labelBetTime = new Label("è·å°ç›˜è¿˜æœ‰           ç§’æ—¶è¿›è¡ŒæŠ•æ³¨");
 		labelBetTime.setSize(200, 25);
 		labelBetTime.setLocation(DsnProxyX, DsnProxyY + 150);
 		
@@ -446,16 +453,16 @@ public class autoBet{
 		panel.add(labelBetTime);
 		
 		
-		//dsn»áÔ±½çÃæ
+		//dsnä¼šå‘˜ç•Œé¢
 		int DsnMemberX = 500;
 		int DsnMemberY = 50;		
 		
 		
-		Label labelDsnMemberLogin = new Label("µÏË¹Äá»áÔ±µÇÂ¼:");
+		Label labelDsnMemberLogin = new Label("è¿ªæ–¯å°¼ä¼šå‘˜ç™»å½•:");
 		labelDsnMemberLogin.setSize(100, 25);
 		labelDsnMemberLogin.setLocation(DsnMemberX, DsnMemberY);
 		
-		Label labelDsnMemberAddress = new Label("ÍøÖ·:");
+		Label labelDsnMemberAddress = new Label("ç½‘å€:");
 		labelDsnMemberAddress.setSize(50, 25);
 		labelDsnMemberAddress.setLocation(DsnMemberX, DsnMemberY +30);
 		
@@ -465,7 +472,7 @@ public class autoBet{
 		textFieldMemberAddress.setLocation(DsnMemberX + 50, DsnMemberY +30);
 		textFieldMemberAddress.setText(ConfigReader.getBetAddress());
 		
-		Label labelDsnMemberAccount = new Label("ÕË»§:");
+		Label labelDsnMemberAccount = new Label("è´¦æˆ·:");
 		labelDsnMemberAccount.setSize(50, 25);
 		labelDsnMemberAccount.setLocation(DsnMemberX, DsnMemberY +60);
 		
@@ -474,7 +481,7 @@ public class autoBet{
 		textFieldMemberAccount.setLocation(DsnMemberX + 50, DsnMemberY +60);
 		textFieldMemberAccount.setText(ConfigReader.getBetAccount());	
 		
-		Label labelDsnMemberPassword = new Label("ÃÜÂë:");
+		Label labelDsnMemberPassword = new Label("å¯†ç :");
 		labelDsnMemberPassword.setSize(50, 25);
 		labelDsnMemberPassword.setLocation(DsnMemberX, DsnMemberY +90);
 		
@@ -485,7 +492,7 @@ public class autoBet{
 		textFieldMemberPassword.setEchoChar('*');
 		
 		
-		Button btnMemberLogin = new Button("µÇÂ¼");
+		Button btnMemberLogin = new Button("ç™»å½•");
 		btnMemberLogin.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(loginToDSNMemberSuccess == true)
@@ -498,7 +505,7 @@ public class autoBet{
 				dsnHttp.setLoginParams(address, account, password);
 
 				if(!dsnHttp.login()) {
-					outputGUIMessage("µÇÂ¼µÏÊ¿Äá»áÔ±Ê§°Ü!\n");
+					outputGUIMessage("ç™»å½•è¿ªå£«å°¼ä¼šå‘˜å¤±è´¥!\n");
 					return;
 				}
 				
@@ -520,7 +527,7 @@ public class autoBet{
 				if(loginToDSNMemberSuccess&&loginToProxySuccess)
 					enableDSNMemberBet(true);
 				
-				outputGUIMessage("µÇÂ¼µÏÊ¿Äá»áÔ±³É¹¦!\n");
+				outputGUIMessage("ç™»å½•è¿ªå£«å°¼ä¼šå‘˜æˆåŠŸ!\n");
 			}
 		});
 		
@@ -528,14 +535,14 @@ public class autoBet{
 		btnMemberLogin.setLocation(DsnMemberX, DsnMemberY + 120);
 		
 
-		btnBetCQSSC = new Button("ÕıÍ¶ÖØÇìÊ±Ê±²Ê");
+		btnBetCQSSC = new Button("æ­£æŠ•é‡åº†æ—¶æ—¶å½©");
 		btnBetCQSSC.addActionListener(new BetCQSSCListener(this, client));
 		
 		btnBetCQSSC.setSize(90, 25);
 		btnBetCQSSC.setLocation(DsnMemberX,DsnMemberY + 150);
 		
 
-		Label labelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label labelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		labelPercent.setSize(60, 25);
 		labelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 150);
 		
@@ -544,13 +551,13 @@ public class autoBet{
 		textFieldCQSSCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 150);
 		
 
-		btnOppositeBetCQSSC = new Button("·´Í¶ÖØÇìÊ±Ê±²Ê");
+		btnOppositeBetCQSSC = new Button("åæŠ•é‡åº†æ—¶æ—¶å½©");
 		btnOppositeBetCQSSC.addActionListener(new BetOppositeCQSSCListener(this, client));
 		
 		btnOppositeBetCQSSC.setSize(90, 25);
 		btnOppositeBetCQSSC.setLocation(DsnMemberX,DsnMemberY + 150);
 		
-		btnStopBetCQSSC = new Button("Í¶×¢½ğ¶î");
+		btnStopBetCQSSC = new Button("æŠ•æ³¨é‡‘é¢");
 		btnStopBetCQSSC.addActionListener(new StopBetCQSSCListener(this));
 		
 		btnStopBetCQSSC.setSize(90, 25);
@@ -559,13 +566,13 @@ public class autoBet{
 		
 		
 		
-		btnBetBJSC = new Button("ÕıÍ¶±±¾©Èü³µ");
+		btnBetBJSC = new Button("æ­£æŠ•åŒ—äº¬èµ›è½¦");
 		btnBetBJSC.addActionListener(new BetBJSCListener(this, client));
 		
 		btnBetBJSC.setSize(75, 25);
 		btnBetBJSC.setLocation(DsnMemberX,DsnMemberY + 210);
 
-		Label BJSClabelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label BJSClabelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		BJSClabelPercent.setSize(60, 25);
 		BJSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 180);
 		
@@ -574,7 +581,7 @@ public class autoBet{
 		textFieldBJSCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 180);
 
 		
-		btnOppositeBJSC = new Button("·´Í¶±±¾©Èü³µ");
+		btnOppositeBJSC = new Button("åæŠ•åŒ—äº¬èµ›è½¦");
 		btnOppositeBJSC.addActionListener(new BetOppositeBJSCListener(this, client));
 		
 		btnOppositeBJSC.setSize(75, 25);
@@ -582,7 +589,7 @@ public class autoBet{
 		
 
 		
-		btnStopBetBJSC = new Button("Í¶×¢½ğ¶î");
+		btnStopBetBJSC = new Button("æŠ•æ³¨é‡‘é¢");
 		btnStopBetBJSC.addActionListener(new StopBetBJSCListener(this));
 		
 		btnStopBetBJSC.setSize(90, 25);
@@ -590,14 +597,14 @@ public class autoBet{
 		
 		
 		
-		//XYNCĞÒÔËÅ©³¡
-		btnBetOppositeXYNC = new Button("·´Í¶ĞÒÔËÅ©³¡");
+		//XYNCå¹¸è¿å†œåœº
+		btnBetOppositeXYNC = new Button("åæŠ•å¹¸è¿å†œåœº");
 		btnBetOppositeXYNC.addActionListener(new BetXYNCListener(this, client));
 		
 		btnBetOppositeXYNC.setSize(75, 25);
 		btnBetOppositeXYNC.setLocation(DsnMemberX,DsnMemberY + 210);
 
-		Label XYNClabelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label XYNClabelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		XYNClabelPercent.setSize(60, 25);
 		XYNClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 210);
 		
@@ -606,7 +613,7 @@ public class autoBet{
 		textFieldXYNCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 210);
 		
 		
-		btnBetAmountWindowXYNC = new Button("Í¶×¢½ğ¶î");
+		btnBetAmountWindowXYNC = new Button("æŠ•æ³¨é‡‘é¢");
 		btnBetAmountWindowXYNC.addActionListener(new BetAmountDetailXYNCListener(this));
 		
 		btnBetAmountWindowXYNC.setSize(90, 25);
@@ -616,13 +623,13 @@ public class autoBet{
 		
 		
 		//GXKLSF
-		btnBetOppositeGXKLSF = new Button("·´Í¶¹ãÎ÷¿ìÀÖÊ®·Ö");
+		btnBetOppositeGXKLSF = new Button("åæŠ•å¹¿è¥¿å¿«ä¹ååˆ†");
 		btnBetOppositeGXKLSF.addActionListener(new BetGXKLSFListener(this, client));
 		
 		btnBetOppositeGXKLSF.setSize(75, 25);
 		btnBetOppositeGXKLSF.setLocation(DsnMemberX,DsnMemberY + 240);
 
-		Label GXKLSFlabelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label GXKLSFlabelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		GXKLSFlabelPercent.setSize(60, 25);
 		GXKLSFlabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 240);
 		
@@ -631,7 +638,7 @@ public class autoBet{
 		textFieldGXKLSFBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 240);
 		
 		
-		btnBetAmountWindowGXKLSF = new Button("Í¶×¢½ğ¶î");
+		btnBetAmountWindowGXKLSF = new Button("æŠ•æ³¨é‡‘é¢");
 		btnBetAmountWindowGXKLSF.addActionListener(new BetAmountDetailGXKLSFListener(this));
 		
 		btnBetAmountWindowGXKLSF.setSize(90, 25);
@@ -640,13 +647,13 @@ public class autoBet{
 		
 		//GDKLSF
 	
-		btnBetOppositeGDKLSF = new Button("·´Í¶¹ã¶«¿ìÀÖÊ®·Ö");
+		btnBetOppositeGDKLSF = new Button("åæŠ•å¹¿ä¸œå¿«ä¹ååˆ†");
 		btnBetOppositeGDKLSF.addActionListener(new BetGDKLSFListener(this, client));
 		
 		btnBetOppositeGDKLSF.setSize(75, 25);
 		btnBetOppositeGDKLSF.setLocation(DsnMemberX,DsnMemberY + 270);
 
-		Label GDKLSFlabelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label GDKLSFlabelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		GDKLSFlabelPercent.setSize(60, 25);
 		GDKLSFlabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 270);
 		
@@ -655,7 +662,7 @@ public class autoBet{
 		textFieldGDKLSFBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 270);
 		
 		
-		btnBetAmountWindowGDKLSF = new Button("Í¶×¢½ğ¶î");
+		btnBetAmountWindowGDKLSF = new Button("æŠ•æ³¨é‡‘é¢");
 		btnBetAmountWindowGDKLSF.addActionListener(new BetAmountDetailGXKLSFListener(this));
 		
 		btnBetAmountWindowGDKLSF.setSize(90, 25);
@@ -666,13 +673,13 @@ public class autoBet{
 		
 		//GD11X5
 		
-		btnBetOppositeGD11X5 = new Button("·´Í¶¹ã¶«11Ñ¡5");
+		btnBetOppositeGD11X5 = new Button("åæŠ•å¹¿ä¸œ11é€‰5");
 		btnBetOppositeGD11X5.addActionListener(new BetGD11X5Listener(this, client));
 		
 		btnBetOppositeGD11X5.setSize(75, 25);
 		btnBetOppositeGD11X5.setLocation(DsnMemberX,DsnMemberY + 300);
 
-		Label GD11X5labelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label GD11X5labelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		GD11X5labelPercent.setSize(60, 25);
 		GD11X5labelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 300);
 		
@@ -681,7 +688,7 @@ public class autoBet{
 		textFieldGD11X5BetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 300);
 		
 		
-		btnBetAmountWindowGD11X5 = new Button("Í¶×¢½ğ¶î");
+		btnBetAmountWindowGD11X5 = new Button("æŠ•æ³¨é‡‘é¢");
 		btnBetAmountWindowGD11X5.addActionListener(new BetAmountDetailGXKLSFListener(this));
 		
 		btnBetAmountWindowGD11X5.setSize(90, 25);
@@ -691,13 +698,13 @@ public class autoBet{
 		
 		//XJSSC
 		
-		btnBetOppositeXJSSC = new Button("·´Í¶ĞÂ½®Ê±Ê±²Ê");
+		btnBetOppositeXJSSC = new Button("åæŠ•æ–°ç–†æ—¶æ—¶å½©");
 		btnBetOppositeXJSSC.addActionListener(new BetXJSSCListener(this, client));
 		
 		btnBetOppositeXJSSC.setSize(75, 25);
 		btnBetOppositeXJSSC.setLocation(DsnMemberX,DsnMemberY + 330);
 
-		Label XJSSClabelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label XJSSClabelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		XJSSClabelPercent.setSize(60, 25);
 		XJSSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 330);
 		
@@ -706,7 +713,7 @@ public class autoBet{
 		textFieldXJSSCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 330);
 		
 		
-		btnBetAmountWindowXJSSC = new Button("Í¶×¢½ğ¶î");
+		btnBetAmountWindowXJSSC = new Button("æŠ•æ³¨é‡‘é¢");
 		btnBetAmountWindowXJSSC.addActionListener(new BetAmountDetailGXKLSFListener(this));
 		
 		btnBetAmountWindowXJSSC.setSize(90, 25);
@@ -716,13 +723,13 @@ public class autoBet{
 		
 		
 		//TJSSC
-		btnBetOppositeTJSSC = new Button("·´Í¶Ìì½òÊ±Ê±²Ê");
+		btnBetOppositeTJSSC = new Button("åæŠ•å¤©æ´¥æ—¶æ—¶å½©");
 		btnBetOppositeTJSSC.addActionListener(new BetTJSSCListener(this, client));
 		
 		btnBetOppositeTJSSC.setSize(75, 25);
 		btnBetOppositeTJSSC.setLocation(DsnMemberX,DsnMemberY + 360);
 
-		Label TJSSClabelPercent = new Label("Í¶×¢±ÈÀı:");
+		Label TJSSClabelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		TJSSClabelPercent.setSize(60, 25);
 		TJSSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 360);
 		
@@ -731,11 +738,35 @@ public class autoBet{
 		textFieldTJSSCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 360);
 		
 		
-		btnBetAmountWindowTJSSC = new Button("Í¶×¢½ğ¶î");
+		btnBetAmountWindowTJSSC = new Button("æŠ•æ³¨é‡‘é¢");
 		btnBetAmountWindowTJSSC.addActionListener(new BetAmountDetailGXKLSFListener(this));
 		
 		btnBetAmountWindowTJSSC.setSize(90, 25);
 		btnBetAmountWindowTJSSC.setLocation(DsnMemberX + 220, DsnMemberY + 360);
+		
+		
+		//KL8
+		btnBetOppositeKL8 = new Button("åæŠ•å¤©æ´¥æ—¶æ—¶å½©");
+		btnBetOppositeKL8.addActionListener(new BetKL8Listener(this, client));
+		
+		btnBetOppositeKL8.setSize(75, 25);
+		btnBetOppositeKL8.setLocation(DsnMemberX,DsnMemberY + 390);
+
+		Label KL8labelPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
+		KL8labelPercent.setSize(60, 25);
+		KL8labelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 390);
+		
+		textFieldKL8BetPercent = new TextField();
+		textFieldKL8BetPercent.setSize(60, 25);
+		textFieldKL8BetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 390);
+		
+		
+		btnBetAmountWindowKL8 = new Button("æŠ•æ³¨é‡‘é¢");
+		btnBetAmountWindowKL8.addActionListener(new BetAmountDetailGXKLSFListener(this));
+		
+		btnBetAmountWindowKL8.setSize(90, 25);
+		btnBetAmountWindowKL8.setLocation(DsnMemberX + 220, DsnMemberY + 390);
+		
 		
 		
 		panel.add(labelDsnMemberLogin);
@@ -798,22 +829,29 @@ public class autoBet{
 		panel.add(btnBetAmountWindowTJSSC);
 		
 		
+		//KL8
+		panel.add(btnBetOppositeKL8);
+		panel.add(KL8labelPercent);
+		panel.add(textFieldKL8BetPercent);
+		panel.add(btnBetAmountWindowKL8);
+		
+		
 		enableDSNMemberBet(false);
 
 		
 
 
 		
-		//Ìí²Ê»áÔ±½çÃæ
+		//æ·»å½©ä¼šå‘˜ç•Œé¢
 		int TianCaiMemberX = 1000;
 		int TianCaiMemberY = 50;		
 		
 		
-		Label labelTianCaiMemberLogin = new Label("Ìí²Ê»áÔ±µÇÂ¼:");
+		Label labelTianCaiMemberLogin = new Label("æ·»å½©ä¼šå‘˜ç™»å½•:");
 		labelTianCaiMemberLogin.setSize(100, 25);
 		labelTianCaiMemberLogin.setLocation(TianCaiMemberX, TianCaiMemberY);
 		
-		Label labelTianCaiMemberAddress = new Label("ÍøÖ·:");
+		Label labelTianCaiMemberAddress = new Label("ç½‘å€:");
 		labelTianCaiMemberAddress.setSize(50, 25);
 		labelTianCaiMemberAddress.setLocation(TianCaiMemberX, TianCaiMemberY +30);
 		
@@ -823,7 +861,7 @@ public class autoBet{
 		textFieldTianCaiMemberAddress.setLocation(TianCaiMemberX + 50, TianCaiMemberY +30);
 		textFieldTianCaiMemberAddress.setText(ConfigReader.gettiancaiBetAddress());
 		
-		Label labelTianCaiMemberAccount = new Label("ÕË»§:");
+		Label labelTianCaiMemberAccount = new Label("è´¦æˆ·:");
 		labelTianCaiMemberAccount.setSize(50, 25);
 		labelTianCaiMemberAccount.setLocation(TianCaiMemberX, TianCaiMemberY +60);
 		
@@ -832,7 +870,7 @@ public class autoBet{
 		textFieldTianCaiMemberAccount.setLocation(TianCaiMemberX + 50, TianCaiMemberY +60);
 		textFieldTianCaiMemberAccount.setText(ConfigReader.gettiancaiBetAccount());	
 		
-		Label labelTianCaiMemberPassword = new Label("ÃÜÂë:");
+		Label labelTianCaiMemberPassword = new Label("å¯†ç :");
 		labelTianCaiMemberPassword.setSize(50, 25);
 		labelTianCaiMemberPassword.setLocation(TianCaiMemberX, TianCaiMemberY +90);
 		
@@ -843,7 +881,7 @@ public class autoBet{
 		textFieldTianCaiMemberPassword.setEchoChar('*');
 		
 		
-		Button btnTianCaiMemberLogin = new Button("µÇÂ¼");
+		Button btnTianCaiMemberLogin = new Button("ç™»å½•");
 		btnTianCaiMemberLogin.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(loginToTianCaiMemberSuccess == true)
@@ -858,7 +896,7 @@ public class autoBet{
 				tianCaiHttp.setLoginParams(address, account, password);
 
 				if(!tianCaiHttp.login()) {
-					outputGUIMessage("µÇÂ¼Ìí²Ê»áÔ±Ê§°Ü!\n");
+					outputGUIMessage("ç™»å½•æ·»å½©ä¼šå‘˜å¤±è´¥!\n");
 					return;
 				}
 				
@@ -873,7 +911,7 @@ public class autoBet{
 				if(loginToTianCaiMemberSuccess&& loginToProxySuccess)
 					enableTianCaiMemberBet(true);
 				
-				outputGUIMessage("µÇÂ¼Ìí²Ê»áÔ±³É¹¦!\n");
+				outputGUIMessage("ç™»å½•æ·»å½©ä¼šå‘˜æˆåŠŸ!\n");
 				
 			}
 		});
@@ -882,14 +920,14 @@ public class autoBet{
 		btnTianCaiMemberLogin.setLocation(TianCaiMemberX, TianCaiMemberY + 120);
 		
 
-		btnBetTianCaiCQSSC = new Button("ÕıÍ¶ÖØÇìÊ±Ê±²Ê");
+		btnBetTianCaiCQSSC = new Button("æ­£æŠ•é‡åº†æ—¶æ—¶å½©");
 		btnBetTianCaiCQSSC.addActionListener(new BetTianCaiOppositeCQSSCListener(this));
 		
 		btnBetTianCaiCQSSC.setSize(90, 25);
 		btnBetTianCaiCQSSC.setLocation(TianCaiMemberX,TianCaiMemberY + 150);
 		
 
-		Label labelTianCaiPercent = new Label("Í¶×¢±ÈÀı:");
+		Label labelTianCaiPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		labelTianCaiPercent.setSize(60, 25);
 		labelTianCaiPercent.setLocation(TianCaiMemberX + 100, TianCaiMemberY + 150);
 		
@@ -898,13 +936,13 @@ public class autoBet{
 		textFieldCQSSCBetTianCaiPercent.setLocation(TianCaiMemberX + 160, TianCaiMemberY + 150);
 		
 
-		btnOppositeBetTianCaiCQSSC = new Button("·´Í¶ÖØÇìÊ±Ê±²Ê");
+		btnOppositeBetTianCaiCQSSC = new Button("åæŠ•é‡åº†æ—¶æ—¶å½©");
 		btnOppositeBetTianCaiCQSSC.addActionListener(new BetTianCaiOppositeCQSSCListener(this));
 		
 		btnOppositeBetTianCaiCQSSC.setSize(90, 25);
 		btnOppositeBetTianCaiCQSSC.setLocation(TianCaiMemberX,TianCaiMemberY + 180);
 		
-		btnStopBetTianCaiCQSSC = new Button("Í¶×¢ÏêÇé");
+		btnStopBetTianCaiCQSSC = new Button("æŠ•æ³¨è¯¦æƒ…");
 		btnStopBetTianCaiCQSSC.addActionListener(new StopBetTianCaiCQSSCListener(this));
 		
 		btnStopBetTianCaiCQSSC.setSize(90, 25);
@@ -913,13 +951,13 @@ public class autoBet{
 		
 		
 		
-		btnBetTianCaiBJSC = new Button("ÕıÍ¶±±¾©Èü³µ");
+		btnBetTianCaiBJSC = new Button("æ­£æŠ•åŒ—äº¬èµ›è½¦");
 		btnBetTianCaiBJSC.addActionListener(new BetBJSCListener(this, client));
 		
 		btnBetTianCaiBJSC.setSize(75, 25);
 		btnBetTianCaiBJSC.setLocation(TianCaiMemberX,TianCaiMemberY + 210);
 
-		Label BJSClabelTianCaiPercent = new Label("Í¶×¢±ÈÀı:");
+		Label BJSClabelTianCaiPercent = new Label("æŠ•æ³¨æ¯”ä¾‹:");
 		BJSClabelTianCaiPercent.setSize(60, 25);
 		BJSClabelTianCaiPercent.setLocation(TianCaiMemberX + 100, TianCaiMemberY + 210);
 		
@@ -928,7 +966,7 @@ public class autoBet{
 		textFieldBJSCBetTianCaiPercent.setLocation(TianCaiMemberX + 160, TianCaiMemberY + 210);
 
 		
-		btnOppositeTianCaiBJSC = new Button("·´Í¶±±¾©Èü³µ");
+		btnOppositeTianCaiBJSC = new Button("åæŠ•åŒ—äº¬èµ›è½¦");
 		btnOppositeTianCaiBJSC.addActionListener(new BetTianCaiOppositeBJSCListener(this));
 		
 		btnOppositeTianCaiBJSC.setSize(75, 25);
@@ -936,7 +974,7 @@ public class autoBet{
 		
 
 		
-		btnStopBetTianCaiBJSC = new Button("Í¶×¢ÏêÇé");
+		btnStopBetTianCaiBJSC = new Button("æŠ•æ³¨è¯¦æƒ…");
 		btnStopBetTianCaiBJSC.addActionListener(new StopBetTianCaiBJSCListener(this));
 		
 		btnStopBetTianCaiBJSC.setSize(90, 25);
@@ -947,17 +985,17 @@ public class autoBet{
 		labelTianCaiTotalBets = new Label();
 		labelTianCaiTotalBets.setSize(300,25);
 		labelTianCaiTotalBets.setLocation(TianCaiMemberX, 400);
-		labelTianCaiTotalBets.setText("ÏÂµ¥´ÎÊı:0");
+		labelTianCaiTotalBets.setText("ä¸‹å•æ¬¡æ•°:0");
 		
 		labelTianCaiSuccessBets = new Label();
 		labelTianCaiSuccessBets.setSize(300,25);
 		labelTianCaiSuccessBets.setLocation(TianCaiMemberX, 430);
-		labelTianCaiSuccessBets.setText("³É¹¦´ÎÊı:0");
+		labelTianCaiSuccessBets.setText("æˆåŠŸæ¬¡æ•°:0");
 		
 		labelTianCaiFailBets = new Label();
 		labelTianCaiFailBets.setSize(300,25);
 		labelTianCaiFailBets.setLocation(TianCaiMemberX, 460);
-		labelTianCaiFailBets.setText("Ê§°Ü´ÎÊı:0");
+		labelTianCaiFailBets.setText("å¤±è´¥æ¬¡æ•°:0");
 		
 		
 /*		panel.add(labelTianCaiTotalBets);
@@ -993,26 +1031,26 @@ public class autoBet{
 		
 		
 		
-		//!lin ×¥È¡½çÃæÊ¹ÓÃ²âÊÔ
-/*		btnStartGrabCQSSC = new Button("¿ª×¥ÖØÇìÊ±²Ê");
+		//!lin æŠ“å–ç•Œé¢ä½¿ç”¨æµ‹è¯•
+/*		btnStartGrabCQSSC = new Button("å¼€æŠ“é‡åº†æ—¶å½©");
 		btnStartGrabCQSSC.setSize(75, 25);
 		btnStartGrabCQSSC.setLocation(50, 230);
-		btnStopGrabCQSSC = new Button("Í£×¥ÖØÇìÊ±²Ê");
+		btnStopGrabCQSSC = new Button("åœæŠ“é‡åº†æ—¶å½©");
 		btnStopGrabCQSSC.setSize(75, 25);
 		btnStopGrabCQSSC.setLocation(150, 230);
 		
-		btnStartGrabBJSC = new Button("¿ª×¥±±¾©Èü³µ");
+		btnStartGrabBJSC = new Button("å¼€æŠ“åŒ—äº¬èµ›è½¦");
 		btnStartGrabBJSC.setSize(75, 25);
 		btnStartGrabBJSC.setLocation(50, 260);
-		btnStopGrabBJSC = new Button("Í£×¥±±¾©Èü³µ");
+		btnStopGrabBJSC = new Button("åœæŠ“åŒ—äº¬èµ›è½¦");
 		btnStopGrabBJSC.setSize(75, 25);
 		btnStopGrabBJSC.setLocation(150, 260);
 		
-		btnStartGrabXYNC = new Button("¿ª×¥ĞÒÔËÅ©³¡");
+		btnStartGrabXYNC = new Button("å¼€æŠ“å¹¸è¿å†œåœº");
 		btnStartGrabXYNC.setSize(75,25);
 		btnStartGrabXYNC.setLocation(50, 290);
 		
-		btnStopGrabXYNC = new Button("Í£×¥ĞÒÔËÅ©³¡");
+		btnStopGrabXYNC = new Button("åœæŠ“å¹¸è¿å†œåœº");
 		btnStopGrabXYNC.setSize(75,25);
 		btnStopGrabXYNC.setLocation(150, 290);
 		
@@ -1067,17 +1105,17 @@ public class autoBet{
 		labelTotalBets = new Label();
 		labelTotalBets.setSize(300,25);
 		labelTotalBets.setLocation(50, 400);
-		labelTotalBets.setText("ÏÂµ¥´ÎÊı:0");
+		labelTotalBets.setText("ä¸‹å•æ¬¡æ•°:0");
 		
 		labelSuccessBets = new Label();
 		labelSuccessBets.setSize(300,25);
 		labelSuccessBets.setLocation(50, 430);
-		labelSuccessBets.setText("³É¹¦´ÎÊı:0");
+		labelSuccessBets.setText("æˆåŠŸæ¬¡æ•°:0");
 		
 		labelFailBets = new Label();
 		labelFailBets.setSize(300,25);
 		labelFailBets.setLocation(50, 460);
-		labelFailBets.setText("Ê§°Ü´ÎÊı:0");*/
+		labelFailBets.setText("å¤±è´¥æ¬¡æ•°:0");*/
 		
 		
 /*		panel.add(labelTotalBets);
@@ -1102,9 +1140,9 @@ public class autoBet{
         (
                 new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
-                    	int n = JOptionPane.showConfirmDialog(null, "È·ÈÏÍË³öÂğ?", "ÍË³ö³ÌĞò", JOptionPane.YES_NO_OPTION);  
+                    	int n = JOptionPane.showConfirmDialog(null, "ç¡®è®¤é€€å‡ºå—?", "é€€å‡ºç¨‹åº", JOptionPane.YES_NO_OPTION);  
                         if (n == JOptionPane.YES_OPTION) {
-                        	System.out.println(outputMessage.getText()); //ÍË³öÊ±±£´æ½çÃæÊä³öµ½log
+                        	System.out.println(outputMessage.getText()); //é€€å‡ºæ—¶ä¿å­˜ç•Œé¢è¾“å‡ºåˆ°log
                         	System.exit(0);  
                         }  
                     }

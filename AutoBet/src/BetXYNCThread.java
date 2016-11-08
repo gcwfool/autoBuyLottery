@@ -1,12 +1,12 @@
-import java.util.Vector;
+ï»¿import java.util.Vector;
 class BetXYNCThread extends Thread{
     
     
-	//long betRemainTime = 15*1000;  //Àë¶àÉÙÃë·âÅÌÊ±½øĞĞÏÂ×¢
+	//long betRemainTime = 15*1000;  //ç¦»å¤šå°‘ç§’å°ç›˜æ—¶è¿›è¡Œä¸‹æ³¨
 	
-	long almostTime = 25*1000;  //½øĞĞ×îºóÒ»´Îsleep¼ÆËãµÄÊ±¼ä
+	long almostTime = 25*1000;  //è¿›è¡Œæœ€åä¸€æ¬¡sleepè®¡ç®—çš„æ—¶é—´
 	
-	long sleepTime = 10*1000;	//Æ½Ê±Ë®íµÊ±¼ä
+	long sleepTime = 10*1000;	//å¹³æ—¶æ°´æ·¼æ—¶é—´
 	boolean requestTime = true;
 	
     static double betXYNCPercent = 1.0;
@@ -35,7 +35,7 @@ class BetXYNCThread extends Thread{
 			boolean getXYNCOddsData = false;
 			
 			
-			//ÓÃÀ´¿ØÖÆ´òÓ¡·âÅÌÊı¾İÊı¾İÓëÏÂµ¥Êı¾İ²îÖµµÄ±äÁ¿
+			//ç”¨æ¥æ§åˆ¶æ‰“å°å°ç›˜æ•°æ®æ•°æ®ä¸ä¸‹å•æ•°æ®å·®å€¼çš„å˜é‡
 			boolean printXYNCErrorValue = false;
 
 	    	
@@ -45,16 +45,16 @@ class BetXYNCThread extends Thread{
 				if(requestTime) {
 					XYNCremainTime = BetXYNCManager.getXYNCremainTime();
 					
-					if(XYNCremainTime > 10*60*1000){//»ñÈ¡Ê±¼äÊ§°Ü
+					if(XYNCremainTime > 10*60*1000){//è·å–æ—¶é—´å¤±è´¥
 						
 
 						XYNCremainTime = BetXYNCManager.getXYNClocalRemainTime();
 					}
 					
-					System.out.println("[µÏË¹Äá»áÔ±]¾àÀëĞÒÔËÅ©³¡·âÅÌÊ±¼äÎª:");
+					System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»å¹¸è¿å†œåœºå°ç›˜æ—¶é—´ä¸º:");
 					System.out.println(XYNCremainTime/1000);			
 					
-					if((XYNCremainTime > 0 && XYNCremainTime <= 40*1000)) {//Èç¹û½«½ü·âÅÌ²»·¢ÇëÇó£¬»ñÈ¡±¾µØÊ±¼ä
+					if((XYNCremainTime > 0 && XYNCremainTime <= 40*1000)) {//å¦‚æœå°†è¿‘å°ç›˜ä¸å‘è¯·æ±‚ï¼Œè·å–æœ¬åœ°æ—¶é—´
 						requestTime = false;
 					}
 					
@@ -62,7 +62,7 @@ class BetXYNCThread extends Thread{
 					XYNCremainTime = BetXYNCManager.getXYNClocalRemainTime();
 					
 					if(autoBetSuccess == false){
-						System.out.println("[µÏË¹Äá»áÔ±]¾àÀëĞÒÔËÅ©³¡·âÅÌÊ±¼äÎª[local]:");
+						System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»å¹¸è¿å†œåœºå°ç›˜æ—¶é—´ä¸º[local]:");
 						System.out.println(XYNCremainTime/1000);	
 					}
 				
@@ -84,7 +84,7 @@ class BetXYNCThread extends Thread{
 
 
 
-				//Ã¿ÅÌÄÃÒ»´ÎÅâÂÊÊı¾İ
+				//æ¯ç›˜æ‹¿ä¸€æ¬¡èµ”ç‡æ•°æ®
 				if(!timeTobetXYNC && (XYNCremainTime <= 90*1000) && XYNCremainTime > 0 && getXYNCOddsData == false){
 					String res = BetXYNCManager.getXYNCoddsData();
 					if(res != null)
@@ -103,7 +103,7 @@ class BetXYNCThread extends Thread{
 
 				
 				
-				if((betXYNC || betOppositeXYNC)&&timeTobetXYNC){//×îºóÊ®ÎåÃëÃëÈ¥ÏÂ×¢
+				if((betXYNC || betOppositeXYNC)&&timeTobetXYNC){//æœ€ååäº”ç§’ç§’å»ä¸‹æ³¨
 					
 					clearXYNCdetaisData = false;
 					
@@ -120,12 +120,12 @@ class BetXYNCThread extends Thread{
 					}
 					
 					if(betXYNCData == null) {
-						System.out.println("[µÏË¹Äá»áÔ±]ÏÂµ¥Ê§°Ü,Î´»ñÈ¡µ½ÏÂµ¥Êı¾İ");
+						System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]ä¸‹å•å¤±è´¥,æœªè·å–åˆ°ä¸‹å•æ•°æ®");
 					} else if(betXYNCData != null &&betXYNCData[0].equals(BetXYNCManager.getXYNCdrawNumber()) && autoBetSuccess == false) {
 						
 						String[] betsData = {betXYNCData[1], betXYNCData[2],betXYNCData[3],betXYNCData[4],betXYNCData[5],betXYNCData[6],betXYNCData[7],betXYNCData[8],betXYNCData[9]};
 						
-						System.out.println("[µÏË¹Äá»áÔ±]ĞÒÔËÅ©³¡ÏÂµ¥Êı¾İ£º");
+						System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]å¹¸è¿å†œåœºä¸‹å•æ•°æ®ï¼š");
 						System.out.println(betXYNCData[1]);
 						
 						
@@ -137,6 +137,12 @@ class BetXYNCThread extends Thread{
 						}
 						
 						printXYNCErrorValue = false;
+						
+					}else if(!betXYNCData[0].equals(BetXYNCManager.getXYNCdrawNumber())){
+						System.out.println("å¹¸è¿å†œåœºä¸‹å•æ•°æ®é”™è¯¯\n");
+						
+						System.out.printf("æœåŠ¡å™¨æœŸæ•°ï¼š%ldï¼Œ æœ¬åœ°æœŸæ•°:%ld\n", betXYNCData[0], BetXYNCManager.getXYNCdrawNumber());
+						
 						
 					}
 					

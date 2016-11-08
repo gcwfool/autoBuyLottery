@@ -529,6 +529,10 @@ public class dsnHttp {
     		targetlottery = "广西快乐十分";
     	}else if(bettype == BetType.GDKLSF){
     		targetlottery = "广东快乐十分";
+    	}else if(bettype == BetType.XJSSC){
+    		targetlottery = "新疆时时彩";
+    	}else if(bettype == BetType.TJSSC){
+    		targetlottery = "天津时时彩";
     	}
     	
     	String lottery = "";
@@ -930,6 +934,14 @@ public class dsnHttp {
     	BetGD11X5Manager.GD11X5detalsDataWindow.setTitle("投注广东11选5详情");
     	
     	BetGD11X5Manager.GD11X5BetAmountWindow.setTitle("广东11选5下注金额");
+    	
+    	BetTJSSCManager.TJSSCdetalsDataWindow.setTitle("投注天津时时彩详情");
+    	
+    	BetTJSSCManager.TJSSCBetAmountWindow.setTitle("天津时时彩下注金额");
+    	
+    	BetXJSSCManager.XJSSCdetalsDataWindow.setTitle("投注新疆时时彩详情");
+    	
+    	BetXJSSCManager.XJSSCBetAmountWindow.setTitle("新疆时时彩下注金额");
     	
     	
     	String[] addressArray = ConfigReader.getBetAddressArray();
@@ -3221,7 +3233,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     public static boolean isAllLotteryIdle(){
     	boolean isIdle = false;
     	
-    	if(isBJSCidle() && isCQSSCidle() && BetXYNCManager.isXYNCidle() && BetXYNCManager.isXYNCidle() &&  BetGDKLSFManager.isGDKLSFidle() &&BetGXKLSFManager.isGXKLSFidle() &&BetGD11X5Manager.isGD11X5idle()){
+    	if(isBJSCidle() && isCQSSCidle() && BetXYNCManager.isXYNCidle() && BetXYNCManager.isXYNCidle() &&  BetGDKLSFManager.isGDKLSFidle() &&BetGXKLSFManager.isGXKLSFidle() &&BetGD11X5Manager.isGD11X5idle() && BetTJSSCManager.isTJSSCidle() && BetXJSSCManager.isXJSSCidle()){
     		isIdle = true;
     	}
     	

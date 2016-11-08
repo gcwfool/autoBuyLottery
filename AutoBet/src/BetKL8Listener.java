@@ -2,13 +2,13 @@
 import java.awt.event.*;
 
 
-public class BetTJSSCListener implements ActionListener
+public class BetKL8Listener implements ActionListener
 {
 	private autoBet ab;
 	private Client client;
 	
 	
-	public BetTJSSCListener(autoBet ab, Client client) {
+	public BetKL8Listener(autoBet ab, Client client) {
 		this.ab = ab;
 		this.client = client;
 	}
@@ -21,11 +21,11 @@ public class BetTJSSCListener implements ActionListener
 		
 		//ab.grabThread.startGrabBJSC();
 		
-		String s = ab.textFieldTJSSCBetPercent.getText();
+		String s = ab.textFieldKL8BetPercent.getText();
 		
 		if(Common.isNum(s)){
 			double percent = Double.parseDouble(s);
-			BetTJSSCThread.betTJSSCPercent = percent;
+			BetKL8Thread.betKL8Percent = percent;
 		}
 		else{
 			//TODO 弹出对话框，提示输入错误
@@ -34,25 +34,25 @@ public class BetTJSSCListener implements ActionListener
 		ab.setBetTime();
 		
 	
-		BetTJSSCThread.betOppositeTJSSC = true;
+		BetKL8Thread.betOppositeKL8 = true;
 		
-		String outputStr = "开始反投天津时时彩,投注比例：" + BetTJSSCThread.betTJSSCPercent + "\n";
+		String outputStr = "开始反投新疆时时彩,投注比例：" + BetKL8Thread.betKL8Percent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		
-		BetTJSSCManager.showTJSSCDeatilsTable();
+		BetKL8Manager.showKL8DeatilsTable();
 		
-		if(ab.inBetTJSSC == true){					
+		if(ab.inBetKL8 == true){					
 			return;
 		}
 		
 
 		
-		BetTJSSCThread betThread = new BetTJSSCThread(client);
+		BetKL8Thread betThread = new BetKL8Thread(client);
 								
 		betThread.start();
 		
-		ab.inBetTJSSC = true;
+		ab.inBetKL8 = true;
 		
 		
 		
@@ -61,20 +61,20 @@ public class BetTJSSCListener implements ActionListener
 }
 
 
-class BetAmountDetailTJSSCListener implements ActionListener
+class BetAmountDetailKL8Listener implements ActionListener
 {
 	private autoBet ab;
 	
 	
 	
-	public BetAmountDetailTJSSCListener(autoBet ab) {
+	public BetAmountDetailKL8Listener(autoBet ab) {
 		this.ab = ab;
 	}
 	
 	public void actionPerformed(ActionEvent e)
 	{
 
-		BetTJSSCManager.showTJSSCBetAmountTable();
+		BetKL8Manager.showKL8BetAmountTable();
 	}	
 
 }

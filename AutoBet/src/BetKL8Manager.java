@@ -8,48 +8,48 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class BetTJSSCManager {
+public class BetKL8Manager {
 	
-	static long TJSSCloseTime = 0;    //封盘时间
+	static long KL8loseTime = 0;    //封盘时间
 	
-	static String TJSSCoddsData = null;
+	static String KL8oddsData = null;
 	
 	
-	static String previousTJSSCdrawNumber = "";
+	static String previousKL8drawNumber = "";
 	
-    static String TJSSCdrawNumber = "";
-    static String previousTJSSCBetNumber = "";
+    static String KL8drawNumber = "";
+    static String previousKL8BetNumber = "";
     
-    static boolean previousTJSSCBetResult = false;
+    static boolean previousKL8BetResult = false;
     
-    static Vector<String> unCalcProfitTJSSCDraw = new Vector<String>();    
-    
-    
-    static int TJSSCbetTotalAmount = 0;
-    
-    static DSNDataDetailsWindow TJSSCdetalsDataWindow = new DSNDataDetailsWindow();   
-    
-    static Vector<String> unknowStatTJSSCDraw = new Vector<String>();    
-    
-    static DSNBetAmountWindow TJSSCBetAmountWindow = new DSNBetAmountWindow();    
-    
-    static int TJSSCbishu = 0;    
-    static int TJSSConeBetAmount = 0;    
-    
-    static int TJSSCzongqishu = 0;
-    static int TJSSCzongshibai = 0;
-    static int TJSSCzongyichang = 0;
-    
-    static int TJSSCjinriqishu = 0;
-    static int TJSSCjinrishibai = 0;
-    static int TJSSCjinriyichang = 0;    
+    static Vector<String> unCalcProfitKL8Draw = new Vector<String>();    
     
     
+    static int KL8betTotalAmount = 0;
     
-    static long TJSSCremainTime = -1;
+    static DSNDataDetailsWindow KL8detalsDataWindow = new DSNDataDetailsWindow();   
+    
+    static Vector<String> unknowStatKL8Draw = new Vector<String>();    
+    
+    static DSNBetAmountWindow KL8BetAmountWindow = new DSNBetAmountWindow();    
+    
+    static int KL8bishu = 0;    
+    static int KL8oneBetAmount = 0;    
+    
+    static int KL8zongqishu = 0;
+    static int KL8zongshibai = 0;
+    static int KL8zongyichang = 0;
+    
+    static int KL8jinriqishu = 0;
+    static int KL8jinrishibai = 0;
+    static int KL8jinriyichang = 0;    
+    
+    
+    
+    static long KL8remainTime = -1;
 
 	
-	public static long getTJSSCremainTime(){
+	public static long getKL8remainTime(){
         //get period
     	String response = "";
     	String host = dsnHttp.ADDRESS;
@@ -59,11 +59,11 @@ public class BetTJSSCManager {
         
         long startTime = System.currentTimeMillis();
         
-        response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=TJSSC&page=lm");
+        response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=KL8&page=lm");
         
         if(response == null){//再拿一次
         	startTime = System.currentTimeMillis();
-        	response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=TJSSC&page=lm");
+        	response = dsnHttp.doGet(getTimeUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=KL8&page=lm");
         }
         
         long endTime = System.currentTimeMillis();
@@ -82,20 +82,20 @@ public class BetTJSSCManager {
         	dsnHttp.time = System.currentTimeMillis();
         }
     	
-        if(!isInTJSSCBetTime(dsnHttp.time)){
+        if(!isInKL8BetTime(dsnHttp.time)){
         	return -1;
         }
         
         
-        String getPeriodUrl = host + "/member/period?lottery=TJSSC&_=";
+        String getPeriodUrl = host + "/member/period?lottery=KL8&_=";
         getPeriodUrl += Long.toString(System.currentTimeMillis());
 
-        //System.out.println(cookieb18 + "defaultLT=TJSSC;" + cookieCfduid);
-        response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=TJSSC&page=lm");
+        //System.out.println(cookieb18 + "defaultLT=KL8;" + cookieCfduid);
+        response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=KL8&page=lm");
         
         if(response == null){
         	dsnHttp.addFailsTimes();
-        	response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=TJSSC&page=lm");
+        	response = dsnHttp.doGet(getPeriodUrl, "", dsnHttp.ADDRESS + "/member/load?lottery=KL8&page=lm");
         }
         
         if(response == null)
@@ -113,15 +113,15 @@ public class BetTJSSCManager {
         
         try{
             JSONObject periodJson = new JSONObject(response);
-            TJSSCloseTime = periodJson.getLong("closeTime");
-            if(!TJSSCdrawNumber.equals(periodJson.getString("drawNumber"))) {//新的一期
-            	previousTJSSCdrawNumber = TJSSCdrawNumber;
-            	TJSSCdrawNumber = periodJson.getString("drawNumber");
-            	if(previousTJSSCBetNumber != previousTJSSCdrawNumber && previousTJSSCBetNumber != TJSSCdrawNumber && previousTJSSCBetNumber != "") {//判断上一期有没有漏投
+            KL8loseTime = periodJson.getLong("closeTime");
+            if(!KL8drawNumber.equals(periodJson.getString("drawNumber"))) {//新的一期
+            	previousKL8drawNumber = KL8drawNumber;
+            	KL8drawNumber = periodJson.getString("drawNumber");
+            	if(previousKL8BetNumber != previousKL8drawNumber && previousKL8BetNumber != KL8drawNumber && previousKL8BetNumber != "") {//判断上一期有没有漏投
 					long dNum = 0;
 					try {
-					    long drawNum = Long.parseLong(TJSSCdrawNumber)%1000;
-					    long preBetNum =  Long.parseLong(previousTJSSCBetNumber)%1000;
+					    long drawNum = Long.parseLong(KL8drawNumber)%1000;
+					    long preBetNum =  Long.parseLong(previousKL8BetNumber)%1000;
 					    if(drawNum - preBetNum > 0) {
 					    	dNum = drawNum - preBetNum - 1;
 					    }else if(drawNum - preBetNum  < 0){
@@ -134,30 +134,30 @@ public class BetTJSSCManager {
 					
 					//failTimes += dNum;
 					
-					TJSSCjinrishibai += dNum;					
-			        TJSSCjinriqishu += dNum;
+					KL8jinrishibai += dNum;					
+			        KL8jinriqishu += dNum;
 			        
-			        TJSSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(TJSSCjinriqishu));
-			        TJSSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(TJSSCjinrishibai));
+			        KL8detalsDataWindow.updateTextFieldjinriqishu(Integer.toString(KL8jinriqishu));
+			        KL8detalsDataWindow.updateTextFieldjinrishibai(Integer.toString(KL8jinrishibai));
 			        
-			        TJSSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(TJSSCzongqishu + TJSSCjinriqishu));
-			        TJSSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(TJSSCzongshibai + TJSSCjinrishibai));
+			        KL8detalsDataWindow.updateTextFieldzongqishu(Integer.toString(KL8zongqishu + KL8jinriqishu));
+			        KL8detalsDataWindow.updateTextFieldzongshibai(Integer.toString(KL8zongshibai + KL8jinrishibai));
 					
 					
 					
 /*					autoBet.labelFailBets.setText("失败次数:" + failTimes);
 					autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));*/
-					System.out.println("漏投" + dNum + "次, 期数：" + TJSSCdrawNumber + "上次下单期数：" + previousTJSSCBetNumber);
+					System.out.println("漏投" + dNum + "次, 期数：" + KL8drawNumber + "上次下单期数：" + previousKL8BetNumber);
 					
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
-					long missDrawNumber = Long.parseLong(previousTJSSCBetNumber) + 1;
+					long missDrawNumber = Long.parseLong(previousKL8BetNumber) + 1;
 					for(int i = 0; i < dNum; i++){
 						String missDrawNmberstr = Long.toString(missDrawNumber + i);						
-		    			TJSSCdetalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
+		    			KL8detalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
 					}
 					
 					
-					previousTJSSCBetNumber = previousTJSSCdrawNumber;
+					previousKL8BetNumber = previousKL8drawNumber;
 					
 					
 			    }
@@ -165,7 +165,7 @@ public class BetTJSSCManager {
         }
         catch(Exception e){
         	autoBet.outputGUIMessage("获取迪斯尼时间错误！");
-        	System.out.println("getTJSSCRemainTime()获取时间异常" + response);
+        	System.out.println("getKL8RemainTime()获取时间异常" + response);
         	return System.currentTimeMillis();
         }
         
@@ -173,9 +173,9 @@ public class BetTJSSCManager {
 
        
         
-        long remainTime = TJSSCloseTime - (System.currentTimeMillis() + dsnHttp.timeDValue); //用差值计算  防止两次请求期间间隔过长
+        long remainTime = KL8loseTime - (System.currentTimeMillis() + dsnHttp.timeDValue); //用差值计算  防止两次请求期间间隔过长
         
-        TJSSCremainTime = remainTime;
+        KL8remainTime = remainTime;
         
     	return remainTime;
 	}
@@ -183,7 +183,7 @@ public class BetTJSSCManager {
 	
 	
 	
-    public static boolean  isInTJSSCBetTime(long time){
+    public static boolean  isInKL8BetTime(long time){
         Date date = new Date(time);
         int currentHour = date.getHours();
         int currentMinutes = date.getMinutes();
@@ -203,68 +203,68 @@ public class BetTJSSCManager {
     }
     
     
-    public static long getTJSSClocalRemainTime() {
-    	TJSSCremainTime = TJSSCloseTime - (System.currentTimeMillis() + dsnHttp.timeDValue);
-    	return TJSSCremainTime;
+    public static long getKL8localRemainTime() {
+    	KL8remainTime = KL8loseTime - (System.currentTimeMillis() + dsnHttp.timeDValue);
+    	return KL8remainTime;
     }
     
     
-    public static String getTJSSCoddsData(){
-    	String url = dsnHttp.ADDRESS + "/member/odds?lottery=TJSSC&games=ZDS%2CZDX%2CZWDX%2CYDX1%2CYDX2%2CYDX3%2CYDX4%2CYDX5%2CYDS1%2CYDS2%2CYDS3%2CYDS4%2CYDS5%2CYWDX1%2CYWDX2%2CYWDX3%2CYWDX4%2CYWDX5%2CYHDS1%2CYHDS2%2CYHDS3%2CYHDS4%2CYHDS5%2CLH15&_=";
+    public static String getKL8oddsData(){
+    	String url = dsnHttp.ADDRESS + "/member/odds?lottery=KL8&games=ZDX%2CZDS&_=";
     	url += Long.toString(System.currentTimeMillis());
     	
-    	TJSSCoddsData = dsnHttp.doGet(url, "", "");
+    	KL8oddsData = dsnHttp.doGet(url, "", "");
     	
-    	if(TJSSCoddsData == null){
-    		TJSSCoddsData = dsnHttp.doGet(url, "", "");
+    	if(KL8oddsData == null){
+    		KL8oddsData = dsnHttp.doGet(url, "", "");
     	}
     	
-    	return  TJSSCoddsData;
+    	return  KL8oddsData;
    	
     }
     
     
-    public static boolean doBetTJSSC(String[] betData, double percent, boolean opposite, String remainTime)
+    public static boolean doBetKL8(String[] betData, double percent, boolean opposite, String remainTime)
     {
 
     	String host = dsnHttp.ADDRESS;
        	
         String jsonParam = "";
         
-        if(previousTJSSCBetNumber.equals(TJSSCdrawNumber)) 
+        if(previousKL8BetNumber.equals(KL8drawNumber)) 
         	return false;
         
         
-        TJSSCjinriqishu++;
+        KL8jinriqishu++;
         
-        TJSSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(TJSSCjinriqishu));
+        KL8detalsDataWindow.updateTextFieldjinriqishu(Integer.toString(KL8jinriqishu));
         
-        TJSSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(TJSSCzongqishu + TJSSCjinriqishu));
+        KL8detalsDataWindow.updateTextFieldzongqishu(Integer.toString(KL8zongqishu + KL8jinriqishu));
         
         //如果未到封盘时间
-        if( TJSSCdrawNumber != null){
+        if( KL8drawNumber != null){
         	
-        	//System.out.printf("下注重庆时时彩第%s期\n",TJSSCdrawNumber);
-        	String outputStr = "下注天津时时彩第" + TJSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
+        	//System.out.printf("下注重庆时时彩第%s期\n",KL8drawNumber);
+        	String outputStr = "下注新疆时时彩第" + KL8drawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
-/*        	if(isEmptyData(betData, BetType.TJSSC)) {
+/*        	if(isEmptyData(betData, BetType.KL8)) {
         		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}*/
         	
-        	jsonParam = constructBetsData(betData, percent, BetType.TJSSC, opposite);
+        	jsonParam = constructBetsData(betData, percent, BetType.KL8, opposite);
         	
         	//在投注金额窗口显示,只显示百分之一
-        	String jsonStr = constructBetsData(betData, 0.01, BetType.TJSSC, opposite);
+        	String jsonStr = constructBetsData(betData, 0.01, BetType.KL8, opposite);
         	
         	
         	
         	
         	if(jsonParam == "") {
         		
-        		previousTJSSCBetNumber = TJSSCdrawNumber;
+        		previousKL8BetNumber = KL8drawNumber;
         		
         		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
@@ -272,7 +272,7 @@ public class BetTJSSCManager {
         		return false;
         	}
         
-        	addToBetAmountWindow(jsonStr, BetType.TJSSC);
+        	addToBetAmountWindow(jsonStr, BetType.KL8);
         	
         	outputBetsDetails(jsonParam);	
         	
@@ -289,7 +289,7 @@ public class BetTJSSCManager {
         	response = dsnHttp.bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	
         	
-        	boolean betRes = isBetSuccess(TJSSCdrawNumber);
+        	boolean betRes = isBetSuccess(KL8drawNumber);
         	
         	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("�ڲ�����") == true)){
         		response = dsnHttp.bet(host + "/member/bet", jsonParam, "UTF-8", "");
@@ -315,22 +315,22 @@ public class BetTJSSCManager {
         	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
         	
         	if(result == false){
-    			TJSSCdetalsDataWindow.addData(df.format(new Date()), TJSSCdrawNumber, 2, Integer.toString(TJSSCbetTotalAmount), Integer.toString(TJSSCbishu));
+    			KL8detalsDataWindow.addData(df.format(new Date()), KL8drawNumber, 2, Integer.toString(KL8betTotalAmount), Integer.toString(KL8bishu));
 
-    			unknowStatTJSSCDraw.add(TJSSCdrawNumber);
+    			unknowStatKL8Draw.add(KL8drawNumber);
     			
-    			TJSSCdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(unknowStatTJSSCDraw.size()));
+    			KL8detalsDataWindow.updateTextFieldjinriyichang(Integer.toString(unknowStatKL8Draw.size()));
     			
         	}
         	else{
-    			TJSSCdetalsDataWindow.addData(df.format(new Date()), TJSSCdrawNumber, 0, Integer.toString(TJSSCbetTotalAmount), Integer.toString(TJSSCbishu));        		
+    			KL8detalsDataWindow.addData(df.format(new Date()), KL8drawNumber, 0, Integer.toString(KL8betTotalAmount), Integer.toString(KL8bishu));        		
         	}
         	
-        	unCalcProfitTJSSCDraw.add(TJSSCdrawNumber);
+        	unCalcProfitKL8Draw.add(KL8drawNumber);
         	
 
         	    
-        	if(!previousTJSSCBetNumber.equals(TJSSCdrawNumber)) { //避免重复计数
+        	if(!previousKL8BetNumber.equals(KL8drawNumber)) { //避免重复计数
 /*        		if(result == true) {
 					successTimes++;
 					autoBet.labelSuccessBets.setText("成功次数:" + successTimes);
@@ -347,8 +347,8 @@ public class BetTJSSCManager {
 				autoBet.labelFailBets.setText("失败次数:" + failTimes);*/
         	}
 			
-			previousTJSSCBetNumber = TJSSCdrawNumber;
-        	previousTJSSCBetResult = result;
+			previousKL8BetNumber = KL8drawNumber;
+        	previousKL8BetResult = result;
         	
         	return result;
         
@@ -379,11 +379,11 @@ public class BetTJSSCManager {
 
 
 	    		
-    		if(TJSSCoddsData == null){
-    			getTJSSCoddsData();
+    		if(KL8oddsData == null){
+    			getKL8oddsData();
     		}
 	    		
-	    	oddsData = TJSSCoddsData;
+	    	oddsData = KL8oddsData;
 	    	
 	    	
 	    	oddsGrabData = new JSONObject(oddsData);
@@ -391,8 +391,8 @@ public class BetTJSSCManager {
 	    	for(int i = 0; i < data.length; i++){
     		
     		
-            	JSONArray TJSSCLMGrabData = new JSONArray(data[i]);        	
-            	JSONArray gamesGrabData = TJSSCLMGrabData.getJSONArray(0);
+            	JSONArray KL8LMGrabData = new JSONArray(data[i]);        	
+            	JSONArray gamesGrabData = KL8LMGrabData.getJSONArray(0);
 
         	
 	        	for(int j = 0; j < gamesGrabData.length(); j++){
@@ -514,9 +514,9 @@ public class BetTJSSCManager {
 	    	betsObj.put("bets", gamesArray);
 	    	
 
-        	betsObj.put("drawNumber",TJSSCdrawNumber);
+        	betsObj.put("drawNumber",KL8drawNumber);
         	
-        	betsObj.put("lottery", "TJSSC");
+        	betsObj.put("lottery", "KL8");
 
 	    	
 	    	res = betsObj.toString();
@@ -535,12 +535,12 @@ public class BetTJSSCManager {
     	return true;
     }
     
-    public static void showTJSSCDeatilsTable(){
-    	TJSSCdetalsDataWindow.setVisible(true);
+    public static void showKL8DeatilsTable(){
+    	KL8detalsDataWindow.setVisible(true);
     }
     
-    public static String getTJSSCdrawNumber(){
-    	return TJSSCdrawNumber;
+    public static String getKL8drawNumber(){
+    	return KL8drawNumber;
     }
     
     
@@ -563,7 +563,7 @@ public class BetTJSSCManager {
         		int amountDS = 0;
         		String contentsDS = "";
         		
-        		TJSSCbishu = gamesData.length();
+        		KL8bishu = gamesData.length();
         		
         		for(int j = 0; j < gamesData.length(); j++){
         			gameData = gamesData.getJSONObject(j);
@@ -659,7 +659,7 @@ public class BetTJSSCManager {
 			autoBet.outputGUIMessage("\n");
 			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
 			
-			TJSSCbetTotalAmount = totalAmount;
+			KL8betTotalAmount = totalAmount;
     			
         	
     	}catch(Exception e){
@@ -692,7 +692,7 @@ public class BetTJSSCManager {
         		int amountDS = 0;
         		String contentsDS = "";
         		
-        		TJSSCbishu = gamesData.length();
+        		KL8bishu = gamesData.length();
         		
         		for(int j = 0; j < gamesData.length(); j++){
         			gameData = gamesData.getJSONObject(j);
@@ -717,14 +717,14 @@ public class BetTJSSCManager {
 				if(amountDX != 0 ){
 						outputStr  = String.format("第%s球  %s", Integer.toString(i), contentsDX);
 						
-						TJSSCBetAmountWindow.addData(df.format(new Date()), TJSSCdrawNumber, outputStr, Integer.toString(amountDX));
+						KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountDX));
 
 				}
 				
 				if(amountDS != 0 ){
 					outputStr  = String.format("第%s球  %s", Integer.toString(i), contentsDS);
 					
-					TJSSCBetAmountWindow.addData(df.format(new Date()), TJSSCdrawNumber, outputStr, Integer.toString(amountDS));
+					KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountDS));
 					
 				}
 				
@@ -773,20 +773,20 @@ public class BetTJSSCManager {
 				outputStr  = String.format("总%s",  contentsZDX);
 				
 				
-				TJSSCBetAmountWindow.addData(df.format(new Date()), TJSSCdrawNumber, outputStr, Integer.toString(amountZDX));
+				KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountZDX));
 				
 				
 			}
 			
 			if(amountZDS != 0){
 				outputStr  = String.format("总%s",  contentsZDS);
-				TJSSCBetAmountWindow.addData(df.format(new Date()), TJSSCdrawNumber, outputStr, Integer.toString(amountZDS));
+				KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountZDS));
 				
 			}
 			
 			if(amountLH != 0){
 				outputStr  = String.format("%s",  contentsLH);
-				TJSSCBetAmountWindow.addData(df.format(new Date()), TJSSCdrawNumber, outputStr, Integer.toString(amountLH));
+				KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountLH));
 				
 			}
 
@@ -802,75 +802,75 @@ public class BetTJSSCManager {
     
     
     public static Vector<String> getUnCalcProfitBJSCDraw(){
-    	return unCalcProfitTJSSCDraw;
+    	return unCalcProfitKL8Draw;
     }
     
-    public static void updateUnCalcTJSSCDraw(Vector<String> calcedDraw){
+    public static void updateUnCalcKL8Draw(Vector<String> calcedDraw){
     	for(int i =0; i < calcedDraw.size(); i++){
-    		unCalcProfitTJSSCDraw.removeElement(calcedDraw.elementAt(i));
-    		unknowStatTJSSCDraw.removeElement(calcedDraw.elementAt(i));
+    		unCalcProfitKL8Draw.removeElement(calcedDraw.elementAt(i));
+    		unknowStatKL8Draw.removeElement(calcedDraw.elementAt(i));
     	}  
     	
     	
-    	long currentDraw = Long.parseLong(TJSSCdrawNumber);
+    	long currentDraw = Long.parseLong(KL8drawNumber);
     	
-    	for(int j =0; j < unCalcProfitTJSSCDraw.size(); j++){
-    		long idrawNumber = Long.parseLong(unCalcProfitTJSSCDraw.elementAt(j));
+    	for(int j =0; j < unCalcProfitKL8Draw.size(); j++){
+    		long idrawNumber = Long.parseLong(unCalcProfitKL8Draw.elementAt(j));
     		if((currentDraw - idrawNumber) >= 4){
-    			unCalcProfitTJSSCDraw.removeElement(unCalcProfitTJSSCDraw.elementAt(j));
+    			unCalcProfitKL8Draw.removeElement(unCalcProfitKL8Draw.elementAt(j));
     		}
     	}
     	
     	
-    	int yichangshu1 = unknowStatTJSSCDraw.size();
+    	int yichangshu1 = unknowStatKL8Draw.size();
     	
-    	for(int j =0; j < unknowStatTJSSCDraw.size(); j++){
-    		long idrawNumber = Long.parseLong(unknowStatTJSSCDraw.elementAt(j));
+    	for(int j =0; j < unknowStatKL8Draw.size(); j++){
+    		long idrawNumber = Long.parseLong(unknowStatKL8Draw.elementAt(j));
     		if((currentDraw - idrawNumber) >= 4){
-    			updateTJSSCWindowdetailsData(unknowStatTJSSCDraw.elementAt(j), TYPEINDEX.STATC.ordinal(), "1");
-    			unknowStatTJSSCDraw.removeElement(unknowStatTJSSCDraw.elementAt(j));
+    			updateKL8WindowdetailsData(unknowStatKL8Draw.elementAt(j), TYPEINDEX.STATC.ordinal(), "1");
+    			unknowStatKL8Draw.removeElement(unknowStatKL8Draw.elementAt(j));
 
     		}
     	}
     	
-    	int yichangshu2 = unknowStatTJSSCDraw.size();
+    	int yichangshu2 = unknowStatKL8Draw.size();
     	
-    	TJSSCjinriyichang = unknowStatTJSSCDraw.size();
+    	KL8jinriyichang = unknowStatKL8Draw.size();
     	
-    	TJSSCjinrishibai += yichangshu1 - yichangshu2;
-    	
-    	
+    	KL8jinrishibai += yichangshu1 - yichangshu2;
     	
     	
     	
-    	TJSSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(TJSSCjinrishibai));
-    	TJSSCdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(TJSSCjinriyichang));
+    	
+    	
+    	KL8detalsDataWindow.updateTextFieldjinrishibai(Integer.toString(KL8jinrishibai));
+    	KL8detalsDataWindow.updateTextFieldjinriyichang(Integer.toString(KL8jinriyichang));
     	
     	
     	
-    	TJSSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(TJSSCzongqishu + TJSSCjinriqishu));
+    	KL8detalsDataWindow.updateTextFieldzongqishu(Integer.toString(KL8zongqishu + KL8jinriqishu));
     	
-    	TJSSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(TJSSCzongshibai + TJSSCjinrishibai));
+    	KL8detalsDataWindow.updateTextFieldzongshibai(Integer.toString(KL8zongshibai + KL8jinrishibai));
     	
     	
     }
     
-    public static void updateTJSSCWindowdetailsData(String drawNumber, int index, String value){
-    	TJSSCdetalsDataWindow.updateRowItem(drawNumber, index, value);
+    public static void updateKL8WindowdetailsData(String drawNumber, int index, String value){
+    	KL8detalsDataWindow.updateRowItem(drawNumber, index, value);
     }
     
-    public static void showTJSSCBetAmountTable(){
-    	TJSSCBetAmountWindow.setVisible(true);
+    public static void showKL8BetAmountTable(){
+    	KL8BetAmountWindow.setVisible(true);
     }
     
-    public static void updateTJSSCBalance(String str){
-    	TJSSCdetalsDataWindow.updateTextFieldyue(str);
+    public static void updateKL8Balance(String str){
+    	KL8detalsDataWindow.updateTextFieldyue(str);
     }
     
     
-    public static boolean isTJSSCidle(){
+    public static boolean isKL8idle(){
     	boolean isIdle = false;
-    	if(TJSSCremainTime < 0 || TJSSCremainTime > 25*1000 ){
+    	if(KL8remainTime < 0 || KL8remainTime > 25*1000 ){
     		isIdle = true;
     	}
     	
@@ -878,26 +878,26 @@ public class BetTJSSCManager {
     }
     
     
-    public static void clearTJSSCdetalsData(){
-    	if(unCalcProfitTJSSCDraw.size() != 0){
-    		unCalcProfitTJSSCDraw.clear();
+    public static void clearKL8detalsData(){
+    	if(unCalcProfitKL8Draw.size() != 0){
+    		unCalcProfitKL8Draw.clear();
     	}
     	
-    	if(unknowStatTJSSCDraw.size() != 0){
-    		TJSSCjinrishibai += unknowStatTJSSCDraw.size();
-    		unknowStatTJSSCDraw.clear();
+    	if(unknowStatKL8Draw.size() != 0){
+    		KL8jinrishibai += unknowStatKL8Draw.size();
+    		unknowStatKL8Draw.clear();
     	}
 
-    	TJSSCzongqishu += TJSSCjinriqishu;
-    	TJSSCzongshibai += TJSSCjinrishibai;
+    	KL8zongqishu += KL8jinriqishu;
+    	KL8zongshibai += KL8jinrishibai;
     	
 
     	
-    	TJSSCjinriqishu = 0;
-    	TJSSCjinrishibai = 0;
-    	TJSSCjinriyichang = 0;
+    	KL8jinriqishu = 0;
+    	KL8jinrishibai = 0;
+    	KL8jinriyichang = 0;
     	
-    	TJSSCremainTime = -1;
+    	KL8remainTime = -1;
 
     }
     

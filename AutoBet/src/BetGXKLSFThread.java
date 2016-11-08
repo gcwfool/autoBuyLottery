@@ -1,12 +1,12 @@
-import java.util.Vector;
+ï»¿import java.util.Vector;
 class BetGXKLSFThread extends Thread{
     
     
-	//long betRemainTime = 15*1000;  //Àë¶àÉÙÃë·âÅÌÊ±½øĞĞÏÂ×¢
+	//long betRemainTime = 15*1000;  //ç¦»å¤šå°‘ç§’å°ç›˜æ—¶è¿›è¡Œä¸‹æ³¨
 	
-	long almostTime = 25*1000;  //½øĞĞ×îºóÒ»´Îsleep¼ÆËãµÄÊ±¼ä
+	long almostTime = 25*1000;  //è¿›è¡Œæœ€åä¸€æ¬¡sleepè®¡ç®—çš„æ—¶é—´
 	
-	long sleepTime = 10*1000;	//Æ½Ê±Ë®íµÊ±¼ä
+	long sleepTime = 10*1000;	//å¹³æ—¶æ°´æ·¼æ—¶é—´
 	boolean requestTime = true;
 	
     static double betGXKLSFPercent = 1.0;
@@ -35,7 +35,7 @@ class BetGXKLSFThread extends Thread{
 			boolean getGXKLSFOddsData = false;
 			
 			
-			//ÓÃÀ´¿ØÖÆ´òÓ¡·âÅÌÊı¾İÊı¾İÓëÏÂµ¥Êı¾İ²îÖµµÄ±äÁ¿
+			//ç”¨æ¥æ§åˆ¶æ‰“å°å°ç›˜æ•°æ®æ•°æ®ä¸ä¸‹å•æ•°æ®å·®å€¼çš„å˜é‡
 			boolean printGXKLSFErrorValue = false;
 
 	    	
@@ -45,16 +45,16 @@ class BetGXKLSFThread extends Thread{
 				if(requestTime) {
 					GXKLSFremainTime = BetGXKLSFManager.getGXKLSFremainTime();
 					
-					if(GXKLSFremainTime > 10*60*1000){//»ñÈ¡Ê±¼äÊ§°Ü
+					if(GXKLSFremainTime > 10*60*1000){//è·å–æ—¶é—´å¤±è´¥
 						
 
 						GXKLSFremainTime = BetGXKLSFManager.getGXKLSFlocalRemainTime();
 					}
 					
-					System.out.println("[µÏË¹Äá»áÔ±]¾àÀë¹ãÎ÷¿ìÀÖÊ®·Ö·âÅÌÊ±¼äÎª:");
+					System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»å¹¿è¥¿å¿«ä¹ååˆ†å°ç›˜æ—¶é—´ä¸º:");
 					System.out.println(GXKLSFremainTime/1000);			
 					
-					if((GXKLSFremainTime > 0 && GXKLSFremainTime <= 40*1000)) {//Èç¹û½«½ü·âÅÌ²»·¢ÇëÇó£¬»ñÈ¡±¾µØÊ±¼ä
+					if((GXKLSFremainTime > 0 && GXKLSFremainTime <= 40*1000)) {//å¦‚æœå°†è¿‘å°ç›˜ä¸å‘è¯·æ±‚ï¼Œè·å–æœ¬åœ°æ—¶é—´
 						requestTime = false;
 					}
 					
@@ -62,7 +62,7 @@ class BetGXKLSFThread extends Thread{
 					GXKLSFremainTime = BetGXKLSFManager.getGXKLSFlocalRemainTime();
 					
 					if(autoBetSuccess == false){
-						System.out.println("[µÏË¹Äá»áÔ±]¾àÀë¹ãÎ÷¿ìÀÖÊ®·Ö·âÅÌÊ±¼äÎª[local]:");
+						System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]è·ç¦»å¹¿è¥¿å¿«ä¹ååˆ†å°ç›˜æ—¶é—´ä¸º[local]:");
 						System.out.println(GXKLSFremainTime/1000);		
 					}
 			
@@ -83,7 +83,7 @@ class BetGXKLSFThread extends Thread{
 
 
 
-				//Ã¿ÅÌÄÃÒ»´ÎÅâÂÊÊı¾İ
+				//æ¯ç›˜æ‹¿ä¸€æ¬¡èµ”ç‡æ•°æ®
 				if(!timeTobetGXKLSF && (GXKLSFremainTime <= 90*1000) && GXKLSFremainTime > 0 && getGXKLSFOddsData == false){
 					String res = BetGXKLSFManager.getGXKLSFoddsData();
 					if(res != null){
@@ -104,7 +104,7 @@ class BetGXKLSFThread extends Thread{
 
 				
 				
-				if((betGXKLSF || betOppositeGXKLSF)&&timeTobetGXKLSF){//×îºóÊ®ÎåÃëÃëÈ¥ÏÂ×¢
+				if((betGXKLSF || betOppositeGXKLSF)&&timeTobetGXKLSF){//æœ€ååäº”ç§’ç§’å»ä¸‹æ³¨
 					
 					clearGXKLSFdetaisData = false;
 					
@@ -122,12 +122,12 @@ class BetGXKLSFThread extends Thread{
 					}
 					
 					if(betGXKLSFData == null) {
-						System.out.println("[µÏË¹Äá»áÔ±]ÏÂµ¥Ê§°Ü,Î´»ñÈ¡µ½ÏÂµ¥Êı¾İ");
+						System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]ä¸‹å•å¤±è´¥,æœªè·å–åˆ°ä¸‹å•æ•°æ®");
 					} else if(betGXKLSFData != null &&betGXKLSFData[0].equals(BetGXKLSFManager.getGXKLSFdrawNumber()) && autoBetSuccess == false) {
 						
 						String[] betsData = {betGXKLSFData[1]};
 						
-						System.out.println("[µÏË¹Äá»áÔ±]¹ãÎ÷¿ìÀÖÊ®·ÖÏÂµ¥Êı¾İ£º");
+						System.out.println("[è¿ªæ–¯å°¼ä¼šå‘˜]å¹¿è¥¿å¿«ä¹ååˆ†ä¸‹å•æ•°æ®ï¼š");
 						System.out.println(betGXKLSFData[1]);
 						
 						
@@ -139,6 +139,12 @@ class BetGXKLSFThread extends Thread{
 						}
 						
 						printGXKLSFErrorValue = false;
+						
+					}else if(!betGXKLSFData[0].equals(BetGXKLSFManager.getGXKLSFdrawNumber())){
+						System.out.println("å¹¿è¥¿å¿«ä¹ååˆ†ä¸‹å•æ•°æ®é”™è¯¯\n");
+						
+						System.out.printf("æœåŠ¡å™¨æœŸæ•°ï¼š%ldï¼Œ æœ¬åœ°æœŸæ•°:%ld\n", betGXKLSFData[0], BetGXKLSFManager.getGXKLSFdrawNumber());
+						
 						
 					}
 					

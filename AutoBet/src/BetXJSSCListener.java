@@ -1,4 +1,4 @@
-import java.awt.*;
+ï»¿import java.awt.*;
 import java.awt.event.*;
 
 
@@ -28,7 +28,7 @@ public class BetXJSSCListener implements ActionListener
 			BetXJSSCThread.betXJSSCPercent = percent;
 		}
 		else{
-			//TODO µ¯³ö¶Ô»°¿ò£¬ÌáÊ¾ÊäÈë´íÎó
+			//TODO å¼¹å‡ºå¯¹è¯æ¡†ï¼Œæç¤ºè¾“å…¥é”™è¯¯
 		}
 		
 		ab.setBetTime();
@@ -36,7 +36,7 @@ public class BetXJSSCListener implements ActionListener
 	
 		BetXJSSCThread.betOppositeXJSSC = true;
 		
-		String outputStr = "¿ªÊ¼·´Í¶¹ãÎ÷¿ìÀÖÊ®·Ö,Í¶×¢±ÈÀı£º" + BetXJSSCThread.betXJSSCPercent + "\n";
+		String outputStr = "å¼€å§‹åæŠ•æ–°ç–†æ—¶æ—¶å½©,æŠ•æ³¨æ¯”ä¾‹ï¼š" + BetXJSSCThread.betXJSSCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		
