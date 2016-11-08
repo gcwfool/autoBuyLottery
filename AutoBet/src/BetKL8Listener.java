@@ -36,7 +36,7 @@ public class BetKL8Listener implements ActionListener
 	
 		BetKL8Thread.betOppositeKL8 = true;
 		
-		String outputStr = "开始反投新疆时时彩,投注比例：" + BetKL8Thread.betKL8Percent + "\n";
+		String outputStr = "开始反投快乐8,投注比例：" + BetKL8Thread.betKL8Percent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		

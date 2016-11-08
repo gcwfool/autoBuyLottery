@@ -245,7 +245,7 @@ public class BetKL8Manager {
         if( KL8drawNumber != null){
         	
         	//System.out.printf("下注重庆时时彩第%s期\n",KL8drawNumber);
-        	String outputStr = "下注新疆时时彩第" + KL8drawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
+        	String outputStr = "下注快乐8第" + KL8drawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
 /*        	if(isEmptyData(betData, BetType.KL8)) {

@@ -113,7 +113,7 @@ class BetKL8Thread extends Thread{
 					
 					for(int i = 0; i < 4; i++) {
 						//todo
-						if((betKL8Data = client.getKL8data()) == null){
+						if((betKL8Data = client.getBJKL8data()) == null){
 							Thread.currentThread().sleep(1*1000);
 						}
 						else {
