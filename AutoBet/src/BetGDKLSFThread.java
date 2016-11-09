@@ -143,7 +143,7 @@ class BetGDKLSFThread extends Thread{
 					}else if(!betGDKLSFData[0].equals(BetGDKLSFManager.getGDKLSFdrawNumber())){
 						System.out.println("广东快乐十分下单数据错误\n");
 						
-						System.out.printf("服务器期数：%ld， 本地期数:%ld\n", betGDKLSFData[0], BetGDKLSFManager.getGDKLSFdrawNumber());
+						System.out.printf("服务器期数：%d， 本地期数:%d\n", betGDKLSFData[0], BetGDKLSFManager.getGDKLSFdrawNumber());
 						
 						
 					}

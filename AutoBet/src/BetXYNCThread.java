@@ -141,7 +141,7 @@ class BetXYNCThread extends Thread{
 					}else if(!betXYNCData[0].equals(BetXYNCManager.getXYNCdrawNumber())){
 						System.out.println("幸运农场下单数据错误\n");
 						
-						System.out.printf("服务器期数：%ld， 本地期数:%ld\n", betXYNCData[0], BetXYNCManager.getXYNCdrawNumber());
+						System.out.printf("服务器期数：%d， 本地期数:%d\n", betXYNCData[0], BetXYNCManager.getXYNCdrawNumber());
 						
 						
 					}

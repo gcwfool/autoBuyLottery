@@ -194,7 +194,7 @@ public class BetKL8Manager {
         }*/
         
         //两分钟分钟的缓冲
-        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 21 * 60 + 30)){
+        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
         	return true;
         }
         
@@ -554,52 +554,7 @@ public class BetKL8Manager {
         	JSONArray gamesData = betsData.getJSONArray("bets");
         	int totalAmount = 0;
         	
-        	for(int i = 1; i <= 5 ; i++){
-        		String gameDX = "DX" + Integer.toString(i);
-        		String gameDS = "DS" + Integer.toString(i);        		
-        		JSONObject gameData;
-        		int amountDX = 0;
-        		String contentsDX = "";
-        		int amountDS = 0;
-        		String contentsDS = "";
-        		
-        		KL8bishu = gamesData.length();
-        		
-        		for(int j = 0; j < gamesData.length(); j++){
-        			gameData = gamesData.getJSONObject(j);
-        			String game = gameData.getString("game");
-        			if(game.equals(gameDX)){
-        				amountDX = gameData.getInt("amount");
-        				contentsDX = gameData.getString("contents");
-        				contentsDX = contentsDX.equals("D")?"大":"小";
-        			}
-        			if(game.equals(gameDS)){
-        				amountDS = gameData.getInt("amount");  
-        				contentsDS = gameData.getString("contents");
-        				contentsDS = contentsDS.equals("D")?"单":"双";
-        			}
-        			
 
-        		}
-        		
-        		
-    			String outputStr = "";
-    			
-				if(amountDX != 0 ){
-						outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDX, amountDX);
-						autoBet.outputGUIMessage(outputStr);
-						totalAmount += amountDX;
-				}
-				
-				if(amountDS != 0 ){
-					outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDS, amountDS);
-					autoBet.outputGUIMessage(outputStr);
-					totalAmount += amountDS;
-				}
-				
-				autoBet.outputGUIMessage("\n");
-        		
-        	}
         	
         	
         	String gameZDX = "ZDX";
@@ -608,11 +563,14 @@ public class BetKL8Manager {
         	
         	int amountZDX = 0;
         	int amountZDS = 0;
-        	int amountLH = 0;
+
         	
         	String contentsZDX = "";
         	String contentsZDS = "";
-        	String contentsLH = "";
+        	
+        	
+        	KL8bishu = gamesData.length();
+
         	
     		for(int j = 0; j < gamesData.length(); j++){
     			JSONObject gameData;
@@ -629,11 +587,7 @@ public class BetKL8Manager {
     				contentsZDS = gameData.getString("contents");
     				contentsZDS = contentsZDS.equals("D")?"单":"双";
     			}
-				if(game.equals(gameLH)){
-					amountLH = gameData.getInt("amount");
-					contentsLH = gameData.getString("contents");
-					contentsLH = contentsLH.equals("L")?"龙":"虎";
-				}
+
 	
     		}
     		
@@ -649,13 +603,7 @@ public class BetKL8Manager {
 				autoBet.outputGUIMessage(outputStr);
 				totalAmount += amountZDS;
 			}
-			
-			if(amountLH != 0){
-				outputStr  = String.format("%s: %d,",  contentsLH, amountLH);
-				autoBet.outputGUIMessage(outputStr);
-				totalAmount += amountLH;
-			}
-			
+
 			autoBet.outputGUIMessage("\n");
 			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
 			
@@ -681,61 +629,11 @@ public class BetKL8Manager {
 
         	JSONObject betsData = new JSONObject(jsonData);
         	JSONArray gamesData = betsData.getJSONArray("bets");
-        	int totalAmount = 0;
-        	
-        	for(int i = 1; i <= 5 ; i++){
-        		String gameDX = "DX" + Integer.toString(i);
-        		String gameDS = "DS" + Integer.toString(i);        		
-        		JSONObject gameData;
-        		int amountDX = 0;
-        		String contentsDX = "";
-        		int amountDS = 0;
-        		String contentsDS = "";
-        		
-        		KL8bishu = gamesData.length();
-        		
-        		for(int j = 0; j < gamesData.length(); j++){
-        			gameData = gamesData.getJSONObject(j);
-        			String game = gameData.getString("game");
-        			if(game.equals(gameDX)){
-        				amountDX = gameData.getInt("amount");
-        				contentsDX = gameData.getString("contents");
-        				contentsDX = contentsDX.equals("D")?"大":"小";
-        			}
-        			if(game.equals(gameDS)){
-        				amountDS = gameData.getInt("amount");  
-        				contentsDS = gameData.getString("contents");
-        				contentsDS = contentsDS.equals("D")?"单":"双";
-        			}
-        			
 
-        		}
-        		
-        		
-    			String outputStr = "";
-    			
-				if(amountDX != 0 ){
-						outputStr  = String.format("第%s球  %s", Integer.toString(i), contentsDX);
-						
-						KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountDX));
-
-				}
-				
-				if(amountDS != 0 ){
-					outputStr  = String.format("第%s球  %s", Integer.toString(i), contentsDS);
-					
-					KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountDS));
-					
-				}
-				
-				
-        		
-        	}
-        	
         	
         	String gameZDX = "ZDX";
         	String gameZDS = "ZDS";
-        	String gameLH = "LH";
+
         	
         	int amountZDX = 0;
         	int amountZDS = 0;
@@ -743,7 +641,7 @@ public class BetKL8Manager {
         	
         	String contentsZDX = "";
         	String contentsZDS = "";
-        	String contentsLH = "";
+
         	
     		for(int j = 0; j < gamesData.length(); j++){
     			JSONObject gameData;
@@ -760,11 +658,7 @@ public class BetKL8Manager {
     				contentsZDS = gameData.getString("contents");
     				contentsZDS = contentsZDS.equals("D")?"单":"双";
     			}
-				if(game.equals(gameLH)){
-					amountLH = gameData.getInt("amount");
-					contentsLH = gameData.getString("contents");
-					contentsLH = contentsLH.equals("L")?"龙":"虎";
-				}
+
 	
     		}
     		
@@ -784,14 +678,7 @@ public class BetKL8Manager {
 				
 			}
 			
-			if(amountLH != 0){
-				outputStr  = String.format("%s",  contentsLH);
-				KL8BetAmountWindow.addData(df.format(new Date()), KL8drawNumber, outputStr, Integer.toString(amountLH));
-				
-			}
 
-
-    			
         	
     	}catch(Exception e){
     		e.printStackTrace();

@@ -237,7 +237,7 @@ class BetThread extends Thread{
 					}else if(!betCQSSCData[0].equals(dsnHttp.getCQSSCdrawNumber())){
 						System.out.println("重庆时时彩下单数据错误\n");
 						
-						System.out.printf("服务器期数：%ld， 本地期数:%ld\n", betCQSSCData[0], dsnHttp.getCQSSCdrawNumber());
+						System.out.printf("服务器期数：%d， 本地期数:%d\n", betCQSSCData[0], dsnHttp.getCQSSCdrawNumber());
 						
 						
 					}
@@ -284,7 +284,7 @@ class BetThread extends Thread{
 						
 						System.out.println("重庆时时彩下单数据错误\n");
 						
-						System.out.printf("服务器期数：%ld， 本地期数:%ld\n", betBJSCData[0], dsnHttp.getBJSCdrawNumber());
+						System.out.printf("服务器期数：%d， 本地期数:%d\n", betBJSCData[0], dsnHttp.getBJSCdrawNumber());
 						
 						
 					}

@@ -152,6 +152,7 @@ public class autoBet {
 			betTime = 24;
 		}
 
+
 		try {
 			// 生成路径
 			File dir = new File("log");
@@ -671,7 +672,7 @@ public class autoBet {
 		btnBetAmountWindowTJSSC.setLocation(DsnMemberX + 220, DsnMemberY + 360);
 
 		// KL8
-		btnBetOppositeKL8 = new Button("反投天津时时彩");
+		btnBetOppositeKL8 = new Button("反投北京快乐8");
 		btnBetOppositeKL8.addActionListener(new BetKL8Listener(this, client));
 
 		btnBetOppositeKL8.setSize(75, 25);

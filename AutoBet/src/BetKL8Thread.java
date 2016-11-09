@@ -143,7 +143,7 @@ class BetKL8Thread extends Thread{
 					}else if(!betKL8Data[0].equals(BetKL8Manager.getKL8drawNumber())){
 						System.out.println("快乐8下单数据错误\n");
 						
-						System.out.printf("服务器期数：%ld， 本地期数:%ld\n", betKL8Data[0], BetKL8Manager.getKL8drawNumber());
+						System.out.printf("服务器期数：%d， 本地期数:%d\n", betKL8Data[0], BetKL8Manager.getKL8drawNumber());
 						
 						
 					}

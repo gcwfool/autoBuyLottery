@@ -194,7 +194,7 @@ public class BetGD11X5Manager {
         }*/
         
         //两分钟分钟的缓冲
-        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 10 * 60)){
+        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 22 * 60)){
         	return true;
         }
         
@@ -565,8 +565,7 @@ public class BetGD11X5Manager {
         		
         		String gameWDX = "WDX" + Integer.toString(i);
         		String gameHDS = "HDS" + Integer.toString(i);
-        		
-        		String gameLH = "LH" + Integer.toString(i);
+
         		
         		JSONObject gameData;
         		
@@ -582,8 +581,7 @@ public class BetGD11X5Manager {
         		int amountHDS = 0;
         		String contentsHDS = "";
         		
-        		int amountLH = 0;
-        		String contentsLH = "";
+
         		
         		
         		for(int j = 0; j < gamesData.length(); j++){
@@ -612,11 +610,7 @@ public class BetGD11X5Manager {
         				contentsHDS = contentsHDS.equals("D")?"合单":"合双";
         			}
         			
-        			if(game.equals(gameLH)){
-        				amountLH = gameData.getInt("amount");
-        				contentsLH = gameData.getString("contents");
-        				contentsLH = contentsLH.equals("D")?"龙":"虎";
-        			}
+
 
         		}
         		
@@ -647,11 +641,7 @@ public class BetGD11X5Manager {
 					totalAmount += amountHDS;
 				}
 				
-				if(amountLH != 0 ){
-					outputStr  = String.format("第%s球   %s: %d,", Integer.toString(i), contentsLH, amountLH);
-					autoBet.outputGUIMessage(outputStr);
-					totalAmount += amountLH;
-				}
+
 				
 				autoBet.outputGUIMessage("\n");
         		
@@ -741,14 +731,13 @@ public class BetGD11X5Manager {
         	
         	GD11X5bishu = gamesData.length();
         	
-        	for(int i = 1; i <= 8 ; i++){
+        	for(int i = 1; i <= 5 ; i++){
         		String gameDX = "DX" + Integer.toString(i);
         		String gameDS = "DS" + Integer.toString(i);
         		
         		String gameWDX = "WDX" + Integer.toString(i);
         		String gameHDS = "HDS" + Integer.toString(i);
-        		
-        		String gameLH = "LH" + Integer.toString(i);
+
         		
         		JSONObject gameData;
         		
@@ -764,8 +753,7 @@ public class BetGD11X5Manager {
         		int amountHDS = 0;
         		String contentsHDS = "";
         		
-        		int amountLH = 0;
-        		String contentsLH = "";
+
         		
         		
         		for(int j = 0; j < gamesData.length(); j++){
@@ -794,11 +782,7 @@ public class BetGD11X5Manager {
         				contentsHDS = contentsHDS.equals("D")?"合单":"合双";
         			}
         			
-        			if(game.equals(gameLH)){
-        				amountLH = gameData.getInt("amount");
-        				contentsLH = gameData.getString("contents");
-        				contentsLH = contentsLH.equals("D")?"龙":"虎";
-        			}
+
 
         		}
         		
@@ -826,10 +810,7 @@ public class BetGD11X5Manager {
 					GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountHDS));
 				}
 				
-				if(amountLH != 0 ){
-					outputStr  = String.format("第%s球   %s", Integer.toString(i), contentsLH);
-					GD11X5BetAmountWindow.addData(df.format(new Date()), GD11X5drawNumber, outputStr, Integer.toString(amountLH));
-				}
+
 				
 				
         		
