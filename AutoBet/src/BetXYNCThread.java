@@ -40,6 +40,17 @@ class BetXYNCThread extends Thread{
 
 	    	
 			while(true){
+				
+				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearXYNCdetaisData == false){
+					BetXYNCManager.clearXYNCdetalsData();
+					clearXYNCdetaisData = true;
+				}
+				
+				long localTime = dsnHttp.getlocalTime();
+				
+				if(!BetXYNCManager.isInXYNCBetTime(localTime) || dsnHttp.isInRelogin == true)
+					continue;
+				
 				long XYNCremainTime = 0;
 				
 				if(requestTime) {
@@ -136,6 +147,9 @@ class BetXYNCThread extends Thread{
 							//dsnHttp.setCQSSCBetData(betsData);
 						}
 						
+						//todo remove
+						autoBetSuccess = true;
+						
 						printXYNCErrorValue = false;
 						
 					}else if(!betXYNCData[0].equals(BetXYNCManager.getXYNCdrawNumber())){
@@ -198,10 +212,7 @@ class BetXYNCThread extends Thread{
 					
 				}
 				
-				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearXYNCdetaisData == false){
-					BetXYNCManager.clearXYNCdetalsData();
-					clearXYNCdetaisData = true;
-				}
+
 
 				
 				

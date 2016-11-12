@@ -1641,6 +1641,12 @@ public class dsnHttp {
     }
     
     
+    
+    public static long getlocalTime() {
+    	return System.currentTimeMillis() + timeDValue;
+    }
+    
+    
 public static void addToBetAmountWindow(String jsonData, BetType betType){
 	
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
@@ -2267,7 +2273,9 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
         	
         	boolean betRes = isBetSuccess(CQSSCdrawNumber);
         	
-        	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("�ڲ�����") == true)){
+        	boolean result = pureParseBetResult(response);
+        	
+        	if((betRes == false) && (result == false)){
         		response = bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	}
         	
@@ -2285,7 +2293,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
         	autoBet.outputGUIMessage(strUsingTime);
 
         	
-        	boolean result = parseBetResult(response);
+        	result = parseBetResult(response);
         	
         	
         	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
@@ -2521,6 +2529,47 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     	
     	return false;
     }
+    
+    
+    
+    public static boolean pureParseBetResult(String str){
+    	
+    	
+
+
+    	
+    	
+    	if(str != null) {
+    		System.out.println("pure下单结果：" + str);
+    	}
+    	
+    	if(str != null && str.length()>0){
+    		String outputStr = "";
+    		JSONObject betResult = null;
+    		try{
+        		betResult = new JSONObject(str);	
+    		}catch(Exception e)
+    		{
+    			return false;
+    		}
+    		int status = betResult.getInt("status");
+    		switch(status){
+    		case 0:
+    			return true;
+    		
+    		case 1:   			
+    		case 2:
+    		case 3:
+    			return false;
+    		
+    		}
+    	}
+    	
+    	
+    	return false;
+    }
+    
+    
     
     public static String constructBetsData(String[] data, double percent, BetType betType, boolean opposite)
     {

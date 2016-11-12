@@ -34,12 +34,18 @@ public class BetCQSSCListener implements ActionListener
 		ab.setBetTime();
 
 		
+		ab.btnBetCQSSC.setBackground(Color.GREEN);
+		ab.btnOppositeBetCQSSC.setBackground(Color.RED);
+		
+		
 		BetThread.betCQSSC = true;
 		BetThread.betOppositeCQSSC = false;
 		
 		String outputStr = "开始正投重庆时时彩,投注比例：" + BetThread.betCQSSCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
+		
+		dsnHttp.showCQSSCDeatilsTable();
 		
 		if(ab.inBet == true){					
 			return;

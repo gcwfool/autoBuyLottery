@@ -68,9 +68,19 @@ public class autoBet {
 	public TextField textFieldBetTime;
 
 	public Button btnBetCQSSC;
+	public Button btnBetBJSC;
+	public Button btnBetXYNC;
+	public Button btnBetGXKLSF;
+	public Button btnBetGDKLSF;
+	public Button btnBetGD11X5;
+	public Button btnBetXJSSC;
+	public Button btnBetTJSSC;
+	public Button btnBetKL8;
+	
+	
 	public Button btnOppositeBetCQSSC;
 	public Button btnStopBetCQSSC;
-	public Button btnBetBJSC;
+	
 	public Button btnOppositeBJSC;
 	public Button btnStopBetBJSC;
 
@@ -146,7 +156,7 @@ public class autoBet {
 			betTime = 5;
 		} else if (betMode == BetMode.MIDDLETIME) {
 			betTimeOut = 15 * 1000;
-			betTime = 20;
+			betTime = 10;
 		} else {
 			betTimeOut = 20 * 1000;
 			betTime = 24;
@@ -197,6 +207,7 @@ public class autoBet {
 			BetGD11X5Thread.betRemainTime = timeSeconds * 1000;
 			BetXJSSCThread.betRemainTime = timeSeconds * 1000;
 			BetTJSSCThread.betRemainTime = timeSeconds * 1000;
+			BetKL8Thread.betRemainTime = timeSeconds * 1000;
 			BetTianCaiThread.betRemainTime = timeSeconds;
 		} else {
 			// TODO 弹出对话框，提示输入错误
@@ -221,10 +232,19 @@ public class autoBet {
 	}
 
 	public void enableDSNMemberBet(boolean flag) {
-		btnBetCQSSC.setEnabled(false);
+		btnBetCQSSC.setEnabled(flag);
+		
+		btnBetXYNC.setEnabled(flag);
+		btnBetGXKLSF.setEnabled(flag);
+		btnBetGDKLSF.setEnabled(flag);
+		btnBetGD11X5.setEnabled(flag);
+		btnBetXJSSC.setEnabled(flag);
+		btnBetTJSSC.setEnabled(flag);
+		btnBetKL8.setEnabled(flag);
+		
 		btnOppositeBetCQSSC.setEnabled(flag);
 		btnStopBetCQSSC.setEnabled(flag);
-		btnBetBJSC.setEnabled(false);
+		btnBetBJSC.setEnabled(flag);
 		btnOppositeBJSC.setEnabled(flag);
 		btnStopBetBJSC.setEnabled(flag);
 		btnBetOppositeXYNC.setEnabled(flag);
@@ -473,93 +493,160 @@ public class autoBet {
 
 		btnBetCQSSC.setSize(90, 25);
 		btnBetCQSSC.setLocation(DsnMemberX, DsnMemberY + 150);
+		
+		
+		btnBetBJSC = new Button("正投北京赛车");
+		btnBetBJSC.addActionListener(new BetBJSCListener(this, client));
+
+		btnBetBJSC.setSize(90, 25);
+		btnBetBJSC.setLocation(DsnMemberX, DsnMemberY + 180);
+		
+		btnBetXYNC = new Button("正投幸运农场");
+		btnBetXYNC.addActionListener(new BetzhengXYNCListener(this, client));
+
+		btnBetXYNC.setSize(90, 25);
+		btnBetXYNC.setLocation(DsnMemberX, DsnMemberY + 210);
+		
+		
+		
+		// GXKLSF
+		btnBetGXKLSF = new Button("正投广西快乐十分");
+		btnBetGXKLSF.addActionListener(new BetzhengGXKLSFListener(this,
+				client));
+
+		btnBetGXKLSF.setSize(90, 25);
+		btnBetGXKLSF.setLocation(DsnMemberX, DsnMemberY + 240);
+		
+		
+		// GDKLSF
+
+		btnBetGDKLSF = new Button("正投广东快乐十分");
+		btnBetGDKLSF.addActionListener(new BetzhengGDKLSFListener(this,
+				client));
+
+		btnBetGDKLSF.setSize(90, 25);
+		btnBetGDKLSF.setLocation(DsnMemberX, DsnMemberY + 270);
+		
+		// GD11X5
+
+		btnBetGD11X5 = new Button("正投广东11选5");
+		btnBetGD11X5.addActionListener(new BetzhengGD11X5Listener(this,
+				client));
+
+		btnBetGD11X5.setSize(90, 25);
+		btnBetGD11X5.setLocation(DsnMemberX, DsnMemberY + 300);
+		
+		
+		// XJSSC
+
+		btnBetXJSSC = new Button("正投新疆时时彩");
+		btnBetXJSSC
+				.addActionListener(new BetzhengXJSSCListener(this, client));
+
+		btnBetXJSSC.setSize(90, 25);
+		btnBetXJSSC.setLocation(DsnMemberX, DsnMemberY + 330);
+		
+		
+		// TJSSC
+		btnBetTJSSC = new Button("正投天津时时彩");
+		btnBetTJSSC
+				.addActionListener(new BetzhengTJSSCListener(this, client));
+
+		btnBetTJSSC.setSize(90, 25);
+		btnBetTJSSC.setLocation(DsnMemberX, DsnMemberY + 360);
+		
+		//kl8
+		btnBetKL8 = new Button("正投北京快乐8");
+		btnBetKL8.addActionListener(new BetzhengKL8Listener(this, client));
+
+		btnBetKL8.setSize(90, 25);
+		btnBetKL8.setLocation(DsnMemberX, DsnMemberY + 390);
+		
+		int DsnMemberOldX =  DsnMemberX + 100;
+		
 
 		Label labelPercent = new Label("投注比例:");
 		labelPercent.setSize(60, 25);
-		labelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 150);
+		labelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 150);
 
 		textFieldCQSSCBetPercent = new TextField();
 		textFieldCQSSCBetPercent.setSize(60, 25);
 		textFieldCQSSCBetPercent
-				.setLocation(DsnMemberX + 160, DsnMemberY + 150);
+				.setLocation(DsnMemberOldX + 160, DsnMemberY + 150);
 
 		btnOppositeBetCQSSC = new Button("反投重庆时时彩");
 		btnOppositeBetCQSSC.addActionListener(new BetOppositeCQSSCListener(
 				this, client));
 
 		btnOppositeBetCQSSC.setSize(90, 25);
-		btnOppositeBetCQSSC.setLocation(DsnMemberX, DsnMemberY + 150);
+		btnOppositeBetCQSSC.setLocation(DsnMemberOldX, DsnMemberY + 150);
 
 		btnStopBetCQSSC = new Button("投注金额");
 		btnStopBetCQSSC.addActionListener(new StopBetCQSSCListener(this));
 
 		btnStopBetCQSSC.setSize(90, 25);
-		btnStopBetCQSSC.setLocation(DsnMemberX + 220, DsnMemberY + 150);
+		btnStopBetCQSSC.setLocation(DsnMemberOldX + 220, DsnMemberY + 150);
 
-		btnBetBJSC = new Button("正投北京赛车");
-		btnBetBJSC.addActionListener(new BetBJSCListener(this, client));
 
-		btnBetBJSC.setSize(75, 25);
-		btnBetBJSC.setLocation(DsnMemberX, DsnMemberY + 210);
 
 		Label BJSClabelPercent = new Label("投注比例:");
 		BJSClabelPercent.setSize(60, 25);
-		BJSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 180);
+		BJSClabelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 180);
 
 		textFieldBJSCBetPercent = new TextField();
 		textFieldBJSCBetPercent.setSize(60, 25);
-		textFieldBJSCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 180);
+		textFieldBJSCBetPercent.setLocation(DsnMemberOldX + 160, DsnMemberY + 180);
 
 		btnOppositeBJSC = new Button("反投北京赛车");
 		btnOppositeBJSC.addActionListener(new BetOppositeBJSCListener(this,
 				client));
 
-		btnOppositeBJSC.setSize(75, 25);
-		btnOppositeBJSC.setLocation(DsnMemberX, DsnMemberY + 180);
+		btnOppositeBJSC.setSize(90, 25);
+		btnOppositeBJSC.setLocation(DsnMemberOldX, DsnMemberY + 180);
 
 		btnStopBetBJSC = new Button("投注金额");
 		btnStopBetBJSC.addActionListener(new StopBetBJSCListener(this));
 
 		btnStopBetBJSC.setSize(90, 25);
-		btnStopBetBJSC.setLocation(DsnMemberX + 220, DsnMemberY + 180);
+		btnStopBetBJSC.setLocation(DsnMemberOldX + 220, DsnMemberY + 180);
 
 		// XYNC幸运农场
 		btnBetOppositeXYNC = new Button("反投幸运农场");
 		btnBetOppositeXYNC.addActionListener(new BetXYNCListener(this, client));
 
-		btnBetOppositeXYNC.setSize(75, 25);
-		btnBetOppositeXYNC.setLocation(DsnMemberX, DsnMemberY + 210);
+		btnBetOppositeXYNC.setSize(90, 25);
+		btnBetOppositeXYNC.setLocation(DsnMemberOldX, DsnMemberY + 210);
 
 		Label XYNClabelPercent = new Label("投注比例:");
 		XYNClabelPercent.setSize(60, 25);
-		XYNClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 210);
+		XYNClabelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 210);
 
 		textFieldXYNCBetPercent = new TextField();
 		textFieldXYNCBetPercent.setSize(60, 25);
-		textFieldXYNCBetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 210);
+		textFieldXYNCBetPercent.setLocation(DsnMemberOldX + 160, DsnMemberY + 210);
 
 		btnBetAmountWindowXYNC = new Button("投注金额");
 		btnBetAmountWindowXYNC
 				.addActionListener(new BetAmountDetailXYNCListener(this));
 
 		btnBetAmountWindowXYNC.setSize(90, 25);
-		btnBetAmountWindowXYNC.setLocation(DsnMemberX + 220, DsnMemberY + 210);
+		btnBetAmountWindowXYNC.setLocation(DsnMemberOldX + 220, DsnMemberY + 210);
 
 		// GXKLSF
 		btnBetOppositeGXKLSF = new Button("反投广西快乐十分");
 		btnBetOppositeGXKLSF.addActionListener(new BetGXKLSFListener(this,
 				client));
 
-		btnBetOppositeGXKLSF.setSize(75, 25);
-		btnBetOppositeGXKLSF.setLocation(DsnMemberX, DsnMemberY + 240);
+		btnBetOppositeGXKLSF.setSize(90, 25);
+		btnBetOppositeGXKLSF.setLocation(DsnMemberOldX, DsnMemberY + 240);
 
 		Label GXKLSFlabelPercent = new Label("投注比例:");
 		GXKLSFlabelPercent.setSize(60, 25);
-		GXKLSFlabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 240);
+		GXKLSFlabelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 240);
 
 		textFieldGXKLSFBetPercent = new TextField();
 		textFieldGXKLSFBetPercent.setSize(60, 25);
-		textFieldGXKLSFBetPercent.setLocation(DsnMemberX + 160,
+		textFieldGXKLSFBetPercent.setLocation(DsnMemberOldX + 160,
 				DsnMemberY + 240);
 
 		btnBetAmountWindowGXKLSF = new Button("投注金额");
@@ -568,7 +655,7 @@ public class autoBet {
 
 		btnBetAmountWindowGXKLSF.setSize(90, 25);
 		btnBetAmountWindowGXKLSF
-				.setLocation(DsnMemberX + 220, DsnMemberY + 240);
+				.setLocation(DsnMemberOldX + 220, DsnMemberY + 240);
 
 		// GDKLSF
 
@@ -576,25 +663,25 @@ public class autoBet {
 		btnBetOppositeGDKLSF.addActionListener(new BetGDKLSFListener(this,
 				client));
 
-		btnBetOppositeGDKLSF.setSize(75, 25);
-		btnBetOppositeGDKLSF.setLocation(DsnMemberX, DsnMemberY + 270);
+		btnBetOppositeGDKLSF.setSize(90, 25);
+		btnBetOppositeGDKLSF.setLocation(DsnMemberOldX, DsnMemberY + 270);
 
 		Label GDKLSFlabelPercent = new Label("投注比例:");
 		GDKLSFlabelPercent.setSize(60, 25);
-		GDKLSFlabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 270);
+		GDKLSFlabelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 270);
 
 		textFieldGDKLSFBetPercent = new TextField();
 		textFieldGDKLSFBetPercent.setSize(60, 25);
-		textFieldGDKLSFBetPercent.setLocation(DsnMemberX + 160,
+		textFieldGDKLSFBetPercent.setLocation(DsnMemberOldX + 160,
 				DsnMemberY + 270);
 
 		btnBetAmountWindowGDKLSF = new Button("投注金额");
 		btnBetAmountWindowGDKLSF
-				.addActionListener(new BetAmountDetailGXKLSFListener(this));
+				.addActionListener(new BetAmountDetailGDKLSFListener(this));
 
 		btnBetAmountWindowGDKLSF.setSize(90, 25);
 		btnBetAmountWindowGDKLSF
-				.setLocation(DsnMemberX + 220, DsnMemberY + 270);
+				.setLocation(DsnMemberOldX + 220, DsnMemberY + 270);
 
 		// GD11X5
 
@@ -602,25 +689,25 @@ public class autoBet {
 		btnBetOppositeGD11X5.addActionListener(new BetGD11X5Listener(this,
 				client));
 
-		btnBetOppositeGD11X5.setSize(75, 25);
-		btnBetOppositeGD11X5.setLocation(DsnMemberX, DsnMemberY + 300);
+		btnBetOppositeGD11X5.setSize(90, 25);
+		btnBetOppositeGD11X5.setLocation(DsnMemberOldX, DsnMemberY + 300);
 
 		Label GD11X5labelPercent = new Label("投注比例:");
 		GD11X5labelPercent.setSize(60, 25);
-		GD11X5labelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 300);
+		GD11X5labelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 300);
 
 		textFieldGD11X5BetPercent = new TextField();
 		textFieldGD11X5BetPercent.setSize(60, 25);
-		textFieldGD11X5BetPercent.setLocation(DsnMemberX + 160,
+		textFieldGD11X5BetPercent.setLocation(DsnMemberOldX + 160,
 				DsnMemberY + 300);
 
 		btnBetAmountWindowGD11X5 = new Button("投注金额");
 		btnBetAmountWindowGD11X5
-				.addActionListener(new BetAmountDetailGXKLSFListener(this));
+				.addActionListener(new BetAmountDetailGD11X5Listener(this));
 
 		btnBetAmountWindowGD11X5.setSize(90, 25);
 		btnBetAmountWindowGD11X5
-				.setLocation(DsnMemberX + 220, DsnMemberY + 300);
+				.setLocation(DsnMemberOldX + 220, DsnMemberY + 300);
 
 		// XJSSC
 
@@ -628,70 +715,70 @@ public class autoBet {
 		btnBetOppositeXJSSC
 				.addActionListener(new BetXJSSCListener(this, client));
 
-		btnBetOppositeXJSSC.setSize(75, 25);
-		btnBetOppositeXJSSC.setLocation(DsnMemberX, DsnMemberY + 330);
+		btnBetOppositeXJSSC.setSize(90, 25);
+		btnBetOppositeXJSSC.setLocation(DsnMemberOldX, DsnMemberY + 330);
 
 		Label XJSSClabelPercent = new Label("投注比例:");
 		XJSSClabelPercent.setSize(60, 25);
-		XJSSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 330);
+		XJSSClabelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 330);
 
 		textFieldXJSSCBetPercent = new TextField();
 		textFieldXJSSCBetPercent.setSize(60, 25);
 		textFieldXJSSCBetPercent
-				.setLocation(DsnMemberX + 160, DsnMemberY + 330);
+				.setLocation(DsnMemberOldX + 160, DsnMemberY + 330);
 
 		btnBetAmountWindowXJSSC = new Button("投注金额");
 		btnBetAmountWindowXJSSC
-				.addActionListener(new BetAmountDetailGXKLSFListener(this));
+				.addActionListener(new BetAmountDetailXJSSCListener(this));
 
 		btnBetAmountWindowXJSSC.setSize(90, 25);
-		btnBetAmountWindowXJSSC.setLocation(DsnMemberX + 220, DsnMemberY + 330);
+		btnBetAmountWindowXJSSC.setLocation(DsnMemberOldX + 220, DsnMemberY + 330);
 
 		// TJSSC
 		btnBetOppositeTJSSC = new Button("反投天津时时彩");
 		btnBetOppositeTJSSC
 				.addActionListener(new BetTJSSCListener(this, client));
 
-		btnBetOppositeTJSSC.setSize(75, 25);
-		btnBetOppositeTJSSC.setLocation(DsnMemberX, DsnMemberY + 360);
+		btnBetOppositeTJSSC.setSize(90, 25);
+		btnBetOppositeTJSSC.setLocation(DsnMemberOldX, DsnMemberY + 360);
 
 		Label TJSSClabelPercent = new Label("投注比例:");
 		TJSSClabelPercent.setSize(60, 25);
-		TJSSClabelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 360);
+		TJSSClabelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 360);
 
 		textFieldTJSSCBetPercent = new TextField();
 		textFieldTJSSCBetPercent.setSize(60, 25);
 		textFieldTJSSCBetPercent
-				.setLocation(DsnMemberX + 160, DsnMemberY + 360);
+				.setLocation(DsnMemberOldX + 160, DsnMemberY + 360);
 
 		btnBetAmountWindowTJSSC = new Button("投注金额");
 		btnBetAmountWindowTJSSC
-				.addActionListener(new BetAmountDetailGXKLSFListener(this));
+				.addActionListener(new BetAmountDetailTJSSCListener(this));
 
 		btnBetAmountWindowTJSSC.setSize(90, 25);
-		btnBetAmountWindowTJSSC.setLocation(DsnMemberX + 220, DsnMemberY + 360);
+		btnBetAmountWindowTJSSC.setLocation(DsnMemberOldX + 220, DsnMemberY + 360);
 
 		// KL8
 		btnBetOppositeKL8 = new Button("反投北京快乐8");
 		btnBetOppositeKL8.addActionListener(new BetKL8Listener(this, client));
 
-		btnBetOppositeKL8.setSize(75, 25);
-		btnBetOppositeKL8.setLocation(DsnMemberX, DsnMemberY + 390);
+		btnBetOppositeKL8.setSize(90, 25);
+		btnBetOppositeKL8.setLocation(DsnMemberOldX, DsnMemberY + 390);
 
 		Label KL8labelPercent = new Label("投注比例:");
 		KL8labelPercent.setSize(60, 25);
-		KL8labelPercent.setLocation(DsnMemberX + 100, DsnMemberY + 390);
+		KL8labelPercent.setLocation(DsnMemberOldX + 100, DsnMemberY + 390);
 
 		textFieldKL8BetPercent = new TextField();
 		textFieldKL8BetPercent.setSize(60, 25);
-		textFieldKL8BetPercent.setLocation(DsnMemberX + 160, DsnMemberY + 390);
+		textFieldKL8BetPercent.setLocation(DsnMemberOldX + 160, DsnMemberY + 390);
 
 		btnBetAmountWindowKL8 = new Button("投注金额");
 		btnBetAmountWindowKL8
-				.addActionListener(new BetAmountDetailGXKLSFListener(this));
+				.addActionListener(new BetAmountDetailKL8Listener(this));
 
 		btnBetAmountWindowKL8.setSize(90, 25);
-		btnBetAmountWindowKL8.setLocation(DsnMemberX + 220, DsnMemberY + 390);
+		btnBetAmountWindowKL8.setLocation(DsnMemberOldX + 220, DsnMemberY + 390);
 
 		panel.add(labelDsnMemberLogin);
 		panel.add(labelDsnMemberAddress);
@@ -702,16 +789,31 @@ public class autoBet {
 		panel.add(textFieldMemberPassword);
 		panel.add(btnMemberLogin);
 
-		// panel.add(btnBetCQSSC);
+		panel.add(btnBetCQSSC);
 		panel.add(labelPercent);
 		panel.add(btnOppositeBetCQSSC);
-		// panel.add(btnBetBJSC);
+		panel.add(btnBetBJSC);
 		panel.add(btnOppositeBJSC);
 		panel.add(BJSClabelPercent);
 		panel.add(textFieldCQSSCBetPercent);
 		panel.add(textFieldBJSCBetPercent);
 		panel.add(btnStopBetCQSSC);
 		panel.add(btnStopBetBJSC);
+		
+		
+		panel.add(btnBetXYNC);
+		panel.add(btnBetGXKLSF);
+		panel.add(btnBetGDKLSF);
+		panel.add(btnBetGD11X5);
+		panel.add(btnBetXJSSC);
+		panel.add(btnBetTJSSC);
+		panel.add(btnBetKL8);
+		
+		
+		
+		
+		
+		
 
 		// XYNC
 		panel.add(btnBetOppositeXYNC);
@@ -758,7 +860,7 @@ public class autoBet {
 		enableDSNMemberBet(false);
 
 		// 添彩会员界面
-		int TianCaiMemberX = 1000;
+		int TianCaiMemberX = 1300;
 		int TianCaiMemberY = 50;
 
 		Label labelTianCaiMemberLogin = new Label("添彩会员登录:");
@@ -876,7 +978,7 @@ public class autoBet {
 		btnBetTianCaiBJSC = new Button("正投北京赛车");
 		btnBetTianCaiBJSC.addActionListener(new BetBJSCListener(this, client));
 
-		btnBetTianCaiBJSC.setSize(75, 25);
+		btnBetTianCaiBJSC.setSize(90, 25);
 		btnBetTianCaiBJSC.setLocation(TianCaiMemberX, TianCaiMemberY + 210);
 
 		Label BJSClabelTianCaiPercent = new Label("投注比例:");
@@ -893,7 +995,7 @@ public class autoBet {
 		btnOppositeTianCaiBJSC
 				.addActionListener(new BetTianCaiOppositeBJSCListener(this));
 
-		btnOppositeTianCaiBJSC.setSize(75, 25);
+		btnOppositeTianCaiBJSC.setSize(90, 25);
 		btnOppositeTianCaiBJSC
 				.setLocation(TianCaiMemberX, TianCaiMemberY + 240);
 
@@ -950,22 +1052,22 @@ public class autoBet {
 		// !lin 抓取界面使用测试
 		/*
 		 * btnStartGrabCQSSC = new Button("开抓重庆时彩");
-		 * btnStartGrabCQSSC.setSize(75, 25); btnStartGrabCQSSC.setLocation(50,
+		 * btnStartGrabCQSSC.setSize(90, 25); btnStartGrabCQSSC.setLocation(50,
 		 * 230); btnStopGrabCQSSC = new Button("停抓重庆时彩");
-		 * btnStopGrabCQSSC.setSize(75, 25); btnStopGrabCQSSC.setLocation(150,
+		 * btnStopGrabCQSSC.setSize(90, 25); btnStopGrabCQSSC.setLocation(150,
 		 * 230);
 		 * 
-		 * btnStartGrabBJSC = new Button("开抓北京赛车"); btnStartGrabBJSC.setSize(75,
+		 * btnStartGrabBJSC = new Button("开抓北京赛车"); btnStartGrabBJSC.setSize(90,
 		 * 25); btnStartGrabBJSC.setLocation(50, 260); btnStopGrabBJSC = new
-		 * Button("停抓北京赛车"); btnStopGrabBJSC.setSize(75, 25);
+		 * Button("停抓北京赛车"); btnStopGrabBJSC.setSize(90, 25);
 		 * btnStopGrabBJSC.setLocation(150, 260);
 		 * 
 		 * btnStartGrabXYNC = new Button("开抓幸运农场");
-		 * btnStartGrabXYNC.setSize(75,25); btnStartGrabXYNC.setLocation(50,
+		 * btnStartGrabXYNC.setSize(90,25); btnStartGrabXYNC.setLocation(50,
 		 * 290);
 		 * 
 		 * btnStopGrabXYNC = new Button("停抓幸运农场");
-		 * btnStopGrabXYNC.setSize(75,25); btnStopGrabXYNC.setLocation(150,
+		 * btnStopGrabXYNC.setSize(90,25); btnStopGrabXYNC.setLocation(150,
 		 * 290);
 		 * 
 		 * 

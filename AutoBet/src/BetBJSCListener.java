@@ -19,7 +19,7 @@ public class BetBJSCListener implements ActionListener
 			return;
 		}
 		
-		ab.grabThread.startGrabBJSC();
+		//ab.grabThread.startGrabBJSC();
 		
 		String s = ab.textFieldBJSCBetPercent.getText();
 		
@@ -33,12 +33,17 @@ public class BetBJSCListener implements ActionListener
 		
 		ab.setBetTime();
 		
+		ab.btnBetBJSC.setBackground(Color.GREEN);
+		ab.btnOppositeBJSC.setBackground(Color.RED);
+		
 		BetThread.betBJSC = true;
 		BetThread.betOppositeBJSC = false;
 		
 		String outputStr = "开始正投北京赛车,投注比例：" + BetThread.betBJSCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
+		
+		dsnHttp.showBJSCDeatilsTable();
 		
 		if(ab.inBet == true){					
 			return;

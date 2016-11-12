@@ -34,6 +34,10 @@ public class BetOppositeCQSSCListener implements ActionListener
 		
 		ab.setBetTime();
 		
+		
+		ab.btnBetCQSSC.setBackground(Color.RED);
+		ab.btnOppositeBetCQSSC.setBackground(Color.GREEN);
+		
 		BetThread.betCQSSC = false;
 		BetThread.betOppositeCQSSC = true;
 

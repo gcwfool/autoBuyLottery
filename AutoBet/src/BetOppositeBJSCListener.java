@@ -33,6 +33,9 @@ public class BetOppositeBJSCListener implements ActionListener
 		
 		ab.setBetTime();
 		
+		ab.btnBetBJSC.setBackground(Color.RED);
+		ab.btnOppositeBJSC.setBackground(Color.GREEN);
+		
 		BetThread.betBJSC = false;
 		BetThread.betOppositeBJSC = true;
 		

@@ -40,6 +40,17 @@ class BetGDKLSFThread extends Thread{
 
 	    	
 			while(true){
+				
+				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearGDKLSFdetaisData == false){
+					BetGDKLSFManager.clearGDKLSFdetalsData();
+					clearGDKLSFdetaisData = true;
+				}
+				
+				long localTime = dsnHttp.getlocalTime();
+				
+				if(!BetGDKLSFManager.isInGDKLSFBetTime(localTime) || dsnHttp.isInRelogin == true)
+					continue;
+				
 				long GDKLSFremainTime = 0;
 				
 				if(requestTime) {
@@ -134,6 +145,9 @@ class BetGDKLSFThread extends Thread{
 						
 						autoBetSuccess = BetGDKLSFManager.doBetGDKLSF(betsData, betGDKLSFPercent, betOppositeGDKLSF, betGDKLSFData[10]);
 						
+						//todo remove
+						autoBetSuccess = true;
+						
 						if(autoBetSuccess == true){
 							//dsnHttp.setCQSSCBetData(betsData);
 						}
@@ -200,10 +214,7 @@ class BetGDKLSFThread extends Thread{
 					
 				}
 				
-				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearGDKLSFdetaisData == false){
-					BetGDKLSFManager.clearGDKLSFdetalsData();
-					clearGDKLSFdetaisData = true;
-				}
+
 
 				
 				

@@ -189,11 +189,10 @@ public class BetXYNCManager {
         int currentMinutes = date.getMinutes();
         int currentSeconds = date.getSeconds();
 
-        //两分钟缓冲
-        if( (currentHour*60 + currentMinutes < 10*60 - 5) && (currentHour * 60 + currentMinutes > 1 * 60 + 59))
-           return false;
-        
-        return true;
+        if((currentHour*60 + currentMinutes < 10*60 -7) && (currentHour * 60 + currentMinutes > 2 * 60 + 3))
+            return false;
+         
+         return true;
     }
     
     
@@ -287,7 +286,9 @@ public class BetXYNCManager {
         	
         	boolean betRes = isBetSuccess(XYNCdrawNumber);
         	
-        	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("�ڲ�����") == true)){
+        	boolean result = dsnHttp.pureParseBetResult(response);
+        	
+        	if((betRes == false) && (result == false)){
         		response = dsnHttp.bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	}
         	
@@ -305,7 +306,7 @@ public class BetXYNCManager {
         	autoBet.outputGUIMessage(strUsingTime);
 
         	
-        	boolean result = dsnHttp.parseBetResult(response);
+        	result = dsnHttp.parseBetResult(response);
         	
         	
         	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式

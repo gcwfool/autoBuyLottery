@@ -40,6 +40,20 @@ class BetKL8Thread extends Thread{
 
 	    	
 			while(true){
+				
+				
+				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearKL8detaisData == false){
+					BetKL8Manager.clearKL8detalsData();
+					clearKL8detaisData = true;
+				}
+
+				
+				
+				long localTime = dsnHttp.getlocalTime();
+				
+				if(!BetKL8Manager.isInKL8BetTime(localTime) || dsnHttp.isInRelogin == true)
+					continue;
+				
 				long KL8remainTime = 0;
 				
 				if(requestTime) {
@@ -138,6 +152,9 @@ class BetKL8Thread extends Thread{
 							//dsnHttp.setCQSSCBetData(betsData);
 						}
 						
+						//todo remove
+						autoBetSuccess = true;
+						
 						printKL8ErrorValue = false;
 						
 					}else if(!betKL8Data[0].equals(BetKL8Manager.getKL8drawNumber())){
@@ -202,10 +219,6 @@ class BetKL8Thread extends Thread{
 					
 				}
 				
-				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearKL8detaisData == false){
-					BetKL8Manager.clearKL8detalsData();
-					clearKL8detaisData = true;
-				}
 
 				
 				

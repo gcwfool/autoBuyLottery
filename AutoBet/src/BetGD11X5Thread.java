@@ -40,6 +40,18 @@ class BetGD11X5Thread extends Thread{
 
 	    	
 			while(true){
+				
+				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearGD11X5detaisData == false){
+					BetGD11X5Manager.clearGD11X5detalsData();
+					clearGD11X5detaisData = true;
+				}
+				
+				long localTime = dsnHttp.getlocalTime();
+				
+				if(!BetGD11X5Manager.isInGD11X5BetTime(localTime) || dsnHttp.isInRelogin == true)
+					continue;
+				
+				
 				long GD11X5remainTime = 0;
 				
 				if(requestTime) {
@@ -133,6 +145,9 @@ class BetGD11X5Thread extends Thread{
 						
 						autoBetSuccess = BetGD11X5Manager.doBetGD11X5(betsData, betGD11X5Percent, betOppositeGD11X5, betGD11X5Data[2]);
 						
+						//todo remove
+						autoBetSuccess = true;
+						
 						if(autoBetSuccess == true){
 							//dsnHttp.setCQSSCBetData(betsData);
 						}
@@ -199,10 +214,7 @@ class BetGD11X5Thread extends Thread{
 					
 				}
 				
-				if(dsnHttp.isInFreetime(System.currentTimeMillis()) == true && clearGD11X5detaisData == false){
-					BetGD11X5Manager.clearGD11X5detalsData();
-					clearGD11X5detaisData = true;
-				}
+
 
 				
 				

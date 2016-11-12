@@ -194,12 +194,11 @@ public class BetTJSSCManager {
         }*/
         
         //两分钟分钟的缓冲
-        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes <= 21 * 60 + 30)){
-        	return true;
-        }
-        
-        
-        return false;
+        if((currentHour *60 + currentMinutes > 9*60 + 1) && (currentHour * 60 + currentMinutes < 23 * 60)){
+      		return true;
+      }
+       
+      return false;
     }
     
     
@@ -291,7 +290,9 @@ public class BetTJSSCManager {
         	
         	boolean betRes = isBetSuccess(TJSSCdrawNumber);
         	
-        	if((betRes == false) && (response == null || response.contains("balance") == false || response.contains("�ڲ�����") == true)){
+        	boolean result = dsnHttp.pureParseBetResult(response);
+        	
+        	if((betRes == false) && (result == false)){
         		response = dsnHttp.bet(host + "/member/bet", jsonParam, "UTF-8", "");
         	}
         	
@@ -309,7 +310,7 @@ public class BetTJSSCManager {
         	autoBet.outputGUIMessage(strUsingTime);
 
         	
-        	boolean result = dsnHttp.parseBetResult(response);
+        	result = dsnHttp.parseBetResult(response);
         	
         	
         	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式

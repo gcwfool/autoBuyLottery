@@ -44,6 +44,10 @@ class BetThread extends Thread{
 
 	    	
 			while(true){
+				
+				if(dsnHttp.isInRelogin == true)
+					continue;
+				
 				long CQSSCremainTime = 0;
 				long BJSCremainTime = 0;
 				if(requestTime) {
@@ -232,6 +236,9 @@ class BetThread extends Thread{
 							dsnHttp.setCQSSCBetData(betsData);
 						}
 						
+						//todo remove
+						autoBetSuccess = true;
+						
 						printCQSSCErrorValue = false;
 						
 					}else if(!betCQSSCData[0].equals(dsnHttp.getCQSSCdrawNumber())){
@@ -277,6 +284,9 @@ class BetThread extends Thread{
 						if(autoBetSuccess == true){
 							dsnHttp.setBJSCBetData(betsData);
 						}
+						
+						//todo remove
+						autoBetSuccess = true;
 						
 						printBJSCErrorValue = false;
 					
