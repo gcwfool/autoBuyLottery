@@ -1511,6 +1511,8 @@ public class dsnHttp {
         
         long remainTime = CQSSCcloseTime - (System.currentTimeMillis() + timeDValue); //用差值计算  防止两次请求期间间隔过长
         
+        CQSSCremainTime = remainTime;
+        
     	return remainTime;
     }
     
@@ -1629,15 +1631,19 @@ public class dsnHttp {
  
         long remainTime = BJSCcloseTime - (System.currentTimeMillis() + timeDValue);
         
+        BJSCremainTime = remainTime;
+        
     	return remainTime;
     }
     
     public static long getCQSSClocalRemainTime() {
-    	return CQSSCcloseTime - (System.currentTimeMillis() + timeDValue);
+    	CQSSCremainTime = CQSSCcloseTime - (System.currentTimeMillis() + timeDValue);
+    	return CQSSCremainTime;
     }
     
     public static long getBJSClocalRemainTime() {
-    	return BJSCcloseTime - (System.currentTimeMillis() + timeDValue);
+    	BJSCremainTime =  BJSCcloseTime - (System.currentTimeMillis() + timeDValue);
+    	return BJSCremainTime;
     }
     
     
@@ -3272,7 +3278,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     
     public static boolean isCQSSCidle(){
     	boolean isIdle = false;
-    	if(CQSSCremainTime < 0 || CQSSCremainTime > 25*1000 ){
+    	if(CQSSCremainTime < 0 || CQSSCremainTime > 30*1000 ){
     		isIdle = true;
     	}
     	
@@ -3281,7 +3287,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     
     public static boolean isBJSCidle(){
     	boolean isIdle = false;
-    	if(BJSCremainTime < 0 || BJSCremainTime > 25*1000 ){
+    	if(BJSCremainTime < 0 || BJSCremainTime > 30*1000 ){
     		isIdle = true;
     	}
     	
