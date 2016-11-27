@@ -294,7 +294,7 @@ class BetThread extends Thread{
 						
 						System.out.println("重庆时时彩下单数据错误\n");
 						
-						System.out.printf("服务器期数：%d， 本地期数:%d\n", betBJSCData[0], dsnHttp.getBJSCdrawNumber());
+						//System.out.printf("服务器期数：%d， 本地期数:%d\n", betBJSCData[0], dsnHttp.getBJSCdrawNumber());
 						
 						
 					}

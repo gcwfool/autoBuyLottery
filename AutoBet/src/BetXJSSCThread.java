@@ -157,7 +157,7 @@ class BetXJSSCThread extends Thread{
 					}else if(!betXJSSCData[0].equals(BetXJSSCManager.getXJSSCdrawNumber())){
 						System.out.println("新疆时时彩下单数据错误\n");
 						
-						System.out.printf("服务器期数：%d， 本地期数:%d\n", betXJSSCData[0], BetXJSSCManager.getXJSSCdrawNumber());
+						//System.out.printf("服务器期数：%d， 本地期数:%d\n", betXJSSCData[0], BetXJSSCManager.getXJSSCdrawNumber());
 						
 						
 					}

@@ -157,7 +157,7 @@ class BetGXKLSFThread extends Thread{
 					}else if(!betGXKLSFData[0].equals(BetGXKLSFManager.getGXKLSFdrawNumber())){
 						System.out.println("广西快乐十分下单数据错误\n");
 						
-						System.out.printf("服务器期数：%d， 本地期数:%d\n", betGXKLSFData[0], BetGXKLSFManager.getGXKLSFdrawNumber());
+						//System.out.printf("服务器期数：%d， 本地期数:%d\n", betGXKLSFData[0], BetGXKLSFManager.getGXKLSFdrawNumber());
 						
 						
 					}

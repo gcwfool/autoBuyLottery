@@ -158,7 +158,7 @@ class BetTJSSCThread extends Thread{
 					}else if(!betTJSSCData[0].equals(BetTJSSCManager.getTJSSCdrawNumber())){
 						System.out.println("天津时时彩下单数据错误\n");
 						
-						System.out.printf("服务器期数：%d， 本地期数:%d\n", betTJSSCData[0], BetTJSSCManager.getTJSSCdrawNumber());
+						//System.out.printf("服务器期数：%d， 本地期数:%d\n", betTJSSCData[0], BetTJSSCManager.getTJSSCdrawNumber());
 						
 						
 					}

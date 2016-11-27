@@ -157,7 +157,7 @@ class BetGD11X5Thread extends Thread{
 					}else if(!betGD11X5Data[0].equals(BetGD11X5Manager.getGD11X5drawNumber())){
 						System.out.println("广西快乐十分下单数据错误\n");
 						
-						System.out.printf("服务器期数：%d， 本地期数:%d\n", betGD11X5Data[0], BetGD11X5Manager.getGD11X5drawNumber());
+						//System.out.printf("服务器期数：%d， 本地期数:%d\n", betGD11X5Data[0], BetGD11X5Manager.getGD11X5drawNumber());
 						
 						
 					}
