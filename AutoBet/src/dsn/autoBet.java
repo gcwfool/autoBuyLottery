@@ -9,6 +9,9 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+
+import lanyang.*;
+import lanyang.BetBJSCManager;
 import lanyang.LanyangHttp;
 
 enum BetType {
@@ -25,6 +28,7 @@ public class autoBet {
 	public boolean loginToDSNMemberSuccess = false;
 	public boolean loginToWeiCaiMemberSuccess = false;
 	public boolean loginToTianCaiMemberSuccess = false;
+	public boolean loginToLanyangMemberSuccess = false;
 	public boolean inBet = false;
 	public boolean inBetXYNC = false;
 	public boolean inBetGXKLSF = false;
@@ -33,6 +37,8 @@ public class autoBet {
 	public boolean inBetXJSSC = false;
 	public boolean inBetTJSSC = false;
 	public boolean inBetKL8 = false;
+	
+	public boolean inBetLanyangBJSC = false;
 
 	public boolean inBetWeiCai = false;
 	public boolean inBetTianCai = false;
@@ -136,6 +142,29 @@ public class autoBet {
 	public static Button btnLogin;
 
 	public static Client client;
+	
+	
+	
+	// 蓝洋会员界面
+	public TextField textFieldLanyangMemberAddress;
+	public TextField textFieldLanyangMemberAccount;
+	public TextField textFieldLanyangMemberPassword;
+	public TextField textFieldCQSSCBetLanyangPercent;
+	public TextField textFieldBJSCBetLanyangPercent;
+
+	public Button btnBetLanyangCQSSC;
+	public Button btnOppositeBetLanyangCQSSC;
+	public Button btnStopBetLanyangCQSSC;
+	public Button btnBetLanyangBJSC;
+	public Button btnBetLanyangBJSCAmount;
+	public Button btnOppositeLanyangBJSC;
+	public Button btnStopBetLanyangBJSC;
+
+	public static Label labelLanyangTotalBets;
+	public static Label labelLanyangSuccessBets;
+	public static Label labelLanyangFailBets;
+	
+	
 
 	public static TextArea outputMessage;
 	public static Label labelTotalBets;
@@ -143,6 +172,8 @@ public class autoBet {
 	public static Label labelFailBets;
 
 	public ReloginThread reloginThread;
+	
+	public LanyangReloginThread lanyangReloginThread;
 
 	TianCaiHttp tianCaiHttp = null;
 
@@ -165,8 +196,13 @@ public class autoBet {
 			betTime = 24;
 		}
 
+		
+/*		LanyangHttp.loginToLanyang();
+		BetBJSCManager.grabGameInfo();
+		BetBJSCManager.grabOddsData();*/
+		
 
-		try {
+/*		try {
 			// 生成路径
 			File dir = new File("log");
 			if (dir.exists()) {
@@ -182,7 +218,7 @@ public class autoBet {
 			System.setErr(ps);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		ConfigReader.read("common.config");
 		ConfigWriter.open("common.config");
@@ -284,6 +320,17 @@ public class autoBet {
 		btnBetTianCaiBJSC.setEnabled(false);
 		btnOppositeTianCaiBJSC.setEnabled(flag);
 		btnStopBetTianCaiBJSC.setEnabled(flag);
+	}
+	
+	
+	public void enableLanyangMemberBet(boolean flag) {
+		btnBetLanyangCQSSC.setEnabled(false);
+		btnOppositeBetLanyangCQSSC.setEnabled(false);
+		btnStopBetLanyangCQSSC.setEnabled(false);
+		btnBetLanyangBJSC.setEnabled(false);
+		btnOppositeLanyangBJSC.setEnabled(flag);
+		btnStopBetLanyangBJSC.setEnabled(flag);
+		btnBetLanyangBJSCAmount.setEnabled(flag);
 	}
 
 	public void launchFrame() {
@@ -865,7 +912,7 @@ public class autoBet {
 		enableDSNMemberBet(false);
 
 		// 添彩会员界面
-		int TianCaiMemberX = 1300;
+		int TianCaiMemberX = 1550;
 		int TianCaiMemberY = 50;
 
 		Label labelTianCaiMemberLogin = new Label("添彩会员登录:");
@@ -1054,6 +1101,231 @@ public class autoBet {
 
 		enableTianCaiMemberBet(false);
 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// 添彩会员界面
+		int LanyangMemberX = 1050;
+		int LanyangMemberY = 50;
+
+		Label labelLanyangMemberLogin = new Label("蓝洋会员登录:");
+		labelLanyangMemberLogin.setSize(100, 25);
+		labelLanyangMemberLogin.setLocation(LanyangMemberX, LanyangMemberY);
+
+		Label labelLanyangMemberAddress = new Label("网址:");
+		labelLanyangMemberAddress.setSize(50, 25);
+		labelLanyangMemberAddress.setLocation(LanyangMemberX,
+				LanyangMemberY + 30);
+
+		textFieldLanyangMemberAddress = new TextField();
+		textFieldLanyangMemberAddress.setSize(300, 25);
+		textFieldLanyangMemberAddress.setLocation(LanyangMemberX + 50,
+				LanyangMemberY + 30);
+		textFieldLanyangMemberAddress.setText(ConfigReader
+				.getlanyangBetAddress());
+
+		Label labelLanyangMemberAccount = new Label("账户:");
+		labelLanyangMemberAccount.setSize(50, 25);
+		labelLanyangMemberAccount.setLocation(LanyangMemberX,
+				LanyangMemberY + 60);
+
+		textFieldLanyangMemberAccount = new TextField();
+		textFieldLanyangMemberAccount.setSize(300, 25);
+		textFieldLanyangMemberAccount.setLocation(LanyangMemberX + 50,
+				LanyangMemberY + 60);
+		textFieldLanyangMemberAccount.setText(ConfigReader
+				.getlanyangBetAccount());
+
+		Label labelLanyangMemberPassword = new Label("密码:");
+		labelLanyangMemberPassword.setSize(50, 25);
+		labelLanyangMemberPassword.setLocation(LanyangMemberX,
+				LanyangMemberY + 90);
+
+		textFieldLanyangMemberPassword = new TextField();
+		textFieldLanyangMemberPassword.setSize(300, 25);
+		textFieldLanyangMemberPassword.setLocation(LanyangMemberX + 50,
+				LanyangMemberY + 90);
+		textFieldLanyangMemberPassword.setText(ConfigReader
+				.getlanyangBetPassword());
+		textFieldLanyangMemberPassword.setEchoChar('*');
+
+		Button btnLanyangMemberLogin = new Button("登录");
+		btnLanyangMemberLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (loginToLanyangMemberSuccess == true)
+					return;
+
+				String address = textFieldLanyangMemberAddress.getText();
+				String account = textFieldLanyangMemberAccount.getText();
+				String password = textFieldLanyangMemberPassword.getText();
+
+				//LanyangHttp = new LanyangHttp();
+
+				LanyangHttp.setLoginParams(address, account, password);
+
+				if (!LanyangHttp.login()) {
+					outputGUIMessage("登录蓝洋会员失败!\n");
+					return;
+				}
+				
+				
+				lanyangReloginThread = new LanyangReloginThread();
+				lanyangReloginThread.start();
+
+				loginToLanyangMemberSuccess = true;
+
+				ConfigWriter.updateLanyangMemberAddress(address);
+				ConfigWriter.updateLanyangMemberAccount(account);
+				ConfigWriter.updateLanyangMemberPassword(password);
+
+				ConfigWriter.saveTofile("common.config");
+
+				if (loginToLanyangMemberSuccess && loginToProxySuccess)
+					enableLanyangMemberBet(true);
+
+				outputGUIMessage("登录蓝洋会员成功!\n");
+
+			}
+		});
+
+		btnLanyangMemberLogin.setSize(50, 25);
+		btnLanyangMemberLogin.setLocation(LanyangMemberX, LanyangMemberY + 120);
+
+		btnBetLanyangCQSSC = new Button("正投重庆时时彩");
+		/*btnBetLanyangCQSSC
+				.addActionListener(new BetLanyangOppositeCQSSCListener(this));*/
+
+		btnBetLanyangCQSSC.setSize(90, 25);
+		btnBetLanyangCQSSC.setLocation(LanyangMemberX, LanyangMemberY + 150);
+
+		Label labelLanyangPercent = new Label("投注比例:");
+		labelLanyangPercent.setSize(60, 25);
+		labelLanyangPercent.setLocation(LanyangMemberX + 100,
+				LanyangMemberY + 150);
+
+		textFieldCQSSCBetLanyangPercent = new TextField();
+		textFieldCQSSCBetLanyangPercent.setSize(60, 25);
+		textFieldCQSSCBetLanyangPercent.setLocation(LanyangMemberX + 160,
+				LanyangMemberY + 150);
+
+		btnOppositeBetLanyangCQSSC = new Button("反投重庆时时彩");
+/*		btnOppositeBetLanyangCQSSC
+				.addActionListener(new BetLanyangOppositeCQSSCListener(this));*/
+
+		btnOppositeBetLanyangCQSSC.setSize(90, 25);
+		btnOppositeBetLanyangCQSSC.setLocation(LanyangMemberX,
+				LanyangMemberY + 180);
+
+		btnStopBetLanyangCQSSC = new Button("停止投注");
+/*		btnStopBetLanyangCQSSC
+				.addActionListener(new StopBetLanyangCQSSCListener(this));*/
+
+		btnStopBetLanyangCQSSC.setSize(90, 25);
+		btnStopBetLanyangCQSSC.setLocation(LanyangMemberX + 100,
+				LanyangMemberY + 180);
+
+		btnBetLanyangBJSC = new Button("正投北京赛车");
+		btnBetLanyangBJSC.addActionListener(new BetBJSCListener(this, client));
+
+		btnBetLanyangBJSC.setSize(90, 25);
+		btnBetLanyangBJSC.setLocation(LanyangMemberX, LanyangMemberY + 210);
+
+		Label BJSClabelLanyangPercent = new Label("投注比例:");
+		BJSClabelLanyangPercent.setSize(60, 25);
+		BJSClabelLanyangPercent.setLocation(LanyangMemberX + 100,
+				LanyangMemberY + 210);
+
+		textFieldBJSCBetLanyangPercent = new TextField();
+		textFieldBJSCBetLanyangPercent.setSize(60, 25);
+		textFieldBJSCBetLanyangPercent.setLocation(LanyangMemberX + 160,
+				LanyangMemberY + 210);
+
+		btnOppositeLanyangBJSC = new Button("反投北京赛车");
+		btnOppositeLanyangBJSC
+				.addActionListener(new BetLanyangOppositeBJSCListener(this, client));
+
+		btnOppositeLanyangBJSC.setSize(90, 25);
+		btnOppositeLanyangBJSC
+				.setLocation(LanyangMemberX, LanyangMemberY + 240);
+		
+		
+		
+		btnBetLanyangBJSCAmount = new Button("投注金额");
+		btnBetLanyangBJSCAmount.addActionListener(new BetLanyangBJSCAmountListener());
+
+		btnBetLanyangBJSCAmount.setSize(90, 25);
+		btnBetLanyangBJSCAmount.setLocation(LanyangMemberX + 100,
+				LanyangMemberY + 240);
+		
+		
+
+		btnStopBetLanyangBJSC = new Button("停止投注");
+		btnStopBetLanyangBJSC.addActionListener(new StopBetLanyangBJSCListener(
+				this));
+
+		btnStopBetLanyangBJSC.setSize(90, 25);
+		btnStopBetLanyangBJSC.setLocation(LanyangMemberX + 200,
+				LanyangMemberY + 240);
+
+		labelLanyangTotalBets = new Label();
+		labelLanyangTotalBets.setSize(300, 25);
+		labelLanyangTotalBets.setLocation(LanyangMemberX, 400);
+		labelLanyangTotalBets.setText("下单次数:0");
+
+		labelLanyangSuccessBets = new Label();
+		labelLanyangSuccessBets.setSize(300, 25);
+		labelLanyangSuccessBets.setLocation(LanyangMemberX, 430);
+		labelLanyangSuccessBets.setText("成功次数:0");
+
+		labelLanyangFailBets = new Label();
+		labelLanyangFailBets.setSize(300, 25);
+		labelLanyangFailBets.setLocation(LanyangMemberX, 460);
+		labelLanyangFailBets.setText("失败次数:0");
+
+		/*
+		 * panel.add(labelLanyangTotalBets); panel.add(labelLanyangSuccessBets);
+		 * panel.add(labelLanyangFailBets);
+		 */
+
+		panel.add(labelLanyangMemberLogin);
+		panel.add(labelLanyangMemberAddress);
+		panel.add(textFieldLanyangMemberAddress);
+		panel.add(labelLanyangMemberAccount);
+		panel.add(textFieldLanyangMemberAccount);
+		panel.add(labelLanyangMemberPassword);
+		panel.add(textFieldLanyangMemberPassword);
+		panel.add(btnLanyangMemberLogin);
+
+		panel.add(btnBetLanyangCQSSC);
+		panel.add(labelLanyangPercent);
+		panel.add(btnOppositeBetLanyangCQSSC);
+		panel.add(btnBetLanyangBJSC);
+		panel.add(btnOppositeLanyangBJSC);
+		panel.add(BJSClabelLanyangPercent);
+		panel.add(textFieldCQSSCBetLanyangPercent);
+		panel.add(textFieldBJSCBetLanyangPercent);
+		panel.add(btnStopBetLanyangCQSSC);
+		panel.add(btnStopBetLanyangBJSC);
+		panel.add(btnBetLanyangBJSCAmount);
+
+		enableLanyangMemberBet(false);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		// !lin 抓取界面使用测试
 		/*
 		 * btnStartGrabCQSSC = new Button("开抓重庆时彩");

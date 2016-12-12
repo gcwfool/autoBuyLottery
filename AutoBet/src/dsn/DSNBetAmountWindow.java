@@ -81,7 +81,7 @@ public class DSNBetAmountWindow extends JFrame
 
 	public DSNBetAmountWindow()  
     {  
-		//setTitle("Ͷע����������");  
+		//setTitle("投注北京赛车详情");  
 		
         intiComponent();  
         
@@ -95,7 +95,7 @@ public class DSNBetAmountWindow extends JFrame
 	public void addData(String data, String drawNumber, String betContent, String betAmount){
 		
 		try{
-/*			for(int i = 0; i<detailsData.size(); i++){ //todo �Ż�
+/*			for(int i = 0; i<detailsData.size(); i++){ //todo 优化
 				if(((String)detailsData.elementAt(i)[1]).equals(drawNumber)){
 					return;
 				}
@@ -150,7 +150,7 @@ public class DSNBetAmountWindow extends JFrame
 
   
     /** 
-     * ��ʼ��������� 
+     * 初始化窗体组件 
      */  
     private void intiComponent()  
     {  
@@ -195,10 +195,10 @@ public class DSNBetAmountWindow extends JFrame
     private class MyTableModel extends AbstractTableModel  
     {  
         /* 
-         * ����͸ղ�һ���������ÿ����ݵ�ֵ 
+         * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        { "����", "����", "Ͷע����", "��ע���  %1"};  
+        { "日期", "期数", "投注内容", "下注金额  %1"};  
         
 
         
@@ -209,16 +209,16 @@ public class DSNBetAmountWindow extends JFrame
         
   
         /** 
-         * ���췽������ʼ����ά����data��Ӧ����� 
+         * 构造方法，初始化二维数组data对应的数据 
          */  
         public MyTableModel()  
         {  
 
         }  
   
-        // ����Ϊ�̳���AbstractTableModle�ķ����������Զ���  
+        // 以下为继承自AbstractTableModle的方法，可以自定义  
         /** 
-         * �õ����� 
+         * 得到列名 
          */  
         @Override  
         public String getColumnName(int column)  
@@ -227,7 +227,7 @@ public class DSNBetAmountWindow extends JFrame
         }  
           
         /** 
-         * ��д�������õ�������� 
+         * 重写方法，得到表格列数 
          */  
         @Override  
         public int getColumnCount()  
@@ -236,7 +236,7 @@ public class DSNBetAmountWindow extends JFrame
         }  
   
         /** 
-         * �õ�������� 
+         * 得到表格行数 
          */  
         @Override  
         public int getRowCount()  
@@ -245,7 +245,7 @@ public class DSNBetAmountWindow extends JFrame
         }  
   
         /** 
-         * �õ�������Ӧ���� 
+         * 得到数据所对应对象 
          */  
         @Override  
         public Object getValueAt(int rowIndex, int columnIndex)  
@@ -255,7 +255,7 @@ public class DSNBetAmountWindow extends JFrame
         }  
   
         /** 
-         * �õ�ָ���е�������� 
+         * 得到指定列的数据类型 
          */  
         @Override  
         public Class<?> getColumnClass(int columnIndex)  
@@ -264,7 +264,7 @@ public class DSNBetAmountWindow extends JFrame
         }  
   
         /** 
-         * ָ��������ݵ�Ԫ�Ƿ�ɱ༭.��������"����","ѧ��"���ɱ༭ 
+         * 指定设置数据单元是否可编辑.这里设置"姓名","学号"不可编辑 
          */  
         @Override  
         public boolean isCellEditable(int rowIndex, int columnIndex)  
@@ -273,13 +273,13 @@ public class DSNBetAmountWindow extends JFrame
         }  
           
         /** 
-         * �����ݵ�ԪΪ�ɱ༭���򽫱༭���ֵ�滻ԭ����ֵ 
+         * 如果数据单元为可编辑，则将编辑后的值替换原来的值 
          */  
         @Override  
         public void setValueAt(Object aValue, int rowIndex, int columnIndex)  
         {  
             detailsData.elementAt(rowIndex)[columnIndex] = aValue;  
-            /*֪ͨ��������ݵ�Ԫ����Ѿ��ı�*/  
+            /*通知监听器数据单元数据已经改变*/  
             fireTableCellUpdated(rowIndex, columnIndex);  
         }  
         

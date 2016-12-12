@@ -30,7 +30,7 @@ public class BetOppositeCQSSCListener implements ActionListener
 			BetThread.betCQSSCPercent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -42,7 +42,7 @@ public class BetOppositeCQSSCListener implements ActionListener
 		BetThread.betCQSSC = false;
 		BetThread.betOppositeCQSSC = true;
 
-		String outputStr = "��ʼ��Ͷ����ʱʱ��,Ͷע����" + BetThread.betCQSSCPercent + "\n";
+		String outputStr = "开始反投重庆时时彩,投注比例：" + BetThread.betCQSSCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		

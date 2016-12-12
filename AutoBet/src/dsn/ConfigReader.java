@@ -29,6 +29,12 @@ public class ConfigReader {
 	static String tessPath = "";
 	
 	
+	
+	static String lanyangbetAddress = "";
+	static String lanyangbetAccount = "";
+	static String lanyangbetPassword = "";
+	
+	
 	static String proxyAddress1 = "";
 	static String proxyAddress2 = "";
 	static String proxyAddress3 = "";
@@ -136,6 +142,21 @@ public class ConfigReader {
 	              
 	        tiancaibetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
 	        System.out.println("tiancaibetpassword:" + tiancaibetPassword);
+
+
+	        //read lanyang bet login msg
+	        list = document.getElementsByTagName("LANYANGBETLOGIN");        
+	        element = (Element)list.item(0);  
+            
+	        lanyangbetAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("lanyangbetaddress:" + lanyangbetAddress);  
+	              
+	        lanyangbetAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
+	        System.out.println("lanyangbetaccount:" + lanyangbetAccount);  
+	              
+	        lanyangbetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("lanyangbetpassword:" + lanyangbetPassword);	        
+	        
 	        
 	        //read tesseract-ocr path
 	        list = document.getElementsByTagName("PATH");   
@@ -209,6 +230,19 @@ public class ConfigReader {
 	
 	public static String gettiancaiBetPassword() {
 		return tiancaibetPassword;
+	}
+	
+	
+	public static String getlanyangBetAddress() {
+		return lanyangbetAddress;
+	}
+	
+	public static String getlanyangBetAccount() {
+		return lanyangbetAccount;
+	}
+	
+	public static String getlanyangBetPassword() {
+		return lanyangbetPassword;
 	}
 	
 	
