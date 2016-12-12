@@ -202,7 +202,7 @@ public class autoBet {
 		BetBJSCManager.grabOddsData();*/
 		
 
-/*		try {
+		try {
 			// 生成路径
 			File dir = new File("log");
 			if (dir.exists()) {
@@ -218,7 +218,7 @@ public class autoBet {
 			System.setErr(ps);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}*/
+		}
 
 		ConfigReader.read("common.config");
 		ConfigWriter.open("common.config");

@@ -1,0 +1,26 @@
+serverAddress:123.207.85.178
+serverPort:12321
+proxyaddress:http://bff5907f.dsn.qq168.ws
+proxyaddress1:http://3f071b45.dsn.qq168.ws
+proxyaddress2:http://bff5907f.dsn.qq168.ws
+proxyaddress3:http://442f2386.dsn.qq168.ws
+proxyaccount:abb100
+proxypassword:aaa2222
+betaddress:http://7877555982.365.qq168.ws
+betaddress1:http://7877555982.365.qq168.ws
+betaddress2:http://9117125614.365.qq168.ws
+betaddress3:http://0740485961.365.qq168.ws
+betaddress4:http://6953583056.365.qq168.ws
+betaccount:hgg2277
+betpassword:abcd12345
+weicaibetaddress:http://52.192.18.67
+weicaibetaccount:wc9999
+weicaibetpassword:9999Aaaa
+tiancaibetaddress:http://yy1888.net
+tiancaibetaccount:gg911
+tiancaibetpassword:asdf1581
+lanyangbetaddress:http://www.ok1688.info
+lanyangbetaccount:ly8899
+lanyangbetpassword:aaa111
+tesspath:C:\Program Files (x86)\Tesseract-OCR
+
