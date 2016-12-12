@@ -52,17 +52,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.Stack;
 
 
-enum TYPEINDEX{
-	DATA,
-	DN,
-	STATC,
-	BETAMOUNT,
-	PROFIT,
-	STATS,
-	COUNT,
-	DVALUE
-	
-}
+
 
 
 class ColorTableCellRenderer extends JLabel implements TableCellRenderer
@@ -71,23 +61,23 @@ class ColorTableCellRenderer extends JLabel implements TableCellRenderer
 
 private static final long serialVersionUID = 1L;
 
-//���幹����
+//定义构造器
 
 public ColorTableCellRenderer ()
 
 {
 
-//���ñ�ǩΪ��͸��״̬
+//设置标签为不透明状态
 
 this.setOpaque(true);
 
-//���ñ�ǩ���ı����뷽ʽΪ����
+//设置标签的文本对齐方式为居中
 
 this.setHorizontalAlignment(JLabel.CENTER);
 
 }
 
-//ʵ�ֻ�ȡ���ֿؼ���getTableCellRendererComponent����
+//实现获取呈现控件的getTableCellRendererComponent方法
 
 public Component getTableCellRendererComponent(JTable table,Object value,
 
@@ -95,11 +85,11 @@ public Component getTableCellRendererComponent(JTable table,Object value,
 
 {           
 
-//��ȡҪ���ֵ���ɫ
+//获取要呈现的颜色
 
 Color c=(Color)value;
 
-//��ݲ���value���ñ���ɫ
+//根据参数value设置背景色
 
 this.setBackground(c);
 
@@ -125,39 +115,39 @@ public class DSNDataDetailsWindow extends JFrame
 	
 	
     
-    private JLabel labelzongqishu = new JLabel("������:");
+    private JLabel labelzongqishu = new JLabel("总期数:");
     private JTextField textFieldzongqishu = new JTextField(15);  
     
-    private JLabel labelzongshibai = new JLabel("��ʧ��:");
+    private JLabel labelzongshibai = new JLabel("总失败:");
     private JTextField textFieldzongshibai = new JTextField(15);  
     
-    private JLabel labelzongyichang = new JLabel("���쳣:");
+    private JLabel labelzongyichang = new JLabel("总异常:");
     private JTextField textFieldzongyichang = new JTextField(15);  
     
-    private JLabel labeljinriqishu = new JLabel("��������:");
+    private JLabel labeljinriqishu = new JLabel("今日期数:");
     private JTextField textFieldjinriqishu = new JTextField(15);  
     
-    private JLabel labeljinrishibai = new JLabel("����ʧ��:");
+    private JLabel labeljinrishibai = new JLabel("今日失败:");
     private JTextField textFieldjinrishibai = new JTextField(15);  
     
-    private JLabel labeljinriyichang = new JLabel("�����쳣:");
+    private JLabel labeljinriyichang = new JLabel("今日异常:");
     private JTextField textFieldjinriyichang = new JTextField(15);  
 
-    private JLabel labelyue = new JLabel("���:");
+    private JLabel labelyue = new JLabel("余额:");
     private JTextField textFieldyue = new JTextField(15);  
     
-    private JLabel labeljinrishuying = new JLabel("������Ӯ:");
+    private JLabel labeljinrishuying = new JLabel("今日输赢:");
     private JTextField textFieldjinrishuying = new JTextField(15);  
     
     
-    private JLabel labelzongchazhi = new JLabel("�ܲ�ֵ:");
+    private JLabel labelzongchazhi = new JLabel("总差值:");
     private JTextField textFieldzongchazhi = new JTextField(15);  
     
-    private JLabel labeljinrichazhi = new JLabel("���ղ�ֵ:");
+    private JLabel labeljinrichazhi = new JLabel("今日差值:");
     private JTextField textFieldjinrichazhi = new JTextField(15);  
     
     
-/*    private JLabel labeltime = new JLabel("�����:");
+/*    private JLabel labeltime = new JLabel("距封盘:");
     private JTextField textFieldtime = new JTextField(15);  
     
     private AtomicLong remainTime = new AtomicLong(0);*/
@@ -192,10 +182,10 @@ public class DSNDataDetailsWindow extends JFrame
     
     public void setCloseText(boolean close) {
     	if(close) {
-    		labeltime.setText("�ѷ��̣��࿪��:");
+    		labeltime.setText("已封盘，距开奖:");
     	}
     	else {
-    		labeltime.setText("�����:");
+    		labeltime.setText("距封盘:");
     	}
     }*/
     
@@ -205,7 +195,7 @@ public class DSNDataDetailsWindow extends JFrame
 
 	public DSNDataDetailsWindow()  
     {  
-		//setTitle("Ͷע����������");  
+		//setTitle("投注北京赛车详情");  
 		
         intiComponent();  
         
@@ -260,7 +250,7 @@ public class DSNDataDetailsWindow extends JFrame
 	public void addData(String data, String drawNumber, int stat, String betAmount, String count){
 		
 		try{
-			for(int i = 0; i<detailsData.size(); i++){ //todo �Ż�
+			for(int i = 0; i<detailsData.size(); i++){ //todo 优化
 				if(((String)detailsData.elementAt(i)[1]).equals(drawNumber)){
 					return;
 				}
@@ -284,14 +274,14 @@ public class DSNDataDetailsWindow extends JFrame
 				newData[TYPEINDEX.STATC.ordinal()] = new Color(100, 255, 100);
 				newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
 				newData[TYPEINDEX.PROFIT.ordinal()] = "0";
-				newData[TYPEINDEX.STATS.ordinal()] = "�ɹ�";
+				newData[TYPEINDEX.STATS.ordinal()] = "成功";
 				newData[TYPEINDEX.COUNT.ordinal()] = count;
 				newData[TYPEINDEX.DVALUE.ordinal()] = "0";
 			}else if(stat == 1){
 				newData[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
 				newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
 				newData[TYPEINDEX.PROFIT.ordinal()] = "---";
-				newData[TYPEINDEX.STATS.ordinal()] = "ʧ��";
+				newData[TYPEINDEX.STATS.ordinal()] = "失败";
 				newData[TYPEINDEX.COUNT.ordinal()] = count;
 				newData[TYPEINDEX.DVALUE.ordinal()] = "---";
 			}
@@ -299,15 +289,15 @@ public class DSNDataDetailsWindow extends JFrame
 				newData[TYPEINDEX.STATC.ordinal()] = new Color(100, 100, 255);
 				newData[TYPEINDEX.BETAMOUNT.ordinal()] = betAmount;
 				newData[TYPEINDEX.PROFIT.ordinal()] = "---";
-				newData[TYPEINDEX.STATS.ordinal()] = "δ֪";
+				newData[TYPEINDEX.STATS.ordinal()] = "未知";
 				newData[TYPEINDEX.COUNT.ordinal()] = count;
 				newData[TYPEINDEX.DVALUE.ordinal()] = "---";
 			}
-			else{//©Ͷ
+			else{//漏投
 				newData[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
 				newData[TYPEINDEX.BETAMOUNT.ordinal()] = "---";
 				newData[TYPEINDEX.PROFIT.ordinal()] = "---";
-				newData[TYPEINDEX.STATS.ordinal()] = "©Ͷ";
+				newData[TYPEINDEX.STATS.ordinal()] = "漏投";
 				newData[TYPEINDEX.COUNT.ordinal()] = "---";
 				newData[TYPEINDEX.DVALUE.ordinal()] = "---";
 			}
@@ -350,10 +340,10 @@ public class DSNDataDetailsWindow extends JFrame
 						int stat = Integer.parseInt(value);
 						if(stat == 0){
 							detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(100, 255, 100);
-							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "�ɹ�";
+							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "成功";
 						}else if(stat == 1){
 							detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
-							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "ʧ��";
+							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "失败";
 						}
 					}else if(index == TYPEINDEX.COUNT.ordinal()){
 						int count = Integer.parseInt((String)detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()]);
@@ -361,7 +351,7 @@ public class DSNDataDetailsWindow extends JFrame
 						
 						if(actualCount > count){
 							detailsData.elementAt(i)[TYPEINDEX.STATC.ordinal()] = new Color(255, 100, 100);
-							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "��Ͷ";
+							detailsData.elementAt(i)[TYPEINDEX.STATS.ordinal()] = "多投";
 							detailsData.elementAt(i)[TYPEINDEX.COUNT.ordinal()] = value;
 						}
 						
@@ -391,7 +381,7 @@ public class DSNDataDetailsWindow extends JFrame
 	
   
     /** 
-     * ��ʼ��������� 
+     * 初始化窗体组件 
      */  
     private void intiComponent()  
     {  
@@ -483,10 +473,10 @@ public class DSNDataDetailsWindow extends JFrame
     private class MyTableModel extends AbstractTableModel  
     {  
         /* 
-         * ����͸ղ�һ���������ÿ����ݵ�ֵ 
+         * 这里和刚才一样，定义列名和每个数据的值 
          */  
         String[] columnNames =  
-        { "����", "����", "״̬", "Ͷע���", "��Ӯ", "�쳣���", "����", "���̲�ֵ" };  
+        { "日期", "期数", "状态", "投注金额", "输赢", "异常情况", "笔数", "封盘差值" };  
         
 
         
@@ -497,16 +487,16 @@ public class DSNDataDetailsWindow extends JFrame
         
   
         /** 
-         * ���췽������ʼ����ά����data��Ӧ����� 
+         * 构造方法，初始化二维数组data对应的数据 
          */  
         public MyTableModel()  
         {  
 
         }  
   
-        // ����Ϊ�̳���AbstractTableModle�ķ����������Զ���  
+        // 以下为继承自AbstractTableModle的方法，可以自定义  
         /** 
-         * �õ����� 
+         * 得到列名 
          */  
         @Override  
         public String getColumnName(int column)  
@@ -515,7 +505,7 @@ public class DSNDataDetailsWindow extends JFrame
         }  
           
         /** 
-         * ��д�������õ�������� 
+         * 重写方法，得到表格列数 
          */  
         @Override  
         public int getColumnCount()  
@@ -524,7 +514,7 @@ public class DSNDataDetailsWindow extends JFrame
         }  
   
         /** 
-         * �õ�������� 
+         * 得到表格行数 
          */  
         @Override  
         public int getRowCount()  
@@ -533,7 +523,7 @@ public class DSNDataDetailsWindow extends JFrame
         }  
   
         /** 
-         * �õ�������Ӧ���� 
+         * 得到数据所对应对象 
          */  
         @Override  
         public Object getValueAt(int rowIndex, int columnIndex)  
@@ -543,7 +533,7 @@ public class DSNDataDetailsWindow extends JFrame
         }  
   
         /** 
-         * �õ�ָ���е�������� 
+         * 得到指定列的数据类型 
          */  
         @Override  
         public Class<?> getColumnClass(int columnIndex)  
@@ -552,7 +542,7 @@ public class DSNDataDetailsWindow extends JFrame
         }  
   
         /** 
-         * ָ��������ݵ�Ԫ�Ƿ�ɱ༭.��������"����","ѧ��"���ɱ༭ 
+         * 指定设置数据单元是否可编辑.这里设置"姓名","学号"不可编辑 
          */  
         @Override  
         public boolean isCellEditable(int rowIndex, int columnIndex)  
@@ -561,13 +551,13 @@ public class DSNDataDetailsWindow extends JFrame
         }  
           
         /** 
-         * �����ݵ�ԪΪ�ɱ༭���򽫱༭���ֵ�滻ԭ����ֵ 
+         * 如果数据单元为可编辑，则将编辑后的值替换原来的值 
          */  
         @Override  
         public void setValueAt(Object aValue, int rowIndex, int columnIndex)  
         {  
             detailsData.elementAt(rowIndex)[columnIndex] = aValue;  
-            /*֪ͨ��������ݵ�Ԫ����Ѿ��ı�*/  
+            /*通知监听器数据单元数据已经改变*/  
             fireTableCellUpdated(rowIndex, columnIndex);  
         }  
         
