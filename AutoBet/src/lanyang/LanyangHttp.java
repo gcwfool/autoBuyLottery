@@ -277,8 +277,8 @@ public class LanyangHttp {
         	String loginUri = lineuri + "_index/c.php";
         	
             List<NameValuePair> loginParams = new ArrayList<NameValuePair>();
-            loginParams.add(new BasicNameValuePair("user", "ly8899"));
-            loginParams.add(new BasicNameValuePair("pwd", "aaa111"));
+            loginParams.add(new BasicNameValuePair("user", ACCOUNT));
+            loginParams.add(new BasicNameValuePair("pwd", PWD));
             loginParams.add(new BasicNameValuePair("captcha", ""));
             loginParams.add(new BasicNameValuePair("style", "2"));
             loginParams.add(new BasicNameValuePair("__RequestVerificationToken", token));

@@ -93,6 +93,8 @@ public class BetBJSCManager {
 		
 		String profit = "---";
 		
+		String maxPage = "1";
+		
 		try{
 			
 			String profitUri = LanyangHttp.lineuri + "z/mem2-betAcountY";
@@ -101,6 +103,18 @@ public class BetBJSCManager {
 			
 			int posStart = -1;
 			int posEnd = -1;
+			
+			if(res != null){
+				posStart = res.indexOf("endpage");
+				posStart = res.indexOf(":", posStart);
+				posEnd = res.indexOf(",",posStart);
+				maxPage = res.substring(posStart+1, posEnd);
+			}
+			
+			profitUri = LanyangHttp.lineuri + "z/mem2-betAcountY" + "?lottery=ALL&ptype=2&page=" + maxPage;
+			
+			res = LanyangHttp.doGet(profitUri, LanyangHttp.strCookies, "");
+			
 			
 			if(res != null && res.contains(drawNumber)){
 				posStart = res.indexOf(drawNumber);
@@ -163,7 +177,7 @@ public class BetBJSCManager {
 	        	
 	        	gameInfo = new JSONObject(gameInfo.getJSONObject("data").toString());
 	        	
-	        	BJSCdrawNumber = gameInfo.getString("name");
+	        	//BJSCdrawNumber = gameInfo.getString("name");
 	        	
 
 
@@ -481,7 +495,14 @@ public class BetBJSCManager {
         	
         	betStr = constructBetsData(betData, percent,  opposite);
         	
-        	//显示百分之一投注数据 todo
+        	if(!betStr.contains("|")) {
+        		outputStr = "代理无人投注\n\n";
+        		autoBet.outputGUIMessage(outputStr);
+        		return false;
+        	}
+        	
+        	
+        	
         	String outputBetData = constructoutputData(betData, percent,  opposite);
         	
         	
@@ -490,11 +511,7 @@ public class BetBJSCManager {
         	
         	addToBetAmountWindow(outputBetData);
         	
-        	if(betStr == "") {
-        		outputStr = "代理无人投注\n\n";
-        		autoBet.outputGUIMessage(outputStr);
-        		return false;
-        	}
+        	
         	        	
         	outputBetsDetails(outputBetData);
         	
@@ -525,7 +542,11 @@ public class BetBJSCManager {
         	
         	if((betRes == false)){
         		response = LanyangHttp.doPost(host + "z/o-trans", params, LanyangHttp.strCookies, "");
+        		
+        		System.out.printf("再次下单结果:%s\n", response);
         	}
+        	
+        	
         	
         	
         	LanyangHttp.defaultTimeout = oldTimeout;
@@ -1382,7 +1403,7 @@ public class BetBJSCManager {
     
     public static boolean isBJSCidle(){
     	boolean isIdle = false;
-    	if(remainTime < 0 || remainTime > 30*1000 ){
+    	if(remainTime < 0 || remainTime > 30 ){
     		isIdle = true;
     	}
     	

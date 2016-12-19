@@ -293,7 +293,9 @@ class BetThread extends Thread{
 					
 					}else if(!betBJSCData[0].equals(dsnHttp.getBJSCdrawNumber())){
 						
-						System.out.println("重庆时时彩下单数据错误\n");
+						System.out.println("北京赛车下单数据错误\n");
+						
+						autoBetSuccess = false;
 						
 						//System.out.printf("服务器期数：%d， 本地期数:%d\n", betBJSCData[0], dsnHttp.getBJSCdrawNumber());
 						
@@ -394,6 +396,9 @@ class BetThread extends Thread{
 					
 				}
 				
+				//数据错误，不sleep。再重新投注
+				if(autoBetSuccess == false)
+					continue;
 				
 				
 				
