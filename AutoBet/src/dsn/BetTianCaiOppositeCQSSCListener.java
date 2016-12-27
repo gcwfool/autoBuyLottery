@@ -26,7 +26,7 @@ public class BetTianCaiOppositeCQSSCListener implements ActionListener {
 			BetTianCaiThread.betCQSSCPercent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -35,7 +35,7 @@ public class BetTianCaiOppositeCQSSCListener implements ActionListener {
 		BetTianCaiThread.betCQSSC = false;
 		BetTianCaiThread.betOppositeCQSSC = true;
 		
-		String outputStr = "��ʼ��Ͷ�������ʱʱ��,Ͷע����" + BetTianCaiThread.betCQSSCPercent + "\n";
+		String outputStr = "开始反投添彩重庆时时彩,投注比例：" + BetTianCaiThread.betCQSSCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		
@@ -68,7 +68,7 @@ class StopBetTianCaiCQSSCListener implements ActionListener
 		BetTianCaiThread.betCQSSC = false;
 		BetTianCaiThread.betOppositeCQSSC = false;
 		
-		autoBet.outputGUIMessage("ֹͣͶע�������ʱʱ��\n");
+		autoBet.outputGUIMessage("停止投注添彩重庆时时彩\n");
 	}	
 
 }

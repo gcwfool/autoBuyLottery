@@ -46,8 +46,8 @@ public class TianCaiHttp {
     
     TianCaiHttp() {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
-        //requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//��ֹ�ض��� �� �Ա��ȡcookieb18
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//���ó�ʱ
+        //requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(10*1000).setConnectionRequestTimeout(10*1000).setSocketTimeout(10*1000).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
     }
     
@@ -78,12 +78,12 @@ public class TianCaiHttp {
     
     String sessionID = "";
     
-    long timeDValue = 0;  //��վʱ��͵���ʱ��Ĳ�ֵ  ��ҳʱ�� - ��ǰʱ��
-    long CQSSCcloseTime = 0;    //����ʱ��
+    long timeDValue = 0;  //网站时间和电脑时间的差值  网页时间 - 当前时间
+    long CQSSCcloseTime = 0;    //封盘时间
     long BJSCcloseTime = 0;
     
-    int failTimes = 0;    //�µ�ʧ�ܴ���
-    int successTimes = 0; //�µ��ɹ�����
+    int failTimes = 0;    //下单失败次数
+    int successTimes = 0; //下单成功次数
     
     int totalAmount = 0;
     
@@ -118,7 +118,7 @@ public class TianCaiHttp {
     	}
     	
     	if(res == false) {
-    		autoBet.outputGUIMessage("��Ա" + ACCOUNT + "����ʧ��,�������µ�¼....\n");
+    		autoBet.outputGUIMessage("会员" + ACCOUNT + "连接失败,正在重新登录....\n");
 	    	while(!loginToTianCai()) {
 	    		try {
 	    			Thread.currentThread().sleep(60*1000);
@@ -126,7 +126,7 @@ public class TianCaiHttp {
 	    			//todo
 	    		}
 	    	}
-	    	autoBet.outputGUIMessage("��Ա" + ACCOUNT + "���µ�¼�ɹ�\n");
+	    	autoBet.outputGUIMessage("会员" + ACCOUNT + "重新登录成功\n");
     	}
     	
     	return true;
@@ -231,7 +231,7 @@ public class TianCaiHttp {
     }
     
     
-    //����ʱ��Ϊ9�㵽24��
+    //开盘时间为9点到24点
     public boolean  isInBJSCBetTime(long time){
         Date date = new Date(time);
         int currentHour = date.getHours();
@@ -245,7 +245,7 @@ public class TianCaiHttp {
         return false;
     }
   
-    //��������ʱ��Ϊ10�㵽01:55
+    //北京赛车开盘时间为10点到01:55
     public boolean isInCQSSCBetTime(long time){
         Date date = new Date(time);
         int currentHour = date.getHours();
@@ -278,7 +278,7 @@ public class TianCaiHttp {
     	params.add(new BasicNameValuePair("hasPlayerInfo", "true"));
         response = doPost(HOST + "/lotteryweb/WebClientAgent", params, "", HOST + "/lotteryweb/Login");
         if(response == "") {
-        	System.out.println("��ȡ����ʱʱ��ʧ��");
+        	System.out.println("获取重庆时时彩失败");
         	return -1;
         }
         
@@ -297,10 +297,10 @@ public class TianCaiHttp {
 				remainTime = joGameInfo.getLong("gameTime") - joGameInfo.getLong("closeTime");
 				CQSSCcloseTime = System.currentTimeMillis() + (remainTime * 1000);
 				CQSSCoddsData = joResult.getJSONObject("odds");
-				if(!CQSSCdrawNumber.equals(joGameInfo.getString("gameNo"))) { //�µ�һ��
+				if(!CQSSCdrawNumber.equals(joGameInfo.getString("gameNo"))) { //新的一期
 					previousCQSSCdrawNumber = CQSSCdrawNumber;
 					CQSSCdrawNumber = joGameInfo.getString("gameNo");
-					if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//�ж���һ����û��©Ͷ
+					if(previousCQSSCBetNumber != previousCQSSCdrawNumber && previousCQSSCBetNumber != CQSSCdrawNumber && previousCQSSCBetNumber != "") {//判断上一期有没有漏投
 						long dNum = 0;
 						try {
 						    long drawNum = Long.parseLong(CQSSCdrawNumber)%1000;
@@ -316,9 +316,9 @@ public class TianCaiHttp {
 						
 						previousCQSSCBetNumber = previousCQSSCdrawNumber;
 						failTimes += dNum;
-						autoBet.labelFailBets.setText("ʧ�ܴ���:" + failTimes);
-						autoBet.labelTotalBets.setText("�µ�����:" + (successTimes + failTimes));
-						System.out.println("©Ͷ" + dNum + "��, ����" + CQSSCdrawNumber + "�ϴ��µ�����" + previousCQSSCBetNumber);
+						autoBet.labelFailBets.setText("失败次数:" + failTimes);
+						autoBet.labelTotalBets.setText("下单次数:" + (successTimes + failTimes));
+						System.out.println("漏投" + dNum + "次, 期数：" + CQSSCdrawNumber + "上次下单期数：" + previousCQSSCBetNumber);
 				    }
 				}
 				
@@ -347,7 +347,7 @@ public class TianCaiHttp {
     	params.add(new BasicNameValuePair("hasPlayerInfo", "true"));
         response = doPost(HOST + "/lotteryweb/WebClientAgent", params, "", HOST + "/lotteryweb/Login");
         if(response == "") {
-        	System.out.println("[���]������ʱ���ȡʧ��");
+        	System.out.println("[添彩]北京赛车时间获取失败");
         	return -1;
         }
         
@@ -368,10 +368,10 @@ public class TianCaiHttp {
 				remainTime = joGameInfo.getLong("gameTime") - joGameInfo.getLong("closeTime");
 				BJSCcloseTime = System.currentTimeMillis() + (remainTime * 1000);
 				BJSCoddsData = joResult.getJSONObject("odds");
-				if(!BJSCdrawNumber.equals(joGameInfo.getString("gameNo"))) { //�µ�һ��
+				if(!BJSCdrawNumber.equals(joGameInfo.getString("gameNo"))) { //新的一期
 					previousBJSCdrawNumber = BJSCdrawNumber;
 					BJSCdrawNumber = joGameInfo.getString("gameNo");
-					if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//�ж���һ����û��©Ͷ
+					if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//判断上一期有没有漏投
 						int dNum = 0;
 						try {
 						    dNum = Integer.parseInt(BJSCdrawNumber) - Integer.parseInt(previousBJSCBetNumber) -1;
@@ -381,9 +381,9 @@ public class TianCaiHttp {
 						
 						previousBJSCBetNumber = previousBJSCdrawNumber;
 						failTimes += dNum;
-						autoBet.labelTianCaiFailBets.setText("ʧ�ܴ���:" + failTimes);
-						autoBet.labelTianCaiTotalBets.setText("�µ�����:" + (successTimes + failTimes));
-						System.out.println("©Ͷ" + dNum + "��, ����" + BJSCdrawNumber + "�ϴ��µ�����" + previousBJSCBetNumber);
+						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+						System.out.println("漏投" + dNum + "次, 期数：" + BJSCdrawNumber + "上次下单期数：" + previousBJSCBetNumber);
 				    }
 				}			
 				
@@ -396,7 +396,7 @@ public class TianCaiHttp {
 			return -9999;
 		}
         
-        //{"returnCode":0,"announcement":"�𾴵��û�����춱���PK10����Ѷ�ų��ֲ��ȶ����ʵ�562372�ڿ��������������⣬ϵͳ�����½����й�����֮��Ӱ���ע��������֮��������ԭ�¡�","winLoss":0,"hasPlayerInfo":true,"gameInfo":{"gameType":"SSC","gameNo":"20160826055","lastGameResult":[],"lastGameNo":"20160826054","gameStatus":"BETTING","gameTime":521,"closeTime":90,"history":[],"roadMap":{"BALL_1":{"ODD":[[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,4],[0,1],[1,1],[0,1],[1,4],[0,1]],"BIG":[[0,4],[1,1],[0,1],[1,1],[0,4],[1,1],[0,1],[1,4],[0,4],[1,1],[0,1],[1,3],[0,3],[1,1],[0,1]],"NO_0":[[2,2],[1,1],[2,1],[7,1],[4,1],[5,1],[2,1],[4,1],[1,1],[4,1],[7,1],[2,1],[5,1],[6,1],[9,2],[2,1],[0,1],[3,2],[9,1],[3,1],[8,1],[7,1],[8,1],[1,3],[9,1],[4,1]]},"BALL_2":{"ODD":[[1,6],[0,4],[1,3],[0,2],[1,1],[0,2],[1,2],[0,1],[1,4],[0,1],[1,2],[0,1],[1,2]],"BIG":[[1,4],[0,2],[1,2],[0,2],[1,2],[0,3],[1,2],[0,2],[1,6],[0,1],[1,1],[0,3],[1,1]],"NO_0":[[7,1],[9,2],[7,1],[3,2],[8,2],[0,1],[2,1],[7,2],[3,1],[0,2],[9,1],[8,1],[0,1],[3,1],[5,1],[8,1],[7,1],[5,1],[9,2],[2,1],[9,1],[1,1],[2,1],[3,1],[5,1]]},"BALL_5":{"ODD":[[1,2],[0,1],[1,2],[0,3],[1,1],[0,1],[1,4],[0,1],[1,2],[0,2],[1,1],[0,1],[1,1],[0,2],[1,4],[0,1],[1,1],[0,1]],"BIG":[[1,3],[0,1],[1,2],[0,2],[1,5],[0,5],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,1],[1,3]],"NO_0":[[5,1],[9,1],[8,1],[1,1],[7,1],[8,1],[2,1],[4,1],[9,1],[8,1],[7,1],[5,1],[9,1],[3,1],[0,1],[3,2],[0,1],[6,1],[3,1],[4,1],[5,1],[0,1],[8,1],[9,1],[3,1],[7,1],[3,1],[8,1],[7,1],[6,1]]},"BALL_3":{"ODD":[[1,5],[0,3],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,5],[0,3],[1,1],[0,1],[1,1],[0,4]],"BIG":[[1,5],[0,1],[1,1],[0,2],[1,4],[0,2],[1,1],[0,1],[1,3],[0,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,2]],"NO_0":[[5,2],[9,1],[7,1],[9,1],[2,1],[6,1],[2,1],[1,1],[8,1],[5,1],[8,1],[7,1],[1,1],[0,1],[8,1],[1,1],[7,3],[3,1],[6,1],[2,1],[8,1],[7,1],[6,1],[9,1],[2,1],[8,1],[2,2]]},"D_T_T":{"DRAGON":[[1,3],[0,1],[2,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,5],[1,1],[2,1],[1,1],[0,2],[2,1],[1,1],[0,1],[1,3],[0,1],[1,1]]},"TOTAL":{"ODD":[[1,2],[0,1],[1,1],[0,1],[1,1],[0,2],[1,5],[0,2],[1,1],[0,2],[1,2],[0,3],[1,2],[0,1],[1,3],[0,2]],"BIG":[[0,1],[1,4],[0,1],[1,1],[0,3],[1,3],[0,2],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,2],[1,1],[0,1]]},"BALL_4":{"ODD":[[0,2],[1,1],[0,3],[1,1],[0,1],[1,1],[0,4],[1,1],[0,2],[1,4],[0,1],[1,1],[0,2],[1,3],[0,2],[1,2]],"BIG":[[0,1],[1,3],[0,2],[1,1],[0,1],[1,1],[0,6],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,4],[1,1],[0,1]],"NO_0":[[2,1],[8,1],[5,1],[6,1],[0,1],[4,1],[5,1],[0,1],[5,1],[0,2],[2,1],[4,1],[1,1],[4,1],[6,1],[1,1],[3,1],[9,1],[3,1],[2,1],[9,1],[4,1],[6,1],[5,1],[3,1],[1,1],[4,1],[2,1],[5,1],[3,1]]}},"twoSideRanking":[{"betOn":"BALL_3","betType":"EVEN","times":4},{"betOn":"BALL_5","betType":"BIG","times":3},{"betOn":"BALL_2","betType":"ODD","times":2},{"betOn":"BALL_3","betType":"SMALL","times":2},{"betOn":"BALL_4","betType":"ODD","times":2},{"betOn":"TOTAL","betType":"EVEN","times":2}],"appearanceList":[{"BALL_1":{"NO_6":1,"NO_1":5,"NO_7":3,"NO_0":1,"NO_2":6,"NO_5":2,"NO_8":2,"NO_9":4,"NO_3":3,"NO_4":4},"BALL_2":{"NO_6":0,"NO_1":1,"NO_7":5,"NO_0":4,"NO_2":3,"NO_5":3,"NO_8":4,"NO_9":6,"NO_3":5,"NO_4":0},"BALL_5":{"NO_6":2,"NO_1":1,"NO_7":4,"NO_0":3,"NO_2":1,"NO_5":3,"NO_8":5,"NO_9":4,"NO_3":6,"NO_4":2},"BALL_3":{"NO_6":3,"NO_1":3,"NO_7":6,"NO_0":1,"NO_2":6,"NO_5":3,"NO_8":5,"NO_9":3,"NO_3":1,"NO_4":0},"BALL_4":{"NO_6":3,"NO_1":3,"NO_7":0,"NO_0":4,"NO_2":4,"NO_5":5,"NO_8":1,"NO_9":2,"NO_3":4,"NO_4":5}},{"BALL_1":{"NO_6":16,"NO_1":2,"NO_7":6,"NO_0":12,"NO_2":13,"NO_5":17,"NO_8":5,"NO_9":1,"NO_3":8,"NO_4":0},"BALL_2":{"NO_6":31,"NO_1":3,"NO_7":9,"NO_0":13,"NO_2":2,"NO_5":0,"NO_8":10,"NO_9":4,"NO_3":1,"NO_4":31},"BALL_5":{"NO_6":0,"NO_1":27,"NO_7":1,"NO_0":8,"NO_2":24,"NO_5":9,"NO_8":2,"NO_9":6,"NO_3":3,"NO_4":10},"BALL_3":{"NO_6":5,"NO_1":14,"NO_7":6,"NO_0":16,"NO_2":0,"NO_5":20,"NO_8":2,"NO_9":4,"NO_3":10,"NO_4":31},"BALL_4":{"NO_6":7,"NO_1":4,"NO_7":31,"NO_0":20,"NO_2":2,"NO_5":1,"NO_8":29,"NO_9":9,"NO_3":0,"NO_4":3}}],"parameters":{"roundTime":"600"}},"odds":{"BALL_1":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"BALL_2":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"MIDDLE3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_5":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"FIRST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_3":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"LAST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"D_T_T":{"DRAGON":1.9838,"TIE":8.8000,"TIGER":1.9838},"TOTAL":{"EVEN":1.9838,"ODD":1.9838,"SMALL":1.9838,"BIG":1.9838},"BALL_4":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140}},"balance":10.00000,"sessionId":"eb212084-bffe-4523-9b61-f5463ba198ac","webServerId":"7d98c50a-2fd1-4edd-b707-834d46ed151f","lastResult":{"gameType":"SSC","gameNo":"20160826054","issueTime":null,"gameResult":[4,5,2,3,6]},"tray":0,"lotteryType":"SSC","command":"UPDATE"}
+        //{"returnCode":0,"announcement":"尊敬的用户，由於北京PK10官网开奖讯号出现不稳定，故第562372期开奖结果曾经出现问题，系统已重新结算有关期数之受影响的注单，不便之处，敬请原谅。","winLoss":0,"hasPlayerInfo":true,"gameInfo":{"gameType":"SSC","gameNo":"20160826055","lastGameResult":[],"lastGameNo":"20160826054","gameStatus":"BETTING","gameTime":521,"closeTime":90,"history":[],"roadMap":{"BALL_1":{"ODD":[[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,2],[1,1],[0,1],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,4],[0,1],[1,1],[0,1],[1,4],[0,1]],"BIG":[[0,4],[1,1],[0,1],[1,1],[0,4],[1,1],[0,1],[1,4],[0,4],[1,1],[0,1],[1,3],[0,3],[1,1],[0,1]],"NO_0":[[2,2],[1,1],[2,1],[7,1],[4,1],[5,1],[2,1],[4,1],[1,1],[4,1],[7,1],[2,1],[5,1],[6,1],[9,2],[2,1],[0,1],[3,2],[9,1],[3,1],[8,1],[7,1],[8,1],[1,3],[9,1],[4,1]]},"BALL_2":{"ODD":[[1,6],[0,4],[1,3],[0,2],[1,1],[0,2],[1,2],[0,1],[1,4],[0,1],[1,2],[0,1],[1,2]],"BIG":[[1,4],[0,2],[1,2],[0,2],[1,2],[0,3],[1,2],[0,2],[1,6],[0,1],[1,1],[0,3],[1,1]],"NO_0":[[7,1],[9,2],[7,1],[3,2],[8,2],[0,1],[2,1],[7,2],[3,1],[0,2],[9,1],[8,1],[0,1],[3,1],[5,1],[8,1],[7,1],[5,1],[9,2],[2,1],[9,1],[1,1],[2,1],[3,1],[5,1]]},"BALL_5":{"ODD":[[1,2],[0,1],[1,2],[0,3],[1,1],[0,1],[1,4],[0,1],[1,2],[0,2],[1,1],[0,1],[1,1],[0,2],[1,4],[0,1],[1,1],[0,1]],"BIG":[[1,3],[0,1],[1,2],[0,2],[1,5],[0,5],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,1],[1,3]],"NO_0":[[5,1],[9,1],[8,1],[1,1],[7,1],[8,1],[2,1],[4,1],[9,1],[8,1],[7,1],[5,1],[9,1],[3,1],[0,1],[3,2],[0,1],[6,1],[3,1],[4,1],[5,1],[0,1],[8,1],[9,1],[3,1],[7,1],[3,1],[8,1],[7,1],[6,1]]},"BALL_3":{"ODD":[[1,5],[0,3],[1,1],[0,1],[1,1],[0,1],[1,2],[0,2],[1,5],[0,3],[1,1],[0,1],[1,1],[0,4]],"BIG":[[1,5],[0,1],[1,1],[0,2],[1,4],[0,2],[1,1],[0,1],[1,3],[0,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,2]],"NO_0":[[5,2],[9,1],[7,1],[9,1],[2,1],[6,1],[2,1],[1,1],[8,1],[5,1],[8,1],[7,1],[1,1],[0,1],[8,1],[1,1],[7,3],[3,1],[6,1],[2,1],[8,1],[7,1],[6,1],[9,1],[2,1],[8,1],[2,2]]},"D_T_T":{"DRAGON":[[1,3],[0,1],[2,1],[1,1],[0,1],[1,4],[0,1],[1,1],[0,5],[1,1],[2,1],[1,1],[0,2],[2,1],[1,1],[0,1],[1,3],[0,1],[1,1]]},"TOTAL":{"ODD":[[1,2],[0,1],[1,1],[0,1],[1,1],[0,2],[1,5],[0,2],[1,1],[0,2],[1,2],[0,3],[1,2],[0,1],[1,3],[0,2]],"BIG":[[0,1],[1,4],[0,1],[1,1],[0,3],[1,3],[0,2],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,1],[1,1],[0,2],[1,1],[0,1]]},"BALL_4":{"ODD":[[0,2],[1,1],[0,3],[1,1],[0,1],[1,1],[0,4],[1,1],[0,2],[1,4],[0,1],[1,1],[0,2],[1,3],[0,2],[1,2]],"BIG":[[0,1],[1,3],[0,2],[1,1],[0,1],[1,1],[0,6],[1,1],[0,2],[1,1],[0,2],[1,1],[0,1],[1,2],[0,4],[1,1],[0,1]],"NO_0":[[2,1],[8,1],[5,1],[6,1],[0,1],[4,1],[5,1],[0,1],[5,1],[0,2],[2,1],[4,1],[1,1],[4,1],[6,1],[1,1],[3,1],[9,1],[3,1],[2,1],[9,1],[4,1],[6,1],[5,1],[3,1],[1,1],[4,1],[2,1],[5,1],[3,1]]}},"twoSideRanking":[{"betOn":"BALL_3","betType":"EVEN","times":4},{"betOn":"BALL_5","betType":"BIG","times":3},{"betOn":"BALL_2","betType":"ODD","times":2},{"betOn":"BALL_3","betType":"SMALL","times":2},{"betOn":"BALL_4","betType":"ODD","times":2},{"betOn":"TOTAL","betType":"EVEN","times":2}],"appearanceList":[{"BALL_1":{"NO_6":1,"NO_1":5,"NO_7":3,"NO_0":1,"NO_2":6,"NO_5":2,"NO_8":2,"NO_9":4,"NO_3":3,"NO_4":4},"BALL_2":{"NO_6":0,"NO_1":1,"NO_7":5,"NO_0":4,"NO_2":3,"NO_5":3,"NO_8":4,"NO_9":6,"NO_3":5,"NO_4":0},"BALL_5":{"NO_6":2,"NO_1":1,"NO_7":4,"NO_0":3,"NO_2":1,"NO_5":3,"NO_8":5,"NO_9":4,"NO_3":6,"NO_4":2},"BALL_3":{"NO_6":3,"NO_1":3,"NO_7":6,"NO_0":1,"NO_2":6,"NO_5":3,"NO_8":5,"NO_9":3,"NO_3":1,"NO_4":0},"BALL_4":{"NO_6":3,"NO_1":3,"NO_7":0,"NO_0":4,"NO_2":4,"NO_5":5,"NO_8":1,"NO_9":2,"NO_3":4,"NO_4":5}},{"BALL_1":{"NO_6":16,"NO_1":2,"NO_7":6,"NO_0":12,"NO_2":13,"NO_5":17,"NO_8":5,"NO_9":1,"NO_3":8,"NO_4":0},"BALL_2":{"NO_6":31,"NO_1":3,"NO_7":9,"NO_0":13,"NO_2":2,"NO_5":0,"NO_8":10,"NO_9":4,"NO_3":1,"NO_4":31},"BALL_5":{"NO_6":0,"NO_1":27,"NO_7":1,"NO_0":8,"NO_2":24,"NO_5":9,"NO_8":2,"NO_9":6,"NO_3":3,"NO_4":10},"BALL_3":{"NO_6":5,"NO_1":14,"NO_7":6,"NO_0":16,"NO_2":0,"NO_5":20,"NO_8":2,"NO_9":4,"NO_3":10,"NO_4":31},"BALL_4":{"NO_6":7,"NO_1":4,"NO_7":31,"NO_0":20,"NO_2":2,"NO_5":1,"NO_8":29,"NO_9":9,"NO_3":0,"NO_4":3}}],"parameters":{"roundTime":"600"}},"odds":{"BALL_1":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"BALL_2":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"MIDDLE3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_5":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"FIRST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"BALL_3":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140},"LAST3":{"THREE_CHAOS":2.6000,"THREE_EQUAL":68.0000,"THREE_PAIR":2.8800,"THREE_HALF_STRAIGHT":2.3000,"THREE_STRAIGHT":12.8000},"D_T_T":{"DRAGON":1.9838,"TIE":8.8000,"TIGER":1.9838},"TOTAL":{"EVEN":1.9838,"ODD":1.9838,"SMALL":1.9838,"BIG":1.9838},"BALL_4":{"SMALL":1.9838,"NO_0":9.9140,"NO_2":9.9140,"NO_9":9.9140,"NO_3":9.9140,"NO_4":9.9140,"NO_6":9.9140,"EVEN":1.9838,"NO_1":9.9140,"NO_7":9.9140,"ODD":1.9838,"BIG":1.9838,"NO_8":9.9140,"NO_5":9.9140}},"balance":10.00000,"sessionId":"eb212084-bffe-4523-9b61-f5463ba198ac","webServerId":"7d98c50a-2fd1-4edd-b707-834d46ed151f","lastResult":{"gameType":"SSC","gameNo":"20160826054","issueTime":null,"gameResult":[4,5,2,3,6]},"tray":0,"lotteryType":"SSC","command":"UPDATE"}
 
 
         return remainTime;
@@ -412,7 +412,7 @@ public class TianCaiHttp {
     
     public static void outputBetsDetails(String jsonData, BetType betType){
     	
-    	autoBet.outputGUIMessage("��ע���飺\n");
+    	autoBet.outputGUIMessage("下注详情：\n");
     	try{
         	if(betType == BetType.BJSC){
             	
@@ -439,17 +439,17 @@ public class TianCaiHttp {
             			if(game.equals(gameDX)){
             				amountDX = gameData.getInt("amount");
             				contentsDX = gameData.getString("contents");
-            				contentsDX = contentsDX.equals("D")?"��":"С";
+            				contentsDX = contentsDX.equals("D")?"大":"小";
             			}
             			if(game.equals(gameDS)){
             				amountDS = gameData.getInt("amount");  
             				contentsDS = gameData.getString("contents");
-            				contentsDS = contentsDS.equals("D")?"��":"˫";
+            				contentsDS = contentsDS.equals("D")?"单":"双";
             			}
     					if(game.equals(gameLH)){
     						amountLH = gameData.getInt("amount");
     						contentsLH = gameData.getString("contents");
-    						contentsLH = contentsLH.equals("L")?"��":"��";
+    						contentsLH = contentsLH.equals("L")?"龙":"虎";
     					}
 
     					
@@ -459,15 +459,15 @@ public class TianCaiHttp {
     				String outputStr = "";
     				if(amountDX != 0 ){
     					if(i == 1){
-    						outputStr  = String.format("�ھ�%s: %d,", contentsDX, amountDX);
+    						outputStr  = String.format("冠军%s: %d,", contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
-    						outputStr  = String.format("�Ǿ�%s: %d,", contentsDX, amountDX);
+    						outputStr  = String.format("亚军%s: %d,", contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
-    						outputStr  = String.format("��%s��%s: %d,", Integer.toString(i), contentsDX, amountDX);
+    						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					
@@ -476,15 +476,15 @@ public class TianCaiHttp {
     				
     				if(amountDS != 0 ){
     					if(i == 1){
-    						outputStr  = String.format("�ھ�%s: %d,", contentsDS, amountDS);
+    						outputStr  = String.format("冠军%s: %d,", contentsDS, amountDS);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
-    						outputStr  = String.format("�Ǿ�%s: %d,", contentsDS, amountDS);
+    						outputStr  = String.format("亚军%s: %d,", contentsDS, amountDS);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
-    						outputStr  = String.format("��%s��%s: %d,", Integer.toString(i), contentsDS, amountDS);
+    						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsDS, amountDS);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					totalAmout += amountDS;
@@ -492,15 +492,15 @@ public class TianCaiHttp {
     				
     				if(amountLH != 0 ){
     					if(i == 1){
-    						outputStr  = String.format("�ھ�%s: %d,", contentsLH, amountLH);
+    						outputStr  = String.format("冠军%s: %d,", contentsLH, amountLH);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else if(i == 2){
-    						outputStr  = String.format("�Ǿ�%s: %d,", contentsLH, amountLH);
+    						outputStr  = String.format("亚军%s: %d,", contentsLH, amountLH);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					else{
-    						outputStr  = String.format("��%s��%s: %d,", Integer.toString(i), contentsLH, amountLH);
+    						outputStr  = String.format("第%s名%s: %d,", Integer.toString(i), contentsLH, amountLH);
     						autoBet.outputGUIMessage(outputStr);
     					}
     					totalAmout += amountLH;
@@ -509,7 +509,7 @@ public class TianCaiHttp {
             		
     				autoBet.outputGUIMessage("\n");
             	}
-            	autoBet.outputGUIMessage("�µ��ܽ��:" + totalAmout + "\n");
+            	autoBet.outputGUIMessage("下单总金额:" + totalAmout + "\n");
         	}
         	
         	
@@ -533,12 +533,12 @@ public class TianCaiHttp {
             			if(game.equals(gameDX)){
             				amountDX = gameData.getInt("amount");
             				contentsDX = gameData.getString("contents");
-            				contentsDX = contentsDX.equals("D")?"��":"С";
+            				contentsDX = contentsDX.equals("D")?"大":"小";
             			}
             			if(game.equals(gameDS)){
             				amountDS = gameData.getInt("amount");  
             				contentsDS = gameData.getString("contents");
-            				contentsDS = contentsDS.equals("D")?"��":"˫";
+            				contentsDS = contentsDS.equals("D")?"单":"双";
             			}
             			
 
@@ -548,13 +548,13 @@ public class TianCaiHttp {
         			String outputStr = "";
         			
     				if(amountDX != 0 ){
-    						outputStr  = String.format("��%s��%s: %d,", Integer.toString(i), contentsDX, amountDX);
+    						outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDX, amountDX);
     						autoBet.outputGUIMessage(outputStr);
     						totalAmount += amountDX;
     				}
     				
     				if(amountDS != 0 ){
-    					outputStr  = String.format("��%s��%s: %d,", Integer.toString(i), contentsDS, amountDS);
+    					outputStr  = String.format("第%s球%s: %d,", Integer.toString(i), contentsDS, amountDS);
     					autoBet.outputGUIMessage(outputStr);
     					totalAmount += amountDS;
     				}
@@ -584,30 +584,30 @@ public class TianCaiHttp {
         			if(game.equals(gameZDX)){
         				amountZDX = gameData.getInt("amount");
         				contentsZDX = gameData.getString("contents");
-        				contentsZDX = contentsZDX.equals("D")?"��":"С";
+        				contentsZDX = contentsZDX.equals("D")?"大":"小";
         			}
         			if(game.equals(gameZDS)){
         				amountZDS = gameData.getInt("amount");  
         				contentsZDS = gameData.getString("contents");
-        				contentsZDS = contentsZDS.equals("D")?"��":"˫";
+        				contentsZDS = contentsZDS.equals("D")?"单":"双";
         			}
     				if(game.equals(gameLH)){
     					amountLH = gameData.getInt("amount");
     					contentsLH = gameData.getString("contents");
-    					contentsLH = contentsLH.equals("L")?"��":"��";
+    					contentsLH = contentsLH.equals("L")?"龙":"虎";
     				}
     	
         		}
         		
     			String outputStr = "";
     			if(amountZDX != 0){
-    				outputStr  = String.format("��%s: %d,",  contentsZDX, amountZDX);
+    				outputStr  = String.format("总%s: %d,",  contentsZDX, amountZDX);
     				autoBet.outputGUIMessage(outputStr);
     				totalAmount += amountZDX;
     			}
     			
     			if(amountZDS != 0){
-    				outputStr  = String.format("��%s: %d,",  contentsZDS, amountZDS);
+    				outputStr  = String.format("总%s: %d,",  contentsZDS, amountZDS);
     				autoBet.outputGUIMessage(outputStr);
     				totalAmount += amountZDS;
     			}
@@ -619,7 +619,7 @@ public class TianCaiHttp {
     			}
     			
     			autoBet.outputGUIMessage("\n");
-    			autoBet.outputGUIMessage("�µ��ܽ��:" + totalAmount +"\n");
+    			autoBet.outputGUIMessage("下单总金额:" + totalAmount +"\n");
         	}
     	}catch(Exception e){
     		e.printStackTrace();
@@ -631,21 +631,21 @@ public class TianCaiHttp {
     public boolean doBetCQSSC(String[] betData, double percent, boolean opposite, String remainTime) {
         String strBet = "";
         
-        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber) && previousCQSSCBetResult == true) {//֮ǰ����Ѿ��¹��ҳɹ��µ���ֱ�ӷ���
+        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber) && previousCQSSCBetResult == true) {//之前如果已经下过单并且成功下单就直接返回
         	return false;
         }
         
         if(isEmptyData(betData, BetType.CQSSC)) {
-    		autoBet.outputGUIMessage("��������Ͷע\n\n");
+    		autoBet.outputGUIMessage("代理无人投注\n\n");
     		return false;
     	}
     	
-        String outputStr = "[���]��ע����ʱʱ�ʵ�" + CQSSCdrawNumber + "��\n" + "�������ʱ�������" + remainTime + "��\n";
+        String outputStr = "[添彩]下注重庆时时彩第" + CQSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
     	autoBet.outputGUIMessage(outputStr);
     	strBet = constructBetsData(betData, percent, BetType.CQSSC, opposite);
         
         
-        //���δ������ʱ��
+        //如果未到封盘时间
         if(getCQSSClocalRemainTime() >= 1) {
         	
         
@@ -654,16 +654,16 @@ public class TianCaiHttp {
         	boolean result = bet(strBet, BetType.CQSSC);
      	
         	
-        	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) {//�����ظ�����
+        	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) {//避免重复计数
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelTianCaiSuccessBets.setText("�ɹ�����:" + successTimes);
+					autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
 				} else {
 					failTimes++;
-					autoBet.labelTianCaiFailBets.setText("ʧ�ܴ���:" + failTimes);
+					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
 				}
 				
-				autoBet.labelTianCaiTotalBets.setText("�µ�����:" + (successTimes + failTimes));
+				autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
         	}
 			
 			previousCQSSCBetNumber = CQSSCdrawNumber;
@@ -672,7 +672,7 @@ public class TianCaiHttp {
         	return result;
         
         } else {
-        	autoBet.outputGUIMessage("�µ�ʧ�� ,�ѷ��̣�\n\n");;
+        	autoBet.outputGUIMessage("下单失败 ,已封盘！\n\n");;
         }
         
         return false;
@@ -682,21 +682,21 @@ public class TianCaiHttp {
     public boolean doBetBJSC(String[] betData, double percent,boolean opposite, String remainTime) {
     	String strBet = "";
         
-        if(previousBJSCBetNumber.equals(BJSCdrawNumber) && previousBJSCBetResult == true) {//֮ǰ����Ѿ��¹��ҳɹ��µ���ֱ�ӷ���
+        if(previousBJSCBetNumber.equals(BJSCdrawNumber) && previousBJSCBetResult == true) {//之前如果已经下过单并且成功下单就直接返回
         	return false;
         }
         
         if(isEmptyData(betData, BetType.BJSC)) {
-    		autoBet.outputGUIMessage("��������Ͷע\n\n");
+    		autoBet.outputGUIMessage("代理无人投注\n\n");
     		return false;
     	}
     	
-        String outputStr = "[���]��ע�������" + BJSCdrawNumber + "��\n" + "�������ʱ�������" + remainTime + "��\n";
+        String outputStr = "[添彩]下注北京赛车第" + BJSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
     	autoBet.outputGUIMessage(outputStr);
     	strBet = constructBetsData(betData, percent, BetType.BJSC, opposite);
         
         
-        //���δ������ʱ��
+        //如果未到封盘时间
         if(getBJSClocalRemainTime() >= 1) {
         
         	//outputBetsDetails(jsonParam, BetType.BJSC);
@@ -704,16 +704,16 @@ public class TianCaiHttp {
         	boolean result = bet(strBet, BetType.BJSC);
    
         	
-        	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) {//�����ظ�����
+        	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) {//避免重复计数
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelTianCaiSuccessBets.setText("�ɹ�����:" + successTimes);
+					autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
 				} else {
 					failTimes++;
-					autoBet.labelTianCaiFailBets.setText("ʧ�ܴ���:" + failTimes);
+					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
 				}
 				
-				autoBet.labelTianCaiTotalBets.setText("�µ�����:" + (successTimes + failTimes));
+				autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
         	}
 				
 			previousBJSCBetNumber = BJSCdrawNumber;
@@ -723,7 +723,7 @@ public class TianCaiHttp {
         	return result;
         
         } else {
-        	autoBet.outputGUIMessage("�µ�ʧ�� ,�ѷ��̣�\n\n");;
+        	autoBet.outputGUIMessage("下单失败 ,已封盘！\n\n");;
         }
         
         return false;
@@ -733,7 +733,7 @@ public class TianCaiHttp {
     
     public boolean parseBetResult(String str){
     	if(str != null) {
-    		System.out.println("�µ����" + str);
+    		System.out.println("下单结果：" + str);
     	}
     	
     	if(str != null && str.length()>0){
@@ -743,7 +743,7 @@ public class TianCaiHttp {
         		betResult = new JSONObject(str);	
     		}catch(Exception e)
     		{
-    			autoBet.outputGUIMessage("��˹���µ�ʧ�ܣ��ڲ�����\n\n");
+    			autoBet.outputGUIMessage("迪斯尼下单失败，内部错误\n\n");
     			return false;
     		}
     		int status = betResult.getInt("status");
@@ -752,26 +752,26 @@ public class TianCaiHttp {
     			JSONObject account = betResult.getJSONObject("account");
     			double balance = account.getDouble("balance");
     			//int betting = account.getInt("betting");
-    			outputStr  = String.format("��˹���µ��ɹ��� �˻����:%f\n\n", balance);
+    			outputStr  = String.format("迪斯尼下单成功！ 账户余额:%f\n\n", balance);
     			autoBet.outputGUIMessage(outputStr);
-    			//System.out.printf("�µ��ɹ��� �µ���%d, �˻����:%f\n", betting, balance);
+    			//System.out.printf("下单成功！ 下单金额：%d, 账户余额:%f\n", betting, balance);
     			return true;
     		
 
     		case 2:
-    			//System.out.println("�µ�ʧ��:�ѷ��̣�\n");
-    			autoBet.outputGUIMessage("��˹���µ�ʧ��:�ѷ��̣�\n\n");
+    			//System.out.println("下单失败:已封盘！\n");
+    			autoBet.outputGUIMessage("迪斯尼下单失败:已封盘！\n\n");
     			return false;
     		case 3:
     			String message = betResult.getString("message");
-    			outputStr  = String.format("��˹���µ�ʧ�ܣ�%s\n\n",message);
+    			outputStr  = String.format("迪斯尼下单失败：%s\n\n",message);
     			autoBet.outputGUIMessage(outputStr);
     			return false;
     		
     		}
     	}
     	
-    	autoBet.outputGUIMessage("��˹���µ�ʧ�ܣ�\n\n");
+    	autoBet.outputGUIMessage("迪斯尼下单失败！\n\n");
     	
     	return false;
     }
@@ -826,7 +826,7 @@ public class TianCaiHttp {
 	    			
 	    			double odds = oddsGrabData.getDouble(oddsKey);
 	    			
-	    			//�޳�����Ǿ� �� ����
+	    			//剔除北京赛车冠亚军 和 两面
 	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
 	    				continue;
 	    			
@@ -836,7 +836,7 @@ public class TianCaiHttp {
 	    			
 	    			
 	    			
-	    			//�����ֵ
+	    			//计算差值
 	        		for(int k = j +1 ; k < gamesGrabData.length(); k++){
 	        			JSONObject oppositeGameGrabData = gamesGrabData.getJSONObject(k);
 	        			String oppositeGame = oppositeGameGrabData.getString("k");
@@ -860,11 +860,11 @@ public class TianCaiHttp {
 	    			
 	    			
 	    			
-	    			//ֻ�����ʶ����µ�
+	    			//只下赔率二以下的
 	        		if(odds < 2.5 && amount >0){
 	        			amount = (int)(amount*percent);  
 	        			if(amount <= 1)
-	        				amount = 2; //���ÿע���2Ԫ
+	        				amount = 2; //添彩每注最低2元
 
 	        			totalAmount += amount;
 	        			
@@ -872,9 +872,9 @@ public class TianCaiHttp {
 	        			
 
 	        			
-	        			//���?Ͷ: ���С��С��󣬵���˫��˫�����仢������¡
+	        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
 	        			if(opposite){
-	        				if(game.indexOf("DX") != -1){//����С
+	        				if(game.indexOf("DX") != -1){//反大小
 	        					if(contents.indexOf("D") != -1){
 	        						contents = "X";        						
 	        					}
@@ -886,7 +886,7 @@ public class TianCaiHttp {
 	        				}
 	        				
 	        				
-	        				if(game.indexOf("DS") != -1){//����˫
+	        				if(game.indexOf("DS") != -1){//反单双
 	        					if(contents.indexOf("D") != -1){
 	        						contents = "S";        						
 	        					}
@@ -897,7 +897,7 @@ public class TianCaiHttp {
 	        					odds = oddsGrabData.getDouble(oddsKey);
 	        				}
 	        				
-	        				if(game.indexOf("LH") != -1){//����
+	        				if(game.indexOf("LH") != -1){//反龙虎
 	        					if(contents.indexOf("L") != -1){
 	        						contents = "H";        						
 	        					}
@@ -911,250 +911,250 @@ public class TianCaiHttp {
 	
 	        				
 	        			}
-	        			//��Ͷ�������
+	        			//反投处理结束
 	        				        			
 	        			String selectionTypeName = "";
 	        			String outputName = "";
 	        			String outputContent = "";
 	        			
 	        		
-	        	    	if(betType == BetType.CQSSC){//����ʱʱ��
+	        	    	if(betType == BetType.CQSSC){//重庆时时彩
         	
 	        	        	switch(game){
 	        	        	case "DX1":
 	        	        		selectionTypeName = "BALL_1";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "��һ��";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第一球";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS1":
 	        	        		selectionTypeName = "BALL_1";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";
-	        	        		outputName = "��һ��";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第一球";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX2":
 	        	        		selectionTypeName = "BALL_2";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "�ڶ���";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第二球";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS2":
 	        	        		selectionTypeName = "BALL_2";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";
-	        	        		outputName = "�ڶ���";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第二球";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX3":
 	        	        		selectionTypeName = "BALL_3";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第三球";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS3":
 	        	        		selectionTypeName = "BALL_3";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第三球";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX4":
 	        	        		selectionTypeName = "BALL_4";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第四球";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS4":
 	        	        		selectionTypeName = "BALL_4";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第四球";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX5":
 	        	        		selectionTypeName = "BALL_5";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第五球";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS5":
 	        	        		selectionTypeName = "BALL_5";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第五球";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "ZDX":
 	        	        		selectionTypeName = "TOTAL";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "�ܴ�С";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "总大小";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "ZDS":
 	        	        		selectionTypeName = "TOTAL";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "�ܵ�˫";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "总单双";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH":
 	        	        		selectionTypeName = "D_T_T";
 	        	        		contents = contents.equals("L")?"DRAGON":"TIGER";
-	        	        		outputName = "��";
-	        	        		outputContent = contents.equals("L")?"��":"��";
+	        	        		outputName = "龙虎";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
 	        	        		break;
 	        	        	}
 	        	        	
-	        	    	}//������
+	        	    	}//北京赛车
 	        	    	else if(betType == BetType.BJSC){
 	        	    		
 	        	        	switch(game){
 	        	        	case "DX1":
 	        	        		selectionTypeName = "BALL_1";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "�ھ�";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "冠军";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS1":
 	        	        		selectionTypeName = "BALL_1";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";
-	        	        		outputName = "�ھ�";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "冠军";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH1":
 	        	        		selectionTypeName = "BALL_1";
 	        	        		contents = contents.equals("L")?"DRAGON":"TIGER";
-	        	        		outputName = "�ھ�";
-	        	        		outputContent = contents.equals("L")?"��":"��";
+	        	        		outputName = "冠军";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
 	        	        		break;	
 	        	        		
 	        	        	case "DX2":
 	        	        		selectionTypeName = "BALL_2";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "�Ǿ�";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "亚军";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS2":
 	        	        		selectionTypeName = "BALL_2";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";
-	        	        		outputName = "�Ǿ�";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "亚军";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH2":
 	        	        		selectionTypeName = "BALL_2";
 	        	        		contents = contents.equals("L")?"DRAGON":"TIGER";
-	        	        		outputName = "�Ǿ�";
-	        	        		outputContent = contents.equals("L")?"��":"��";
+	        	        		outputName = "亚军";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
 	        	        		break;		
 	        	        	case "DX3":
 	        	        		selectionTypeName = "BALL_3";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第三名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS3":
 	        	        		selectionTypeName = "BALL_3";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第三名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH3":
 	        	        		selectionTypeName = "BALL_3";
 	        	        		contents = contents.equals("L")?"DRAGON":"TIGER";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("L")?"��":"��";
+	        	        		outputName = "第三名";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
 	        	        		break;		
 	        	        	case "DX4":
 	        	        		selectionTypeName = "BALL_4";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第四名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS4":
 	        	        		selectionTypeName = "BALL_4";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第四名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH4":
 	        	        		selectionTypeName = "BALL_4";
 	        	        		contents = contents.equals("L")?"DRAGON":"TIGER";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("L")?"��":"��";
+	        	        		outputName = "第四名";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
 	        	        		break;	
 	        	        	case "DX5":
 	        	        		selectionTypeName = "BALL_5";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第五名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS5":
 	        	        		selectionTypeName = "BALL_5";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第五名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH5":
 	        	        		selectionTypeName = "BALL_5";
 	        	        		contents = contents.equals("L")?"DRAGON":"TIGER";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("L")?"��":"��";
+	        	        		outputName = "第五名";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
 	        	        		break;	
 	        	        	case "DX6":
 	        	        		selectionTypeName = "BALL_6";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第六名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS6":
 	        	        		selectionTypeName = "BALL_6";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第六名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX7":
 	        	        		selectionTypeName = "BALL_7";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第七名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS7":
 	        	        		selectionTypeName = "BALL_7";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "������";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第七名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX8":
 	        	        		selectionTypeName = "BALL_8";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "�ڰ���";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第八名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS8":
 	        	        		selectionTypeName = "BALL_8";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";
-	        	        		outputName = "�ڰ���";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第八名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX9":
 	        	        		selectionTypeName = "BALL_9";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "�ھ���";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第九名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS9":
 	        	        		selectionTypeName = "BALL_9";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";	
-	        	        		outputName = "�ھ���";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第九名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX10":
 	        	        		selectionTypeName = "BALL_10";
 	        	        		contents = contents.equals("D")?"BIG":"SMALL";
-	        	        		outputName = "��ʮ��";
-	        	        		outputContent = contents.equals("D")?"��":"С";
+	        	        		outputName = "第十名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS10":
 	        	        		selectionTypeName = "BALL_10";
 	        	        		contents = contents.equals("D")?"ODD":"EVEN";
-	        	        		outputName = "��ʮ��";
-	        	        		outputContent = contents.equals("D")?"��":"˫";
+	        	        		outputName = "第十名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
 	        	        		break;
 
 	        	        	}
@@ -1177,14 +1177,14 @@ public class TianCaiHttp {
 	    	
 	    	if(res.length() > 1) {
 	    		res = "[" + res.substring(0, res.length() - 1) + "]"; 
-	    		autoBet.outputGUIMessage("�µ��ܶ�:" + totalAmount + "\n");
+	    		autoBet.outputGUIMessage("下单总额:" + totalAmount + "\n");
 	    	}
 	    	
-	    	System.out.println("�µ���ݣ�------------------------------------" + res);
+	    	System.out.println("下单数据：------------------------------------" + res);
     	
     	}catch(Exception e){
     		e.printStackTrace();
-    		autoBet.outputGUIMessage("�����µ���ݴ���\n");
+    		autoBet.outputGUIMessage("构造下单数据错误！\n");
     		return "";
     	}
    	
@@ -1230,7 +1230,7 @@ public class TianCaiHttp {
 
 
 
-    /**��utf-8��ʽ��ȡ*/
+    /**以utf-8形式读取*/
     public String doPost(String url,List<NameValuePair> formparams, String cookies, String referUrl) {
         return doPost(url, formparams,"UTF-8", cookies, referUrl);
     }
@@ -1238,7 +1238,7 @@ public class TianCaiHttp {
     public String doPost(String url,List<NameValuePair> formparams,String charset, String cookies, String referUrl) {
 
 
-     // ����httppost    
+     // 创建httppost    
         HttpPost httppost = new HttpPost(url); 
     
         //httppost.addHeader("Cookie", cookies);
@@ -1263,7 +1263,7 @@ public class TianCaiHttp {
             httppost.setEntity(uefEntity);
             CloseableHttpResponse response = httpclient.execute(httppost);
             try {
-                // ��ӡ��Ӧ״̬    
+                // 打印响应状态    
             	setCookie(response);
             	System.out.println(response.getStatusLine().toString());
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
@@ -1302,7 +1302,7 @@ public class TianCaiHttp {
     public String doGet(String url, String cookies, String referUrl) {
     	
         try {  
-            // ����httpget.    
+            // 创建httpget.    
             HttpGet httpget = new HttpGet(url);
             
             if(cookies != "") {
@@ -1324,7 +1324,7 @@ public class TianCaiHttp {
             httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
             System.out.println("executing request " + httpget.getURI()); 
            
-            // ִ��get����.    
+            // 执行get请求.    
             CloseableHttpResponse response = httpclient.execute(httpget); 
             
             String statusLine = response.getStatusLine().toString();   
@@ -1334,7 +1334,7 @@ public class TianCaiHttp {
             
             try{
             	setCookie(response);  	
-            	//System.out.println("����cookie:" + strCookies);
+            	//System.out.println("设置cookie:" + strCookies);
             	
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
              	   return response.getFirstHeader("Location").getValue();
@@ -1389,7 +1389,7 @@ public class TianCaiHttp {
 	    		return true;
 	    	}
 	    } catch(Exception e){
-	    	autoBet.outputGUIMessage("isEmptyData()�����µ���ݴ���\n");
+	    	autoBet.outputGUIMessage("isEmptyData()构造下单数据错误！\n");
 	    	return true;
 	    }
     }
@@ -1413,8 +1413,8 @@ public class TianCaiHttp {
     	params.add(new BasicNameValuePair("hasPlayerInfo", "true"));
         response = doPost(HOST + "/lotteryweb/WebClientAgent", params, "", HOST + "/lotteryweb/Login");
         if(response == "") {
-        	System.out.println("�µ�ʧ��  response == \"\"");
-        	String out = "�µ�ʧ�ܣ�\n\n";	
+        	System.out.println("下单失败  response == \"\"");
+        	String out = "下单失败！\n\n";	
         	autoBet.outputGUIMessage(out);
         	return false;
         }
@@ -1427,16 +1427,16 @@ public class TianCaiHttp {
 			
 			if(joResult.getInt("returnCode") == 0) {
 				double balance = joResult.getDouble("balance");
-				//System.out.println(" �µ��ɹ�   ���:" + balance);
-				String out = "�µ��ɹ��� �˻����:" + balance + "\n\n";			
+				//System.out.println(" 下单成功   余额:" + balance);
+				String out = "下单成功， 账户余额:" + balance + "\n\n";			
 				autoBet.outputGUIMessage(out);
 				
 				return true;
 				
 			}
 			else {
-				//System.out.println("�µ�ʧ��, message:" + joResult.getString("returnMsg"));
-				String out = "�µ�ʧ��" + joResult.getString("returnMsg") + "\n\n";			
+				//System.out.println("下单失败, message:" + joResult.getString("returnMsg"));
+				String out = "下单失败" + joResult.getString("returnMsg") + "\n\n";			
 				autoBet.outputGUIMessage(out);
 				return false;
 			}
@@ -1465,17 +1465,17 @@ public class TianCaiHttp {
          httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
          System.out.println("executing request " + httpget.getURI()); 
        
-	        // ִ��get����.    
+	        // 执行get请求.    
         
 	        CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
        	 try {
        		    setCookie(response);
-                // ��ӡ��Ӧ״̬    
+                // 打印响应状态    
                 System.out.println(response.getStatusLine()); 
                 System.out.println("------------------------------------");
-                File storeFile = new File("tcyzm.png");   //ͼƬ���浽��ǰλ��
+                File storeFile = new File("tcyzm.png");   //图片保存到当前位置
                 FileOutputStream output = new FileOutputStream(storeFile);  
-                //�õ�������Դ���ֽ�����,��д���ļ�  
+                //得到网络资源的字节数组,并写入文件  
                 byte [] a = EntityUtils.toByteArray(response.getEntity());
                 output.write(a);  
                 output.close();  
@@ -1485,7 +1485,7 @@ public class TianCaiHttp {
         		 String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "tcyzm.png", "result", "-l", "eng"};
 
         		 Process process = Runtime.getRuntime().exec(cmd);
-        		 // cmd ����Ϣ
+        		 // cmd 的信息
         		 ins = process.getInputStream();
         		 BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 
@@ -1495,12 +1495,12 @@ public class TianCaiHttp {
         		 }
         			
         		 int exitValue = process.waitFor();
-        		 System.out.println("����ֵ��" + exitValue);
+        		 System.out.println("返回值：" + exitValue);
         		 process.getOutputStream().close();
         		 File file = new File("result.txt");
         		 reader.close();
                 reader = new BufferedReader(new FileReader(file));
-                 // һ�ζ���һ�У�ֱ������nullΪ�ļ�����
+                 // 一次读入一行，直到读入null为文件结束
                 String rmNum;
                 rmNum = reader.readLine();
                 reader.close();

@@ -29,7 +29,7 @@ public class BetBJSCListener implements ActionListener
 			BetThread.betBJSCPercent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -40,7 +40,7 @@ public class BetBJSCListener implements ActionListener
 		BetThread.betBJSC = true;
 		BetThread.betOppositeBJSC = false;
 		
-		String outputStr = "��ʼ��Ͷ������,Ͷע����" + BetThread.betBJSCPercent + "\n";
+		String outputStr = "开始正投北京赛车,投注比例：" + BetThread.betBJSCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		

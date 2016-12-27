@@ -88,8 +88,8 @@ public class WeiCaiHttp {
     
     static {
         requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
-        requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//��ֹ�ض��� �� �Ա��ȡcookieb18
-        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(9*1000).setConnectionRequestTimeout(9*1000).setSocketTimeout(9*1000).build();//���ó�ʱ
+        requestConfig = RequestConfig.copy(requestConfig).setRedirectsEnabled(false).build();//禁止重定向 ， 以便获取cookieb18
+        requestConfig = RequestConfig.copy(requestConfig).setConnectTimeout(9*1000).setConnectionRequestTimeout(9*1000).setSocketTimeout(9*1000).build();//设置超时
         httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build();
    }
     
@@ -217,7 +217,7 @@ public class WeiCaiHttp {
     				break;
     		}
     		
-    		//System.out.println("��ַ:");
+    		//System.out.println("网址:");
     		//System.out.println(location);
     		
     		if(location != null){
@@ -240,9 +240,9 @@ public class WeiCaiHttp {
     				String imgUrl = loginPage.substring(imgPosStart, imgPosEnd);
     				imgUrl = host + imgUrl;
     				
-    				String rmNum = getPicNum(imgUrl);//get ��֤��
+    				String rmNum = getPicNum(imgUrl);//get 验证码
 
-            		System.out.println("��֤��");
+            		System.out.println("验证码");
             		System.out.println(rmNum);
             		if(!Common.isNum(rmNum)) {
             			return false;
@@ -292,7 +292,7 @@ public class WeiCaiHttp {
     		
 
     		
-    		if(res.contains("�����µ�¼") == true || res.contains("����������ط���¼") == true){
+    		if(res.contains("请重新登录") == true || res.contains("你已在其他地方登录") == true){
     			login();
     			res = doGet(accountUrl, "",  "");
     		}
@@ -371,7 +371,7 @@ public class WeiCaiHttp {
 	    			
 	    			double odds = oddsGrabData.getDouble(oddsKey);
 	    			
-	    			//�޳�����Ǿ� �� ����
+	    			//剔除北京赛车冠亚军 和 两面
 	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
 	    				continue;
 	    			
@@ -381,7 +381,7 @@ public class WeiCaiHttp {
 	    			
 	    			
 	    			
-	    			//�����ֵ
+	    			//计算差值
 	        		for(int k = j +1 ; k < gamesGrabData.length(); k++){
 	        			JSONObject oppositeGameGrabData = gamesGrabData.getJSONObject(k);
 	        			String oppositeGame = oppositeGameGrabData.getString("k");
@@ -405,11 +405,11 @@ public class WeiCaiHttp {
 	    			
 	    			
 	    			
-	    			//ֻ�����ʶ����µ�
+	    			//只下赔率二以下的
 	        		if(odds < 2.5 && amount >0){
 	        			amount = (int)(amount*percent);  
 	        			if(amount <= 1)
-	        				amount = 2; //΢��ÿע���2Ԫ
+	        				amount = 2; //微彩每注最低2元
 
 	        			totalAmount += amount;
 	        			
@@ -418,9 +418,9 @@ public class WeiCaiHttp {
 	        			
 
 	        			
-	        			//���?Ͷ: ���С��С��󣬵���˫��˫�����仢������¡
+	        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
 	        			if(opposite){
-	        				if(game.indexOf("DX") != -1){//����С
+	        				if(game.indexOf("DX") != -1){//反大小
 	        					if(contents.indexOf("D") != -1){
 	        						contents = "X";        						
 	        					}
@@ -432,7 +432,7 @@ public class WeiCaiHttp {
 	        				}
 	        				
 	        				
-	        				if(game.indexOf("DS") != -1){//����˫
+	        				if(game.indexOf("DS") != -1){//反单双
 	        					if(contents.indexOf("D") != -1){
 	        						contents = "S";        						
 	        					}
@@ -443,7 +443,7 @@ public class WeiCaiHttp {
 	        					odds = oddsGrabData.getDouble(oddsKey);
 	        				}
 	        				
-	        				if(game.indexOf("LH") != -1){//����
+	        				if(game.indexOf("LH") != -1){//反龙虎
 	        					if(contents.indexOf("L") != -1){
 	        						contents = "H";        						
 	        					}
@@ -457,7 +457,7 @@ public class WeiCaiHttp {
 	
 	        				
 	        			}
-	        			//��Ͷ�������
+	        			//反投处理结束
 	        				        			
 
 	        			
@@ -466,60 +466,60 @@ public class WeiCaiHttp {
 	        			String selectionTypeName = "";
 	        			
 	        		
-	        	    	if(betType == BetType.CQSSC){//����ʱʱ��
+	        	    	if(betType == BetType.CQSSC){//重庆时时彩
         	
 	        	        	switch(game){
 	        	        	case "DX1":
-	        	        		selectionTypeName = "��һ��";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第一球";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS1":
-	        	        		selectionTypeName = "��һ��";
-	        	        		contents = contents.equals("D")?"��":"˫";
+	        	        		selectionTypeName = "第一球";
+	        	        		contents = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX2":
-	        	        		selectionTypeName = "�ڶ���";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第二球";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS2":
-	        	        		selectionTypeName = "�ڶ���";
-	        	        		contents = contents.equals("D")?"��":"˫";
+	        	        		selectionTypeName = "第二球";
+	        	        		contents = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "DX3":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第三球";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS3":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第三球";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "DX4":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第四球";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS4":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第四球";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "DX5":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第五球";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS5":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第五球";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "ZDX":
-	        	        		selectionTypeName = "�ܺ�";
-	        	        		contents = contents.equals("D")?"�ܴ�":"��С";
+	        	        		selectionTypeName = "总和";
+	        	        		contents = contents.equals("D")?"总大":"总小";
 	        	        		break;
 	        	        	case "ZDS":
-	        	        		selectionTypeName = "�ܺ�";
-	        	        		contents = contents.equals("D")?"�ܵ�":"��˫";		
+	        	        		selectionTypeName = "总和";
+	        	        		contents = contents.equals("D")?"总单":"总双";		
 	        	        		break;
 	        	        	case "LH":
-	        	        		selectionTypeName = "��һ��";
-	        	        		contents = contents.equals("L")?"��":"��";
+	        	        		selectionTypeName = "第一球";
+	        	        		contents = contents.equals("L")?"龙":"虎";
 	        	        		break;
 	        	        	}
 	        	        	
@@ -540,110 +540,110 @@ public class WeiCaiHttp {
 	        	        	}
 	        	        	
 	        	        	
-	        	    	}//������
+	        	    	}//北京赛车
 	        	    	else if(betType == BetType.BJSC){
 	        	    		
 	        	        	switch(game){
 	        	        	case "DX1":
-	        	        		selectionTypeName = "�ھ�";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "冠军";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS1":
-	        	        		selectionTypeName = "�ھ�";
-	        	        		contents = contents.equals("D")?"��":"˫";
+	        	        		selectionTypeName = "冠军";
+	        	        		contents = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH1":
-	        	        		selectionTypeName = "�ھ�";
-	        	        		contents = contents.equals("L")?"��":"��";
+	        	        		selectionTypeName = "冠军";
+	        	        		contents = contents.equals("L")?"龙":"虎";
 	        	        		break;	
 	        	        		
 	        	        	case "DX2":
-	        	        		selectionTypeName = "�Ǿ�";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "亚军";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS2":
-	        	        		selectionTypeName = "�Ǿ�";
-	        	        		contents = contents.equals("D")?"��":"˫";
+	        	        		selectionTypeName = "亚军";
+	        	        		contents = contents.equals("D")?"单":"双";
 	        	        		break;
 	        	        	case "LH2":
-	        	        		selectionTypeName = "�Ǿ�";
-	        	        		contents = contents.equals("L")?"��":"��";
+	        	        		selectionTypeName = "亚军";
+	        	        		contents = contents.equals("L")?"龙":"虎";
 	        	        		break;		
 	        	        	case "DX3":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第三名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS3":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第三名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "LH3":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("L")?"��":"��";
+	        	        		selectionTypeName = "第三名";
+	        	        		contents = contents.equals("L")?"龙":"虎";
 	        	        		break;		
 	        	        	case "DX4":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第四名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS4":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第四名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "LH4":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("L")?"��":"��";
+	        	        		selectionTypeName = "第四名";
+	        	        		contents = contents.equals("L")?"龙":"虎";
 	        	        		break;	
 	        	        	case "DX5":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第五名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS5":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第五名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "LH5":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("L")?"��":"��";
+	        	        		selectionTypeName = "第五名";
+	        	        		contents = contents.equals("L")?"龙":"虎";
 	        	        		break;	
 	        	        	case "DX6":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第六名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS6":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第六名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "DX7":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第七名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS7":
-	        	        		selectionTypeName = "������";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第七名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "DX8":
-	        	        		selectionTypeName = "�ڰ���";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第八名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS8":
-	        	        		selectionTypeName = "�ڰ���";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第八名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "DX9":
-	        	        		selectionTypeName = "�ھ���";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第九名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS9":
-	        	        		selectionTypeName = "�ھ���";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第九名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 	        	        	case "DX10":
-	        	        		selectionTypeName = "��ʮ��";
-	        	        		contents = contents.equals("D")?"��":"С";
+	        	        		selectionTypeName = "第十名";
+	        	        		contents = contents.equals("D")?"大":"小";
 	        	        		break;
 	        	        	case "DS10":
-	        	        		selectionTypeName = "��ʮ��";
-	        	        		contents = contents.equals("D")?"��":"˫";	
+	        	        		selectionTypeName = "第十名";
+	        	        		contents = contents.equals("D")?"单":"双";	
 	        	        		break;
 
 	        	        	}
@@ -708,7 +708,7 @@ public class WeiCaiHttp {
 	    	res = betsObj.toString();
     	
     	}catch(Exception e){
-    		autoBet.outputGUIMessage("�����µ���ݴ���\n");
+    		autoBet.outputGUIMessage("构造下单数据错误！\n");
     		return "";
     	}
    	
@@ -741,7 +741,7 @@ public class WeiCaiHttp {
     		
         	String marketUrl = memberUrl + "BJPKS/Market.action?viewName=two_way_market&gameTypeId=201&marketTypeIds=2012%2C2013%2C2022%2C2023%2C2032%2C2033%2C2042%2C2043%2C2052%2C2053%2C2062%2C2063%2C2072%2C2073%2C2082%2C2083%2C2092%2C2093%2C2102%2C2103%2C2014%2C2024%2C2034%2C2044%2C2054%2C2002%2C2003";
         	
-        	//��selectionTypeID
+        	//拿selectionTypeID
         	market = doGet(marketUrl, "", "");
         	
         	if(market == null)
@@ -752,12 +752,12 @@ public class WeiCaiHttp {
         	
         	if(market != null){
         		
-        		if(market.contains("û������") == true){
-        			return "û������";
+        		if(market.contains("没有赛事") == true){
+        			return "没有赛事";
         		}
         		
-        		if(market.contains("�����µ�¼") == true || market.contains("����������ط���¼") == true){
-        			return "�����µ�¼";
+        		if(market.contains("请重新登录") == true || market.contains("你已在其他地方登录") == true){
+        			return "请重新登录";
         		}
         		
             	posStart = market.indexOf("[201201");
@@ -784,7 +784,7 @@ public class WeiCaiHttp {
 
                 	}
                 	
-                	//��ӡ
+                	//打印
                 	/*for(int k = 0; k < CQSSCselectionTypeIdList.size(); k ++){
                 		String[] idItem = (String[]) CQSSCselectionTypeIdList.get(k);
                 		for(int h = 0; h < idItem.length; h++){
@@ -794,7 +794,7 @@ public class WeiCaiHttp {
                 	}*/
             	}
             	else{
-            		System.out.println("δ�õ�selectionTypeID");
+            		System.out.println("未拿到selectionTypeID");
             		System.out.println(market);
             		return "false";
             	}
@@ -847,8 +847,8 @@ public class WeiCaiHttp {
             	posEnd = marketRefresh.indexOf("\r\n", posStart);
             	
             	
-        		if(marketRefresh.contains("�����µ�¼") == true || marketRefresh.contains("����������ط���¼") == true){
-        			return "�����µ�¼";
+        		if(marketRefresh.contains("请重新登录") == true || marketRefresh.contains("你已在其他地方登录") == true){
+        			return "请重新登录";
         		}
 
             	
@@ -877,7 +877,7 @@ public class WeiCaiHttp {
             			
             		}
             		
-            		//��ӡ
+            		//打印
                 	/*for(int k = 0; k < CQSSCoddsList.size(); k ++){
                 		String[] idItem = (String[]) CQSSCoddsList.get(k);
                 		for(int h = 0; h < idItem.length; h++){
@@ -889,12 +889,12 @@ public class WeiCaiHttp {
         		}
         		else{
         			System.out.println(marketRefresh);
-        			System.out.println("û���������\n");
+        			System.out.println("没有赔率数据\n");
         		}
         		
 
         		
-        		//��eventID
+        		//拿eventID
         		posStart = marketRefresh.indexOf("selectedEventId = ");
         		
         		if(posStart == -1){
@@ -908,7 +908,7 @@ public class WeiCaiHttp {
         		BJSCeventID = marketRefresh.substring(posStart+1, posEnd);
         		
         		
-        		//��DrawNumber
+        		//拿DrawNumber
         		posStart = marketRefresh.indexOf("selectedEventNo = ");
         		
         		if(posStart == -1){
@@ -922,7 +922,7 @@ public class WeiCaiHttp {
         		BJSCdrawNumber = marketRefresh.substring(posStart+1, posEnd);
         		
         		
-        		//�þ��뿪�̵�ʱ��
+        		//拿距离开盘的时间
         		posStart = marketRefresh.indexOf("parent.setEventIsPaused(");
         		
         		if(posStart == -1){
@@ -933,12 +933,12 @@ public class WeiCaiHttp {
         		posStart = marketRefresh.indexOf(",'", posStart);
         		posStart = marketRefresh.indexOf(",'", posStart + 1);
         		posStart = marketRefresh.indexOf(",'", posStart + 1);
-        		//����ʱ��
+        		//封盘时间
         		posEnd = marketRefresh.indexOf("'", posStart + 2);
         		
         		BJSCcloseTime = Long.parseLong(marketRefresh.substring(posStart+2, posEnd));
         		
-        		//����ʱ��
+        		//现在时间
         		
         		posStart = marketRefresh.indexOf(",'", posEnd);
         		posEnd = marketRefresh.indexOf("'", posStart + 2);
@@ -979,7 +979,7 @@ public class WeiCaiHttp {
     		
         	String marketUrl = memberUrl + "CQSSC/Market.action?viewName=consolidated_market&gameTypeId=401&marketTypeIds=4001%2C4002%2C4003%2C4021%2C4022%2C4023%2C4041%2C4042%2C4043%2C4061%2C4062%2C4063%2C4081%2C4082%2C4083%2C4101%2C4102%2C4004%2C4123%2C4122%2C4121";
         	
-        	//��selectionTypeID
+        	//拿selectionTypeID
         	market = doGet(marketUrl, "", "");
         	
         	if(market == null)
@@ -1013,7 +1013,7 @@ public class WeiCaiHttp {
 
                 	}
                 	
-                	//��ӡ
+                	//打印
                 	/*for(int k = 0; k < CQSSCselectionTypeIdList.size(); k ++){
                 		String[] idItem = (String[]) CQSSCselectionTypeIdList.get(k);
                 		for(int h = 0; h < idItem.length; h++){
@@ -1023,7 +1023,7 @@ public class WeiCaiHttp {
                 	}*/
             	}
             	else{
-            		System.out.println("δ�õ�selectionTypeID");
+            		System.out.println("未拿到selectionTypeID");
             		System.out.println(market);
             		return false;
             	}
@@ -1075,8 +1075,8 @@ public class WeiCaiHttp {
         	
         	if(marketRefresh != null){
         		
-        		if(marketRefresh.contains("�����µ�¼") == true || marketRefresh.contains("����������ط���¼") == true){
-        			return "�����µ�¼";
+        		if(marketRefresh.contains("请重新登录") == true || marketRefresh.contains("你已在其他地方登录") == true){
+        			return "请重新登录";
         		}
         		
             	posStart = marketRefresh.indexOf("pItm=[]");
@@ -1109,7 +1109,7 @@ public class WeiCaiHttp {
             			
             		}
             		
-            		//��ӡ
+            		//打印
                 	/*for(int k = 0; k < CQSSCoddsList.size(); k ++){
                 		String[] idItem = (String[]) CQSSCoddsList.get(k);
                 		for(int h = 0; h < idItem.length; h++){
@@ -1121,12 +1121,12 @@ public class WeiCaiHttp {
         		}
         		else{
         			System.out.println(marketRefresh);
-        			System.out.println("û���������\n");
+        			System.out.println("没有赔率数据\n");
         		}
         		
 
         		
-        		//��eventID
+        		//拿eventID
         		posStart = marketRefresh.indexOf("selectedEventId = ");
         		
         		if(posStart == -1){
@@ -1140,7 +1140,7 @@ public class WeiCaiHttp {
         		CQSSCeventID = marketRefresh.substring(posStart+1, posEnd);
         		
         		
-        		//��DrawNumber
+        		//拿DrawNumber
         		posStart = marketRefresh.indexOf("selectedEventNo = ");
         		
         		if(posStart == -1){
@@ -1154,7 +1154,7 @@ public class WeiCaiHttp {
         		CQSSCdrawNumber = marketRefresh.substring(posStart+1, posEnd);
         		
         		
-        		//�þ��뿪�̵�ʱ��
+        		//拿距离开盘的时间
         		posStart = marketRefresh.indexOf("parent.setEventIsPaused(");
         		
         		if(posStart == -1){
@@ -1165,12 +1165,12 @@ public class WeiCaiHttp {
         		posStart = marketRefresh.indexOf(",'", posStart);
         		posStart = marketRefresh.indexOf(",'", posStart + 1);
         		posStart = marketRefresh.indexOf(",'", posStart + 1);
-        		//����ʱ��
+        		//封盘时间
         		posEnd = marketRefresh.indexOf("'", posStart + 2);
         		
         		CQSSCcloseTime = Long.parseLong(marketRefresh.substring(posStart+2, posEnd));
         		
-        		//����ʱ��
+        		//现在时间
         		
         		posStart = marketRefresh.indexOf(",'", posEnd);
         		posEnd = marketRefresh.indexOf("'", posStart + 2);
@@ -1234,7 +1234,7 @@ public class WeiCaiHttp {
 	    		return true;
 	    	}
 	    } catch(Exception e){
-	    	autoBet.outputGUIMessage("isEmptyData()�����µ���ݴ���\n");
+	    	autoBet.outputGUIMessage("isEmptyData()构造下单数据错误！\n");
 	    	return true;
 	    }
     }
@@ -1242,7 +1242,7 @@ public class WeiCaiHttp {
     public static String bet(String url,String jsonData, String charset, String cookies) {
 
 
-        // ����httppost    
+        // 创建httppost    
            HttpPost httppost = new HttpPost(url); 
            //httppost.addHeader("Cookie", cookies);
            httppost.addHeader("Content-Type","application/json");
@@ -1263,7 +1263,7 @@ public class WeiCaiHttp {
                httppost.setEntity(strEntity);
                CloseableHttpResponse response = httpclient.execute(httppost);
                try {
-                   // ��ӡ��Ӧ״̬    
+                   // 打印响应状态    
                    //System.out.println(response.getStatusLine());
                     HttpEntity entity = response.getEntity(); 
                     
@@ -1294,19 +1294,19 @@ public class WeiCaiHttp {
        	
         String jsonParam = "";
         
-        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber) && previousCQSSCBetResult == true) //֮ǰ����Ѿ��¹��ҳɹ��µ���ֱ�ӷ���
+        if(previousCQSSCBetNumber.equals(CQSSCdrawNumber) && previousCQSSCBetResult == true) //之前如果已经下过单并且成功下单就直接返回
         	return false;
         
         
-        //���δ������ʱ��
+        //如果未到封盘时间
         if( CQSSCdrawNumber != null){
         	
-        	//System.out.printf("��ע����ʱʱ�ʵ�%s��\n",CQSSCdrawNumber);
-        	String outputStr = "[΢��]��ע����ʱʱ�ʵ�" + CQSSCdrawNumber + "��\n" + "�������ʱ�������" + remainTime + "��\n";
+        	//System.out.printf("下注重庆时时彩第%s期\n",CQSSCdrawNumber);
+        	String outputStr = "[微彩]下注重庆时时彩第" + CQSSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
         	if(isEmptyData(betData, BetType.CQSSC)) {
-        		outputStr = "��������Ͷע\n\n";
+        		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
@@ -1322,15 +1322,15 @@ public class WeiCaiHttp {
 
         	response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
         	
-    		if(response != null && (response.contains("�����µ�¼") == true || response.contains("����������ط���¼") == true)){
+    		if(response != null && (response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true)){
     			login();
     		}
         	
-        	if(response == null || response.contains("�����µ�¼") == true || response.contains("����������ط���¼") == true){
+        	if(response == null || response.contains("请重新登录") == true || response.contains("你已在其他地方登录") == true){
         		response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
         	}
         	
-        	System.out.println("΢���µ����");
+        	System.out.println("微彩下单结果");
         	System.out.println(response);
         	
         	boolean result = parseBetResult(response);
@@ -1338,24 +1338,24 @@ public class WeiCaiHttp {
         	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) {
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelWeiCaiSuccessBets.setText("�ɹ�����:" + successTimes);
+					autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
 				} else {
 					failTimes++;
-					autoBet.labelWeiCaiFailBets.setText("ʧ�ܴ���:" + failTimes);
+					autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
 				}
 				
-				autoBet.labelWeiCaiTotalBets.setText("�µ�����:" + (successTimes + failTimes));
+				autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
         	} else if(result) {
         		successTimes++;
-        		autoBet.labelWeiCaiSuccessBets.setText("�ɹ�����:" + successTimes);
+        		autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
         		failTimes--;
-        		autoBet.labelWeiCaiFailBets.setText("ʧ�ܴ���:" + failTimes);
+        		autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
         	}
 			
 			previousCQSSCBetNumber = CQSSCdrawNumber;
         	previousCQSSCBetResult = result;
 			
-			String out = "�˻����:" + getAccountBalance() + "\n\n";
+			String out = "账户余额:" + getAccountBalance() + "\n\n";
 			
 			autoBet.outputGUIMessage(out);
         	
@@ -1372,19 +1372,19 @@ public class WeiCaiHttp {
        	
         String jsonParam = "";
         
-        if(previousBJSCBetNumber.equals(BJSCdrawNumber) && previousBJSCBetResult == true) //֮ǰ����Ѿ��¹��ҳɹ��µ���ֱ�ӷ���
+        if(previousBJSCBetNumber.equals(BJSCdrawNumber) && previousBJSCBetResult == true) //之前如果已经下过单并且成功下单就直接返回
         	return false;
         
         
-        //���δ������ʱ��
+        //如果未到封盘时间
         if( BJSCdrawNumber != null){
         	
-        	//System.out.printf("��ע����ʱʱ�ʵ�%s��\n",BJSCdrawNumber);
-        	String outputStr = "[΢��]��ע�������" + BJSCdrawNumber + "��\n" + "�������ʱ�������" + remainTime + "��\n";
+        	//System.out.printf("下注重庆时时彩第%s期\n",BJSCdrawNumber);
+        	String outputStr = "[微彩]下注北京赛车第" + BJSCdrawNumber + "期\n" + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
         	if(isEmptyData(betData, BetType.BJSC)) {
-        		outputStr = "��������Ͷע\n\n";
+        		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
@@ -1404,7 +1404,7 @@ public class WeiCaiHttp {
         		response = bet(memberUrl + "Bet/PlaceBet.action", jsonParam, "UTF-8", "");
         	}
         	
-        	System.out.println("΢���µ����");
+        	System.out.println("微彩下单结果");
         	System.out.println(response);
         	
         	boolean result = parseBetResult(response);
@@ -1412,24 +1412,24 @@ public class WeiCaiHttp {
         	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) {
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelWeiCaiSuccessBets.setText("�ɹ�����:" + successTimes);
+					autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
 				} else {
 					failTimes++;
-					autoBet.labelWeiCaiFailBets.setText("ʧ�ܴ���:" + failTimes);
+					autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
 				}
 				
-				autoBet.labelWeiCaiTotalBets.setText("�µ�����:" + (successTimes + failTimes));
+				autoBet.labelWeiCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
         	} else if(result) {
         		successTimes++;
-        		autoBet.labelWeiCaiSuccessBets.setText("�ɹ�����:" + successTimes);
+        		autoBet.labelWeiCaiSuccessBets.setText("成功次数:" + successTimes);
         		failTimes--;
-        		autoBet.labelWeiCaiFailBets.setText("ʧ�ܴ���:" + failTimes);
+        		autoBet.labelWeiCaiFailBets.setText("失败次数:" + failTimes);
         	}
 			
 			previousBJSCBetNumber = BJSCdrawNumber;
         	previousBJSCBetResult = result;
 			
-			String out = "�˻����:" + getAccountBalance() + "\n\n";
+			String out = "账户余额:" + getAccountBalance() + "\n\n";
 			
 			autoBet.outputGUIMessage(out);
 			
@@ -1461,7 +1461,7 @@ public class WeiCaiHttp {
     	}
 
     	
-    	autoBet.outputGUIMessage("��ע����:\n");
+    	autoBet.outputGUIMessage("下注详情:\n");
     	
     	if(posStart != -1){
         	while(posStart != -1){
@@ -1487,11 +1487,11 @@ public class WeiCaiHttp {
         	}
         	
         	if(betAmount >0){
-        		String outputStr  = String.format("΢����ע�ɹ�! �µ��ܶ�: %d  ", betAmount);
+        		String outputStr  = String.format("微彩下注成功! 下单总额: %d  ", betAmount);
         		autoBet.outputGUIMessage(outputStr);
         	}
         	else{
-        		autoBet.outputGUIMessage("΢����עʧ��. ");
+        		autoBet.outputGUIMessage("微彩下注失败. ");
         		return false;
         	}
         	
@@ -1500,7 +1500,7 @@ public class WeiCaiHttp {
         	
     	}
     	else{
-    		autoBet.outputGUIMessage("΢����עʧ��. ");
+    		autoBet.outputGUIMessage("微彩下注失败. ");
     		if(betResult != null){
     			autoBet.outputGUIMessage(betResult);
     		}
@@ -1552,7 +1552,7 @@ public class WeiCaiHttp {
     	
     	
         try {  
-            // ����httpget.    
+            // 创建httpget.    
             HttpGet httpget = new HttpGet(url);
             
             if(cookies != "") {
@@ -1574,13 +1574,13 @@ public class WeiCaiHttp {
             httpget.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
             System.out.println("executing request " + httpget.getURI()); 
            
-            // ִ��get����.    
+            // 执行get请求.    
             CloseableHttpResponse response = httpclient.execute(httpget); 
             //System.out.println(response.getStatusLine());
             
             try{
             	setCookie(response);  	
-            	//System.out.println("����cookie:" + strCookies);
+            	//System.out.println("设置cookie:" + strCookies);
             	
             	String statusLine = response.getStatusLine().toString();
             	
@@ -1625,7 +1625,7 @@ public class WeiCaiHttp {
     public static String doPost(String url,List<NameValuePair> formparams,String charset, String cookies) {
 
 
-     // ����httppost    
+     // 创建httppost    
         HttpPost httppost = new HttpPost(url); 
         //httppost.addHeader("Cookie", cookies);
         //httppost.addHeader("Accept-Encoding","Accept-Encoding: gzip, deflate, sdch");
@@ -1644,9 +1644,9 @@ public class WeiCaiHttp {
             httppost.setEntity(uefEntity);
             CloseableHttpResponse response = httpclient.execute(httppost);
             try {
-                // ��ӡ��Ӧ״̬    
+                // 打印响应状态    
             	setCookie(response);
-            	//System.out.println("����cookie:" + strCookies);
+            	//System.out.println("设置cookie:" + strCookies);
 
             	
             	
@@ -1694,17 +1694,17 @@ public class WeiCaiHttp {
 	        					+ "(KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36");           
 	        System.out.println("executing request " + httpget.getURI()); 
        
-	        // ִ��get����.    
+	        // 执行get请求.    
         
 	        CloseableHttpResponse response = httpclient.execute(httpget, clientContext); 
        	 try {
        		    setCookie(response);
-                // ��ӡ��Ӧ״̬    
+                // 打印响应状态    
                 System.out.println(response.getStatusLine()); 
                 System.out.println("------------------------------------");
-                File storeFile = new File("wcyzm.png");   //ͼƬ���浽��ǰλ��
+                File storeFile = new File("wcyzm.png");   //图片保存到当前位置
                 FileOutputStream output = new FileOutputStream(storeFile);  
-                //�õ�������Դ���ֽ�����,��д���ļ�  
+                //得到网络资源的字节数组,并写入文件  
                 byte [] a = EntityUtils.toByteArray(response.getEntity());
                 output.write(a);  
                 output.close();  
@@ -1714,7 +1714,7 @@ public class WeiCaiHttp {
         		 String[] cmd = new String[]{ConfigReader.getTessPath() + "\\tesseract", "wcyzm.png", "result", "-l", "eng"};
 
         		 Process process = Runtime.getRuntime().exec(cmd);
-        		 // cmd ����Ϣ
+        		 // cmd 的信息
         		 ins = process.getInputStream();
         		 BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 
@@ -1724,12 +1724,12 @@ public class WeiCaiHttp {
         		 }
         			
         		 int exitValue = process.waitFor();
-        		 System.out.println("����ֵ��" + exitValue);
+        		 System.out.println("返回值：" + exitValue);
         		 process.getOutputStream().close();
         		 File file = new File("result.txt");
         		 reader.close();
                 reader = new BufferedReader(new FileReader(file));
-                 // һ�ζ���һ�У�ֱ������nullΪ�ļ�����
+                 // 一次读入一行，直到读入null为文件结束
                 String rmNum;
                 rmNum = reader.readLine();
                 reader.close();

@@ -29,7 +29,7 @@ public class BetGD11X5Listener implements ActionListener
 			BetGD11X5Thread.betGD11X5Percent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -41,7 +41,7 @@ public class BetGD11X5Listener implements ActionListener
 		BetGD11X5Thread.betOppositeGD11X5 = true;
 		BetGD11X5Thread.betGD11X5 = false;
 		
-		String outputStr = "��ʼ��Ͷ�㶫11ѡ5,Ͷע����" + BetGD11X5Thread.betGD11X5Percent + "\n";
+		String outputStr = "开始反投广东11选5,投注比例：" + BetGD11X5Thread.betGD11X5Percent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		
@@ -92,7 +92,7 @@ class BetzhengGD11X5Listener implements ActionListener
 			BetGD11X5Thread.betGD11X5Percent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -103,7 +103,7 @@ class BetzhengGD11X5Listener implements ActionListener
 		BetGD11X5Thread.betGD11X5 = true;
 		BetGD11X5Thread.betOppositeGD11X5 = false;
 		
-		String outputStr = "��ʼ��Ͷ�㶫11ѡ5,Ͷע����" + BetGD11X5Thread.betGD11X5Percent + "\n";
+		String outputStr = "开始正投广东11选5,投注比例：" + BetGD11X5Thread.betGD11X5Percent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		
