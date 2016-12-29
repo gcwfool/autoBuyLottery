@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Client extends Thread{
 	String [] dataCQSSC = {"", "", ""};
-    String [] dataBJSC = {"", "", "", "", ""};
+    String [] dataBJSC = {"", "", "", "", "", "", ""};
     String [] dataXYNC = {"", "", "", "", "","", "", "", "", "", ""};
     String [] dataGDKL = {"", "", "", "", "","", "", "", "", "", ""};
     String [] dataGXKL = {"", "", ""};
@@ -23,13 +23,13 @@ public class Client extends Thread{
     String [] dataBJKL8 = {"", "", ""};
     boolean grabBJSC = true;
     boolean grabCQSSC = true;
-    boolean grabXYNC = true;
-    boolean grabGDKL = true;
-    boolean grabGXKL = true;
-    boolean grabXJSSC = true;
-    boolean grabTJSSC = true;
-    boolean grabGD115 = true;
-    boolean grabBJKL8 = true;
+    boolean grabXYNC = false;
+    boolean grabGDKL = false;
+    boolean grabGXKL = false;
+    boolean grabXJSSC = false;
+    boolean grabTJSSC = false;
+    boolean grabGD115 = false;
+    boolean grabBJKL8 = false;
     ReadWriteLock lock = new ReentrantReadWriteLock();
     
     String address = "";
@@ -153,7 +153,9 @@ public class Client extends Thread{
 					            	String str2 = json.getString("remainTime");
 					            	String str3 = json.getString("dataGY");
 					            	String str4 = json.getString("dataSSWL");
-					            	String str5 = json.getString("dataQBJS");
+					            	String str5 = json.getString("dataQBJS");				            	
+					            	String str6 = json.getString("percent");
+					            	String str7 = json.getString("positive");
 					            	
 					            	lock.writeLock().lock();
 					            	dataBJSC[0] = str1;
@@ -161,6 +163,8 @@ public class Client extends Thread{
 					            	dataBJSC[1] = str3;
 					            	dataBJSC[2] = str4;
 					            	dataBJSC[3] = str5;
+					            	dataBJSC[5] = str6;
+					            	dataBJSC[6] = str7;
 					            	lock.writeLock().unlock();
 					            	//System.out.println("drawNumber:" + dataBJSC[0]);
 					            	//System.out.println("remainTime:" + dataBJSC[4]);
