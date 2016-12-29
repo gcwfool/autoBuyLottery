@@ -29,7 +29,7 @@ public class BetXYNCListener implements ActionListener
 			BetXYNCThread.betXYNCPercent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -40,7 +40,7 @@ public class BetXYNCListener implements ActionListener
 		BetXYNCThread.betOppositeXYNC = true;
 		BetXYNCThread.betXYNC = false;
 		
-		String outputStr = "��ʼ��Ͷ����ũ��,Ͷע����" + BetXYNCThread.betXYNCPercent + "\n";
+		String outputStr = "开始反投幸运农场,投注比例：" + BetXYNCThread.betXYNCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		
@@ -92,7 +92,7 @@ class BetzhengXYNCListener implements ActionListener
 			BetXYNCThread.betXYNCPercent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -103,7 +103,7 @@ class BetzhengXYNCListener implements ActionListener
 		BetXYNCThread.betXYNC = true;
 		BetXYNCThread.betOppositeXYNC = false;
 		
-		String outputStr = "��ʼ��Ͷ����ũ��,Ͷע����" + BetXYNCThread.betXYNCPercent + "\n";
+		String outputStr = "开始正投幸运农场,投注比例：" + BetXYNCThread.betXYNCPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		

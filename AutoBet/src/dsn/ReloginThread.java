@@ -1,4 +1,5 @@
 package dsn;
+
 public class ReloginThread extends Thread{
 
 	@Override
@@ -9,7 +10,7 @@ public class ReloginThread extends Thread{
 				if(dsnHttp.getIsisNeedChangeLine() == true){
 					
 					
-					System.out.println("���ߣ����µ�¼\n");
+					System.out.println("换线，重新登录\n");
 					
 					dsnHttp.isInRelogin = true;
 					
@@ -34,7 +35,7 @@ public class ReloginThread extends Thread{
 				
 				dsnHttp.isInRelogin = true;
 				
-				System.out.println("���µ�¼\n");
+				System.out.println("重新登录\n");
 				
 				dsnHttp.reLogin();
 				dsnHttp.setIsNeedRelogin(false);

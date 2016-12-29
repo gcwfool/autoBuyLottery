@@ -29,7 +29,7 @@ public class BetGXKLSFListener implements ActionListener
 			BetGXKLSFThread.betGXKLSFPercent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -41,7 +41,7 @@ public class BetGXKLSFListener implements ActionListener
 		BetGXKLSFThread.betOppositeGXKLSF = true;
 		BetGXKLSFThread.betGXKLSF = false;
 		
-		String outputStr = "��ʼ��Ͷ��������ʮ��,Ͷע����" + BetGXKLSFThread.betGXKLSFPercent + "\n";
+		String outputStr = "开始反投广西快乐十分,投注比例：" + BetGXKLSFThread.betGXKLSFPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		
@@ -93,7 +93,7 @@ class BetzhengGXKLSFListener implements ActionListener
 			BetGXKLSFThread.betGXKLSFPercent = percent;
 		}
 		else{
-			//TODO �����Ի�����ʾ�������
+			//TODO 弹出对话框，提示输入错误
 		}
 		
 		ab.setBetTime();
@@ -104,7 +104,7 @@ class BetzhengGXKLSFListener implements ActionListener
 		BetGXKLSFThread.betGXKLSF = true;
 		BetGXKLSFThread.betOppositeGXKLSF = false;
 		
-		String outputStr = "��ʼ��Ͷ��������ʮ��,Ͷע����" + BetGXKLSFThread.betGXKLSFPercent + "\n";
+		String outputStr = "开始正投广西快乐十分,投注比例：" + BetGXKLSFThread.betGXKLSFPercent + "\n";
 		
 		autoBet.outputGUIMessage(outputStr);
 		

@@ -2,11 +2,11 @@ package dsn;
 public class BetTianCaiThread extends Thread{
     
     
-	//long betRemainTime = 15*1000;  //����������ʱ������ע
+	//long betRemainTime = 15*1000;  //离多少秒封盘时进行下注
 	
-	long almostTime = 25;  //�������һ��sleep�����ʱ��
+	long almostTime = 25;  //进行最后一次sleep计算的时间
 	
-	long sleepTime = 10;	//ƽʱ˯��ʱ��
+	long sleepTime = 10;	//平时睡眠时间
 	boolean requestTime = true;
 	
     static double betCQSSCPercent = 1.0;
@@ -41,7 +41,7 @@ public class BetTianCaiThread extends Thread{
 				if(requestTime) {
 					CQSSCremainTime = tianCaiHttp.getCQSSCRemainTime();
 					BJSCremainTime = tianCaiHttp.getBJSCRemainTime();
-					while(CQSSCremainTime == -9999 || BJSCremainTime == -9999){//��ȡʱ��ʧ��
+					while(CQSSCremainTime == -9999 || BJSCremainTime == -9999){//获取时间失败
 						if(tianCaiHttp.login() == false) {
 							//todo
 							return;
@@ -50,12 +50,12 @@ public class BetTianCaiThread extends Thread{
 						BJSCremainTime = tianCaiHttp.getBJSCRemainTime();
 					}
 					
-					System.out.println("[���]��������ʱʱ�ʷ���ʱ��Ϊ:");
+					System.out.println("[添彩]距离重庆时时彩封盘时间为:");
 					System.out.println(CQSSCremainTime);			
-					System.out.println("[���]���뱱�������ʱ��Ϊ:");
+					System.out.println("[添彩]距离北京赛车封盘时间为:");
 					System.out.println(BJSCremainTime);
 					
-					if((CQSSCremainTime > 0 && CQSSCremainTime <= 40) || (BJSCremainTime > 0 && BJSCremainTime <= 40)) {//������̲������󣬻�ȡ����ʱ��
+					if((CQSSCremainTime > 0 && CQSSCremainTime <= 40) || (BJSCremainTime > 0 && BJSCremainTime <= 40)) {//如果将近封盘不发请求，获取本地时间
 						requestTime = false;
 					}
 					
@@ -63,9 +63,9 @@ public class BetTianCaiThread extends Thread{
 					CQSSCremainTime = tianCaiHttp.getCQSSClocalRemainTime();
 					BJSCremainTime = tianCaiHttp.getBJSClocalRemainTime();
 					
-					System.out.println("[���]��������ʱʱ�ʷ���ʱ��Ϊ[local]:");
+					System.out.println("[添彩]距离重庆时时彩封盘时间为[local]:");
 					System.out.println(CQSSCremainTime);					
-					System.out.println("[���]���뱱�������ʱ��Ϊ[local]:");
+					System.out.println("[添彩]距离北京赛车封盘时间为[local]:");
 					System.out.println(BJSCremainTime);
 					
 					if((CQSSCremainTime <= 0 || CQSSCremainTime > 40) && (BJSCremainTime <= 0 || BJSCremainTime > 40)) {
@@ -85,21 +85,21 @@ public class BetTianCaiThread extends Thread{
 				boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime > 1;
 
 				
-				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//���ʮ������ȥ��ע
+				if((betCQSSC || betOppositeCQSSC)&&timeTobetCQSSC){//最后十五秒秒去下注
 
 					String[] betCQSSCData = null;
 					
 					for(int i = 0; i < 4; i++) {
-						
+
 					}
 					
 					if(betCQSSCData == null) {
-						System.out.println("�µ�ʧ��,δ��ȡ���µ����");
+						System.out.println("下单失败,未获取到下单数据");
 					} else if(betCQSSCData != null &&betCQSSCData[0].equals(tianCaiHttp.getCQSSCdrawNumber())) {
 						
 						String[] betsData = {betCQSSCData[1]};
 						
-						System.out.println("�µ���ݣ�");
+						System.out.println("下单数据：");
 						System.out.println(betCQSSCData[1]);
 						
 						autoBetSuccess = tianCaiHttp.doBetCQSSC(betsData, betCQSSCPercent, betOppositeCQSSC, betCQSSCData[2]);
@@ -115,15 +115,15 @@ public class BetTianCaiThread extends Thread{
 					String[] betBJSCData = null;
 					
 					for(int i = 0; i < 4; i++) {
-						
+
 					}
 					
 					if(betBJSCData == null) {
-						System.out.println("δ��ȡ���µ����");
+						System.out.println("未获取到下单数据");
 					} else if(betBJSCData[0].equals(tianCaiHttp.getBJSCdrawNumber())){
 						String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
 						
-						System.out.println("�µ���ݣ�");
+						System.out.println("下单数据：");
 						System.out.println(betBJSCData[1]);
 						System.out.println(betBJSCData[2]);
 						System.out.println(betBJSCData[3]);
