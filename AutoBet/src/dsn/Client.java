@@ -164,10 +164,10 @@ public class Client extends Thread{
 					            	dataBJSC[2] = str4;
 					            	dataBJSC[3] = str5;
 					            	dataBJSC[5] = str6;
-					            	dataBJSC[6] = str7;
+					            	dataBJSC[6] = str7;				            	
 					            	lock.writeLock().unlock();
-					            	//System.out.println("drawNumber:" + dataBJSC[0]);
-					            	//System.out.println("remainTime:" + dataBJSC[4]);
+					            	System.out.println("percent:" + dataBJSC[5]);
+					            	System.out.println("positive:" + dataBJSC[6]);
 					            	
 					            } else {
 					            	System.out.println("【client】获取数据失败");
