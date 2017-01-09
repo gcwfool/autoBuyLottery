@@ -1572,6 +1572,7 @@ public class dsnHttp {
         {
         	
         	System.out.println("get period failed");
+        	addFailsTimes();
         	return System.currentTimeMillis();
         }
         
@@ -1953,7 +1954,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
             	
             	SingleNumberBetAmount = 0;
             	
-            	for(int i = 1; i <= 10 ; i++){
+/*            	for(int i = 1; i <= 10 ; i++){
             		String gameSingle = "B" + Integer.toString(i);
             		
             		JSONObject gameData;
@@ -1993,7 +1994,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
 
             		
 
-            	}
+            	}*/
             	
             	
             	
@@ -2371,11 +2372,24 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
         	//System.out.printf("下注北京赛车第%s期\n",BJSCdrawNumber);
         	String outputStr = "下注北京赛车第" + BJSCdrawNumber + "期\n"  + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
+        	
+        	String betMode = "";
+        	
+        	if(opposite == false){
+        		betMode = "正投";
+        	}else{
+        		betMode = "反投";
+        	}
+        	
+        	outputStr = String.format("%s, 下注比例：%f\n", betMode, percent);
+        	autoBet.outputGUIMessage(outputStr);
         	if(isEmptyData(betData, BetType.BJSC)) {
         		outputStr = "代理无人投注\n\n";
         		autoBet.outputGUIMessage(outputStr);
         		return false;
         	}
+        	
+        	//jsonParam = constructBetsBigData(betData, percent, BetType.BJSC, true);
         	
         	jsonParam = constructBetsData(betData, percent, BetType.BJSC, opposite);
         	
@@ -2575,6 +2589,422 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     	
     	return false;
     }
+    
+    
+    
+    
+    
+    public static String constructBetsBigData(String[] data, double percent, BetType betType, boolean opposite)
+    {
+    	
+    	//data = "[[{\"k\":\"DX2\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX3\",\"i\":\"D\",\"c\":3,\"a\":130,\"r\":258.294,\"cm\":0},{\"k\":\"DX4\",\"i\":\"D\",\"c\":4,\"a\":660,\"r\":1319.868,\"cm\":0},{\"k\":\"DS1\",\"i\":\"D\",\"c\":1,\"a\":10,\"r\":19.998,\"cm\":0},{\"k\":\"DX2\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DX3\",\"i\":\"X\",\"c\":1,\"a\":5,\"r\":9.999,\"cm\":0},{\"k\":\"DX5\",\"i\":\"D\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DX1\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX4\",\"i\":\"X\",\"c\":1,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDX\",\"i\":\"D\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS1\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"D\",\"c\":3,\"a\":100,\"r\":199.98,\"cm\":0},{\"k\":\"DS3\",\"i\":\"D\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DS3\",\"i\":\"S\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"S\",\"c\":2,\"a\":45,\"r\":89.991,\"cm\":0},{\"k\":\"DS5\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX1\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX5\",\"i\":\"X\",\"c\":3,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDS\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"S\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DS5\",\"i\":\"S\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0}],{\"DS1_S\":1.983,\"DS1_D\":1.983,\"DS2_S\":1.983,\"DS2_D\":1.983,\"DS3_S\":1.983,\"DS3_D\":1.983,\"DS4_S\":1.983,\"DS4_D\":1.983,\"DS5_S\":1.983,\"DS5_D\":1.983,\"DX1_X\":1.983,\"DX1_D\":1.983,\"DX2_X\":1.983,\"DX2_D\":1.983,\"DX3_X\":1.983,\"DX3_D\":1.983,\"DX4_X\":1.983,\"DX4_D\":1.983,\"DX5_X\":1.983,\"DX5_D\":1.983,\"LH_T\":9.28,\"LH_H\":1.983,\"LH_L\":1.983,\"ZDS_S\":1.983,\"ZDS_D\":1.983,\"ZDX_X\":1.983,\"ZDX_D\":1.983},{\"B1\":64,\"B4\":142,\"LM\":1535,\"B3\":64,\"B5\":334,\"B2\":64}]";
+    	int totalAmount = 0;
+    	
+    	String res = "";
+    	
+    	String oddsData = "";
+    	
+    	int betCount = 0;
+    	
+    	double avgAmount = 0.0;
+    	
+    	
+    	try{
+    		
+    		List<String> parsedGames = new ArrayList<String>();;
+    		
+	    	JSONArray gamesArray = new JSONArray();
+	    	JSONObject oddsGrabData = null;
+	    	
+	    	if(betType == BetType.BJSC){
+	    		
+	    		if(BJSCoddsData == null){
+	    			getBJSCoddsData();
+	    		}
+	    		
+	    		oddsData = BJSCoddsData;
+	    		
+
+	    		
+	    		
+	    	}
+	    	else if(betType == BetType.CQSSC){
+	    		
+	    		if(CQSSCoddsData == null){
+	    			getCQSSCoddsData();
+	    		}
+	    		
+	    		oddsData = CQSSCoddsData;
+	    	}
+	    	
+	    	oddsGrabData = new JSONObject(oddsData);
+	    	
+	    	
+	    	
+	    	
+	    	for(int i = 0; i < data.length; i++){
+	    		
+	    		
+            	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
+            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+
+        	
+	        	for(int j = 0; j < gamesGrabData.length(); j++){
+	        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
+	        		
+	    			String game = gameGrabData.getString("k");
+	    			String contents = gameGrabData.getString("i");
+	    			int amount = gameGrabData.getInt("a");
+	    			String oddsKey = game + "_" + contents;
+	    			
+	    			if(oddsData.contains(oddsKey) == false)
+	    				continue;
+	    			
+	    			double odds = oddsGrabData.getDouble(oddsKey);
+	    			
+	    			//剔除北京赛车冠亚军 和 两面
+	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
+	    				continue;
+	    			
+	    			if(parsedGames.contains(game) == true)
+	    				continue;
+	    			
+	    			//计算差值
+	        		for(int k = j +1 ; k < gamesGrabData.length(); k++){
+	        			JSONObject oppositeGameGrabData = gamesGrabData.getJSONObject(k);
+	        			String oppositeGame = oppositeGameGrabData.getString("k");
+	        			if(oppositeGame.equals(game)){
+	        				int oppositeAmount = oppositeGameGrabData.getInt("a");
+	        				if(oppositeAmount > amount){
+	        					amount = oppositeAmount - amount;
+	        					contents = oppositeGameGrabData.getString("i");
+	        					oddsKey = oppositeGame + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				else{
+	        					amount = amount - oppositeAmount;
+	        				}
+	        				break;
+	        			}
+	        		}
+	        		
+	        		parsedGames.add(game);    			
+	    			
+	    			//只下赔率二以下的
+	        		if(odds < 2.5 && amount >0){
+	        			betCount++;
+	        			totalAmount += amount;
+	        		}
+	    	
+	    	
+	        	}
+	    	
+	        	avgAmount = totalAmount/betCount;
+	        	
+	    	}
+	    	
+	    	
+	    	parsedGames.clear();
+	    	
+	    	
+	    	totalAmount = 0;
+	    	
+	    	
+	    	
+	    	for(int i = 0; i < data.length; i++){
+    		
+    		
+            	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
+            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+
+        	
+	        	for(int j = 0; j < gamesGrabData.length(); j++){
+	        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
+	        		
+	    			String game = gameGrabData.getString("k");
+	    			String contents = gameGrabData.getString("i");
+	    			int amount = gameGrabData.getInt("a");
+	    			String oddsKey = game + "_" + contents;
+	    			
+	    			if(oddsData.contains(oddsKey) == false)
+	    				continue;
+	    			
+	    			double odds = oddsGrabData.getDouble(oddsKey);
+	    			
+	    			//剔除北京赛车冠亚军 和 两面
+	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
+	    				continue;
+	    			
+	    			if(parsedGames.contains(game) == true)
+	    				continue;
+	    			
+	    			//计算差值
+	        		for(int k = j +1 ; k < gamesGrabData.length(); k++){
+	        			JSONObject oppositeGameGrabData = gamesGrabData.getJSONObject(k);
+	        			String oppositeGame = oppositeGameGrabData.getString("k");
+	        			if(oppositeGame.equals(game)){
+	        				int oppositeAmount = oppositeGameGrabData.getInt("a");
+	        				if(oppositeAmount > amount){
+	        					amount = oppositeAmount - amount;
+	        					contents = oppositeGameGrabData.getString("i");
+	        					oddsKey = oppositeGame + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				else{
+	        					amount = amount - oppositeAmount;
+	        				}
+	        				break;
+	        			}
+	        		}
+	        		
+	        		parsedGames.add(game);    			
+	    			
+	    			//只下赔率二以下的
+	        		if(odds < 2.5 && amount >0){
+	        			
+	        			int tmpAmount = (int)(avgAmount*5);
+	        			
+	        			if(amount <= tmpAmount)
+	        				continue;
+	        			
+	        			amount = (int)(amount*percent);  
+	        			if(amount == 0)
+	        				continue;
+	        			totalAmount += amount;
+	        			
+	        			JSONObject gameObj = new JSONObject();
+	        			gameObj.put("game", game);
+	        			
+	        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
+	        			if(opposite){
+	        				if(game.indexOf("DX") != -1){//反大小
+	        					if(contents.indexOf("D") != -1){
+	        						contents = "X";        						
+	        					}
+	        					else{
+	        						contents = "D";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				
+	        				
+	        				if(game.indexOf("DS") != -1){//反单双
+	        					if(contents.indexOf("D") != -1){
+	        						contents = "S";        						
+	        					}
+	        					else{
+	        						contents = "D";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				
+	        				if(game.indexOf("LH") != -1){//反龙虎
+	        					if(contents.indexOf("L") != -1){
+	        						contents = "H";        						
+	        					}
+	        					else{
+	        						contents = "L";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	
+	        				}
+	
+	        				
+	        			}
+	        			//反投处理结束
+	        				        			
+	        				        			
+	        			gameObj.put("contents", contents);
+	        			gameObj.put("amount", amount);
+	        			gameObj.put("odds", odds);
+	        			
+	        			
+
+	        			
+	        			gamesArray.put(gameObj);
+	        		}
+	        		
+	        	}
+	    	}
+	    	
+	    	//反投单号1~10
+	    	if(betType == BetType.BJSC){
+	    		
+	    		double odds = 0;
+	    		
+		    	
+	    		for(int k = 1; k <=10; k++){
+	    			
+	    			String gameFind = "B" + Integer.toString(k);
+	    			
+	    			Vector<Object[]> singleNumberGames = new Vector<Object[]>();
+	    			
+		    		for(int i = 0; i < data.length; i++){
+			    		
+			    		
+		            	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
+		            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+
+		        	
+			        	for(int j = 0; j < gamesGrabData.length(); j++){
+			        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
+			        		
+			    			String game = gameGrabData.getString("k");
+			    			String contents = gameGrabData.getString("i");
+			    			int amount = gameGrabData.getInt("a");
+			    			String oddsKey = game + "_" + contents;
+			    			
+			    			
+			    			if(oddsData.contains(oddsKey) == false)
+			    				continue;
+			    			
+			    			odds = oddsGrabData.getDouble(oddsKey);
+			    			
+			    			
+			    			if(gameFind.equals(game)){
+			    				Object[] games = new Object[2];
+			    				games[0] = contents;
+			    				games[1] = new Integer(amount);
+			    				
+			    				singleNumberGames.add(games);
+			    			}
+			    			
+			        	}
+	    			
+
+	    		}
+		    		
+	    		if(singleNumberGames.size() != 0){
+	    			
+			    	Comparator ct = new CompareBetAmount();
+			    	
+			    	Collections.sort(singleNumberGames, ct);
+	    			
+	    			int bigAmount = (int)singleNumberGames.elementAt(0)[1];
+	    			
+	    			if(bigAmount == 0)
+	    				continue;
+	    			
+	    			int number = Integer.parseInt((String)(singleNumberGames.elementAt(0)[0]));
+	    			
+			    	for(int a = 1; a <= 10; a++){
+			    		
+			    		if(a == number)
+			    			continue;
+			    		
+			    		String oddsKeys = gameFind + "_" + Integer.toString(a);
+			    		
+		    			if(oddsData.contains(oddsKeys) == false)
+		    				continue;
+			    		
+			    		
+			    		odds = oddsGrabData.getDouble(oddsKeys);
+			    		
+			    		boolean hasBet = false;
+			    		
+	        			JSONObject gameObj = new JSONObject();
+	        			gameObj.put("game", gameFind);
+			    		
+			    		for(int b = 0; b <singleNumberGames.size(); b++){
+			    			
+
+			    			
+			    			int contents = Integer.parseInt((String)(singleNumberGames.elementAt(b)[0]));
+			    			
+			    			if(contents == a){
+			    				
+			    				
+			    				hasBet = true;
+			    				
+			    				int OldAmount = (int)singleNumberGames.elementAt(b)[1];
+			    				
+			    				int currentAmount = bigAmount - OldAmount;
+			    				
+			    				currentAmount = (int)(currentAmount * percent);
+			    				
+			    				if(currentAmount == 0)
+			    					currentAmount = 1;
+			        			gameObj.put("contents", Integer.toString(a));
+			        			gameObj.put("amount", currentAmount);
+			        			gameObj.put("odds", odds);
+			        			
+			        			
+
+			        			//gamesArray.put(gameObj);
+			        			
+			    				
+			    				
+			    				
+			    				break;
+			    			}
+			    			
+			    			
+			    			
+			    		}
+			    		
+			    		
+			    		if(hasBet == false){
+			    			
+			    			int amount = (int)(bigAmount*percent);
+			    			if(amount == 0)
+			    				amount = 1;
+		        			gameObj.put("contents", Integer.toString(a));
+		        			gameObj.put("amount", amount);
+		        			gameObj.put("odds", odds);
+		        			
+		        			//gamesArray.put(gameObj);
+			    		}
+			    		
+			    	}
+	    		}
+		    		
+
+			    	
+			    	
+
+
+	    	}
+	    	
+	    	}
+	    	
+	    	if(gamesArray.length() == 0) {
+	    		return "";
+	    	}
+	    	
+	    	JSONObject betsObj = new JSONObject();
+	    	
+	    	boolean ignore = false;
+	    	betsObj.put("ignore", ignore);
+	    	betsObj.put("bets", gamesArray);
+	    	
+	    	if(betType == BetType.CQSSC){
+	        	betsObj.put("drawNumber",CQSSCdrawNumber);
+	        	
+	        	betsObj.put("lottery", "CQSSC");
+	    	}
+	    	else if(betType == BetType.BJSC){
+	        	betsObj.put("drawNumber",BJSCdrawNumber);
+	        	
+	        	betsObj.put("lottery", "BJPK10");
+	
+	    	}
+	    	
+	    	res = betsObj.toString();
+    	
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		autoBet.outputGUIMessage("构造下单数据错误！\n");
+    		return "";
+    	}
+   	
+    	return res;	
+    }
+    
+    
+    
     
     
     

@@ -52,6 +52,14 @@ class BetThread extends Thread{
 				long CQSSCremainTime = 0;
 				long BJSCremainTime = 0;
 				if(requestTime) {
+					
+					long time = System.currentTimeMillis();
+					
+			        if(!dsnHttp.isInBJSCBetTime(time) && !dsnHttp.isInCQSSCBetTime(time) ){
+			        	continue;
+			        }
+					
+					
 					CQSSCremainTime = dsnHttp.getCQSSCRemainTime();
 					BJSCremainTime = dsnHttp.getBJSCRemainTime();
 					if(CQSSCremainTime > 10*60*1000){//��ȡʱ��ʧ��					
@@ -279,8 +287,13 @@ class BetThread extends Thread{
 						System.out.println(betBJSCData[3]);
 						
 						
+						double times = Double.parseDouble(betBJSCData[5]);
 						
-						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
+						
+						
+						
+						
+						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
 						
 						if(autoBetSuccess == true){
 							dsnHttp.setBJSCBetData(betsData);
@@ -397,8 +410,8 @@ class BetThread extends Thread{
 				}
 				
 				//数据错误，不sleep。再重新投注
-				if(autoBetSuccess == false)
-					continue;
+/*				if(autoBetSuccess == false)
+					continue;*/
 				
 				
 				
