@@ -292,8 +292,11 @@ class BetThread extends Thread{
 						
 						
 						
-						
+						//策略
 						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+						
+						//手动控制
+						//autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
 						
 						if(autoBetSuccess == true){
 							dsnHttp.setBJSCBetData(betsData);

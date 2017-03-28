@@ -306,7 +306,7 @@ public class BetBJSCManager {
     	
 
         try{
-        	String url = LanyangHttp.lineuri + "z/gPKT-pkt7?gi=11&bt=1";
+        	String url = LanyangHttp.lineuri + "z/gPKT-pkt7?gi=11&bt=4";
         	
         	//System.out.println(LanyangHttp.strCookies);
         	
@@ -475,8 +475,11 @@ public class BetBJSCManager {
        	
         String betStr = "";
         
-        if(previousBJSCBetNumber.equals(BJSCdrawNumber)) 
+        if(previousBJSCBetNumber.equals(BJSCdrawNumber)) {
+        	System.out.println("previousBJSCBetNumber == BJSCdrawNumber");
         	return false;
+        }
+        	
         
         
         BJSCjinriqishu++;
@@ -622,7 +625,7 @@ public class BetBJSCManager {
     	//data = "[[{\"k\":\"DX2\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX3\",\"i\":\"D\",\"c\":3,\"a\":130,\"r\":258.294,\"cm\":0},{\"k\":\"DX4\",\"i\":\"D\",\"c\":4,\"a\":660,\"r\":1319.868,\"cm\":0},{\"k\":\"DS1\",\"i\":\"D\",\"c\":1,\"a\":10,\"r\":19.998,\"cm\":0},{\"k\":\"DX2\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"D\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DX3\",\"i\":\"X\",\"c\":1,\"a\":5,\"r\":9.999,\"cm\":0},{\"k\":\"DX5\",\"i\":\"D\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DX1\",\"i\":\"X\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DX4\",\"i\":\"X\",\"c\":1,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDX\",\"i\":\"D\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS1\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"D\",\"c\":3,\"a\":100,\"r\":199.98,\"cm\":0},{\"k\":\"DS3\",\"i\":\"D\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0},{\"k\":\"DS3\",\"i\":\"S\",\"c\":3,\"a\":20,\"r\":39.996,\"cm\":0},{\"k\":\"DS4\",\"i\":\"S\",\"c\":2,\"a\":45,\"r\":89.991,\"cm\":0},{\"k\":\"DS5\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX1\",\"i\":\"D\",\"c\":3,\"a\":50,\"r\":99.99,\"cm\":0},{\"k\":\"DX5\",\"i\":\"X\",\"c\":3,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"ZDS\",\"i\":\"S\",\"c\":2,\"a\":15,\"r\":29.997,\"cm\":0},{\"k\":\"DS2\",\"i\":\"S\",\"c\":2,\"a\":40,\"r\":79.992,\"cm\":0},{\"k\":\"DS5\",\"i\":\"S\",\"c\":2,\"a\":55,\"r\":109.989,\"cm\":0}],{\"DS1_S\":1.983,\"DS1_D\":1.983,\"DS2_S\":1.983,\"DS2_D\":1.983,\"DS3_S\":1.983,\"DS3_D\":1.983,\"DS4_S\":1.983,\"DS4_D\":1.983,\"DS5_S\":1.983,\"DS5_D\":1.983,\"DX1_X\":1.983,\"DX1_D\":1.983,\"DX2_X\":1.983,\"DX2_D\":1.983,\"DX3_X\":1.983,\"DX3_D\":1.983,\"DX4_X\":1.983,\"DX4_D\":1.983,\"DX5_X\":1.983,\"DX5_D\":1.983,\"LH_T\":9.28,\"LH_H\":1.983,\"LH_L\":1.983,\"ZDS_S\":1.983,\"ZDS_D\":1.983,\"ZDX_X\":1.983,\"ZDX_D\":1.983},{\"B1\":64,\"B4\":142,\"LM\":1535,\"B3\":64,\"B5\":334,\"B2\":64}]";
     	int totalAmount = 0;
     	
-    	String res = "11,1,0";
+    	String res = "11,4,0";
     	
     	res =res + "," + BJSCdrawNumber;
     	
@@ -691,8 +694,9 @@ public class BetBJSCManager {
 	    			
 	    			//只下赔率二以下的
 	        		if(odds < 2.0 && amount >0){
-	        			amount = (int)(amount*percent);  
-	        			if(amount <= 10)
+	        			amount = (int)(amount*percent);
+	        			//amount = 10;
+	        			if(amount <= 9)
 	        				continue;
 	        			totalAmount += amount;	        				        				        			
 	        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
@@ -700,12 +704,33 @@ public class BetBJSCManager {
         				//autoBet.outputGUIMessage(game + contents + ":" + Integer.toString(amount));
         				
         				if(game.indexOf("DX") != -1){//反大小
-        					if(contents.indexOf("D") != -1 && opposite){
+/*        					if(contents.indexOf("D") != -1 && opposite){
         						contents = "2";        						
         					}
         					else{
         						contents = "1";
+        					}*/
+        					
+        					if(contents.indexOf("D") != -1){
+        						
+        						if(opposite == false){
+        							contents = "1";
+        						}
+        						else{
+        							contents = "2";
+        						}
+        						
+        					}else{
+        						if(opposite == false){
+        							contents = "2";
+        						}
+        						else{
+        							contents = "1";
+        						}
+        						
         					}
+        					
+        					
         					
         					
         					
@@ -721,12 +746,32 @@ public class BetBJSCManager {
         				
         				
         				if(game.indexOf("DS") != -1){//反单双
-        					if(contents.indexOf("D") != -1 && opposite){
+/*        					if(contents.indexOf("D") != -1 && opposite){
         						contents = "2";        						
         					}
         					else{
         						contents = "1";
+        					}*/
+        					
+        					if(contents.indexOf("D") != -1){
+        						
+        						if(opposite == false){
+        							contents = "1";
+        						}
+        						else{
+        							contents = "2";
+        						}
+        						
+        					}else{
+        						if(opposite == false){
+        							contents = "2";
+        						}
+        						else{
+        							contents = "1";
+        						}
+        						
         					}
+        					
         					
         					int index = Integer.parseInt(game.replace("DS", ""));
         					
@@ -739,12 +784,32 @@ public class BetBJSCManager {
         				}
         				
         				if(game.indexOf("LH") != -1){//反龙虎
-        					if(contents.indexOf("L") != -1 && opposite){
+/*        					if(contents.indexOf("L") != -1 && opposite){
         						contents = "2";        						
         					}
         					else{
         						contents = "1";
+        					}*/
+        					
+        					if(contents.indexOf("L") != -1){
+        						
+        						if(opposite == false){
+        							contents = "1";
+        						}
+        						else{
+        							contents = "2";
+        						}
+        						
+        					}else{
+        						if(opposite == false){
+        							contents = "2";
+        						}
+        						else{
+        							contents = "1";
+        						}
+        						
         					}
+        					
         					int index = Integer.parseInt(game.replace("LH", ""));
         					
         					index = lhStartIndex + index -1;
@@ -926,6 +991,7 @@ public class BetBJSCManager {
 	    			//只下赔率二以下的
 	        		if(odds < 2.0 && amount >0){
 	        			amount = (int)(amount*percent);  
+	        			//amount = 10;
 	        			if(amount < 10)
 	        				continue;
 	        			totalAmount += amount;

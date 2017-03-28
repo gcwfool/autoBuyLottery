@@ -1,6 +1,7 @@
 package lanyang;
 
 import dsn.TYPEINDEX;
+
 import java.util.Vector;
 
 import dsn.Client;
@@ -160,12 +161,28 @@ class BetLanyangBJSCThread extends Thread{
 						
 						String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
 						
-						System.out.println("[蓝洋]北京赛车下单数据：");
+/*						System.out.println("[蓝洋]北京赛车下单数据：");
 						System.out.println(betBJSCData[1]);
 						
 						
 						
-						autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
+						autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);*/
+						
+						
+						System.out.println("[蓝洋]北京赛车下单数据：");
+						System.out.println(betBJSCData[0]);
+						System.out.println(betBJSCData[1]);
+						//System.out.println(betBJSCData[2]);
+						//System.out.println(betBJSCData[3]);
+						
+						
+						double times = Double.parseDouble(betBJSCData[5]);
+						
+						
+						
+						
+						
+						autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
 						
 						if(autoBetSuccess == true){
 							//dsnHttp.setCQSSCBetData(betsData);
@@ -179,7 +196,7 @@ class BetLanyangBJSCThread extends Thread{
 					}else if(!betBJSCData[0].equals(BetBJSCManager.getDrawnumber())){
 						System.out.println("蓝洋北京赛车下单数据错误\n");
 						
-						//System.out.printf("服务器期数：%d， 本地期数:%d\n", betBJSCData[0], BetBJSCManager.getBJSCdrawNumber());
+						System.out.printf("服务器期数：%s， 本地期数:%s\n", betBJSCData[0], BetBJSCManager.getDrawnumber());
 						
 						
 					}
