@@ -64,7 +64,8 @@ public class BetBJSCManager {
 	
 	static String gameOdds = "";
 	
-	
+	static Map<String, String> oddsPairs = new HashMap<String, String>();
+
 	public static long webTime = -1;  //seconds
 	
 	public static long closeTime = -1; //seconds
@@ -85,7 +86,10 @@ public class BetBJSCManager {
 	    	params1.add(new BasicNameValuePair("playid", "2,3,4,6,7,8,10,11,12,14,15,16,18,19,20,22,23,25,26,28,29,31,32,34,35,37,38"));
 	    	params1.add(new BasicNameValuePair("playpage", "pk10_lmp"));
 	    	
+	    	long time1 = 0, time2 = 0;
+	    	time1 = System.currentTimeMillis();
         	res = HuarunHttp.doPost(HuarunHttp.ADDRESS + "/L_PK10/Handler/Handler.ashx", params1, "", HuarunHttp.ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10");
+        	time2 = System.currentTimeMillis();
         	
         	JSONObject gameInfo = new JSONObject(res);        	
         	gameInfo = new JSONObject(gameInfo.getJSONObject("data").toString());
@@ -99,7 +103,7 @@ public class BetBJSCManager {
 	    		int sec = Integer.parseInt(timeArray[2]);
 	    		
 	    		openning = gameInfo.getString("openning").equals("y") ? true : false;
-	    		if(openning) {
+	    		if(openning && time2 - time1 < 2500) {
 			        closeTime = hour * 3600 + min * 60 + sec;
 			        closeTime = System.currentTimeMillis()/1000 + closeTime;
         		}
@@ -108,9 +112,8 @@ public class BetBJSCManager {
 	    		phaseId = gameInfo.getString("p_id");
 	    		      	
 	    		JSONObject oddsInfo = gameInfo.getJSONObject("play_odds");
-	    		oddsInfo = oddsInfo.getJSONObject("2_11");
-	    		gameOdds = oddsInfo.getString("pl"); 				    		
-	    		usableCredit = gameInfo.getString("usable_credit");
+	    		putOddsInfo(oddsInfo);
+	    		updateBJSCBalance(usableCredit);	
 	    		
 	    		return true;
         	}		
@@ -120,6 +123,164 @@ public class BetBJSCManager {
     	}
 		
 		return false;
+	}
+	
+	public static void putOddsInfo(JSONObject oddsInfo) {
+		try {
+			JSONObject tmp = oddsInfo.getJSONObject("2_11");
+			oddsPairs.put("11", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("2_12");
+			oddsPairs.put("12", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("3_13");
+			oddsPairs.put("13", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("3_14");
+			oddsPairs.put("14", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("4_15");
+			oddsPairs.put("15", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("4_16");
+			oddsPairs.put("16", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("6_27");
+			oddsPairs.put("27", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("6_28");
+			oddsPairs.put("28", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("7_29");
+			oddsPairs.put("29", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("7_30");
+			oddsPairs.put("30", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("8_31");
+			oddsPairs.put("31", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("8_32");
+			oddsPairs.put("32", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("10_43");
+			oddsPairs.put("43", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("10_44");
+			oddsPairs.put("44", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("11_45");
+			oddsPairs.put("45", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("11_46");
+			oddsPairs.put("46", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("12_47");
+			oddsPairs.put("47", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("12_48");
+			oddsPairs.put("48", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("14_59");
+			oddsPairs.put("59", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("14_60");
+			oddsPairs.put("60", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("15_61");
+			oddsPairs.put("61", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("15_62");
+			oddsPairs.put("62", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("16_63");
+			oddsPairs.put("63", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("16_64");
+			oddsPairs.put("64", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("18_75");
+			oddsPairs.put("75", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("18_76");
+			oddsPairs.put("76", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("19_77");
+			oddsPairs.put("77", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("19_78");
+			oddsPairs.put("78", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("20_79");
+			oddsPairs.put("79", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("20_80");
+			oddsPairs.put("80", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("22_91");
+			oddsPairs.put("91", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("22_92");
+			oddsPairs.put("92", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("23_93");
+			oddsPairs.put("93", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("23_94");
+			oddsPairs.put("94", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("25_105");
+			oddsPairs.put("105", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("25_106");
+			oddsPairs.put("106", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("26_107");
+			oddsPairs.put("107", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("26_108");
+			oddsPairs.put("108", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("28_119");
+			oddsPairs.put("119", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("28_120");
+			oddsPairs.put("120", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("29_121");
+			oddsPairs.put("121", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("29_122");
+			oddsPairs.put("122", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("31_133");
+			oddsPairs.put("133", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("31_134");
+			oddsPairs.put("134", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("32_135");
+			oddsPairs.put("135", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("32_136");
+			oddsPairs.put("136", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("34_147");
+			oddsPairs.put("147", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("34_148");
+			oddsPairs.put("148", tmp.getString("pl"));
+	
+			tmp = oddsInfo.getJSONObject("35_149");
+			oddsPairs.put("149", tmp.getString("pl"));
+			
+			tmp = oddsInfo.getJSONObject("35_150");
+			oddsPairs.put("150", tmp.getString("pl"));
+		
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
 	}
 	
 	public static String getDrawnumber(){
@@ -222,12 +383,12 @@ public class BetBJSCManager {
         	boolean betRes = isBetSuccess(response);
         	
         	if((failed == true) && getRemainTime() > 0){
+        		params = constructBetsData(betData, percent,  opposite, saves);
         		response = HuarunHttp.doPost(HuarunHttp.ADDRESS + "/L_PK10/Handler/Handler.ashx", params, "", HuarunHttp.ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10");	  
         		betRes = isBetSuccess(response);
+        		failed = isBetFailed(response);
         		System.out.printf("再次下单结果:%s\n", response);
-        	}else {
-        		System.out.printf("下单结果成功！！！");
-        	} 	
+        	}
         	
         	HuarunHttp.defaultTimeout = oldTimeout;
 
@@ -252,7 +413,6 @@ public class BetBJSCManager {
     			unknowStatBJSCDraw.add(BJSCdrawNumber);
     			
     			BJSCdetalsDataWindow.updateTextFieldjinriyichang(Integer.toString(unknowStatBJSCDraw.size()));
-    			
         	}
         	else{
     			BJSCdetalsDataWindow.addData(df.format(new Date()), BJSCdrawNumber, 0, Integer.toString(BJSCbetTotalAmount), Integer.toString(BJSCbishu));        		
@@ -584,7 +744,7 @@ public class BetBJSCManager {
 	    	for(Map.Entry<String,String> entry : mapList){
 	    		oddsid += entry.getKey() + ",";
 	    		uPI_M += entry.getValue() + ",";
-	    		uPI_P += gameOdds + ",";
+	    		uPI_P += oddsPairs.get(entry.getKey()) + ",";
 	    		i_index += i + ",";
 	    		i++;
 	            System.out.println(entry.getKey()+":"+entry.getValue());             
@@ -635,7 +795,7 @@ public class BetBJSCManager {
     			JSONObject data = betRes.getJSONObject("data");
     			HuarunHttp.jeuValidate = data.getString("JeuValidate");
     			return true;
-    		}
+    		} 
     		
     	}catch(Exception e){
     		e.printStackTrace();
@@ -789,7 +949,7 @@ public class BetBJSCManager {
 	        		if(odds < 2.0 && amount >0){
 	        			amount = (int)(amount*percent);  
 	        			//amount = 10;
-	        			if(amount < 10)
+	        			if(amount < 2)
 	        				continue;
 	        			totalAmount += amount;
 	        			

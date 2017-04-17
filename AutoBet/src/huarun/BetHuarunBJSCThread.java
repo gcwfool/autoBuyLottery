@@ -85,7 +85,7 @@ public class BetHuarunBJSCThread extends Thread{
 						autoBetSuccess = false;
 					}
 		
-					boolean timeTobetBJSC = BJSCremainTime <= betRemainTime && BJSCremainTime > 0;
+					boolean timeTobetBJSC = BJSCremainTime <= 15 && BJSCremainTime > 0;
 		
 					if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){//最后十五秒秒去下注
 						
@@ -161,12 +161,12 @@ public class BetHuarunBJSCThread extends Thread{
 	
 					if(BJSCremainTime <= almostTime && BJSCremainTime > 0){					
 
-						long time2 = BJSCremainTime - betRemainTime;
+						long time2 = BJSCremainTime - 15;
 						long littleTime = time2;
 						
 						if(time2 < 0)
 							littleTime = 1;
-						if(littleTime > 0 && littleTime <= (almostTime - betRemainTime))
+						if(littleTime > 0 && littleTime <= (almostTime - 15))
 							sleepTime = littleTime;
 					}
 					
