@@ -1,18 +1,30 @@
 ﻿package dsn;
-import java.awt.*;
-import java.awt.event.*;
+import huarun.BetHuarunOppositeBJSCListener;
+import huarun.HuarunHttp;
+
+import java.awt.Button;
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.io.File;
 
 import javax.swing.JOptionPane;
 
-
-import lanyang.*;
-import lanyang.BetBJSCManager;
+import lanyang.BetLanyangBJSCAmountListener;
+import lanyang.BetLanyangOppositeBJSCListener;
 import lanyang.LanyangHttp;
+import lanyang.LanyangReloginThread;
+import lanyang.StopBetLanyangBJSCListener;
 
 enum BetType {
 	CQSSC, BJSC, XYNC, GXKLSF, GDKLSF, GD11X5, XJSSC, TJSSC, KL8
@@ -29,6 +41,7 @@ public class autoBet {
 	public boolean loginToWeiCaiMemberSuccess = false;
 	public boolean loginToTianCaiMemberSuccess = false;
 	public boolean loginToLanyangMemberSuccess = false;
+	public boolean loginToHuarunMemberSuccess = false;
 	public boolean inBet = false;
 	public boolean inBetXYNC = false;
 	public boolean inBetGXKLSF = false;
@@ -39,9 +52,11 @@ public class autoBet {
 	public boolean inBetKL8 = false;
 	
 	public boolean inBetLanyangBJSC = false;
+	public boolean inBetHuarunBJSC = false;
 
 	public boolean inBetWeiCai = false;
 	public boolean inBetTianCai = false;
+	
 
 	// 代理登录界面
 	public TextField textFieldProxyAddress;
@@ -163,6 +178,26 @@ public class autoBet {
 	public static Label labelLanyangTotalBets;
 	public static Label labelLanyangSuccessBets;
 	public static Label labelLanyangFailBets;
+	
+	//华润会员界面
+	public TextField textFieldHuarunMemberAddress;
+	public TextField textFieldHuarunMemberAccount;
+	public TextField textFieldHuarunMemberPassword;
+	public TextField textFieldCQSSCBetHuarunPercent;
+	public TextField textFieldBJSCBetHuarunPercent;
+
+	public Button btnBetHuarunCQSSC;
+	public Button btnOppositeBetHuarunCQSSC;
+	public Button btnStopBetHuarunCQSSC;
+	public Button btnBetHuarunBJSC;
+	public Button btnBetHuarunBJSCAmount;
+	public Button btnOppositeHuarunBJSC;
+	public Button btnStopBetHuarunBJSC;
+
+	public static Label labelHuarunTotalBets;
+	public static Label labelHuarunSuccessBets;
+	public static Label labelHuarunFailBets;
+	//华润会员界面end
 	
 	
 
@@ -331,6 +366,16 @@ public class autoBet {
 		btnOppositeLanyangBJSC.setEnabled(flag);
 		btnStopBetLanyangBJSC.setEnabled(flag);
 		btnBetLanyangBJSCAmount.setEnabled(flag);
+	}
+	
+	public void enableHuarunMemberBet(boolean flag) {
+		btnBetHuarunCQSSC.setEnabled(false);
+		btnOppositeBetHuarunCQSSC.setEnabled(false);
+		btnStopBetHuarunCQSSC.setEnabled(false);
+		btnBetHuarunBJSC.setEnabled(false);
+		btnOppositeHuarunBJSC.setEnabled(flag);
+		btnStopBetHuarunBJSC.setEnabled(flag);
+		btnBetHuarunBJSCAmount.setEnabled(flag);
 	}
 
 	public void launchFrame() {
@@ -1110,7 +1155,7 @@ public class autoBet {
 		
 		
 		
-		// 添彩会员界面
+		// 蓝洋会员界面
 		int LanyangMemberX = 1050;
 		int LanyangMemberY = 50;
 
@@ -1316,6 +1361,224 @@ public class autoBet {
 
 		enableLanyangMemberBet(false);
 		
+		
+		// 华润会员界面
+		int HuarunMemberX = 1050;
+		int HuarunMemberY = 350;
+
+		Label labelHuarunMemberLogin = new Label("华润会员登录:");
+		labelHuarunMemberLogin.setSize(100, 25);
+		labelHuarunMemberLogin.setLocation(HuarunMemberX, HuarunMemberY);
+
+		Label labelHuarunMemberAddress = new Label("网址:");
+		labelHuarunMemberAddress.setSize(50, 25);
+		labelHuarunMemberAddress.setLocation(HuarunMemberX,
+				HuarunMemberY + 30);
+
+		textFieldHuarunMemberAddress = new TextField();
+		textFieldHuarunMemberAddress.setSize(300, 25);
+		textFieldHuarunMemberAddress.setLocation(HuarunMemberX + 50,
+				HuarunMemberY + 30);
+		textFieldHuarunMemberAddress.setText(ConfigReader
+				.gethuarunBetAddress());
+
+		Label labelHuarunMemberAccount = new Label("账户:");
+		labelHuarunMemberAccount.setSize(50, 25);
+		labelHuarunMemberAccount.setLocation(HuarunMemberX,
+				HuarunMemberY + 60);
+
+		textFieldHuarunMemberAccount = new TextField();
+		textFieldHuarunMemberAccount.setSize(300, 25);
+		textFieldHuarunMemberAccount.setLocation(HuarunMemberX + 50,
+				HuarunMemberY + 60);
+		textFieldHuarunMemberAccount.setText(ConfigReader
+				.gethuarunBetAccount());
+
+		Label labelHuarunMemberPassword = new Label("密码:");
+		labelHuarunMemberPassword.setSize(50, 25);
+		labelHuarunMemberPassword.setLocation(HuarunMemberX,
+				HuarunMemberY + 90);
+
+		textFieldHuarunMemberPassword = new TextField();
+		textFieldHuarunMemberPassword.setSize(300, 25);
+		textFieldHuarunMemberPassword.setLocation(HuarunMemberX + 50,
+				HuarunMemberY + 90);
+		textFieldHuarunMemberPassword.setText(ConfigReader
+				.gethuarunBetPassword());
+		textFieldHuarunMemberPassword.setEchoChar('*');
+
+		Button btnHuarunMemberLogin = new Button("登录");
+		btnHuarunMemberLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (loginToHuarunMemberSuccess == true || loginToProxySuccess ==false)
+					return;
+				
+				if(loginToProxySuccess ==false) {
+					outputGUIMessage("请先连接服务器!\n");
+					return;
+				}
+
+				String address = textFieldHuarunMemberAddress.getText();
+				String account = textFieldHuarunMemberAccount.getText();
+				String password = textFieldHuarunMemberPassword.getText();
+
+				//HuarunHttp = new HuarunHttp();
+
+				HuarunHttp.setLoginParams(address, account, password);
+
+				if (!HuarunHttp.loginTohuarun() && !HuarunHttp.login()) {
+					outputGUIMessage("登录华润会员失败!\n");
+					return;
+				}
+				
+				//new BetHuarunBJSCThread(client).start();
+				loginToHuarunMemberSuccess = true;
+				
+				if (loginToHuarunMemberSuccess && loginToProxySuccess)
+					enableHuarunMemberBet(true);
+
+				outputGUIMessage("登录华润会员成功!\n");
+				
+				/*HuarunReloginThread = new HuarunReloginThread();
+				HuarunReloginThread.start();
+
+				loginToHuarunMemberSuccess = true;
+
+				ConfigWriter.updateHuarunMemberAddress(address);
+				ConfigWriter.updateHuarunMemberAccount(account);
+				ConfigWriter.updateHuarunMemberPassword(password);
+
+				ConfigWriter.saveTofile("common.config");
+
+				if (loginToHuarunMemberSuccess && loginToProxySuccess)
+					enableHuarunMemberBet(true);
+
+				outputGUIMessage("登录华润会员成功!\n");*/
+
+			}
+		});
+
+		btnHuarunMemberLogin.setSize(50, 25);
+		btnHuarunMemberLogin.setLocation(HuarunMemberX, HuarunMemberY + 120);
+
+		btnBetHuarunCQSSC = new Button("正投重庆时时彩");
+		/*btnBetHuarunCQSSC
+				.addActionListener(new BetHuarunOppositeCQSSCListener(this));*/
+
+		btnBetHuarunCQSSC.setSize(90, 25);
+		btnBetHuarunCQSSC.setLocation(HuarunMemberX, HuarunMemberY + 150);
+
+		Label labelHuarunPercent = new Label("投注比例:");
+		labelHuarunPercent.setSize(60, 25);
+		labelHuarunPercent.setLocation(HuarunMemberX + 100,
+				HuarunMemberY + 150);
+
+		textFieldCQSSCBetHuarunPercent = new TextField();
+		textFieldCQSSCBetHuarunPercent.setSize(60, 25);
+		textFieldCQSSCBetHuarunPercent.setLocation(HuarunMemberX + 160,
+				HuarunMemberY + 150);
+
+		btnOppositeBetHuarunCQSSC = new Button("反投重庆时时彩");
+/*		btnOppositeBetHuarunCQSSC
+				.addActionListener(new BetHuarunOppositeCQSSCListener(this));*/
+
+		btnOppositeBetHuarunCQSSC.setSize(90, 25);
+		btnOppositeBetHuarunCQSSC.setLocation(HuarunMemberX,
+				HuarunMemberY + 180);
+
+		btnStopBetHuarunCQSSC = new Button("停止投注");
+/*		btnStopBetHuarunCQSSC
+				.addActionListener(new StopBetHuarunCQSSCListener(this));*/
+
+		btnStopBetHuarunCQSSC.setSize(90, 25);
+		btnStopBetHuarunCQSSC.setLocation(HuarunMemberX + 100,
+				HuarunMemberY + 180);
+
+		btnBetHuarunBJSC = new Button("正投北京赛车");
+		btnBetHuarunBJSC.addActionListener(new BetBJSCListener(this, client));
+
+		btnBetHuarunBJSC.setSize(90, 25);
+		btnBetHuarunBJSC.setLocation(HuarunMemberX, HuarunMemberY + 210);
+
+		Label BJSClabelHuarunPercent = new Label("投注比例:");
+		BJSClabelHuarunPercent.setSize(60, 25);
+		BJSClabelHuarunPercent.setLocation(HuarunMemberX + 100,
+				HuarunMemberY + 210);
+
+		textFieldBJSCBetHuarunPercent = new TextField();
+		textFieldBJSCBetHuarunPercent.setSize(60, 25);
+		textFieldBJSCBetHuarunPercent.setLocation(HuarunMemberX + 160,
+				HuarunMemberY + 210);
+
+		btnOppositeHuarunBJSC = new Button("反投北京赛车");
+		btnOppositeHuarunBJSC
+				.addActionListener(new BetHuarunOppositeBJSCListener(this, client));
+
+		btnOppositeHuarunBJSC.setSize(90, 25);
+		btnOppositeHuarunBJSC
+				.setLocation(HuarunMemberX, HuarunMemberY + 240);
+		
+		
+		
+		btnBetHuarunBJSCAmount = new Button("投注金额");
+		/*btnBetHuarunBJSCAmount.addActionListener(new BetHuarunBJSCAmountListener());
+*/
+		btnBetHuarunBJSCAmount.setSize(90, 25);
+		btnBetHuarunBJSCAmount.setLocation(HuarunMemberX + 100,
+				HuarunMemberY + 240);
+		
+		
+
+		btnStopBetHuarunBJSC = new Button("停止投注");
+		/*btnStopBetHuarunBJSC.addActionListener(new StopBetHuarunBJSCListener(
+				this));*/
+
+		btnStopBetHuarunBJSC.setSize(90, 25);
+		btnStopBetHuarunBJSC.setLocation(HuarunMemberX + 200,
+				HuarunMemberY + 240);
+
+		labelHuarunTotalBets = new Label();
+		labelHuarunTotalBets.setSize(300, 25);
+		labelHuarunTotalBets.setLocation(HuarunMemberX, 400);
+		labelHuarunTotalBets.setText("下单次数:0");
+
+		labelHuarunSuccessBets = new Label();
+		labelHuarunSuccessBets.setSize(300, 25);
+		labelHuarunSuccessBets.setLocation(HuarunMemberX, 430);
+		labelHuarunSuccessBets.setText("成功次数:0");
+
+		labelHuarunFailBets = new Label();
+		labelHuarunFailBets.setSize(300, 25);
+		labelHuarunFailBets.setLocation(HuarunMemberX, 460);
+		labelHuarunFailBets.setText("失败次数:0");
+
+		/*
+		 * panel.add(labelHuarunTotalBets); panel.add(labelHuarunSuccessBets);
+		 * panel.add(labelHuarunFailBets);
+		 */
+
+		panel.add(labelHuarunMemberLogin);
+		panel.add(labelHuarunMemberAddress);
+		panel.add(textFieldHuarunMemberAddress);
+		panel.add(labelHuarunMemberAccount);
+		panel.add(textFieldHuarunMemberAccount);
+		panel.add(labelHuarunMemberPassword);
+		panel.add(textFieldHuarunMemberPassword);
+		panel.add(btnHuarunMemberLogin);
+
+		panel.add(btnBetHuarunCQSSC);
+		panel.add(labelHuarunPercent);
+		panel.add(btnOppositeBetHuarunCQSSC);
+		panel.add(btnBetHuarunBJSC);
+		panel.add(btnOppositeHuarunBJSC);
+		panel.add(BJSClabelHuarunPercent);
+		panel.add(textFieldCQSSCBetHuarunPercent);
+		panel.add(textFieldBJSCBetHuarunPercent);
+		panel.add(btnStopBetHuarunCQSSC);
+		panel.add(btnStopBetHuarunBJSC);
+		panel.add(btnBetHuarunBJSCAmount);
+
+		enableHuarunMemberBet(false);
 		
 		
 		

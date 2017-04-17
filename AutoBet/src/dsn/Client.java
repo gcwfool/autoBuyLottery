@@ -22,7 +22,7 @@ public class Client extends Thread{
     String [] dataGD115 = {"", "", ""};
     String [] dataBJKL8 = {"", "", ""};
     boolean grabBJSC = true;
-    boolean grabCQSSC = true;
+    boolean grabCQSSC = false;
     boolean grabXYNC = false;
     boolean grabGDKL = false;
     boolean grabGXKL = false;
@@ -166,8 +166,8 @@ public class Client extends Thread{
 					            	dataBJSC[5] = str6;
 					            	dataBJSC[6] = str7;				            	
 					            	lock.writeLock().unlock();
-					            	System.out.println("percent:" + dataBJSC[5]);
-					            	System.out.println("positive:" + dataBJSC[6]);
+					            	//System.out.println("percent:" + dataBJSC[5]);
+					            	//System.out.println("positive:" + dataBJSC[6]);
 					            	
 					            } else {
 					            	System.out.println("【client】获取数据失败");
