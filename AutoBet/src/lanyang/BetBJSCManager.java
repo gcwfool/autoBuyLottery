@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 
 
+
 import dsn.Common;
 import dsn.DSNBetAmountWindow;
 import dsn.DSNDataDetailsWindow;
@@ -157,7 +158,7 @@ public class BetBJSCManager {
 
 	        String res = LanyangHttp.doPost(checkGameUri, params, cookies, LanyangHttp.lineuri + "z/");
 	        
-	        System.out.println(res);
+	        //System.out.println(res);
 	        
 	        if(res != null && res.contains("index2.php")){
 	        	LanyangHttp.setIsNeedRelogin(true);
@@ -496,6 +497,18 @@ public class BetBJSCManager {
         	autoBet.outputGUIMessage(outputStr);
         	
         	
+        	String betMode = "";
+        	
+        	if(opposite == false){
+        		betMode = "正投";
+        	}else{
+        		betMode = "反投";
+        	}
+        	
+        	outputStr = String.format("%s, 下注比例：%f\n", betMode, percent);
+        	autoBet.outputGUIMessage(outputStr);
+        	
+        	
         	betStr = constructBetsData(betData, percent,  opposite);
         	
         	if(!betStr.contains("|")) {
@@ -696,8 +709,10 @@ public class BetBJSCManager {
 	        		if(odds < 2.0 && amount >0){
 	        			amount = (int)(amount*percent);
 	        			//amount = 10;
-	        			if(amount <= 9)
+	        			if(amount <= 9){
 	        				continue;
+	        			}
+	        				
 	        			totalAmount += amount;	        				        				        			
 	        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
 	        				
@@ -992,8 +1007,9 @@ public class BetBJSCManager {
 	        		if(odds < 2.0 && amount >0){
 	        			amount = (int)(amount*percent);  
 	        			//amount = 10;
-	        			if(amount < 10)
+	        			if(amount <= 9){
 	        				continue;
+	        			}
 	        			totalAmount += amount;
 	        			
 	        			JSONObject gameObj = new JSONObject();

@@ -18,7 +18,7 @@ class BetLanyangBJSCThread extends Thread{
 	
     static double betBJSCPercent = 1.0;
     
-    static long betRemainTime = 15;
+    static long betRemainTime = 20;
     
     static boolean betBJSC = false;
     static boolean betOppositeBJSC = false;
@@ -181,8 +181,14 @@ class BetLanyangBJSCThread extends Thread{
 						
 						
 						
-						
+						//策略
 						autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+						
+						//正投
+						//autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent, false, betBJSCData[4]);
+						
+						//反投
+						//autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent, true, betBJSCData[4]);
 						
 						if(autoBetSuccess == true){
 							//dsnHttp.setCQSSCBetData(betsData);
