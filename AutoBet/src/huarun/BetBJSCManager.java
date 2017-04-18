@@ -61,9 +61,6 @@ public class BetBJSCManager {
 	
 	static long remainTime = -1;
 	
-	
-	static String gameOdds = "";
-	
 	static Map<String, String> oddsPairs = new HashMap<String, String>();
 
 	public static long webTime = -1;  //seconds
@@ -112,6 +109,7 @@ public class BetBJSCManager {
 	    		phaseId = gameInfo.getString("p_id");
 	    		      	
 	    		JSONObject oddsInfo = gameInfo.getJSONObject("play_odds");
+	    		usableCredit = gameInfo.getString("usable_credit");
 	    		putOddsInfo(oddsInfo);
 	    		updateBJSCBalance(usableCredit);	
 	    		
@@ -308,6 +306,27 @@ public class BetBJSCManager {
         
         return false;
     }
+    
+    public static boolean  isInLastTime(){
+    	
+    	long time = System.currentTimeMillis();
+        Date date = new Date(time);
+        int currentHour = date.getHours();
+        int currentMinutes = date.getMinutes();
+        int currentSeconds = date.getSeconds();
+        
+        /*if(currentHour >=9 && (currentHour * 60 + currentMinutes <= 23 * 60 + 57)){
+        	return true;
+        }*/
+        
+        //两分钟分钟的缓冲
+        if((currentHour *60 + currentMinutes > 23*60 + 57) && (currentHour * 60 + currentMinutes <= 24 * 60)){
+        	return true;
+        } 
+        
+        
+        return false;
+    }
 	
 	
 	public static long getRemainTime(){
@@ -342,6 +361,7 @@ public class BetBJSCManager {
         	String outputStr = "华润下注北京赛车第" + BJSCdrawNumber + "期\n"  + "最新数据时间距收盘" + remainTime + "秒\n";
         	autoBet.outputGUIMessage(outputStr);
         	
+        	long time1 = System.currentTimeMillis();
         	Vector<String> saves = new Vector<String>();
         	List<NameValuePair> params = constructBetsData(betData, percent,  opposite, saves);
 
@@ -366,10 +386,7 @@ public class BetBJSCManager {
         	System.out.println(betStr);
         	
         	String response = "";       	
-        	
-        	
-        	long time1 = System.currentTimeMillis();
-     	
+   	
 	        int oldTimeout = HuarunHttp.defaultTimeout;
 	        
 	        HuarunHttp.defaultTimeout = 10*1000;
@@ -814,6 +831,7 @@ public class BetBJSCManager {
     		if(errorCode != 200){
     			JSONObject data = betRes.getJSONObject("data");
     			HuarunHttp.jeuValidate = data.getString("JeuValidate");
+    			System.out.println(res);
     			return true;
     		}
     		
@@ -1297,7 +1315,38 @@ public class BetBJSCManager {
 						return String.valueOf((int)profit);
 					}
 				}	
-			}		
+			} else if(dNum == 0 && isInLastTime()) {
+				int pos = 0;
+				res = HuarunHttp.doGet(HuarunHttp.ADDRESS + "/ReportBill/Report_kc.aspx?findDate=" + dateString, "", "");
+				res1 = HuarunHttp.doGet(HuarunHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=2&findDate=" + dateString + "&lid=&op=&isback=", "", "");
+				if(res!= null && res1 != null && res.contains(">" + number + "<")) {
+					pos = res.indexOf(">" + number + "<", pos);	
+					if(pos > 0) {
+						hasResult = true;
+					}
+					
+					while(pos > 0) {
+						pos = res.indexOf("</tr>", pos) - 40;
+						pos = res.indexOf("right\">", pos) + 7;
+						profit += Double.valueOf(res.substring(pos, res.indexOf("&nbsp", pos)));
+						pos = res.indexOf(">" + number + "<", pos);
+					}
+					
+					if(res1 != null) {
+						pos = res1.indexOf(">" + number + "<", pos);	
+						while(pos > 0) {
+							pos = res1.indexOf("</tr>", pos) - 40;
+							pos = res1.indexOf("right\">", pos) + 7;
+							profit += Double.valueOf(res1.substring(pos, res1.indexOf("&nbsp", pos)));
+							pos = res1.indexOf(">" + number + "<", pos);
+						}
+					}
+					
+					if(hasResult) {
+						return String.valueOf((int)profit);
+					}
+				}	
+			}
     	}catch(Exception e){
     		e.printStackTrace();
     		System.out.println(res);
@@ -1465,7 +1514,7 @@ public class BetBJSCManager {
     	
     	for(int j =0; j < unCalcProfitBJSCDraw.size(); j++){
     		int idrawNumber = Integer.parseInt(unCalcProfitBJSCDraw.elementAt(j));
-    		if((currentDraw - idrawNumber) >= 4){
+    		if((currentDraw - idrawNumber) >= 3){
     			unCalcProfitBJSCDraw.removeElement(unCalcProfitBJSCDraw.elementAt(j));
     		}
     	}
@@ -1475,7 +1524,7 @@ public class BetBJSCManager {
     	
     	for(int j =0; j < unknowStatBJSCDraw.size(); j++){
     		int idrawNumber = Integer.parseInt(unknowStatBJSCDraw.elementAt(j));
-    		if((currentDraw - idrawNumber) >= 4){
+    		if((currentDraw - idrawNumber) >= 3){
     			updateBJSCWindowdetailsData(unknowStatBJSCDraw.elementAt(j), TYPEINDEX.STATC.ordinal(), "1");
     			unknowStatBJSCDraw.removeElement(unknowStatBJSCDraw.elementAt(j));
     			

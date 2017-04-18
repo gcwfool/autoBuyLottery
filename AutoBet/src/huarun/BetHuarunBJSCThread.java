@@ -55,81 +55,84 @@ public class BetHuarunBJSCThread extends Thread{
 		
 					long BJSCremainTime = 0;
 					
-					if(requestTime) {	
-						if(!BetBJSCManager.grabGameInfo() && !BetBJSCManager.grabGameInfo()) {
-							System.out.println("reLogin !!");
-							if(!HuarunHttp.loginTohuarun() && !HuarunHttp.loginTohuarun()) {
-								HuarunHttp.reLogin();
-							}
-						}
-						
-						BJSCremainTime = BetBJSCManager.getRemainTime();
-						System.out.println("[华润]第" + BetBJSCManager.getDrawnumber() + "期距离北京赛车封盘时间为:");
-						System.out.println(BJSCremainTime);
-
-						if((BJSCremainTime > 0 && BJSCremainTime <= 40)) {//如果将近封盘不发请求，获取本地时间
-							requestTime = false;
-						}
-						
-					} else {
-						BJSCremainTime = BetBJSCManager.getRemainTime();
-						System.out.println("[华润]第" + BetBJSCManager.getDrawnumber() + "期距离北京赛车封盘时间为local:");
-						System.out.println(BJSCremainTime);
-						
-						if((BJSCremainTime < 0 || BJSCremainTime >= 40)) {//如果将近封盘不发请求，获取本地时间
-							requestTime = true;}
-						
-					}
+					if(BetBJSCManager.isInBJSCBetTime()) {
 					
-					if(BJSCremainTime < 0) {
-						autoBetSuccess = false;
-					}
-		
-					boolean timeTobetBJSC = BJSCremainTime <= 15 && BJSCremainTime > 0;
-		
-					if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){//最后十五秒秒去下注
-						
-						clearBJSCdetaisData = false;
-						
-						
-						String[] betBJSCData = null;
-						
-						for(int i = 0; i < 4; i++) {
-							if((betBJSCData = client.getBJSCdata()) == null){
-								Thread.currentThread().sleep(500);
+						if(requestTime) {	
+							if(!BetBJSCManager.grabGameInfo() && !BetBJSCManager.grabGameInfo()) {
+								System.out.println("reLogin !!");
+								if(!HuarunHttp.loginTohuarun() && !HuarunHttp.loginTohuarun()) {
+									HuarunHttp.reLogin();
+								}
 							}
-							else {
-								break;
+							
+							BJSCremainTime = BetBJSCManager.getRemainTime();
+							System.out.println("[华润]第" + BetBJSCManager.getDrawnumber() + "期距离北京赛车封盘时间为:");
+							System.out.println(BJSCremainTime);
+	
+							if((BJSCremainTime > 0 && BJSCremainTime <= 40)) {//如果将近封盘不发请求，获取本地时间
+								requestTime = false;
 							}
+							
+						} else {
+							BJSCremainTime = BetBJSCManager.getRemainTime();
+							System.out.println("[华润]第" + BetBJSCManager.getDrawnumber() + "期距离北京赛车封盘时间为local:");
+							System.out.println(BJSCremainTime);
+							
+							if((BJSCremainTime < 0 || BJSCremainTime >= 40)) {//如果将近封盘不发请求，获取本地时间
+								requestTime = true;}
+							
 						}
 						
-						if(betBJSCData == null) {
-							System.out.println("[华润]下单失败,未获取到下单数据");
-						} else if(betBJSCData != null &&betBJSCData[0].equals(BetBJSCManager.getDrawnumber()) && autoBetSuccess == false) {
-						//} else if(betBJSCData != null &&betBJSCData[0].equals(BetBJSCManager.getDrawnumber())) {
+						if(BJSCremainTime < 0) {
+							autoBetSuccess = false;
+						}
+			
+						boolean timeTobetBJSC = BJSCremainTime <= 15 && BJSCremainTime > 0;
+			
+						if((betBJSC || betOppositeBJSC)&&timeTobetBJSC){//最后十五秒秒去下注
 							
-							String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
+							clearBJSCdetaisData = false;
 							
-							System.out.println("[华润]北京赛车下单数据：");
-							System.out.println(betBJSCData[0]);
-							System.out.println(betBJSCData[1]);							
 							
-							double times = Double.parseDouble(betBJSCData[5]);
-						
-							autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+							String[] betBJSCData = null;
 							
-							//todo remove
-							autoBetSuccess = true;					
+							for(int i = 0; i < 4; i++) {
+								if((betBJSCData = client.getBJSCdata()) == null){
+									Thread.currentThread().sleep(500);
+								}
+								else {
+									break;
+								}
+							}
 							
-						}else if(!betBJSCData[0].equals(BetBJSCManager.getDrawnumber())) {
-							System.out.println("华润北京赛车下单数据错误\n");			
-							System.out.printf("服务器期数：%s， 本地期数:%s\n", betBJSCData[0], BetBJSCManager.getDrawnumber());				
+							if(betBJSCData == null) {
+								System.out.println("[华润]下单失败,未获取到下单数据");
+							} else if(betBJSCData != null &&betBJSCData[0].equals(BetBJSCManager.getDrawnumber()) && autoBetSuccess == false) {
+							//} else if(betBJSCData != null &&betBJSCData[0].equals(BetBJSCManager.getDrawnumber())) {
+								
+								String[] betsData = {betBJSCData[1], betBJSCData[2], betBJSCData[3]};
+								
+								System.out.println("[华润]北京赛车下单数据：");
+								System.out.println(betBJSCData[0]);
+								System.out.println(betBJSCData[1]);							
+								
+								double times = Double.parseDouble(betBJSCData[5]);
+							
+								autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+								
+								//todo remove
+								autoBetSuccess = true;					
+								
+							}else if(!betBJSCData[0].equals(BetBJSCManager.getDrawnumber())) {
+								System.out.println("华润北京赛车下单数据错误\n");			
+								System.out.printf("服务器期数：%s， 本地期数:%s\n", betBJSCData[0], BetBJSCManager.getDrawnumber());				
+							}
 						}
 					}
 
 					sleepTime = 10;
 				
-					if(HuarunHttp.isAllLotteryIdle()){	
+					if(HuarunHttp.isAllLotteryIdle()){
 						if(BetBJSCManager.getUnCalcProfitBJSCDraw().size() != 0) {						
 							Vector<String> calcedBJSCDraw = new Vector<String>();					
 							Vector<String> data = BetBJSCManager.getUnCalcProfitBJSCDraw();
