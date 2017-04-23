@@ -1,15 +1,17 @@
 ﻿package dsn;
-import java.net.*;
-import java.nio.*;
-import java.nio.channels.*;
-
-import org.json.*;
-
-import java.util.HashMap;  
-import java.util.Map;
 import java.io.IOException;
-import java.util.concurrent.locks.ReadWriteLock;  
-import java.util.concurrent.locks.ReentrantReadWriteLock; 
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import netty.client.NettyClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Client extends Thread{
 	String [] dataCQSSC = {"", "", ""};
@@ -31,43 +33,22 @@ public class Client extends Thread{
     boolean grabGD115 = false;
     boolean grabBJKL8 = false;
     ReadWriteLock lock = new ReentrantReadWriteLock();
-    
-    String address = "";
-    int port;
-    
-    SocketChannel client = null;
+
+    NettyClient client = null;
     
     
     public boolean connectToSever(String taddress, String tport){
-    	boolean res = false;
-    	
-    	address = taddress;
+    	client = new NettyClient(this);
+    	int port = 0;
     	
     	if(Common.isNum(tport)){
     		port = Integer.parseInt(tport);
+    	} else {
+    		return false;
     	}
     	
-    	
-    	
-    	for(int i = 0; i < 5; i++){
-    		try{
-        		client = SocketChannel.open();
-                if(client.connect(new InetSocketAddress(address, port))){
-                	res = true;
-                	
-                	client.close();
-                	
-                    break;
-                }
-
-        		
-        	}catch(Exception e){
-        		
-        	}
-    	}
-    	
-    	
-    	
+    	client.SetAddress(taddress, port);
+    	boolean res = client.connect();
     	
     	return res;
     }
@@ -75,117 +56,29 @@ public class Client extends Thread{
     public void run() {
     	try {
     		while(true) {
-    			
-    			SocketChannel client = null;
-    			try {   
-    			        client = SocketChannel.open();
-    			        if(!client.connect(new InetSocketAddress(address, port))){
-    			            continue;
-    			        }
-    			
-    			    client.socket().setSoTimeout(2000);
-    			    
-    			    boolean reg = false;
-		            {
-		            	Map<String, String> map = new HashMap<String, String>();  
-		                map.put("request", "register");
-		                map.put("account", "account");
-		                map.put("website", "dsn");
-		                
-		                JSONObject json = new JSONObject(map);  
-		                String request = json.toString();
-			            ByteBuffer buffer = ByteBuffer.allocate(1024);
-			            ByteBuffer buffer1 = ByteBuffer.allocate(20480);
-			            buffer.put(request.getBytes());
-			            buffer.flip();
-				        client.write(buffer);
-				        String content = "";
-				        if(client.read(buffer1) == -1) {
-				        	continue;
-				        }
-				        content += new String(buffer1.array());
-				        buffer1.clear();
-				           
-				        try {
-				            json = new JSONObject(content);
-				            
-				            if(json.getString("result").equals("true")) {
-				            	System.out.println("【client】注册成功");
-				            	reg = true;
-				            } else {
-				            	System.out.println("【client】注册失败");
-				            }
-				            	
-				        } catch (JSONException e) {
-				    		System.out.println("【client】注册数据包错误");
-				    	}
-				        if(!reg) {
-				        	continue;
-				        }
-	            	}
+    			try { 
+    				if(!client.isActive()) {
+    					client.connect();
+    				}
+    				
+    				sendRegister();
+		            
 		            while(true) {
+		            	if(!client.isActive()) {
+		            		break;
+		            	}
 		            	boolean brokenBag = false;
 		            	if(grabBJSC){
-			            	Map<String, String> map = new HashMap<String, String>();  
+			            	Map<String, String> map = new HashMap<String, String>();
 			                map.put("request", "data");
 			                map.put("lottery", "BJSC");   
 			                JSONObject json = new JSONObject(map);  
 			                String request = json.toString();
-				            ByteBuffer buffer = ByteBuffer.allocate(1024);
-				            ByteBuffer buffer1 = ByteBuffer.allocate(30960);
-				            buffer.put(request.getBytes());
-				            buffer.flip();
-					        client.write(buffer);
-					        String content = "";
-					        if(client.read(buffer1) == -1) {
-					        	break;
-					        }
-					        content += new String(buffer1.array());
-					        buffer1.clear();
-					       
-					           
-					        try {
-					            json = new JSONObject(content);
-					            
-					            if(json.getString("result").equals("true")) {
-					            	
-					            	String str1 = json.getString("drawNumber");
-					            	String str2 = json.getString("remainTime");
-					            	String str3 = json.getString("dataGY");
-					            	String str4 = json.getString("dataSSWL");
-					            	String str5 = json.getString("dataQBJS");				            	
-					            	String str6 = json.getString("percent");
-					            	String str7 = json.getString("positive");
-					            	
-					            	lock.writeLock().lock();
-					            	dataBJSC[0] = str1;
-					            	dataBJSC[4] = str2;
-					            	dataBJSC[1] = str3;
-					            	dataBJSC[2] = str4;
-					            	dataBJSC[3] = str5;
-					            	dataBJSC[5] = str6;
-					            	dataBJSC[6] = str7;				            	
-					            	lock.writeLock().unlock();
-					            	//System.out.println("percent:" + dataBJSC[5]);
-					            	//System.out.println("positive:" + dataBJSC[6]);
-					            	
-					            } else {
-					            	System.out.println("【client】获取数据失败");
-					            }
-					            	
-					        } catch (JSONException e) {
-					    		System.out.println("【client】数据包错误");
-					    		e.printStackTrace();
-					    		try {
-					    			client.read(buffer1);
-					    		} catch(IOException io) {
-					    			io.printStackTrace();
-					    		}
-					    		brokenBag = true;
-					    	}
+				            
+			                client.send(request);				           
 		            	}
 		            	
-		            	if(grabCQSSC){
+		            	/*if(grabCQSSC){
 			            	Map<String, String> map = new HashMap<String, String>();  
 			                map.put("request", "data");
 			                map.put("lottery", "CQSSC");  
@@ -601,7 +494,7 @@ public class Client extends Thread{
 					    		}
 					    		brokenBag = true;
 					    	}
-		            	}
+		            	}*/
 
 			            
 			            //System.out.println("sleep");
@@ -617,14 +510,61 @@ public class Client extends Thread{
 				            
 		            
 		            }//while
-    			} catch(IOException e) {
+    			} catch(Exception e) {
     				System.out.println("【client】重新建立连接");
     			}
+    			Thread.sleep(5000);
     		}//while
-    	}catch (InterruptedException e) {
+    	}catch (Exception e) {
 	        // TODO: handle exception
 			//System.out.println("end sleep1");
 	    }
+    }
+    
+    public void sendRegister() {
+    	Map<String, String> map = new HashMap<String, String>();  
+        map.put("request", "register");
+        map.put("account", "account");
+        map.put("website", "dsn");
+        
+        JSONObject json = new JSONObject(map);  
+        String request = json.toString();
+        client.send(request); 
+    }
+    
+    public void parseData(String data) {
+    	try {
+    		JSONObject json = new JSONObject(data);
+            
+            if(json.getString("result").equals("true") && json.has("lottery")) {
+            	switch (json.getString("lottery")) {
+            		case "BJSC":
+                    	String str1 = json.getString("drawNumber");
+                    	String str2 = json.getString("remainTime");
+                    	String str3 = json.getString("dataGY");
+                    	String str4 = json.getString("dataSSWL");
+                    	String str5 = json.getString("dataQBJS");				            	
+                    	String str6 = json.getString("percent");
+                    	String str7 = json.getString("positive");
+                    	
+                    	lock.writeLock().lock();
+                    	dataBJSC[0] = str1;
+                    	dataBJSC[4] = str2;
+                    	dataBJSC[1] = str3;
+                    	dataBJSC[2] = str4;
+                    	dataBJSC[3] = str5;
+                    	dataBJSC[5] = str6;
+                    	dataBJSC[6] = str7;				            	
+                    	lock.writeLock().unlock();	
+                    break;
+            	}            	
+            } else {
+            	System.out.println("【client】获取数据失败");
+            }   	
+        } catch (JSONException e) {
+    		System.out.println("【client】数据包错误");
+    		e.printStackTrace();
+    	}
     }
     
     public String [] getCQSSCdata() {

@@ -15,7 +15,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import dsn.Common;
 import dsn.DSNBetAmountWindow;
 import dsn.DSNDataDetailsWindow;
 import dsn.TYPEINDEX;
@@ -92,8 +91,12 @@ public class BetBJSCManager {
         	gameInfo = new JSONObject(gameInfo.getJSONObject("data").toString());
         	
         	if(gameInfo.has("stop_time")) {
+        		String stop_time = gameInfo.getString("stop_time");
+        		if(stop_time.equals("")) {
+        			return true;
+        		}
         	
-	        	String[] timeArray = gameInfo.getString("stop_time").split(":");
+	        	String[] timeArray = stop_time.split(":");
 	    		
 	    		int hour = Integer.parseInt(timeArray[0]);
 	    		int min = Integer.parseInt(timeArray[1]);
@@ -383,13 +386,14 @@ public class BetBJSCManager {
         	        	
         	outputBetsDetails(outputBetData);
         	
-        	System.out.println(betStr);
+        	//System.out.println(betStr);
         	
         	String response = "";       	
    	
 	        int oldTimeout = HuarunHttp.defaultTimeout;
 	        
 	        HuarunHttp.defaultTimeout = 10*1000;
+	        System.out.println(getRemainTime());
 	        
         	
         	response = HuarunHttp.doPost(HuarunHttp.ADDRESS + "/L_PK10/Handler/Handler.ashx", params, "", HuarunHttp.ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10");

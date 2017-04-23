@@ -38,9 +38,7 @@ public class BetHuarunBJSCThread extends Thread{
     @Override
     public void run() {
     	boolean autoBetSuccess = false;	
-		
-		//用来控制打印封盘数据数据与下单数据差值的变量
-		//boolean printBJSCErrorValue = false;
+
 			while(true){
 				try{
 					if(HuarunHttp.isInFreetime() == true && clearBJSCdetaisData == false){
@@ -60,7 +58,7 @@ public class BetHuarunBJSCThread extends Thread{
 						if(requestTime) {	
 							if(!BetBJSCManager.grabGameInfo() && !BetBJSCManager.grabGameInfo()) {
 								System.out.println("reLogin !!");
-								if(!HuarunHttp.loginTohuarun() && !HuarunHttp.loginTohuarun()) {
+								if(!HuarunHttp.loginTohuarun()) {
 									HuarunHttp.reLogin();
 								}
 							}
@@ -156,10 +154,7 @@ public class BetHuarunBJSCThread extends Thread{
 							
 							
 						}
-					
-						//String balance = BetBJSCManager.getBalance();
-						
-						//BetBJSCManager.updateBJSCBalance(balance);				
+								
 					}
 	
 					if(BJSCremainTime <= almostTime && BJSCremainTime > 0){					

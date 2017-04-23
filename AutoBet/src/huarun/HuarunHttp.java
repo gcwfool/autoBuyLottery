@@ -105,14 +105,7 @@ public class HuarunHttp {
 	
 	
 	public static boolean reLogin(){
-		
-		setIscalcRequestTime(false);
-		
-		boolean res =  loginTohuarun();
-		
-		setIscalcRequestTime(true);
-		
-		return res;
+		return connFailLogin();
 	}	
 	
 	public static boolean connFailLogin(){
@@ -124,7 +117,7 @@ public class HuarunHttp {
 			strCookies = "";
 			
 			try{
-				Thread.currentThread().sleep(20*1000);
+				Thread.currentThread().sleep(5*1000);
 				
 			}catch(Exception e){
 				e.printStackTrace();
@@ -137,7 +130,6 @@ public class HuarunHttp {
 		return true;
 	}
 
-	
 	public static boolean login(){
 		
 		boolean success = false;
@@ -243,9 +235,21 @@ public class HuarunHttp {
 	    	params.add(new BasicNameValuePair("loginPwd", PWD));
 	    	params.add(new BasicNameValuePair("ValidateCode", ""));
         	res = doPost(ADDRESS + "/Handler/LoginHandler.ashx?action=user_login", params, "", ADDRESS);
+        	if(res == null) {
+        		return false;
+        	}
         	res = doGet(ADDRESS + "/LoginValidate.aspx", "", ADDRESS);
+        	if(res == null) {
+        		return false;
+        	}
         	res = doGet(ADDRESS + "/index.aspx", "", ADDRESS + "/LoginValidate.aspx");
+        	if(res == null) {
+        		return false;
+        	}
         	res = doGet(ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10", "", ADDRESS + "/index.aspx");
+        	if(res == null) {
+        		return false;
+        	}
         	//System.out.println(res);
         	if(res.contains("var JeuValidate = ")) {
         		int start = res.indexOf("var JeuValidate") + 19;
