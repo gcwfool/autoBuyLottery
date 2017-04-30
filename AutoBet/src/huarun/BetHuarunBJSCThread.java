@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import dsn.Client;
 import dsn.TYPEINDEX;
+import dsn.autoBet;
 
 public class BetHuarunBJSCThread extends Thread{
     
@@ -115,8 +116,13 @@ public class BetHuarunBJSCThread extends Thread{
 								System.out.println(betBJSCData[1]);							
 								
 								double times = Double.parseDouble(betBJSCData[5]);
-							
-								autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+								
+								if(client.betBJSCopen()) {
+									autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+								} else {
+									autoBet.outputGUIMessage("华润北京赛车" + BetBJSCManager.getDrawnumber() + "期  暂停投注！ \n");
+								}
+								//autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
 								
 								//todo remove
 								autoBetSuccess = true;					

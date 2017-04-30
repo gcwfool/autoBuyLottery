@@ -150,16 +150,17 @@ public class HuarunHttp {
 			String linePage = doGet(linePageUri, "", "");
 	    	
 	    	if(linePage == null){
+	    		linePageUri = "http://qzqzl.com";
 	    		linePage = doGet(linePageUri, "", "");
 	    	}	    	
 	    	
 	    	List<NameValuePair> params = new ArrayList<NameValuePair>();
 	    	params.add(new BasicNameValuePair("code", "123999"));
 	    	params.add(new BasicNameValuePair("Submit", "%E7%99%BB+%E9%8C%84"));
-	    	linePage = doPost("http://www.qch56.com/Web/SearchLine.aspx", params, "", "http://www.qch56.com");
+	    	linePage = doPost(linePageUri + "/Web/SearchLine.aspx", params, "", "");
 	    	
 	    	if(linePage == null) {
-	    		linePage = doPost("http://www.qch56.com/Web/SearchLine.aspx", params, "", "http://www.qch56.com");
+	    		linePage = doPost(linePageUri + "/Web/SearchLine.aspx", params, "", "");
 	    	}
 	    	
 	    	if(linePage == null) {
@@ -258,21 +259,14 @@ public class HuarunHttp {
 				return false;
 			}
         	
-/*        	List<NameValuePair> params2 = new ArrayList<NameValuePair>();
-	    	params2.add(new BasicNameValuePair("action", "get_putinfo"));
-	    	params2.add(new BasicNameValuePair("playpage", "pk10_lmp"));
-	    	
-        	res = doPost(ADDRESS + "/L_PK10/Handler/Handler.ashx", params2, "", ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10");
-        	System.out.print(res);*/
         	
-        	
-        	List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+        	/*List<NameValuePair> params1 = new ArrayList<NameValuePair>();
 	    	params1.add(new BasicNameValuePair("action", "get_oddsinfo"));
 	    	params1.add(new BasicNameValuePair("playid", "2,3,4,6,7,8,10,11,12,14,15,16,18,19,20,22,23,25,26,28,29,31,32,34,35,37,38"));
 	    	params1.add(new BasicNameValuePair("playpage", "pk10_lmp"));
 	    	
         	res = doPost(ADDRESS + "/L_PK10/Handler/Handler.ashx", params1, "", ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10");
-        	System.out.print(res);
+        	//System.out.print(res);
         	
         	JSONObject gameInfo = new JSONObject(res);        	
         	gameInfo = new JSONObject(gameInfo.getJSONObject("data").toString());
@@ -280,7 +274,7 @@ public class HuarunHttp {
         	System.out.println(gameInfo.getString("nn"));
         	System.out.println(gameInfo.getString("stop_time"));
         	System.out.println(gameInfo.getString("credit"));
-        	System.out.println(gameInfo.getString("drawopen_time"));
+        	System.out.println(gameInfo.getString("drawopen_time"));*/
 
         	if(res != null) {
         		return true;

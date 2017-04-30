@@ -32,6 +32,7 @@ public class Client extends Thread{
     boolean grabTJSSC = false;
     boolean grabGD115 = false;
     boolean grabBJKL8 = false;
+    boolean betBJSCopen = false;
     ReadWriteLock lock = new ReentrantReadWriteLock();
 
     NettyClient client = null;
@@ -547,7 +548,15 @@ public class Client extends Thread{
                     	String str6 = json.getString("percent");
                     	String str7 = json.getString("positive");
                     	
+                    	String open = json.getString("open");
+                    	
+                    	
                     	lock.writeLock().lock();
+                    	if(open.equals("y")) {
+                    		betBJSCopen = true;
+                    	} else {
+                    		betBJSCopen = false;
+                    	}
                     	dataBJSC[0] = str1;
                     	dataBJSC[4] = str2;
                     	dataBJSC[1] = str3;
@@ -565,6 +574,13 @@ public class Client extends Thread{
     		System.out.println("【client】数据包错误");
     		e.printStackTrace();
     	}
+    }
+    
+    public boolean betBJSCopen() {
+    	lock.readLock().lock();
+    	boolean open =betBJSCopen;
+    	lock.readLock().unlock();
+    	return open;
     }
     
     public String [] getCQSSCdata() {

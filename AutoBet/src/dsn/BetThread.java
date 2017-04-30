@@ -1,4 +1,6 @@
 package dsn;
+import huarun.BetBJSCManager;
+
 import java.util.Vector;
 class BetThread extends Thread{
     
@@ -293,7 +295,12 @@ class BetThread extends Thread{
 						
 						
 						//策略
-						autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+						if(client.betBJSCopen()) {
+							autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+						} else {
+							autoBet.outputGUIMessage("迪斯尼北京赛车" + BetBJSCManager.getDrawnumber() + "期  暂停投注！ \n");
+						}
+						//autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
 						
 						//手动控制
 						//autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent, betOppositeBJSC, betBJSCData[4]);
