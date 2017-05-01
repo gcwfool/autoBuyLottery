@@ -249,6 +249,7 @@ public class HuarunHttp {
         	}
         	res = doGet(ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10", "", ADDRESS + "/index.aspx");
         	if(res == null) {
+        		System.out.println(res);
         		return false;
         	}
         	//System.out.println(res);
@@ -256,6 +257,7 @@ public class HuarunHttp {
         		int start = res.indexOf("var JeuValidate") + 19;
         		jeuValidate = res.substring(start, res.indexOf("'", start));
         	} else {
+        		System.out.println(res);
 				return false;
 			}
         	
@@ -320,16 +322,20 @@ public class HuarunHttp {
             CloseableHttpResponse response = execute(httpget); 
             
             String statusLine = response.getStatusLine().toString();   
-            if(statusLine.indexOf("200 OK") == -1) {
-         	   System.out.println(statusLine); 
-            }
+            
             
             try{
       	
             	if(response.getStatusLine().toString().indexOf("302 Found") > 0) {
              	   return response.getFirstHeader("Location").getValue();
                 }
-                HttpEntity entity = response.getEntity(); 
+            	
+            	if(statusLine.indexOf("200 OK") == -1) {
+              	   System.out.println(statusLine);
+              	   return null;
+                }
+            	
+                HttpEntity entity = response.getEntity();
                 
                 String res = EntityUtils.toString(entity);
                 

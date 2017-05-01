@@ -404,7 +404,28 @@ public class BetBJSCManager {
         	boolean betRes = isBetSuccess(response);
         	
         	if((failed == true) && getRemainTime() > 0){
-        		params = constructBetsData(betData, percent,  opposite, saves);
+        		if(!response.contains("newpl")) {
+        			params = constructBetsData(betData, percent,  opposite, saves);
+        		} else {
+        			try{
+        			   JSONObject newpl = new JSONObject(response);
+         			   JSONObject data = newpl.getJSONObject("data");
+         			   JSONArray arr = data.getJSONArray("index");
+         			   JSONArray arr1 = data.getJSONArray("newpl");
+         			   int size = arr.length();
+         			   int [] indexs = new int[size];
+         			   String [] pls = new String[size];
+         			   for(int i = 0; i < size; i++) {
+         				   indexs[i] = arr.getInt(i);
+         				   pls[i] = arr1.getString(i);
+         			   } 
+         			   
+         			   params = reConstructBetsData(betData, percent,  opposite, saves, indexs, pls, size);
+        	    		
+        	    	}catch(Exception e){
+        	    		e.printStackTrace();
+        	    	}			   
+        		}
         		response = HuarunHttp.doPost(HuarunHttp.ADDRESS + "/L_PK10/Handler/Handler.ashx", params, "", HuarunHttp.ADDRESS + "/L_PK10/index.aspx?lid=2&path=L_PK10");	  
         		betRes = isBetSuccess(response);
         		failed = isBetFailed(response);
@@ -769,6 +790,367 @@ public class BetBJSCManager {
 	    		i_index += i + ",";
 	    		i++;
 	            System.out.println(entry.getKey()+":"+entry.getValue());             
+	        }  
+	    	
+	    	oddsid = oddsid.substring(0, oddsid.length() - 1);
+	    	uPI_M = uPI_M.substring(0, uPI_M.length() - 1);
+	    	uPI_P = uPI_P.substring(0, uPI_P.length() - 1);
+	    	i_index = i_index.substring(0, i_index.length() - 1);
+	    	System.out.println("下单数据：------------------------------------");
+	    	List<NameValuePair> params = new ArrayList<NameValuePair>();
+	    	params.add(new BasicNameValuePair("action", "put_money"));
+	    	params.add(new BasicNameValuePair("phaseid", phaseId));
+	    	params.add(new BasicNameValuePair("oddsid", oddsid));
+	    	params.add(new BasicNameValuePair("uPI_P", uPI_P));
+	    	params.add(new BasicNameValuePair("uPI_M", uPI_M));
+	    	params.add(new BasicNameValuePair("i_index", i_index));
+	    	params.add(new BasicNameValuePair("JeuValidate", HuarunHttp.jeuValidate));
+	    	params.add(new BasicNameValuePair("playpage", "pk10_lmp"));
+
+	        System.out.println(phaseId);
+	        System.out.println(oddsid);
+	        System.out.println(uPI_P);
+	        System.out.println(uPI_M);
+	        System.out.println(i_index);
+	        System.out.println(HuarunHttp.jeuValidate);
+	        
+	        return params;
+	        
+    	
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		autoBet.outputGUIMessage("构造下单数据错误！\n");
+    		return null;
+    	}
+   	
+    }
+    
+public static List<NameValuePair> reConstructBetsData(String[] data, double percent, boolean opposite, Vector<String> saves, int[] indexs, String[]  pls, int size) {
+    	
+    	long totalAmount = 0;
+    	
+    	String res = "";
+    	
+    	Map<String, String> betPairs = new HashMap<String, String>();
+    	
+    	try{
+    		
+    		List<String> parsedGames = new ArrayList<String>();
+	    	
+	    	for(int i = 0; i < data.length; i++){
+	    		
+            	JSONArray cqsscLMGrabData = new JSONArray(data[i]);        	
+            	JSONArray gamesGrabData = cqsscLMGrabData.getJSONArray(0);
+            	JSONObject oddsGrabData = cqsscLMGrabData.getJSONObject(1);
+	
+	        	for(int j = 0; j < gamesGrabData.length(); j++) {
+	        		JSONObject gameGrabData = gamesGrabData.getJSONObject(j);
+	        		
+	    			String game = gameGrabData.getString("k");
+	    			String contents = gameGrabData.getString("i");
+	    			int amount = gameGrabData.getInt("a");
+	    			String oddsKey = game + "_" + contents;
+	    			
+	    			
+	    			
+	    			double odds = oddsGrabData.getDouble(oddsKey);
+	    			
+	    			//剔除北京赛车冠亚军 和 两面
+	    			if(game.indexOf("GDX") != -1 || game.indexOf("GDS") != -1)
+	    				continue;
+	    			
+	    			if(parsedGames.contains(game) == true)
+	    				continue;
+    			
+	    			//计算差值
+	        		for(int k = j +1 ; k < gamesGrabData.length(); k++){
+	        			JSONObject oppositeGameGrabData = gamesGrabData.getJSONObject(k);
+	        			String oppositeGame = oppositeGameGrabData.getString("k");
+	        			if(oppositeGame.equals(game)){
+	        				int oppositeAmount = oppositeGameGrabData.getInt("a");
+	        				if(oppositeAmount > amount){
+	        					amount = oppositeAmount - amount;
+	        					contents = oppositeGameGrabData.getString("i");
+	        					oddsKey = oppositeGame + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				else{
+	        					amount = amount - oppositeAmount;
+	        				}
+	        				break;
+	        			}
+	        		}
+	        		
+	        		parsedGames.add(game);
+
+	    			
+	    			
+	    			
+	    			//只下赔率二以下的
+	        		if(odds < 2.5 && amount >0){
+	        			amount = (int)(amount*percent);  
+	        			if(amount < 2)
+	        				continue; //添彩每注最低2元
+
+	        			totalAmount += amount;
+	        			
+	        			//gameObj.put("game", game);
+	        			
+
+	        			
+	        			//处理反投: 大变小，小变大，单变双，双变大，龙变虎，虎变隆
+	        			if(opposite){
+	        				if(game.indexOf("DX") != -1){//反大小
+	        					if(contents.indexOf("D") != -1){
+	        						contents = "X";        						
+	        					}
+	        					else{
+	        						contents = "D";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				
+	        				
+	        				if(game.indexOf("DS") != -1){//反单双
+	        					if(contents.indexOf("D") != -1){
+	        						contents = "S";        						
+	        					}
+	        					else{
+	        						contents = "D";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	        				}
+	        				
+	        				if(game.indexOf("LH") != -1){//反龙虎
+	        					if(contents.indexOf("L") != -1){
+	        						contents = "H";        						
+	        					}
+	        					else{
+	        						contents = "L";
+	        					}
+	        					oddsKey = game + "_" + contents;
+	        					odds = oddsGrabData.getDouble(oddsKey);
+	
+	        				}
+	
+	        				
+	        			}
+	        			//反投处理结束
+	        				        			
+	        			String selectionTypeName = "";
+	        			String outputName = "";
+	        			String outputContent = "";
+   	
+	        	    		
+        	        	switch(game){
+	        	        	case "DX1":
+	        	        		selectionTypeName = "1";
+	        	        		contents = contents.equals("D")?"11":"12";
+	        	        		outputName = "冠军";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS1":
+	        	        		selectionTypeName = "1";
+	        	        		contents = contents.equals("D")?"13":"14";
+	        	        		outputName = "冠军";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "LH1":
+	        	        		selectionTypeName = "1";
+	        	        		contents = contents.equals("L")?"15":"16";
+	        	        		outputName = "冠军";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
+	        	        		break;	
+	        	        		
+	        	        	case "DX2":
+	        	        		selectionTypeName = "2";
+	        	        		contents = contents.equals("D")?"27":"28";
+	        	        		outputName = "亚军";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS2":
+	        	        		selectionTypeName = "2";
+	        	        		contents = contents.equals("D")?"29":"30";
+	        	        		outputName = "亚军";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "LH2":
+	        	        		selectionTypeName = "2";
+	        	        		contents = contents.equals("L")?"31":"32";
+	        	        		outputName = "亚军";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
+	        	        		break;		
+	        	        	case "DX3":
+	        	        		selectionTypeName = "3";
+	        	        		contents = contents.equals("D")?"43":"44";
+	        	        		outputName = "第三名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS3":
+	        	        		selectionTypeName = "3";
+	        	        		contents = contents.equals("D")?"45":"46";	
+	        	        		outputName = "第三名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "LH3":
+	        	        		selectionTypeName = "3";
+	        	        		contents = contents.equals("L")?"47":"48";
+	        	        		outputName = "第三名";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
+	        	        		break;		
+	        	        	case "DX4":
+	        	        		selectionTypeName = "4";
+	        	        		contents = contents.equals("D")?"59":"60";
+	        	        		outputName = "第四名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS4":
+	        	        		selectionTypeName = "4";
+	        	        		contents = contents.equals("D")?"61":"62";
+	        	        		outputName = "第四名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "LH4":
+	        	        		selectionTypeName = "4";
+	        	        		contents = contents.equals("L")?"63":"64";
+	        	        		outputName = "第四名";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
+	        	        		break;	
+	        	        	case "DX5":
+	        	        		selectionTypeName = "5";
+	        	        		contents = contents.equals("D")?"75":"76";
+	        	        		outputName = "第五名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS5":
+	        	        		selectionTypeName = "5";
+	        	        		contents = contents.equals("D")?"77":"78";	
+	        	        		outputName = "第五名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "LH5":
+	        	        		selectionTypeName = "5";
+	        	        		contents = contents.equals("L")?"79":"80";
+	        	        		outputName = "第五名";
+	        	        		outputContent = contents.equals("L")?"龙":"虎";
+	        	        		break;	
+	        	        	case "DX6":
+	        	        		selectionTypeName = "6";
+	        	        		contents = contents.equals("D")?"91":"92";
+	        	        		outputName = "第六名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS6":
+	        	        		selectionTypeName = "6";
+	        	        		contents = contents.equals("D")?"93":"94";	
+	        	        		outputName = "第六名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "DX7":
+	        	        		selectionTypeName = "7";
+	        	        		contents = contents.equals("D")?"105":"106";
+	        	        		outputName = "第七名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS7":
+	        	        		selectionTypeName = "7";
+	        	        		contents = contents.equals("D")?"107":"108";	
+	        	        		outputName = "第七名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "DX8":
+	        	        		selectionTypeName = "8";
+	        	        		contents = contents.equals("D")?"119":"120";
+	        	        		outputName = "第八名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS8":
+	        	        		selectionTypeName = "8";
+	        	        		contents = contents.equals("D")?"121":"122";
+	        	        		outputName = "第八名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "DX9":
+	        	        		selectionTypeName = "9";
+	        	        		contents = contents.equals("D")?"133":"134";
+	        	        		outputName = "第九名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS9":
+	        	        		selectionTypeName = "9";
+	        	        		contents = contents.equals("D")?"135":"136";	
+	        	        		outputName = "第九名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+	        	        	case "DX10":
+	        	        		selectionTypeName = "10";
+	        	        		contents = contents.equals("D")?"147":"148";
+	        	        		outputName = "第十名";
+	        	        		outputContent = contents.equals("D")?"大":"小";
+	        	        		break;
+	        	        	case "DS10":
+	        	        		selectionTypeName = "10";
+	        	        		contents = contents.equals("D")?"149":"150";
+	        	        		outputName = "第十名";
+	        	        		outputContent = contents.equals("D")?"单":"双";
+	        	        		break;
+        	        	}    	        	
+
+        	        	betPairs.put(contents, String.valueOf(amount));
+	        			String out = outputName + "_" + outputContent + ":" + amount;
+	        			String save = selectionTypeName + "_" + outputContent + "_" + amount;
+	        			saves.add(save);
+	        			System.out.println(out);	        	    	
+	        		}		
+	        	}
+	    	}
+	    	
+	    	if(res.length() > 1) {
+	    		res = "[" + res.substring(0, res.length() - 1) + "]"; 
+	    		autoBet.outputGUIMessage("下单总额:" + totalAmount + "\n");
+	    	}
+	    	
+	    	List<Map.Entry<String, String>> mapList;
+	    	mapList=new ArrayList<Map.Entry<String, String>>(betPairs.entrySet()); 
+	    	Collections.sort(mapList, new Comparator<Map.Entry<String,String>>() {
+				@Override
+				public int compare(Map.Entry<String,String> firstMapEntry, 
+								   Map.Entry<String,String> secondMapEntry) {
+						if(Integer.parseInt(firstMapEntry.getKey()) > Integer.parseInt(secondMapEntry.getKey())) {
+							return 1;
+						}else if(Integer.parseInt(firstMapEntry.getKey()) < Integer.parseInt(secondMapEntry.getKey())){
+							return  -1;
+						}
+						else {
+							return 0;
+						}
+				}
+			});
+	    	
+	    	String oddsid = "";
+	    	String uPI_M = "";
+	    	String uPI_P = "";
+	    	String i_index = "";
+	    	int i = 0;
+	    	for(Map.Entry<String,String> entry : mapList){
+	    		oddsid += entry.getKey() + ",";
+	    		uPI_M += entry.getValue() + ",";
+	    		boolean change = false;
+	    		for(int j = 0; j < size; j++) {
+	    			if(indexs[j] == i) {
+	    				uPI_P += pls[j] + ",";
+	    				change = true;
+	    			}
+	    		}
+	    		
+	    		if(!change) {
+	    			uPI_P += oddsPairs.get(entry.getKey()) + ",";
+	    		}
+	    		i_index += i + ",";
+	    		i++;
+	            //System.out.println(entry.getKey()+":"+entry.getValue());             
 	        }  
 	    	
 	    	oddsid = oddsid.substring(0, oddsid.length() - 1);

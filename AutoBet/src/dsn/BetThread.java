@@ -298,7 +298,7 @@ class BetThread extends Thread{
 						if(client.betBJSCopen()) {
 							autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
 						} else {
-							autoBet.outputGUIMessage("迪斯尼北京赛车" + BetBJSCManager.getDrawnumber() + "期  暂停投注！ \n");
+							autoBet.outputGUIMessage("迪斯尼北京赛车" + dsnHttp.getBJSCdrawNumber() + "期  暂停投注！ \n");
 						}
 						//autoBetSuccess = dsnHttp.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
 						
