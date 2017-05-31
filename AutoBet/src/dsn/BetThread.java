@@ -13,7 +13,7 @@ class BetThread extends Thread{
 	boolean requestTime = true;
 	
     static double betCQSSCPercent = 1.0;
-    static double betBJSCPercent = 1.0;
+    static double betBJSCPercent = 0.001;
     
     static long betRemainTime = 10 * 1000;
     
