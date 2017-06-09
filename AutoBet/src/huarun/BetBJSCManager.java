@@ -442,7 +442,7 @@ public class BetBJSCManager {
         	
         	usingTime = usingTime/1000;
         	
-        	String strUsingTime  = String.format("下单用时！ :%f 秒\n", usingTime);
+        	String strUsingTime  = String.format("下单用时！ :%f 秒\n\n", usingTime);
         	
         	autoBet.outputGUIMessage(strUsingTime);     	
      	
@@ -540,6 +540,9 @@ public class BetBJSCManager {
 	        			amount = (int)(amount*percent);  
 	        			if(amount < 2)
 	        				continue; //添彩每注最低2元
+	        			if(amount > 50000) {
+	        				amount = 50000;
+	        			}
 
 	        			totalAmount += amount;
 	        			
@@ -891,6 +894,9 @@ public static List<NameValuePair> reConstructBetsData(String[] data, double perc
 	        			amount = (int)(amount*percent);  
 	        			if(amount < 2)
 	        				continue; //添彩每注最低2元
+	        			if(amount > 50000) {
+	        				amount = 50000;
+	        			}
 
 	        			totalAmount += amount;
 	        			

@@ -68,7 +68,7 @@ public class HuarunHttp {
 	static String ACCOUNT = "";
 	static String PWD = "";
 	
-	static int defaultTimeout = 3*1000;
+	static int defaultTimeout = 10*1000;
 	
 	static String line = "";
 	//static String host = "ok1688.info/";
@@ -136,10 +136,10 @@ public class HuarunHttp {
 		
 		setIscalcRequestTime(false);
 		
-		String linePageUri = "http://www.qch56.com";
+		String linePageUri = "http://www.xt3456.com/";
 		
 		int oldTimeout = defaultTimeout;
-		defaultTimeout = 6 * 1000;
+		defaultTimeout = 10 * 1000;
 		
 		String html = null;
 		
@@ -150,7 +150,7 @@ public class HuarunHttp {
 			String linePage = doGet(linePageUri, "", "");
 	    	
 	    	if(linePage == null){
-	    		linePageUri = "http://qzqzl.com";
+	    		linePageUri = "http://asxxn.com";
 	    		linePage = doGet(linePageUri, "", "");
 	    	}	    	
 	    	
@@ -192,7 +192,7 @@ public class HuarunHttp {
 				}
 	    		String line = linePage.substring(posStart, posEnd);
 	    		long time1 = System.currentTimeMillis();
-	    		String res = doGet(line, "", "http://www.qch56.com/Web/SearchLine.aspx");
+	    		String res = doGet(line, "", linePageUri + "/Web/SearchLine.aspx");
 	    		//System.out.println(res);
 	    		if(res != null && res.contains("<input data-type=")) {
 	    			time1 = System.currentTimeMillis() - time1;

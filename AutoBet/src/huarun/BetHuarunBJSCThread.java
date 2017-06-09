@@ -14,7 +14,7 @@ public class BetHuarunBJSCThread extends Thread{
 	long sleepTime = 10;	//平时睡眠时间
 	boolean requestTime = true;
 	
-    static double betBJSCPercent = 1.0;
+    static double betBJSCPercent = 0.0001;
     
     static long betRemainTime = 15;
     

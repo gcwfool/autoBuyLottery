@@ -25,6 +25,8 @@ import lanyang.BetLanyangOppositeBJSCListener;
 import lanyang.LanyangHttp;
 import lanyang.LanyangReloginThread;
 import lanyang.StopBetLanyangBJSCListener;
+import yabo.BetYaboOppositeBJSCListener;
+import yabo.YaboHttp;
 
 enum BetType {
 	CQSSC, BJSC, XYNC, GXKLSF, GDKLSF, GD11X5, XJSSC, TJSSC, KL8
@@ -42,6 +44,7 @@ public class autoBet {
 	public boolean loginToTianCaiMemberSuccess = false;
 	public boolean loginToLanyangMemberSuccess = false;
 	public boolean loginToHuarunMemberSuccess = false;
+	public boolean loginToYaboMemberSuccess = false;
 	public boolean inBet = false;
 	public boolean inBetXYNC = false;
 	public boolean inBetGXKLSF = false;
@@ -53,6 +56,7 @@ public class autoBet {
 	
 	public boolean inBetLanyangBJSC = false;
 	public boolean inBetHuarunBJSC = false;
+	public boolean inBetYaboBJSC = false;
 
 	public boolean inBetWeiCai = false;
 	public boolean inBetTianCai = false;
@@ -198,6 +202,26 @@ public class autoBet {
 	public static Label labelHuarunSuccessBets;
 	public static Label labelHuarunFailBets;
 	//华润会员界面end
+	
+	//亚博会员界面
+	public TextField textFieldYaboMemberAddress;
+	public TextField textFieldYaboMemberAccount;
+	public TextField textFieldYaboMemberPassword;
+	public TextField textFieldCQSSCBetYaboPercent;
+	public TextField textFieldBJSCBetYaboPercent;
+
+	public Button btnBetYaboCQSSC;
+	public Button btnOppositeBetYaboCQSSC;
+	public Button btnStopBetYaboCQSSC;
+	public Button btnBetYaboBJSC;
+	public Button btnBetYaboBJSCAmount;
+	public Button btnOppositeYaboBJSC;
+	public Button btnStopBetYaboBJSC;
+
+	public static Label labelYaboTotalBets;
+	public static Label labelYaboSuccessBets;
+	public static Label labelYaboFailBets;
+	//亚博会员界面end
 	
 	
 
@@ -376,6 +400,16 @@ public class autoBet {
 		btnOppositeHuarunBJSC.setEnabled(flag);
 		btnStopBetHuarunBJSC.setEnabled(flag);
 		btnBetHuarunBJSCAmount.setEnabled(flag);
+	}
+	
+	public void enableYaboMemberBet(boolean flag) {
+		btnBetYaboCQSSC.setEnabled(false);
+		btnOppositeBetYaboCQSSC.setEnabled(false);
+		btnStopBetYaboCQSSC.setEnabled(false);
+		btnBetYaboBJSC.setEnabled(false);
+		btnOppositeYaboBJSC.setEnabled(flag);
+		btnStopBetYaboBJSC.setEnabled(flag);
+		btnBetYaboBJSCAmount.setEnabled(flag);
 	}
 
 	public void launchFrame() {
@@ -1579,6 +1613,226 @@ public class autoBet {
 		panel.add(btnBetHuarunBJSCAmount);
 
 		enableHuarunMemberBet(false);
+		
+		
+		
+		// 亚博会员界面
+		int YaboMemberX = 1550;
+		int YaboMemberY = 350;
+
+		Label labelYaboMemberLogin = new Label("亚博会员登录:");
+		labelYaboMemberLogin.setSize(100, 25);
+		labelYaboMemberLogin.setLocation(YaboMemberX, YaboMemberY);
+
+		Label labelYaboMemberAddress = new Label("网址:");
+		labelYaboMemberAddress.setSize(50, 25);
+		labelYaboMemberAddress.setLocation(YaboMemberX,
+				YaboMemberY + 30);
+
+		textFieldYaboMemberAddress = new TextField();
+		textFieldYaboMemberAddress.setSize(300, 25);
+		textFieldYaboMemberAddress.setLocation(YaboMemberX + 50,
+				YaboMemberY + 30);
+		textFieldYaboMemberAddress.setText(ConfigReader
+				.getyaboBetAddress());
+
+		Label labelYaboMemberAccount = new Label("账户:");
+		labelYaboMemberAccount.setSize(50, 25);
+		labelYaboMemberAccount.setLocation(YaboMemberX,
+				YaboMemberY + 60);
+
+		textFieldYaboMemberAccount = new TextField();
+		textFieldYaboMemberAccount.setSize(300, 25);
+		textFieldYaboMemberAccount.setLocation(YaboMemberX + 50,
+				YaboMemberY + 60);
+		textFieldYaboMemberAccount.setText(ConfigReader
+				.getyaboBetAccount());
+
+		Label labelYaboMemberPassword = new Label("密码:");
+		labelYaboMemberPassword.setSize(50, 25);
+		labelYaboMemberPassword.setLocation(YaboMemberX,
+				YaboMemberY + 90);
+
+		textFieldYaboMemberPassword = new TextField();
+		textFieldYaboMemberPassword.setSize(300, 25);
+		textFieldYaboMemberPassword.setLocation(YaboMemberX + 50,
+				YaboMemberY + 90);
+		textFieldYaboMemberPassword.setText(ConfigReader
+				.getyaboBetPassword());
+		textFieldYaboMemberPassword.setEchoChar('*');
+
+		Button btnYaboMemberLogin = new Button("登录");
+		btnYaboMemberLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (loginToYaboMemberSuccess == true || loginToProxySuccess ==false)
+					return;
+				
+				if(loginToProxySuccess ==false) {
+					outputGUIMessage("请先连接服务器!\n");
+					return;
+				}
+
+				String address = textFieldYaboMemberAddress.getText();
+				String account = textFieldYaboMemberAccount.getText();
+				String password = textFieldYaboMemberPassword.getText();
+
+				//YaboHttp = new YaboHttp();
+
+				YaboHttp.setLoginParams(address, account, password);
+
+				if (!YaboHttp.loginToYabo() && !YaboHttp.login()) {
+					outputGUIMessage("登录亚博会员失败!\n");
+					return;
+				}
+				
+				//new BetYaboBJSCThread(client).start();
+				loginToYaboMemberSuccess = true;
+				
+				if (loginToYaboMemberSuccess && loginToProxySuccess)
+					enableYaboMemberBet(true);
+
+				outputGUIMessage("登录亚博会员成功!\n");
+				
+				/*YaboReloginThread = new YaboReloginThread();
+				YaboReloginThread.start();
+
+				loginToYaboMemberSuccess = true;
+
+				ConfigWriter.updateYaboMemberAddress(address);
+				ConfigWriter.updateYaboMemberAccount(account);
+				ConfigWriter.updateYaboMemberPassword(password);
+
+				ConfigWriter.saveTofile("common.config");
+
+				if (loginToYaboMemberSuccess && loginToProxySuccess)
+					enableYaboMemberBet(true);
+
+				outputGUIMessage("登录华润会员成功!\n");*/
+
+			}
+		});
+
+		btnYaboMemberLogin.setSize(50, 25);
+		btnYaboMemberLogin.setLocation(YaboMemberX, YaboMemberY + 120);
+
+		btnBetYaboCQSSC = new Button("正投重庆时时彩");
+		/*btnBetYaboCQSSC
+				.addActionListener(new BetYaboOppositeCQSSCListener(this));*/
+
+		btnBetYaboCQSSC.setSize(90, 25);
+		btnBetYaboCQSSC.setLocation(YaboMemberX, YaboMemberY + 150);
+
+		Label labelYaboPercent = new Label("投注比例:");
+		labelYaboPercent.setSize(60, 25);
+		labelYaboPercent.setLocation(YaboMemberX + 100,
+				YaboMemberY + 150);
+
+		textFieldCQSSCBetYaboPercent = new TextField();
+		textFieldCQSSCBetYaboPercent.setSize(60, 25);
+		textFieldCQSSCBetYaboPercent.setLocation(YaboMemberX + 160,
+				YaboMemberY + 150);
+
+		btnOppositeBetYaboCQSSC = new Button("反投重庆时时彩");
+/*		btnOppositeBetYaboCQSSC
+				.addActionListener(new BetYaboOppositeCQSSCListener(this));*/
+
+		btnOppositeBetYaboCQSSC.setSize(90, 25);
+		btnOppositeBetYaboCQSSC.setLocation(YaboMemberX,
+				YaboMemberY + 180);
+
+		btnStopBetYaboCQSSC = new Button("停止投注");
+/*		btnStopBetYaboCQSSC
+				.addActionListener(new StopBetYaboCQSSCListener(this));*/
+
+		btnStopBetYaboCQSSC.setSize(90, 25);
+		btnStopBetYaboCQSSC.setLocation(YaboMemberX + 100,
+				YaboMemberY + 180);
+
+		btnBetYaboBJSC = new Button("正投北京赛车");
+		btnBetYaboBJSC.addActionListener(new BetBJSCListener(this, client));
+
+		btnBetYaboBJSC.setSize(90, 25);
+		btnBetYaboBJSC.setLocation(YaboMemberX, YaboMemberY + 210);
+
+		Label BJSClabelYaboPercent = new Label("投注比例:");
+		BJSClabelYaboPercent.setSize(60, 25);
+		BJSClabelYaboPercent.setLocation(YaboMemberX + 100,
+				YaboMemberY + 210);
+
+		textFieldBJSCBetYaboPercent = new TextField();
+		textFieldBJSCBetYaboPercent.setSize(60, 25);
+		textFieldBJSCBetYaboPercent.setLocation(YaboMemberX + 160,
+				YaboMemberY + 210);
+
+		btnOppositeYaboBJSC = new Button("反投北京赛车");
+		btnOppositeYaboBJSC
+				.addActionListener(new BetYaboOppositeBJSCListener(this, client));
+
+		btnOppositeYaboBJSC.setSize(90, 25);
+		btnOppositeYaboBJSC
+				.setLocation(YaboMemberX, YaboMemberY + 240);
+		
+		
+		
+		btnBetYaboBJSCAmount = new Button("投注金额");
+		/*btnBetYaboBJSCAmount.addActionListener(new BetYaboBJSCAmountListener());
+*/
+		btnBetYaboBJSCAmount.setSize(90, 25);
+		btnBetYaboBJSCAmount.setLocation(YaboMemberX + 100,
+				YaboMemberY + 240);
+		
+		
+
+		btnStopBetYaboBJSC = new Button("停止投注");
+		/*btnStopBetYaboBJSC.addActionListener(new StopBetYaboBJSCListener(
+				this));*/
+
+		btnStopBetYaboBJSC.setSize(90, 25);
+		btnStopBetYaboBJSC.setLocation(YaboMemberX + 200,
+				YaboMemberY + 240);
+
+		labelYaboTotalBets = new Label();
+		labelYaboTotalBets.setSize(300, 25);
+		labelYaboTotalBets.setLocation(YaboMemberX, 400);
+		labelYaboTotalBets.setText("下单次数:0");
+
+		labelYaboSuccessBets = new Label();
+		labelYaboSuccessBets.setSize(300, 25);
+		labelYaboSuccessBets.setLocation(YaboMemberX, 430);
+		labelYaboSuccessBets.setText("成功次数:0");
+
+		labelYaboFailBets = new Label();
+		labelYaboFailBets.setSize(300, 25);
+		labelYaboFailBets.setLocation(YaboMemberX, 460);
+		labelYaboFailBets.setText("失败次数:0");
+
+		/*
+		 * panel.add(labelYaboTotalBets); panel.add(labelYaboSuccessBets);
+		 * panel.add(labelYaboFailBets);
+		 */
+
+		panel.add(labelYaboMemberLogin);
+		panel.add(labelYaboMemberAddress);
+		panel.add(textFieldYaboMemberAddress);
+		panel.add(labelYaboMemberAccount);
+		panel.add(textFieldYaboMemberAccount);
+		panel.add(labelYaboMemberPassword);
+		panel.add(textFieldYaboMemberPassword);
+		panel.add(btnYaboMemberLogin);
+
+		panel.add(btnBetYaboCQSSC);
+		panel.add(labelYaboPercent);
+		panel.add(btnOppositeBetYaboCQSSC);
+		panel.add(btnBetYaboBJSC);
+		panel.add(btnOppositeYaboBJSC);
+		panel.add(BJSClabelYaboPercent);
+		panel.add(textFieldCQSSCBetYaboPercent);
+		panel.add(textFieldBJSCBetYaboPercent);
+		panel.add(btnStopBetYaboCQSSC);
+		panel.add(btnStopBetYaboBJSC);
+		panel.add(btnBetYaboBJSCAmount);
+
+		enableYaboMemberBet(false);
 		
 		
 		

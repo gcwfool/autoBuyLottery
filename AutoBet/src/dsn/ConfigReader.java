@@ -38,6 +38,10 @@ public class ConfigReader {
 	static String huarunbetAccount = "";
 	static String huarunbetPassword = "";
 	
+	static String yabobetAddress = "";
+	static String yabobetAccount = "";
+	static String yabobetPassword = "";
+	
 	
 	static String proxyAddress1 = "";
 	static String proxyAddress2 = "";
@@ -174,6 +178,19 @@ public class ConfigReader {
 	        huarunbetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
 	        System.out.println("huarunbetpassword:" + huarunbetPassword);	
 	        
+	        //read yabo bet login msg
+	        list = document.getElementsByTagName("YABOBETLOGIN");        
+	        element = (Element)list.item(0);  
+            
+	        yabobetAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("huarunbetaddress:" + yabobetAddress);  
+	              
+	        yabobetAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
+	        System.out.println("huarunbetaccount:" + yabobetAccount);  
+	              
+	        yabobetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("huarunbetpassword:" + yabobetPassword);	
+	        
 	        
 	        //read tesseract-ocr path
 	        list = document.getElementsByTagName("PATH");   
@@ -272,6 +289,18 @@ public class ConfigReader {
 	
 	public static String gethuarunBetPassword() {
 		return huarunbetPassword;
+	}
+	
+	public static String getyaboBetAddress() {
+		return yabobetAddress;
+	}
+	
+	public static String getyaboBetAccount() {
+		return yabobetAccount;
+	}
+	
+	public static String getyaboBetPassword() {
+		return yabobetPassword;
 	}
 	
 	
