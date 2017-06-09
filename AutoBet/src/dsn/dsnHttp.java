@@ -1083,7 +1083,7 @@ public class dsnHttp {
             	
             	long passTime = currentTime - lastChangeLineTime;
             	
-            	if(avgRequestTime >= 500 && passTime >= 90*1000){
+            	if(avgRequestTime >= 500 && passTime >= 90*1000 && isBJSCidle()){
             		setisNeedChangeLine(true);
             		lastChangeLineTime = currentTime;
             	}
@@ -3718,7 +3718,7 @@ public static void addToBetAmountWindow(String jsonData, BetType betType){
     
     public static boolean isBJSCidle(){
     	boolean isIdle = false;
-    	if(BJSCremainTime < 0 || BJSCremainTime > 30*1000 ){
+    	if(BJSCremainTime < 0 || BJSCremainTime > 40*1000 ){
     		isIdle = true;
     	}
     	

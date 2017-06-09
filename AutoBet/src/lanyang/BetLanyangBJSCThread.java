@@ -5,6 +5,7 @@ import dsn.TYPEINDEX;
 import java.util.Vector;
 
 import dsn.Client;
+import dsn.autoBet;
 import dsn.dsnHttp;
 class BetLanyangBJSCThread extends Thread{
     
@@ -16,7 +17,7 @@ class BetLanyangBJSCThread extends Thread{
 	long sleepTime = 10;	//平时水淼时间
 	boolean requestTime = true;
 	
-    static double betBJSCPercent = 1.0;
+    static double betBJSCPercent = 0.001;
     
     static long betRemainTime = 20;
     
@@ -182,7 +183,16 @@ class BetLanyangBJSCThread extends Thread{
 						
 						
 						//策略
-						autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+					//	autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+						
+						if(client.betBJSCopen()) {
+							autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
+						} else {
+							autoBet.outputGUIMessage("迪斯尼北京赛车" + dsnHttp.getBJSCdrawNumber() + "期  暂停投注！ \n");
+						}
+						
+						
+						
 						
 						//正投
 						//autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent, false, betBJSCData[4]);
