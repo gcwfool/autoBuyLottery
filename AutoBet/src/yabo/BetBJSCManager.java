@@ -318,7 +318,6 @@ public class BetBJSCManager {
 	        			posStart = response.indexOf("Update_JV(") + 11;
 	        			YaboHttp.jeuValidate = response.substring(posStart, response.indexOf("\"", posStart));
 	        		}
-	        		System.out.println(response);
         		} catch(Exception e) {
         		}
         	}
@@ -1342,7 +1341,7 @@ public class BetBJSCManager {
 	        		if(odds < 2.0 && amount >0){
 	        			amount = (int)(amount*percent);  
 	        			//amount = 10;
-	        			if(amount < 2)
+	        			if(amount < 5)
 	        				continue;
 	        			totalAmount += amount;
 	        			
