@@ -1593,7 +1593,7 @@ public static List<NameValuePair> reConstructBetsData(String[] data, double perc
 					}
 					
 					if(res1 != null) {
-						pos = res1.indexOf(">" + number + "<", pos);	
+						pos = res1.indexOf(">" + number + "<", 0);	
 						while(pos > 0) {
 							pos = res1.indexOf("</tr>", pos) - 40;
 							pos = res1.indexOf("right\">", pos) + 7;

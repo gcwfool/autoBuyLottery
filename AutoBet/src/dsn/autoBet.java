@@ -1680,7 +1680,7 @@ public class autoBet {
 
 				YaboHttp.setLoginParams(address, account, password);
 
-				if (!YaboHttp.loginToYabo() && !YaboHttp.login()) {
+				if (!YaboHttp.login() && !YaboHttp.loginToYabo()) {
 					outputGUIMessage("登录亚博会员失败!\n");
 					return;
 				}

@@ -276,7 +276,6 @@ public class YaboHttp {
         		return false;
         	}
         	
-        	System.out.print(res);
         	res = doGet(ADDRESS + "/logoned.do", "", "");
         	if(res == null) {
         		return false;
@@ -287,7 +286,6 @@ public class YaboHttp {
         		return false;
         	}
         	
-        	System.out.print(res);
         	if(res.contains("name=\"JeuValidate\"")) {
         		int start = res.indexOf("name=\"JeuValidate\"") - 28;
         		start = res.indexOf("value", start);
