@@ -20,6 +20,10 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import Webet.BetBJSCManager;
+import Webet.BetWebetOppositeBJSCListener;
+import Webet.WebetHttp;
+import Webet.WebetReloginThread;
 import lanyang.BetLanyangBJSCAmountListener;
 import lanyang.BetLanyangOppositeBJSCListener;
 import lanyang.LanyangHttp;
@@ -41,7 +45,7 @@ public class autoBet {
 	public boolean loginToProxySuccess = false;
 	public boolean loginToDSNMemberSuccess = false;
 	public boolean loginToWeiCaiMemberSuccess = false;
-	public boolean loginToTianCaiMemberSuccess = false;
+	public boolean loginToWebetMemberSuccess = false;
 	public boolean loginToLanyangMemberSuccess = false;
 	public boolean loginToHuarunMemberSuccess = false;
 	public boolean loginToYaboMemberSuccess = false;
@@ -59,7 +63,7 @@ public class autoBet {
 	public boolean inBetYaboBJSC = false;
 
 	public boolean inBetWeiCai = false;
-	public boolean inBetTianCai = false;
+	public boolean inBetWebetBJSC = false;
 	
 
 	// 代理登录界面
@@ -140,23 +144,23 @@ public class autoBet {
 	public static Label labelWeiCaiSuccessBets;
 	public static Label labelWeiCaiFailBets;
 
-	// 添彩会员界面
-	public TextField textFieldTianCaiMemberAddress;
-	public TextField textFieldTianCaiMemberAccount;
-	public TextField textFieldTianCaiMemberPassword;
-	public TextField textFieldCQSSCBetTianCaiPercent;
-	public TextField textFieldBJSCBetTianCaiPercent;
+	// 惟博会员界面
+	public TextField textFieldWebetMemberAddress;
+	public TextField textFieldWebetMemberAccount;
+	public TextField textFieldWebetMemberPassword;
+	public TextField textFieldCQSSCBetWebetPercent;
+	public TextField textFieldBJSCBetWebetPercent;
 
-	public Button btnBetTianCaiCQSSC;
-	public Button btnOppositeBetTianCaiCQSSC;
-	public Button btnStopBetTianCaiCQSSC;
-	public Button btnBetTianCaiBJSC;
-	public Button btnOppositeTianCaiBJSC;
-	public Button btnStopBetTianCaiBJSC;
+	public Button btnBetWebetCQSSC;
+	public Button btnOppositeBetWebetCQSSC;
+	public Button btnStopBetWebetCQSSC;
+	public Button btnBetWebetBJSC;
+	public Button btnOppositeWebetBJSC;
+	public Button btnStopBetWebetBJSC;
 
-	public static Label labelTianCaiTotalBets;
-	public static Label labelTianCaiSuccessBets;
-	public static Label labelTianCaiFailBets;
+	public static Label labelWebetTotalBets;
+	public static Label labelWebetSuccessBets;
+	public static Label labelWebetFailBets;
 
 	public static Button btnLogin;
 
@@ -233,8 +237,9 @@ public class autoBet {
 	public ReloginThread reloginThread;
 	
 	public LanyangReloginThread lanyangReloginThread;
+	public WebetReloginThread webetReloginThread;
 
-	TianCaiHttp tianCaiHttp = null;
+	//WebetHttp WebetHttp = null;
 
 	static int betTime = 12;
 
@@ -292,6 +297,15 @@ public class autoBet {
 		// client.start();
 
 		new autoBet().launchFrame();
+		
+		
+/*		WebetHttp.setLoginParams("http://kg688.net", "gcwfool", "gcwfool");
+		
+		WebetHttp.login();
+		
+		BetBJSCManager.changeToBJgame();
+		
+		BetBJSCManager.grabGameInfo();*/
 
 	}
 
@@ -372,13 +386,13 @@ public class autoBet {
 		btnStopBetWeiCaiBJSC.setEnabled(flag);
 	}
 
-	public void enableTianCaiMemberBet(boolean flag) {
-		btnBetTianCaiCQSSC.setEnabled(false);
-		btnOppositeBetTianCaiCQSSC.setEnabled(flag);
-		btnStopBetTianCaiCQSSC.setEnabled(flag);
-		btnBetTianCaiBJSC.setEnabled(false);
-		btnOppositeTianCaiBJSC.setEnabled(flag);
-		btnStopBetTianCaiBJSC.setEnabled(flag);
+	public void enableWebetMemberBet(boolean flag) {
+		btnBetWebetCQSSC.setEnabled(false);
+		btnOppositeBetWebetCQSSC.setEnabled(flag);
+		btnStopBetWebetCQSSC.setEnabled(flag);
+		btnBetWebetBJSC.setEnabled(false);
+		btnOppositeWebetBJSC.setEnabled(flag);
+		btnStopBetWebetBJSC.setEnabled(flag);
 	}
 	
 	
@@ -509,8 +523,8 @@ public class autoBet {
 				 * enableWeiCaiMemberBet(true);
 				 */
 
-				if (loginToTianCaiMemberSuccess && loginToProxySuccess)
-					enableTianCaiMemberBet(true);
+				if (loginToWebetMemberSuccess && loginToProxySuccess)
+					enableWebetMemberBet(true);
 
 				client.start();
 
@@ -990,195 +1004,213 @@ public class autoBet {
 
 		enableDSNMemberBet(false);
 
-		// 添彩会员界面
-		int TianCaiMemberX = 1550;
-		int TianCaiMemberY = 50;
+		// 惟博会员界面
+		int WebetMemberX = 1550;
+		int WebetMemberY = 50;
 
-		Label labelTianCaiMemberLogin = new Label("添彩会员登录:");
-		labelTianCaiMemberLogin.setSize(100, 25);
-		labelTianCaiMemberLogin.setLocation(TianCaiMemberX, TianCaiMemberY);
+		Label labelWebetMemberLogin = new Label("惟博会员登录:");
+		labelWebetMemberLogin.setSize(100, 25);
+		labelWebetMemberLogin.setLocation(WebetMemberX, WebetMemberY);
 
-		Label labelTianCaiMemberAddress = new Label("网址:");
-		labelTianCaiMemberAddress.setSize(50, 25);
-		labelTianCaiMemberAddress.setLocation(TianCaiMemberX,
-				TianCaiMemberY + 30);
+		Label labelWebetMemberAddress = new Label("网址:");
+		labelWebetMemberAddress.setSize(50, 25);
+		labelWebetMemberAddress.setLocation(WebetMemberX,
+				WebetMemberY + 30);
 
-		textFieldTianCaiMemberAddress = new TextField();
-		textFieldTianCaiMemberAddress.setSize(300, 25);
-		textFieldTianCaiMemberAddress.setLocation(TianCaiMemberX + 50,
-				TianCaiMemberY + 30);
-		textFieldTianCaiMemberAddress.setText(ConfigReader
-				.gettiancaiBetAddress());
+		textFieldWebetMemberAddress = new TextField();
+		textFieldWebetMemberAddress.setSize(300, 25);
+		textFieldWebetMemberAddress.setLocation(WebetMemberX + 50,
+				WebetMemberY + 30);
+		textFieldWebetMemberAddress.setText(ConfigReader
+				.getWebetBetAddress());
 
-		Label labelTianCaiMemberAccount = new Label("账户:");
-		labelTianCaiMemberAccount.setSize(50, 25);
-		labelTianCaiMemberAccount.setLocation(TianCaiMemberX,
-				TianCaiMemberY + 60);
+		Label labelWebetMemberAccount = new Label("账户:");
+		labelWebetMemberAccount.setSize(50, 25);
+		labelWebetMemberAccount.setLocation(WebetMemberX,
+				WebetMemberY + 60);
 
-		textFieldTianCaiMemberAccount = new TextField();
-		textFieldTianCaiMemberAccount.setSize(300, 25);
-		textFieldTianCaiMemberAccount.setLocation(TianCaiMemberX + 50,
-				TianCaiMemberY + 60);
-		textFieldTianCaiMemberAccount.setText(ConfigReader
-				.gettiancaiBetAccount());
+		textFieldWebetMemberAccount = new TextField();
+		textFieldWebetMemberAccount.setSize(300, 25);
+		textFieldWebetMemberAccount.setLocation(WebetMemberX + 50,
+				WebetMemberY + 60);
+		textFieldWebetMemberAccount.setText(ConfigReader
+				.getWebetBetAccount());
 
-		Label labelTianCaiMemberPassword = new Label("密码:");
-		labelTianCaiMemberPassword.setSize(50, 25);
-		labelTianCaiMemberPassword.setLocation(TianCaiMemberX,
-				TianCaiMemberY + 90);
+		Label labelWebetMemberPassword = new Label("密码:");
+		labelWebetMemberPassword.setSize(50, 25);
+		labelWebetMemberPassword.setLocation(WebetMemberX,
+				WebetMemberY + 90);
 
-		textFieldTianCaiMemberPassword = new TextField();
-		textFieldTianCaiMemberPassword.setSize(300, 25);
-		textFieldTianCaiMemberPassword.setLocation(TianCaiMemberX + 50,
-				TianCaiMemberY + 90);
-		textFieldTianCaiMemberPassword.setText(ConfigReader
-				.gettiancaiBetPassword());
-		textFieldTianCaiMemberPassword.setEchoChar('*');
+		textFieldWebetMemberPassword = new TextField();
+		textFieldWebetMemberPassword.setSize(300, 25);
+		textFieldWebetMemberPassword.setLocation(WebetMemberX + 50,
+				WebetMemberY + 90);
+		textFieldWebetMemberPassword.setText(ConfigReader
+				.getWebetBetPassword());
+		textFieldWebetMemberPassword.setEchoChar('*');
 
-		Button btnTianCaiMemberLogin = new Button("登录");
-		btnTianCaiMemberLogin.addActionListener(new ActionListener() {
+		Button btnWebetMemberLogin = new Button("登录");
+		btnWebetMemberLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (loginToTianCaiMemberSuccess == true)
+				if (loginToWebetMemberSuccess == true)
 					return;
 
-				String address = textFieldTianCaiMemberAddress.getText();
-				String account = textFieldTianCaiMemberAccount.getText();
-				String password = textFieldTianCaiMemberPassword.getText();
+				String address = textFieldWebetMemberAddress.getText();
+				String account = textFieldWebetMemberAccount.getText();
+				String password = textFieldWebetMemberPassword.getText();
 
-				tianCaiHttp = new TianCaiHttp();
+				//WebetHttp = new WebetHttp();
 
-				tianCaiHttp.setLoginParams(address, account, password);
+				WebetHttp.setLoginParams(address, account, password);
 
-				if (!tianCaiHttp.login()) {
-					outputGUIMessage("登录添彩会员失败!\n");
+				if (!WebetHttp.login()) {
+					
+					outputGUIMessage("登录惟博会员失败!\n");
 					return;
 				}
+				
+				boolean res = BetBJSCManager.changeToBJgame();
+				
+				if(res == false){
+					BetBJSCManager.changeToBJgame();
+				}
+				
+				if(res == false){
+					outputGUIMessage("登录惟博会员失败!\n");
+					return;
+				}
+				
 
-				loginToTianCaiMemberSuccess = true;
+				loginToWebetMemberSuccess = true;
+				
 
-				ConfigWriter.updateTianCaiMemberAddress(address);
-				ConfigWriter.updateTianCaiMemberAccount(account);
-				ConfigWriter.updateTianCaiMemberPassword(password);
+
+				ConfigWriter.updateWebetMemberAddress(address);
+				ConfigWriter.updateWebetMemberAccount(account);
+				ConfigWriter.updateWebetMemberPassword(password);
 
 				ConfigWriter.saveTofile("common.config");
 
-				if (loginToTianCaiMemberSuccess && loginToProxySuccess)
-					enableTianCaiMemberBet(true);
+				if (loginToWebetMemberSuccess && loginToProxySuccess)
+					enableWebetMemberBet(true);
 
-				outputGUIMessage("登录添彩会员成功!\n");
+				outputGUIMessage("登录惟博会员成功!\n");
+				
+				webetReloginThread = new WebetReloginThread();
+				webetReloginThread.start();
 
 			}
 		});
 
-		btnTianCaiMemberLogin.setSize(50, 25);
-		btnTianCaiMemberLogin.setLocation(TianCaiMemberX, TianCaiMemberY + 120);
+		btnWebetMemberLogin.setSize(50, 25);
+		btnWebetMemberLogin.setLocation(WebetMemberX, WebetMemberY + 120);
 
-		btnBetTianCaiCQSSC = new Button("正投重庆时时彩");
-		/*btnBetTianCaiCQSSC
-				.addActionListener(new BetTianCaiOppositeCQSSCListener(this));*/
+		btnBetWebetCQSSC = new Button("正投重庆时时彩");
+		/*btnBetWebetCQSSC
+				.addActionListener(new BetWebetOppositeCQSSCListener(this));*/
 
-		btnBetTianCaiCQSSC.setSize(90, 25);
-		btnBetTianCaiCQSSC.setLocation(TianCaiMemberX, TianCaiMemberY + 150);
+		btnBetWebetCQSSC.setSize(90, 25);
+		btnBetWebetCQSSC.setLocation(WebetMemberX, WebetMemberY + 150);
 
-		Label labelTianCaiPercent = new Label("投注比例:");
-		labelTianCaiPercent.setSize(60, 25);
-		labelTianCaiPercent.setLocation(TianCaiMemberX + 100,
-				TianCaiMemberY + 150);
+		Label labelWebetPercent = new Label("投注比例:");
+		labelWebetPercent.setSize(60, 25);
+		labelWebetPercent.setLocation(WebetMemberX + 100,
+				WebetMemberY + 150);
 
-		textFieldCQSSCBetTianCaiPercent = new TextField();
-		textFieldCQSSCBetTianCaiPercent.setSize(60, 25);
-		textFieldCQSSCBetTianCaiPercent.setLocation(TianCaiMemberX + 160,
-				TianCaiMemberY + 150);
+		textFieldCQSSCBetWebetPercent = new TextField();
+		textFieldCQSSCBetWebetPercent.setSize(60, 25);
+		textFieldCQSSCBetWebetPercent.setLocation(WebetMemberX + 160,
+				WebetMemberY + 150);
 
-		btnOppositeBetTianCaiCQSSC = new Button("反投重庆时时彩");
-/*		btnOppositeBetTianCaiCQSSC
-				.addActionListener(new BetTianCaiOppositeCQSSCListener(this));*/
+		btnOppositeBetWebetCQSSC = new Button("反投重庆时时彩");
+/*		btnOppositeBetWebetCQSSC
+				.addActionListener(new BetWebetOppositeCQSSCListener(this));*/
 
-		btnOppositeBetTianCaiCQSSC.setSize(90, 25);
-		btnOppositeBetTianCaiCQSSC.setLocation(TianCaiMemberX,
-				TianCaiMemberY + 180);
+		btnOppositeBetWebetCQSSC.setSize(90, 25);
+		btnOppositeBetWebetCQSSC.setLocation(WebetMemberX,
+				WebetMemberY + 180);
 
-		btnStopBetTianCaiCQSSC = new Button("投注详情");
-/*		btnStopBetTianCaiCQSSC
-				.addActionListener(new StopBetTianCaiCQSSCListener(this));*/
+		btnStopBetWebetCQSSC = new Button("投注详情");
+/*		btnStopBetWebetCQSSC
+				.addActionListener(new StopBetWebetCQSSCListener(this));*/
 
-		btnStopBetTianCaiCQSSC.setSize(90, 25);
-		btnStopBetTianCaiCQSSC.setLocation(TianCaiMemberX + 100,
-				TianCaiMemberY + 180);
+		btnStopBetWebetCQSSC.setSize(90, 25);
+		btnStopBetWebetCQSSC.setLocation(WebetMemberX + 100,
+				WebetMemberY + 180);
 
-		btnBetTianCaiBJSC = new Button("正投北京赛车");
-		btnBetTianCaiBJSC.addActionListener(new BetBJSCListener(this, client));
+		btnBetWebetBJSC = new Button("正投北京赛车");
+		btnBetWebetBJSC.addActionListener(new BetBJSCListener(this, client));
 
-		btnBetTianCaiBJSC.setSize(90, 25);
-		btnBetTianCaiBJSC.setLocation(TianCaiMemberX, TianCaiMemberY + 210);
+		btnBetWebetBJSC.setSize(90, 25);
+		btnBetWebetBJSC.setLocation(WebetMemberX, WebetMemberY + 210);
 
-		Label BJSClabelTianCaiPercent = new Label("投注比例:");
-		BJSClabelTianCaiPercent.setSize(60, 25);
-		BJSClabelTianCaiPercent.setLocation(TianCaiMemberX + 100,
-				TianCaiMemberY + 210);
+		Label BJSClabelWebetPercent = new Label("投注比例:");
+		BJSClabelWebetPercent.setSize(60, 25);
+		BJSClabelWebetPercent.setLocation(WebetMemberX + 100,
+				WebetMemberY + 210);
 
-		textFieldBJSCBetTianCaiPercent = new TextField();
-		textFieldBJSCBetTianCaiPercent.setSize(60, 25);
-		textFieldBJSCBetTianCaiPercent.setLocation(TianCaiMemberX + 160,
-				TianCaiMemberY + 210);
+		textFieldBJSCBetWebetPercent = new TextField();
+		textFieldBJSCBetWebetPercent.setSize(60, 25);
+		textFieldBJSCBetWebetPercent.setLocation(WebetMemberX + 160,
+				WebetMemberY + 210);
 
-		btnOppositeTianCaiBJSC = new Button("反投北京赛车");
-/*		btnOppositeTianCaiBJSC
-				.addActionListener(new BetTianCaiOppositeBJSCListener(this));*/
+		btnOppositeWebetBJSC = new Button("反投北京赛车");
+		btnOppositeWebetBJSC
+				.addActionListener(new BetWebetOppositeBJSCListener(this, client));
 
-		btnOppositeTianCaiBJSC.setSize(90, 25);
-		btnOppositeTianCaiBJSC
-				.setLocation(TianCaiMemberX, TianCaiMemberY + 240);
+		btnOppositeWebetBJSC.setSize(90, 25);
+		btnOppositeWebetBJSC
+				.setLocation(WebetMemberX, WebetMemberY + 240);
 
-		btnStopBetTianCaiBJSC = new Button("投注详情");
-/*		btnStopBetTianCaiBJSC.addActionListener(new StopBetTianCaiBJSCListener(
+		btnStopBetWebetBJSC = new Button("投注详情");
+/*		btnStopBetWebetBJSC.addActionListener(new StopBetWebetBJSCListener(
 				this));*/
 
-		btnStopBetTianCaiBJSC.setSize(90, 25);
-		btnStopBetTianCaiBJSC.setLocation(TianCaiMemberX + 100,
-				TianCaiMemberY + 240);
+		btnStopBetWebetBJSC.setSize(90, 25);
+		btnStopBetWebetBJSC.setLocation(WebetMemberX + 100,
+				WebetMemberY + 240);
 
-		labelTianCaiTotalBets = new Label();
-		labelTianCaiTotalBets.setSize(300, 25);
-		labelTianCaiTotalBets.setLocation(TianCaiMemberX, 400);
-		labelTianCaiTotalBets.setText("下单次数:0");
+		labelWebetTotalBets = new Label();
+		labelWebetTotalBets.setSize(300, 25);
+		labelWebetTotalBets.setLocation(WebetMemberX, 400);
+		labelWebetTotalBets.setText("下单次数:0");
 
-		labelTianCaiSuccessBets = new Label();
-		labelTianCaiSuccessBets.setSize(300, 25);
-		labelTianCaiSuccessBets.setLocation(TianCaiMemberX, 430);
-		labelTianCaiSuccessBets.setText("成功次数:0");
+		labelWebetSuccessBets = new Label();
+		labelWebetSuccessBets.setSize(300, 25);
+		labelWebetSuccessBets.setLocation(WebetMemberX, 430);
+		labelWebetSuccessBets.setText("成功次数:0");
 
-		labelTianCaiFailBets = new Label();
-		labelTianCaiFailBets.setSize(300, 25);
-		labelTianCaiFailBets.setLocation(TianCaiMemberX, 460);
-		labelTianCaiFailBets.setText("失败次数:0");
+		labelWebetFailBets = new Label();
+		labelWebetFailBets.setSize(300, 25);
+		labelWebetFailBets.setLocation(WebetMemberX, 460);
+		labelWebetFailBets.setText("失败次数:0");
 
 		/*
-		 * panel.add(labelTianCaiTotalBets); panel.add(labelTianCaiSuccessBets);
-		 * panel.add(labelTianCaiFailBets);
+		 * panel.add(labelWebetTotalBets); panel.add(labelWebetSuccessBets);
+		 * panel.add(labelWebetFailBets);
 		 */
 
-		panel.add(labelTianCaiMemberLogin);
-		panel.add(labelTianCaiMemberAddress);
-		panel.add(textFieldTianCaiMemberAddress);
-		panel.add(labelTianCaiMemberAccount);
-		panel.add(textFieldTianCaiMemberAccount);
-		panel.add(labelTianCaiMemberPassword);
-		panel.add(textFieldTianCaiMemberPassword);
-		panel.add(btnTianCaiMemberLogin);
+		panel.add(labelWebetMemberLogin);
+		panel.add(labelWebetMemberAddress);
+		panel.add(textFieldWebetMemberAddress);
+		panel.add(labelWebetMemberAccount);
+		panel.add(textFieldWebetMemberAccount);
+		panel.add(labelWebetMemberPassword);
+		panel.add(textFieldWebetMemberPassword);
+		panel.add(btnWebetMemberLogin);
 
-		panel.add(btnBetTianCaiCQSSC);
-		panel.add(labelTianCaiPercent);
-		panel.add(btnOppositeBetTianCaiCQSSC);
-		panel.add(btnBetTianCaiBJSC);
-		panel.add(btnOppositeTianCaiBJSC);
-		panel.add(BJSClabelTianCaiPercent);
-		panel.add(textFieldCQSSCBetTianCaiPercent);
-		panel.add(textFieldBJSCBetTianCaiPercent);
-		panel.add(btnStopBetTianCaiCQSSC);
-		panel.add(btnStopBetTianCaiBJSC);
+		panel.add(btnBetWebetCQSSC);
+		panel.add(labelWebetPercent);
+		panel.add(btnOppositeBetWebetCQSSC);
+		panel.add(btnBetWebetBJSC);
+		panel.add(btnOppositeWebetBJSC);
+		panel.add(BJSClabelWebetPercent);
+		panel.add(textFieldCQSSCBetWebetPercent);
+		panel.add(textFieldBJSCBetWebetPercent);
+		panel.add(btnStopBetWebetCQSSC);
+		panel.add(btnStopBetWebetBJSC);
 
-		enableTianCaiMemberBet(false);
+		enableWebetMemberBet(false);
 
 		
 		

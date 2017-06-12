@@ -12,7 +12,7 @@ public class BetTianCaiOppositeBJSCListener implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		if(ab.loginToTianCaiMemberSuccess == false){			
+/*		if(ab.loginToTianCaiMemberSuccess == false){			
 			return;
 		}
 		
@@ -47,7 +47,7 @@ public class BetTianCaiOppositeBJSCListener implements ActionListener {
 								
 		BetTianCaiThread.start();
 		
-		ab.inBetTianCai = true;
+		ab.inBetTianCai = true;*/
 	}
 
 }

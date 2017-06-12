@@ -381,8 +381,7 @@ public class TianCaiHttp {
 						
 						previousBJSCBetNumber = previousBJSCdrawNumber;
 						failTimes += dNum;
-						autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
-						autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+
 						System.out.println("漏投" + dNum + "次, 期数：" + BJSCdrawNumber + "上次下单期数：" + previousBJSCBetNumber);
 				    }
 				}			
@@ -657,13 +656,13 @@ public class TianCaiHttp {
         	if(!previousCQSSCBetNumber.equals(CQSSCdrawNumber)) {//避免重复计数
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
+					
 				} else {
 					failTimes++;
-					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+					
 				}
 				
-				autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+				
         	}
 			
 			previousCQSSCBetNumber = CQSSCdrawNumber;
@@ -707,13 +706,13 @@ public class TianCaiHttp {
         	if(!previousBJSCBetNumber.equals(BJSCdrawNumber)) {//避免重复计数
 	        	if(result == true) {
 					successTimes++;
-					autoBet.labelTianCaiSuccessBets.setText("成功次数:" + successTimes);
+					
 				} else {
 					failTimes++;
-					autoBet.labelTianCaiFailBets.setText("失败次数:" + failTimes);
+					
 				}
 				
-				autoBet.labelTianCaiTotalBets.setText("下单次数:" + (successTimes + failTimes));
+				
         	}
 				
 			previousBJSCBetNumber = BJSCdrawNumber;

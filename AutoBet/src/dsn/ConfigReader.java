@@ -42,6 +42,10 @@ public class ConfigReader {
 	static String yabobetAccount = "";
 	static String yabobetPassword = "";
 	
+	static String webetAddress = "";
+	static String webetAccount = "";
+	static String webetPassword = "";
+	
 	
 	static String proxyAddress1 = "";
 	static String proxyAddress2 = "";
@@ -192,6 +196,22 @@ public class ConfigReader {
 	        System.out.println("huarunbetpassword:" + yabobetPassword);	
 	        
 	        
+	        //read webet bet login msg
+	        list = document.getElementsByTagName("WEBETLOGIN");        
+	        element = (Element)list.item(0);  
+            
+	        webetAddress = element.getElementsByTagName("ADDRESS").item(0).getFirstChild().getNodeValue();               
+	        System.out.println("webet address:" + webetAddress);  
+	              
+	        webetAccount = element.getElementsByTagName("ACCOUNT").item(0).getFirstChild().getNodeValue();    
+	        System.out.println("webet account:" + webetAccount);  
+	              
+	        webetPassword = element.getElementsByTagName("PASSWORD").item(0).getFirstChild().getNodeValue();  
+	        System.out.println("webet password:" + webetPassword);	
+	        
+	        
+	        
+	        
 	        //read tesseract-ocr path
 	        list = document.getElementsByTagName("PATH");   
 	        element = (Element)list.item(0);  
@@ -301,6 +321,18 @@ public class ConfigReader {
 	
 	public static String getyaboBetPassword() {
 		return yabobetPassword;
+	}
+	
+	public static String getWebetBetAddress() {
+		return webetAddress;
+	}
+	
+	public static String getWebetBetAccount() {
+		return webetAccount;
+	}
+	
+	public static String getWebetBetPassword() {
+		return webetPassword;
 	}
 	
 	

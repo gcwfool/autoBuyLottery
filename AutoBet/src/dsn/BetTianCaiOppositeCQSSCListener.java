@@ -13,7 +13,7 @@ public class BetTianCaiOppositeCQSSCListener implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		if(ab.loginToTianCaiMemberSuccess == false){			
+/*		if(ab.loginToTianCaiMemberSuccess == false){			
 			return;
 		}
 		
@@ -47,7 +47,7 @@ public class BetTianCaiOppositeCQSSCListener implements ActionListener {
 								
 		betTianCaiThread.start();
 		
-		ab.inBetTianCai = true;
+		ab.inBetTianCai = true;*/
 		
 	}	
 }
