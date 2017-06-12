@@ -120,7 +120,49 @@ public class BetBJSCManager {
     		}
     		
     		//期数
-    		BJSCdrawNumber = element.getElementsByTagName("k_qs").item(0).getFirstChild().getNodeValue();
+    		String number = element.getElementsByTagName("k_qs").item(0).getFirstChild().getNodeValue();
+    		 if(!BJSCdrawNumber.equals(number)) {//新的一期
+             	previousBJSCdrawNumber = BJSCdrawNumber;
+             	BJSCdrawNumber = number;
+             	if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//判断上一期有没有漏投
+ 					int dNum = 0;
+ 					try {
+ 					    dNum = Integer.parseInt(BJSCdrawNumber) - Integer.parseInt(previousBJSCBetNumber) -1;
+ 					} catch (NumberFormatException e) {
+ 					    e.printStackTrace();
+ 					}
+ 					
+ 					
+ 					
+ 					
+ 					BJSCjinrishibai += dNum;					
+ 			        BJSCjinriqishu += dNum;
+ 			        
+ 			        BJSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(BJSCjinriqishu));
+ 			        BJSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(BJSCjinrishibai));
+ 			        
+ 			        BJSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(BJSCzongqishu + BJSCjinriqishu));
+ 			        BJSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(BJSCzongshibai + BJSCjinrishibai));
+ 			        
+
+ 					System.out.println("漏投" + dNum + "次, 期数：" + BJSCdrawNumber + "上次下单期数：" + previousBJSCBetNumber);
+ 					
+ 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
+ 					int missDrawNumber = Integer.parseInt(previousBJSCBetNumber) + 1;
+ 					for(int i = 0; i < dNum; i++){
+ 						String missDrawNmberstr = Integer.toString(missDrawNumber + i);						
+ 		    			BJSCdetalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
+ 					}
+ 					
+ 					
+ 					previousBJSCBetNumber = previousBJSCdrawNumber;
+ 					
+ 					
+ 					
+ 			    }
+             }
+    		 
+    		BJSCdrawNumber = number;
     		System.out.println(BJSCdrawNumber);
 	       
     		//赔率
@@ -265,17 +307,19 @@ public class BetBJSCManager {
         	//boolean failed = isBetFailed(response);
         	boolean betRes = isBetSuccess(response);
         	if(betRes) {
-        		int posStart = response.indexOf("location") + 10;
-        		String uri = response.substring(posStart, response.indexOf("'", posStart));
-        		response = YaboHttp.doGet(YaboHttp.ADDRESS + uri, "", "");
-        		if(!response.contains("Update_JV(")) {
-        			response = YaboHttp.doGet(YaboHttp.ADDRESS + uri, "", "");
+        		try {
+	        		int posStart = response.indexOf("location") + 10;
+	        		String uri = response.substring(posStart, response.indexOf("'", posStart));
+	        		response = YaboHttp.doGet(YaboHttp.ADDRESS + uri, "", "");
+	        		if(!response.contains("Update_JV(")) {
+	        			response = YaboHttp.doGet(YaboHttp.ADDRESS + uri, "", "");
+	        		}
+	        		if(response.contains("Update_JV(")) {
+	        			posStart = response.indexOf("Update_JV(") + 11;
+	        			YaboHttp.jeuValidate = response.substring(posStart, response.indexOf("\"", posStart));
+	        		}
+        		} catch(Exception e) {
         		}
-        		if(response.contains("Update_JV(")) {
-        			posStart = response.indexOf("Update_JV(") + 11;
-        			YaboHttp.jeuValidate = response.substring(posStart, response.indexOf("\"", posStart));
-        		}
-        		System.out.println(response);
         	}
 //        	
 //        	if((failed == true) && getRemainTime() > 0){
@@ -1297,7 +1341,7 @@ public class BetBJSCManager {
 	        		if(odds < 2.0 && amount >0){
 	        			amount = (int)(amount*percent);  
 	        			//amount = 10;
-	        			if(amount < 2)
+	        			if(amount < 5)
 	        				continue;
 	        			totalAmount += amount;
 	        			
@@ -1515,28 +1559,30 @@ public class BetBJSCManager {
 			
 			if(dNum == 1 && getRemainTime() < 245) {
 				int pos = 0;
-				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?findDate=" + dateString, "", "");
-				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=2&findDate=" + dateString + "&lid=&op=&isback=", "", "");
-				if(res!= null && res1 != null && res.contains(">" + number + "<")) {
-					pos = res.indexOf(">" + number + "<", pos);	
+				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?cdate=" + dateString + "&rowNumPerPage=15", "", "");
+				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?pageNo=2&cdate=" + dateString, "", "");
+				if(res!= null && res1 != null && res.contains(number + "期")) {
+					pos = res.indexOf(number + "期", pos);	
 					if(pos > 0) {
 						hasResult = true;
 					}
 					
 					while(pos > 0) {
-						pos = res.indexOf("</tr>", pos) - 40;
-						pos = res.indexOf("right\">", pos) + 7;
-						profit += Double.valueOf(res.substring(pos, res.indexOf("&nbsp", pos)));
-						pos = res.indexOf(">" + number + "<", pos);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						profit += Double.valueOf(res.substring(pos + 19, res.indexOf("</td>", pos)));
+						pos = res.indexOf(number + "期", pos);
 					}
 					
 					if(res1 != null) {
-						pos = res1.indexOf(">" + number + "<", pos);	
+						pos = res1.indexOf(number + "期", 0);	
 						while(pos > 0) {
-							pos = res1.indexOf("</tr>", pos) - 40;
-							pos = res1.indexOf("right\">", pos) + 7;
-							profit += Double.valueOf(res1.substring(pos, res1.indexOf("&nbsp", pos)));
-							pos = res1.indexOf(">" + number + "<", pos);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							profit += Double.valueOf(res1.substring(pos + 19, res1.indexOf("</td>", pos)));
+							pos = res1.indexOf(number + "期", pos);
 						}
 					}
 					
@@ -1546,48 +1592,51 @@ public class BetBJSCManager {
 				}	
 			} else if(dNum == 2) {
 				int pos = 0;
-				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?findDate=" + dateString, "", "");
-				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=2&findDate=" + dateString + "&lid=&op=&isback=", "", "");
-				String res2 = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=3&findDate=" + dateString + "&lid=&op=&isback=", "", "");
+				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?cdate=" + dateString + "&rowNumPerPage=15", "", "");
+				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?pageNo=2&cdate=" + dateString, "", "");
+				String res2 = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?pageNo=3&cdate=" + dateString, "", "");
 				
 				if(res!= null && res1 != null && res2 != null) {
-					pos = res.indexOf(">" + number + "<", 0);
+					pos = res.indexOf(number + "期", 0);
 					if(pos > 0) {
 						hasResult = true;
 					}
 					
 					while(pos > 0) {
-						pos = res.indexOf("</tr>", pos) - 40;
-						pos = res.indexOf("right\">", pos) + 7;
-						profit += Double.valueOf(res.substring(pos, res.indexOf("&nbsp", pos)));
-						pos = res.indexOf(">" + number + "<", pos);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						profit += Double.valueOf(res.substring(pos + 19, res.indexOf("</td>", pos)));
+						pos = res.indexOf(number + "期", pos);
 					}
 					
 					if(res1 != null) {
-						pos = res1.indexOf(">" + number + "<", 0);	
+						pos = res1.indexOf(number + "期", 0);	
 						if(pos > 0) {
 							hasResult = true;
 						}
 						
 						while(pos > 0) {
-							pos = res1.indexOf("</tr>", pos) - 40;
-							pos = res1.indexOf("right\">", pos) + 7;
-							profit += Double.valueOf(res1.substring(pos, res1.indexOf("&nbsp", pos)));
-							pos = res1.indexOf(">" + number + "<", pos);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							profit += Double.valueOf(res1.substring(pos + 19, res1.indexOf("</td>", pos)));
+							pos = res1.indexOf(number + "期", pos);
 						}
 					}
 					
 					if(res2 != null) {
-						pos = res2.indexOf(">" + number + "<", 0);	
+						pos = res2.indexOf(number + "期", 0);	
 						if(pos > 0) {
 							hasResult = true;
 						}
 						
 						while(pos > 0) {
-							pos = res2.indexOf("</tr>", pos) - 40;
-							pos = res2.indexOf("right\">", pos) + 7;
-							profit += Double.valueOf(res2.substring(pos, res2.indexOf("&nbsp", pos)));
-							pos = res2.indexOf(">" + number + "<", pos);
+							pos = res2.indexOf("td class='f_right'", pos + 1);
+							pos = res2.indexOf("td class='f_right'", pos + 1);
+							pos = res2.indexOf("td class='f_right'", pos + 1);
+							profit += Double.valueOf(res2.substring(pos + 19, res2.indexOf("</td>", pos)));
+							pos = res2.indexOf(number + "期", pos);
 						}
 					}
 					
@@ -1597,47 +1646,50 @@ public class BetBJSCManager {
 				}	
 			} else if(dNum == 3) {
 				int pos = 0;
-				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=2&findDate=" + dateString + "&lid=&op=&isback=", "", "");
-				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=3&findDate=" + dateString + "&lid=&op=&isback=", "", "");
-				String res2 = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=4&findDate=" + dateString + "&lid=&op=&isback=", "", "");
+				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?pageNo=2&cdate=" + dateString, "", "");
+				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?pageNo=3&cdate=" + dateString, "", "");
+				String res2 = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?pageNo=4&cdate=" + dateString, "", "");
 				if(res != null && res2 != null && res1 != null) {
-					pos = res.indexOf(">" + number + "<", 0);	
+					pos = res.indexOf(number + "期", 0);	
 					if(pos > 0) {
 						hasResult = true;
 					}
 					
 					while(pos > 0) {
-						pos = res.indexOf("</tr>", pos) - 40;
-						pos = res.indexOf("right\">", pos) + 7;
-						profit += Double.valueOf(res.substring(pos, res.indexOf("&nbsp", pos)));
-						pos = res.indexOf(">" + number + "<", pos);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						profit += Double.valueOf(res.substring(pos + 19, res.indexOf("</td>", pos)));
+						pos = res.indexOf(number + "期", pos);
 					}
 					
 					if(res1 != null) {
-						pos = res1.indexOf(">" + number + "<", 0);	
+						pos = res1.indexOf(number + "期", 0);	
 						if(pos > 0) {
 							hasResult = true;
 						}
 						
 						while(pos > 0) {
-							pos = res1.indexOf("</tr>", pos) - 40;
-							pos = res1.indexOf("right\">", pos) + 7;
-							profit += Double.valueOf(res1.substring(pos, res1.indexOf("&nbsp", pos)));
-							pos = res1.indexOf(">" + number + "<", pos);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							profit += Double.valueOf(res1.substring(pos + 19, res1.indexOf("</td>", pos)));
+							pos = res1.indexOf(number + "期", pos);
 						}
 					}
 					
 					if(res2 != null) {
-						pos = res2.indexOf(">" + number + "<", 0);	
+						pos = res2.indexOf(number + "期", 0);	
 						if(pos > 0) {
 							hasResult = true;
 						}
 						
 						while(pos > 0) {
-							pos = res2.indexOf("</tr>", pos) - 40;
-							pos = res2.indexOf("right\">", pos) + 7;
-							profit += Double.valueOf(res2.substring(pos, res2.indexOf("&nbsp", pos)));
-							pos = res2.indexOf(">" + number + "<", pos);
+							pos = res2.indexOf("td class='f_right'", pos + 1);
+							pos = res2.indexOf("td class='f_right'", pos + 1);
+							pos = res2.indexOf("td class='f_right'", pos + 1);
+							profit += Double.valueOf(res2.substring(pos + 19, res2.indexOf("</td>", pos)));
+							pos = res2.indexOf(number + "期", pos);
 						}
 					}
 					
@@ -1647,28 +1699,30 @@ public class BetBJSCManager {
 				}	
 			} else if(dNum == 0 && isInLastTime()) {
 				int pos = 0;
-				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?findDate=" + dateString, "", "");
-				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/ReportBill/Report_kc.aspx?page=2&findDate=" + dateString + "&lid=&op=&isback=", "", "");
-				if(res!= null && res1 != null && res.contains(">" + number + "<")) {
-					pos = res.indexOf(">" + number + "<", pos);	
+				res = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?cdate=" + dateString + "&rowNumPerPage=15", "", "");
+				res1 = YaboHttp.doGet(YaboHttp.ADDRESS + "/hisorder/queryHistory.do?pageNo=2&cdate=" + dateString, "", "");
+				if(res!= null && res1 != null && res.contains(number + "期")) {
+					pos = res.indexOf(number + "期", 0);		
 					if(pos > 0) {
 						hasResult = true;
 					}
 					
 					while(pos > 0) {
-						pos = res.indexOf("</tr>", pos) - 40;
-						pos = res.indexOf("right\">", pos) + 7;
-						profit += Double.valueOf(res.substring(pos, res.indexOf("&nbsp", pos)));
-						pos = res.indexOf(">" + number + "<", pos);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						pos = res.indexOf("td class='f_right'", pos + 1);
+						profit += Double.valueOf(res.substring(pos + 19, res.indexOf("</td>", pos)));
+						pos = res.indexOf(number + "期", pos);
 					}
 					
 					if(res1 != null) {
-						pos = res1.indexOf(">" + number + "<", pos);	
+						pos = res1.indexOf(number + "期", 0);	
 						while(pos > 0) {
-							pos = res1.indexOf("</tr>", pos) - 40;
-							pos = res1.indexOf("right\">", pos) + 7;
-							profit += Double.valueOf(res1.substring(pos, res1.indexOf("&nbsp", pos)));
-							pos = res1.indexOf(">" + number + "<", pos);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							pos = res1.indexOf("td class='f_right'", pos + 1);
+							profit += Double.valueOf(res1.substring(pos + 19, res1.indexOf("</td>", pos)));
+							pos = res1.indexOf(number + "期", pos);
 						}
 					}
 					

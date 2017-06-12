@@ -123,7 +123,9 @@ public class BetYaboBJSCThread extends Thread{
 									//autoBet.outputGUIMessage("亚博北京赛车" + BetBJSCManager.getDrawnumber() + "期  暂停投注！ \n");
 								//}
 								autoBetSuccess = BetBJSCManager.doBetBJSC(betsData, betBJSCPercent*times, !Boolean.parseBoolean(betBJSCData[6]), betBJSCData[4]);
-								
+								if(!autoBetSuccess && !YaboHttp.loginToYabo()) {
+									YaboHttp.reLogin();
+								}
 								//todo remove
 								autoBetSuccess = true;					
 								
@@ -136,35 +138,34 @@ public class BetYaboBJSCThread extends Thread{
 
 					sleepTime = 10;
 				
-//					if(YaboHttp.isAllLotteryIdle()){
-//						if(BetBJSCManager.getUnCalcProfitBJSCDraw().size() != 0) {						
-//							Vector<String> calcedBJSCDraw = new Vector<String>();					
-//							Vector<String> data = BetBJSCManager.getUnCalcProfitBJSCDraw();
-//							
-//							for(int i = 0; i < data.size(); i++) {						
-//								String drawNumber = data.elementAt(i);						
-//								String profit = BetBJSCManager.getProfit(drawNumber);
-//								
-//								if(profit.equals("---") != true){
-//									BetBJSCManager.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
-//									BetBJSCManager.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profit);								
-//									BetBJSCManager.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.COUNT.ordinal(), "0");
-//									
-//									calcedBJSCDraw.add(drawNumber);
-//								}		
-//							}
-//							
-//							if(calcedBJSCDraw.size() != 0){
-//								BetBJSCManager.updateUnCalcBJSCDraw(calcedBJSCDraw);
-//							}
-//							
-//							
-//						}
-//								
-//					}
+					if(YaboHttp.isAllLotteryIdle()){
+						if(BetBJSCManager.getUnCalcProfitBJSCDraw().size() != 0) {						
+							Vector<String> calcedBJSCDraw = new Vector<String>();					
+							Vector<String> data = BetBJSCManager.getUnCalcProfitBJSCDraw();
+							
+							for(int i = 0; i < data.size(); i++) {						
+								String drawNumber = data.elementAt(i);						
+								String profit = BetBJSCManager.getProfit(drawNumber);
+								
+								if(profit.equals("---") != true){
+									BetBJSCManager.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.STATC.ordinal(), "0");
+									BetBJSCManager.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.PROFIT.ordinal(), profit);								
+									BetBJSCManager.updateBJSCWindowdetailsData(drawNumber, TYPEINDEX.COUNT.ordinal(), "0");
+									
+									calcedBJSCDraw.add(drawNumber);
+								}		
+							}
+							
+							if(calcedBJSCDraw.size() != 0){
+								BetBJSCManager.updateUnCalcBJSCDraw(calcedBJSCDraw);
+							}
+							
+							
+						}
+								
+					}
 	
 					if(BJSCremainTime <= almostTime && BJSCremainTime > 0){					
-
 						long time2 = BJSCremainTime - 15;
 						long littleTime = time2;
 						
