@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 
 
+
 import dsn.Common;
 import dsn.DSNBetAmountWindow;
 import dsn.DSNDataDetailsWindow;
@@ -73,6 +74,7 @@ public class BetBJSCManager {
     static DSNBetAmountWindow BJSCBetAmountWindow = new DSNBetAmountWindow();    
 	
 	static long remainTime = -1;
+	static String balanceStr = "---";
 	
 	
 	//static JSONObject gameOdds = new JSONObject();
@@ -142,41 +144,62 @@ public class BetBJSCManager {
 		
 		String profit = "---";
 		
-		String maxPage = "1";
+		
 		
 		try{
-			
-			String profitUri = WebetHttp.lineuri + "z/mem2-betAcountY";
-			
-			String res = WebetHttp.doGet(profitUri, WebetHttp.strCookies, "");
-			
-			int posStart = -1;
-			int posEnd = -1;
-			
-			if(res != null){
-				posStart = res.indexOf("endpage");
-				posStart = res.indexOf(":", posStart);
-				posEnd = res.indexOf(",",posStart);
-				maxPage = res.substring(posStart+1, posEnd);
+			String allProfitUri = WebetHttp.lineuri + "/d3m1/bjapp/ajaxdata/account_day.jsp?" + loaddatauripart;
+			String res = WebetHttp.doGet(allProfitUri, "", "");
+			if(res == null){
+				res = WebetHttp.doGet(allProfitUri, "", "");
 			}
 			
-			profitUri = WebetHttp.lineuri + "z/mem2-betAcountY" + "?lottery=ALL&ptype=2&page=" + maxPage;
+			int ps = res.indexOf("p=");
+			int pe = res.indexOf("\"", ps);
 			
-			res = WebetHttp.doGet(profitUri, WebetHttp.strCookies, "");
+			String loaddayprouripart = res.substring(ps, pe);
+			String loaddayprouri = WebetHttp.lineuri + "/d3m1/bjapp/ajaxdata/account.jsp?" + loaddayprouripart;
 			
-			
-			if(res != null && res.contains(drawNumber)){
-				posStart = res.indexOf(drawNumber);
-				
-				posEnd = res.indexOf("]", posStart);
-				
-				String subStr = res.substring(posStart, posEnd);
-				
-				String[] infoArray = subStr.split(",");
-				
-				profit = infoArray[7];
-
+			res = WebetHttp.doGet(loaddayprouri, "", "");
+			if(res == null){
+				res = WebetHttp.doGet(loaddayprouri, "", "");
 			}
+			
+			ps = res.indexOf(drawNumber + "期");
+			
+			ps = res.indexOf("style", ps);
+			ps = res.indexOf(">", ps) + 1;
+			pe = res.indexOf("<", ps);
+			
+			String oneProfit = res.substring(ps, pe);
+			oneProfit = oneProfit.trim();
+			double dp = 0.0;
+			
+			if(oneProfit.equals("")||oneProfit.equals("尚未")){
+				return profit;
+			}
+			
+			double op = Double.parseDouble(oneProfit);
+			dp = dp + op;
+			
+			while(true){
+				ps = res.indexOf(drawNumber + "期", pe);
+				
+				if(ps == -1){
+					break;
+				}
+				
+				ps = res.indexOf("style", ps);
+				ps = res.indexOf(">", ps) + 1;
+				pe = res.indexOf("<", ps);
+				
+				oneProfit = res.substring(ps, pe);
+				oneProfit = oneProfit.trim();
+				op = Double.parseDouble(oneProfit);
+				dp = dp + op;
+			}
+			
+			profit = String.format("%.1f", dp);
+			
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -194,10 +217,12 @@ public class BetBJSCManager {
 	
 	public static boolean grabGameInfo(){
 		
+		String res = "";
+		
 		try{
 			
 			
-        	String res =  WebetHttp.doGet(WebetHttp.gameMainUri, "", "");
+        	res =  WebetHttp.doGet(WebetHttp.gameMainUri, "", "");
         	
         	
         	
@@ -255,7 +280,11 @@ public class BetBJSCManager {
 	    	kang = res.substring(ps, pe);
 			
 			
+			ps = res.indexOf("快开额度");
+			ps = res.indexOf(">", ps) + 1;
+			pe = res.indexOf("<", ps);
 			
+			balanceStr = res.substring(ps, pe);
 			
 			
 			
@@ -280,9 +309,9 @@ public class BetBJSCManager {
 			ps = res.indexOf(":\"", ps) + 2;
 			pe = res.indexOf("\"", ps);
 			
-			BJSCdrawNumber = res.substring(ps, pe);
+			//BJSCdrawNumber = res.substring(ps, pe);
 			
-			System.out.println(res);
+			//System.out.println(res);
 			
 			
 			String loadgamedata = WebetHttp.lineuri + "/d3m1/bjapp/ajaxdata/load_data.jsp?" +loaddatauripart + "&_=" + 
@@ -298,7 +327,7 @@ public class BetBJSCManager {
 				
 			}
 			
-			System.out.println(res);
+			//System.out.println(res);
 			
 			
 			
@@ -314,16 +343,60 @@ public class BetBJSCManager {
 	        	ps = res.indexOf("GameNum");
 	        	ps = res.indexOf(">", ps) + 1;
 	        	pe = res.indexOf("<", ps);
-	        	BJSCdrawNumber = res.substring(ps, pe);
+	        	//BJSCdrawNumber = res.substring(ps, pe);
+	        	
+	        	
+                if(!BJSCdrawNumber.equals(res.substring(ps, pe))) {//新的一期
+                	previousBJSCdrawNumber = BJSCdrawNumber;
+                	BJSCdrawNumber = res.substring(ps, pe);
+                	if(previousBJSCBetNumber != previousBJSCdrawNumber && previousBJSCBetNumber != BJSCdrawNumber && previousBJSCBetNumber != "") {//判断上一期有没有漏投
+    					int dNum = 0;
+    					try {
+    					    dNum = Integer.parseInt(BJSCdrawNumber) - Integer.parseInt(previousBJSCBetNumber) -1;
+    					} catch (NumberFormatException e) {
+    					    e.printStackTrace();
+    					}
+    					
+    					
+    					
+    					
+    					BJSCjinrishibai += dNum;					
+    			        BJSCjinriqishu += dNum;
+    			        
+    			        BJSCdetalsDataWindow.updateTextFieldjinriqishu(Integer.toString(BJSCjinriqishu));
+    			        BJSCdetalsDataWindow.updateTextFieldjinrishibai(Integer.toString(BJSCjinrishibai));
+    			        
+    			        BJSCdetalsDataWindow.updateTextFieldzongqishu(Integer.toString(BJSCzongqishu + BJSCjinriqishu));
+    			        BJSCdetalsDataWindow.updateTextFieldzongshibai(Integer.toString(BJSCzongshibai + BJSCjinrishibai));
+    			        
+
+    					System.out.println("漏投" + dNum + "次, 期数：" + BJSCdrawNumber + "上次下单期数：" + previousBJSCBetNumber);
+    					
+    					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm");//设置日期格式
+    					int missDrawNumber = Integer.parseInt(previousBJSCBetNumber) + 1;
+    					for(int i = 0; i < dNum; i++){
+    						String missDrawNmberstr = Integer.toString(missDrawNumber + i);						
+    		    			BJSCdetalsDataWindow.addData(df.format(new Date()), missDrawNmberstr, 3, "---", "---"); 
+    					}
+    					
+    					
+    					previousBJSCBetNumber = previousBJSCdrawNumber;
+    					
+    					
+    					
+    			    }
+                }
+	        	
+	        	
 	        	
 	        	
 	        	ps = res.indexOf("StopTimeSec");
 	        	ps = res.indexOf(">", ps) + 1;
 	        	pe = res.indexOf("<", ps);
 	        	
-	        	remainTime = Integer.parseInt(res.substring(ps, pe));
+	        	int tmpremainTime = Integer.parseInt(res.substring(ps, pe));
 	        	
-	        	closeTime = System.currentTimeMillis() + remainTime* 1000;
+	        	closeTime = System.currentTimeMillis() + tmpremainTime* 1000;
 	        	
 	        	ps = res.indexOf("{", pe);
 	        	pe = res.indexOf(";", ps);
@@ -357,6 +430,7 @@ public class BetBJSCManager {
 			
 		}catch(Exception e){
 			e.printStackTrace();
+			System.out.println(res);
 			WebetHttp.addFailsTimes();
 			return false;
 		}
@@ -1589,45 +1663,7 @@ public class BetBJSCManager {
     
     
     public static String getBalance(){
-    	
-    	String balanceStr = "---";
-    	
-    	try{
-        	String balanceURI = WebetHttp.lineuri + "z/user-info";
-        	
-        	String res = WebetHttp.doGet(balanceURI, WebetHttp.strCookies, "");
-        	
-        	
-        	
-        	if(res == null){
-        		res = WebetHttp.doGet(balanceURI, WebetHttp.strCookies, "");
-        	}
-        	
-        	
-        	if(res != null){
-        		int posStart = res.indexOf("N_Credits");
-        		posStart = res.indexOf(">", posStart);
-        		int posEnd = res.indexOf("<", posStart);
-        		
-        		if(posEnd > posStart && posStart >=0){
-        			balanceStr = res.substring(posStart+1, posEnd);
-        		}
-        		
-        		balanceStr = balanceStr.trim();
-        		
-        		
-        		if(Common.isNum(balanceStr)){    			    			    			
-        			balanceStr = String.format("%.1f", Double.parseDouble(balanceStr));
-        		}
-        	}
-    		
-    	}catch(Exception e){
-    		e.printStackTrace();
-    		return balanceStr;
-    	}
 
-    	
-    	
     	return balanceStr;
     	
     }

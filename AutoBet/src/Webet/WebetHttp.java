@@ -806,15 +806,14 @@ public class WebetHttp {
 	
 	
     public static boolean isAllLotteryIdle(){
-/*    	boolean isIdle = false;
+    	boolean isIdle = false;
     	
     	if(BetBJSCManager.isBJSCidle()){
     		isIdle = true;
     	}
     	
-    	return isIdle;*/
-    	
-    	return true;
+    	return isIdle;
+
     }
     
     

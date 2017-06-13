@@ -210,7 +210,7 @@ class BetWebetBJSCThread extends Thread{
 					
 					
 
-/*					if(BetBJSCManager.getUnCalcProfitBJSCDraw().size() != 0){
+					if(BetBJSCManager.getUnCalcProfitBJSCDraw().size() != 0){
 						
 						Vector<String> calcedBJSCDraw = new Vector<String>();
 						
@@ -242,7 +242,7 @@ class BetWebetBJSCThread extends Thread{
 					
 					String balance = BetBJSCManager.getBalance();
 					
-					BetBJSCManager.updateBJSCBalance(balance);*/
+					BetBJSCManager.updateBJSCBalance(balance);
 
 					
 				}
